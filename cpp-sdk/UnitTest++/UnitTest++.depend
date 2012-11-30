@@ -1,0 +1,59 @@
+# depslib dependency file v1.0
+1225373262 source:f:\postindustria_api2\cppwrapper\unittest++\src\assertexception.cpp
+	"AssertException.h"
+	<cstring>
+
+1174314856 f:\postindustria_api2\cppwrapper\unittest++\src\assertexception.h
+	<exception>
+
+1225373262 source:f:\postindustria_api2\cppwrapper\unittest++\src\checks.cpp
+	"Checks.h"
+	<cstring>
+
+1225373262 f:\postindustria_api2\cppwrapper\unittest++\src\checks.h
+	"Config.h"
+	"TestResults.h"
+	"MemoryOutStream.h"
+
+1225373916 f:\postindustria_api2\cppwrapper\unittest++\src\config.h
+
+1174314856 f:\postindustria_api2\cppwrapper\unittest++\src\testresults.h
+
+1174314856 f:\postindustria_api2\cppwrapper\unittest++\src\memoryoutstream.h
+	"Config.h"
+	<sstream>
+	<cstddef>
+
+1225287488 source:f:\postindustria_api2\cppwrapper\unittest++\src\currenttest.cpp
+	"CurrentTest.h"
+	<cstddef>
+
+1225287488 f:\postindustria_api2\cppwrapper\unittest++\src\currenttest.h
+
+1225383016 source:f:\postindustria_api2\cppwrapper\unittest++\src\deferredtestreporter.cpp
+	"DeferredTestReporter.h"
+	"TestDetails.h"
+	"Config.h"
+
+1174314856 f:\postindustria_api2\cppwrapper\unittest++\src\deferredtestreporter.h
+	"TestReporter.h"
+	"DeferredTestResult.h"
+	<vector>
+
+1174314856 f:\postindustria_api2\cppwrapper\unittest++\src\testreporter.h
+
+1176647666 f:\postindustria_api2\cppwrapper\unittest++\src\deferredtestresult.h
+	<string>
+	<vector>
+
+1174314856 f:\postindustria_api2\cppwrapper\unittest++\src\testdetails.h
+
+1225383016 source:f:\postindustria_api2\cppwrapper\unittest++\src\deferredtestresult.cpp
+	"DeferredTestResult.h"
+	"Config.h"
+
+1225373262 source:f:\postindustria_api2\cppwrapper\unittest++\src\memoryoutstream.cpp
+	"MemoryOutStream.h"
+	<cstring>
+	<cstdio>
+

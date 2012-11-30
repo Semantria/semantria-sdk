@@ -1,0 +1,585 @@
+# depslib dependency file v1.0
+1341861285 source:f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\testapp\main.cpp
+	<string>
+	"TestApp.h"
+
+1342119241 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\session.h
+	"proxies/SentimentPhraseUpdateProxy.h"
+	"proxies/ConfigurationUpdateProxy.h"
+	"proxies/BlacklistUpdateProxy.h"
+	"proxies/CategoryUpdateProxy.h"
+	"proxies/EntityUpdateProxy.h"
+	"proxies/QueryUpdateProxy.h"
+	"objects/stub/Stub_Blacklist.h"
+	"objects/stub/Stub_Categories.h"
+	"objects/stub/Stub_Configurations.h"
+	"objects/stub/Stub_Entities.h"
+	"objects/stub/Stub_Queries.h"
+	"objects/stub/Stub_SentimentPhrase.h"
+	"objects/stub/Stub_DocAnalyticDatas.h"
+	"objects/stub/Stub_CollAnalyticDatas.h"
+	"objects/stub/Stub_Tasks.h"
+	"objects/output/Document.h"
+	"objects/output/Collection.h"
+	"serializers/Serializer.h"
+	"serializers/xml/XmlSerializer.h"
+	"serializers/json/JsonSerializer.h"
+	"handlers/CallbackHandler.h"
+	"common/EnumsHelper.h"
+	"objects/output/ServiceStatus.h"
+	"objects/output/Subscription.h"
+	"connection/AuthRequest.h"
+
+1342120064 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\proxies\sentimentphraseupdateproxy.h
+	"UpdateProxy.h"
+	"../objects/configuration/SentimentPhrase.h"
+
+1342120054 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\proxies\updateproxy.h
+	<vector>
+	"../serializers/json/JsonSerializable.h"
+	"../serializers/xml/XmlSerializable.h"
+
+1341165203 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\serializers\jsonserializable.h
+	"json/json.h"
+
+1340175275 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\serializers\json\json.h
+	"autolink.h"
+	"value.h"
+	"reader.h"
+	"writer.h"
+	"features.h"
+
+1340175275 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\serializers\json\autolink.h
+	"config.h"
+	<cpptl/cpptl_autolink.h>
+	"autolink.h"
+
+1340181757 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\serializers\json\config.h
+	<cpptl/config.h>
+
+1340180485 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\serializers\json\value.h
+	"forwards.h"
+	<string>
+	<vector>
+	"config.h"
+	<map>
+	<cpptl/smallmap.h>
+	<cpptl/forwards.h>
+
+1340175275 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\serializers\json\forwards.h
+	"config.h"
+
+1340175275 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\serializers\json\reader.h
+	"features.h"
+	"value.h"
+	<deque>
+	<stack>
+	<string>
+	<iostream>
+
+1340175275 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\serializers\json\features.h
+	"forwards.h"
+
+1340175275 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\serializers\json\writer.h
+	"value.h"
+	<vector>
+	<string>
+	<iostream>
+
+1341944805 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\objects\configuration\sentimentphrase.h
+	"../../serializers/json/JsonSerializable.h"
+
+1341950757 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\proxies\configurationupdateproxy.h
+	"UpdateProxy.h"
+	"../objects/configuration/Configuration.h"
+
+1341944805 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\objects\configuration\configuration.h
+	"../../serializers/json/JsonSerializable.h"
+	"../../serializers/xml/XmlSerializable.h"
+
+1342122780 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\proxies\blacklistupdateproxy.h
+	"UpdateProxy.h"
+	"../objects/configuration/Blacklisted.h"
+
+1341944805 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\objects\configuration\blacklisted.h
+	"../../serializers/json/JsonSerializable.h"
+
+1341938157 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\proxies\categoryupdateproxy.h
+	"UpdateProxy.h"
+	"../objects/configuration/Category.h"
+
+1341944805 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\objects\configuration\category.h
+	"../../serializers/json/JsonSerializable.h"
+
+1341937568 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\proxies\entityupdateproxy.h
+	"UpdateProxy.h"
+	"../objects/configuration/UserEntity.h"
+
+1341944805 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\objects\configuration\userentity.h
+	"../../serializers/json/JsonSerializable.h"
+
+1341937564 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\proxies\queryupdateproxy.h
+	"UpdateProxy.h"
+	"../objects/configuration/Query.h"
+
+1341944805 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\objects\configuration\query.h
+	"../../serializers/json/JsonSerializable.h"
+
+1342122289 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\objects\stub\stub_blacklist.h
+	"../../serializers/json/JsonSerializable.h"
+	"../../serializers/xml/XmlSerializable.h"
+	"../../serializers/xml/BlacklistXmlHandler.h"
+
+1342157078 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\objects\stub\stub_categories.h
+	"../../serializers/json/JsonSerializable.h"
+	"../../objects/configuration/Category.h"
+	"../../serializers/xml/XmlSerializable.h"
+	"../../serializers/xml/CategoryXmlHandler.h"
+
+1342157178 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\objects\stub\stub_configurations.h
+	"../../serializers/json/JsonSerializable.h"
+	"../../objects/configuration/Configuration.h"
+	"../../serializers/xml/XmlSerializable.h"
+	"../../serializers/xml/ConfigurationXmlHandler.h"
+
+1342158869 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\objects\stub\stub_entities.h
+	"../../serializers/json/JsonSerializable.h"
+	"../../serializers/xml/XmlSerializable.h"
+	"../../serializers/xml/UserEntityXmlHandler.h"
+	"../../objects/configuration/UserEntity.h"
+
+1342158882 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\objects\stub\stub_queries.h
+	"../../serializers/json/JsonSerializable.h"
+	"../../objects/configuration/Query.h"
+	"../../serializers/xml/XmlSerializable.h"
+	"../../serializers/xml/QueryXmlHandler.h"
+
+1342158897 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\objects\stub\stub_sentimentphrase.h
+	"../../serializers/json/JsonSerializable.h"
+	"../../serializers/xml/XmlSerializable.h"
+	"../../serializers/xml/SentimentPhraseXmlHandler.h"
+	"../../objects/configuration/SentimentPhrase.h"
+
+1342157209 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\objects\stub\stub_docanalyticdatas.h
+	"../../serializers/json/JsonSerializable.h"
+	"../../objects/output/DocAnalyticData.h"
+	"../../serializers/xml/XmlSerializable.h"
+	"../../serializers/xml/DocumentXmlHandler.h"
+
+1342172532 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\objects\output\docanalyticdata.h
+	"../../serializers/json/JsonSerializable.h"
+	"../../serializers/xml/XmlSerializable.h"
+	"../../common/Enums.h"
+	"../../common/EnumsHelper.h"
+	"../../objects/output/DocEntity.h"
+	"../../objects/output/DocTopic.h"
+	"../../objects/output/DocTheme.h"
+	"../../objects/output/DocPhrase.h"
+
+1342162341 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\common\enums.h
+
+1342122038 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\objects\output\docentity.h
+	"../../serializers/json/JsonSerializable.h"
+	"../../objects/output/DocTheme.h"
+
+1342122046 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\objects\output\doctheme.h
+	"../../serializers/json/JsonSerializable.h"
+
+1342122049 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\objects\output\doctopic.h
+	"../../serializers/json/JsonSerializable.h"
+
+1342122042 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\objects\output\docphrase.h
+	"../../serializers/json/JsonSerializable.h"
+
+1342157147 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\objects\stub\stub_collanalyticdatas.h
+	"../../serializers/json/JsonSerializable.h"
+	"../../objects/output/CollAnalyticData.h"
+	"../../serializers/xml/XmlSerializable.h"
+	"../../serializers/xml/CollectionXmlHandler.h"
+
+1342123127 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\objects\output\collanalyticdata.h
+	"../../serializers/json/JsonSerializable.h"
+	"../../serializers/xml/XmlSerializable.h"
+	"../../common/Enums.h"
+	"../../common/EnumsHelper.h"
+	"../../objects/output/CollEntity.h"
+	"../../objects/output/CollTopic.h"
+	"../../objects/output/CollTheme.h"
+	"../../objects/output/Facet.h"
+
+1342122016 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\objects\output\collentity.h
+	"../../serializers/json/JsonSerializable.h"
+
+1342122024 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\objects\output\colltopic.h
+	"../../serializers/json/JsonSerializable.h"
+
+1342122020 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\objects\output\colltheme.h
+	"../../serializers/json/JsonSerializable.h"
+
+1342122061 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\objects\output\facet.h
+	"../../serializers/json/JsonSerializable.h"
+	"../../objects/output/Attribute.h"
+
+1342122011 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\objects\output\attribute.h
+	"../../serializers/json/JsonSerializable.h"
+
+1342158911 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\objects\stub\stub_tasks.h
+	<vector>
+	"../output/Document.h"
+	"../../serializers/json/JsonSerializable.h"
+	"../../serializers/xml/XmlSerializable.h"
+
+1342122057 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\objects\output\document.h
+	"../../serializers/json/JsonSerializable.h"
+	"../../serializers/xml/XmlSerializable.h"
+
+1342122032 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\objects\output\collection.h
+	"../../serializers/json/JsonSerializable.h"
+	"../../serializers/xml/XmlSerializable.h"
+	"../../objects/output/Document.h"
+
+1342119125 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\serializers\serializer.h
+	<string>
+
+1341396397 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\handlers\callbackhandler.h
+	<vector>
+	"../common/ResponseArgs.h"
+	"../common/RequestArgs.h"
+	"../objects/output/DocAnalyticData.h"
+	"../objects/output/CollAnalyticData.h"
+
+1341385896 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\common\responseargs.h
+	<string>
+
+1341386074 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\common\requestargs.h
+	<string>
+
+1342123293 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\common\enumshelper.h
+	<string>
+	"Enums.h"
+
+1342164526 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\objects\output\servicestatus.h
+	"../../serializers/json/JsonSerializable.h"
+	"../../serializers/xml/XmlSerializable.h"
+	"../../serializers/xml/ServiceStatusXmlHandler.h"
+
+1342122079 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\objects\output\subscription.h
+	"../../serializers/json/JsonSerializable.h"
+	"../../serializers/xml/XmlSerializable.h"
+	"../../serializers/xml/SubscriptionXmlHandler.h"
+
+1341953415 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\connection\authrequest.h
+	"../common/Enums.h"
+	<string>
+	<vector>
+	<iostream>
+	<curl/curl.h>
+
+1335364160 c:\curl\include\curl\curl.h
+	"curlver.h"
+	"curlbuild.h"
+	"curlrules.h"
+	<stdio.h>
+	<limits.h>
+	<osreldate.h>
+	<sys/types.h>
+	<time.h>
+	<winsock2.h>
+	<ws2tcpip.h>
+	<sys/select.h>
+	<sys/socket.h>
+	<sys/time.h>
+	<support/SupportDefs.h>
+	"easy.h"
+	"multi.h"
+	"typecheck-gcc.h"
+
+1337872022 c:\curl\include\curl\curlver.h
+
+1341165032 c:\curl\include\curl\curlbuild.h
+	<windows.h>
+	<winsock2.h>
+	<ws2tcpip.h>
+	<sys/types.h>
+	<stdint.h>
+	<inttypes.h>
+	<sys/socket.h>
+
+1300544234 c:\curl\include\curl\curlrules.h
+
+1320442376 c:\curl\include\curl\easy.h
+
+1300544168 c:\curl\include\curl\multi.h
+	"curl.h"
+
+1335364160 c:\curl\include\curl\typecheck-gcc.h
+
+1341503798 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\handlers\simplecallbackhandler.h
+	<iostream>
+	"CallbackHandler.h"
+
+1341837299 source:f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\testapp\testapp.cpp
+	"TestApp.h"
+	<windows.h>
+	<unistd.h>
+
+1341550133 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\testapp\testapp.h
+	<string>
+	<iostream>
+	<sstream>
+	<dos.h>
+	<time.h>
+	<cstdlib>
+	"../src/Session.h"
+	"../src/handlers/SimpleCallbackHandler.h"
+
+1342120167 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\serializers\xml\xmlserializable.h
+	<libxml/parser.h>
+	<cstring>
+	<string>
+	<sstream>
+	<iostream>
+
+1341846200 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\serializers\xml\sentimentphrasexmlhandler.h
+	"../../objects/stub/Stub_SentimentPhrase.h"
+
+1341858506 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\serializers\xml\configurationxmlhandler.h
+	"../../objects/stub/Stub_Configurations.h"
+
+1341845601 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\serializers\xml\blacklistxmlhandler.h
+	"../../objects/stub/Stub_Blacklist.h"
+
+1341849945 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\serializers\xml\categoryxmlhandler.h
+	"../../objects/stub/Stub_Categories.h"
+
+1341852723 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\serializers\xml\userentityxmlhandler.h
+	"../../objects/stub/Stub_Entities.h"
+
+1341853587 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\serializers\xml\queryxmlhandler.h
+	"../../objects/stub/Stub_Queries.h"
+
+1341858522 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\serializers\xml\documentxmlhandler.h
+	"../../objects/stub/Stub_DocAnalyticDatas.h"
+
+1341841164 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\serializers\xml\servicestatusxmlhandler.h
+	"../../objects/output/ServiceStatus.h"
+
+1341834658 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\serializers\xml\subscriptionxmlhandler.h
+	"../../objects/output/Subscription.h"
+
+1288879124 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\libs\libxml2\include\libxml\parser.h
+	<stdarg.h>
+	<libxml/xmlversion.h>
+	<libxml/tree.h>
+	<libxml/dict.h>
+	<libxml/hash.h>
+	<libxml/valid.h>
+	<libxml/entities.h>
+	<libxml/xmlerror.h>
+	<libxml/xmlstring.h>
+	<libxml/encoding.h>
+	<libxml/xmlIO.h>
+	<libxml/globals.h>
+
+1308508838 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\libs\libxml2\include\libxml\xmlversion.h
+	<libxml/xmlexports.h>
+	<ansidecl.h>
+
+1286861132 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\libs\libxml2\include\libxml\xmlexports.h
+
+1286861132 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\libs\libxml2\include\libxml\tree.h
+	<stdio.h>
+	<libxml/xmlversion.h>
+	<libxml/xmlstring.h>
+	<libxml/xmlregexp.h>
+	<libxml/xmlmemory.h>
+
+1286861132 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\libs\libxml2\include\libxml\xmlstring.h
+	<stdarg.h>
+	<libxml/xmlversion.h>
+
+1286861132 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\libs\libxml2\include\libxml\xmlregexp.h
+	<libxml/xmlversion.h>
+	<libxml/tree.h>
+	<libxml/dict.h>
+
+1253802720 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\libs\libxml2\include\libxml\dict.h
+	<libxml/xmlversion.h>
+	<libxml/tree.h>
+
+1286861132 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\libs\libxml2\include\libxml\xmlmemory.h
+	<stdio.h>
+	<libxml/xmlversion.h>
+	<libxml/threads.h>
+	<libxml/globals.h>
+
+1286861132 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\libs\libxml2\include\libxml\threads.h
+	<libxml/xmlversion.h>
+	<libxml/globals.h>
+
+1286861132 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\libs\libxml2\include\libxml\globals.h
+	<libxml/xmlversion.h>
+	<libxml/parser.h>
+	<libxml/xmlerror.h>
+	<libxml/SAX.h>
+	<libxml/SAX2.h>
+	<libxml/xmlmemory.h>
+	<libxml/threads.h>
+
+1286861132 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\libs\libxml2\include\libxml\xmlerror.h
+	<libxml/parser.h>
+
+1253802720 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\libs\libxml2\include\libxml\sax.h
+	<stdio.h>
+	<stdlib.h>
+	<libxml/xmlversion.h>
+	<libxml/parser.h>
+	<libxml/xlink.h>
+
+1253802720 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\libs\libxml2\include\libxml\xlink.h
+	<libxml/xmlversion.h>
+	<libxml/tree.h>
+
+1253802720 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\libs\libxml2\include\libxml\sax2.h
+	<stdio.h>
+	<stdlib.h>
+	<libxml/xmlversion.h>
+	<libxml/parser.h>
+	<libxml/xlink.h>
+
+1253802720 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\libs\libxml2\include\libxml\hash.h
+	<libxml/xmlversion.h>
+	<libxml/parser.h>
+	<libxml/dict.h>
+
+1286861132 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\libs\libxml2\include\libxml\valid.h
+	<libxml/xmlversion.h>
+	<libxml/xmlerror.h>
+	<libxml/tree.h>
+	<libxml/list.h>
+	<libxml/xmlautomata.h>
+	<libxml/xmlregexp.h>
+
+1253802720 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\libs\libxml2\include\libxml\list.h
+	<libxml/xmlversion.h>
+
+1253802720 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\libs\libxml2\include\libxml\xmlautomata.h
+	<libxml/xmlversion.h>
+	<libxml/tree.h>
+	<libxml/xmlregexp.h>
+
+1286861132 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\libs\libxml2\include\libxml\entities.h
+	<libxml/xmlversion.h>
+	<libxml/tree.h>
+
+1288882432 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\libs\libxml2\include\libxml\encoding.h
+	<libxml/xmlversion.h>
+	<iconv.h>
+	<unicode/ucnv.h>
+	<libxml/tree.h>
+
+1253802720 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\libs\libxml2\include\libxml\xmlio.h
+	<stdio.h>
+	<libxml/xmlversion.h>
+	<libxml/globals.h>
+	<libxml/tree.h>
+	<libxml/parser.h>
+	<libxml/encoding.h>
+
+1342119197 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\serializers\xml\xmlserializer.h
+	"../Serializer.h"
+	"XmlSerializable.h"
+
+1342099527 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\serializers\json\jsonserializable.h
+	"jsoncpp/json.h"
+
+1341863740 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\serializers\xml\collectionxmlhandler.h
+	"../../objects/stub/Stub_CollAnalyticDatas.h"
+
+1340175275 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\serializers\json\jsoncpp\json.h
+	"autolink.h"
+	"value.h"
+	"reader.h"
+	"writer.h"
+	"features.h"
+
+1340175275 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\serializers\json\jsoncpp\autolink.h
+	"config.h"
+	<cpptl/cpptl_autolink.h>
+	"autolink.h"
+
+1340181757 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\serializers\json\jsoncpp\config.h
+	<cpptl/config.h>
+
+1340180485 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\serializers\json\jsoncpp\value.h
+	"forwards.h"
+	<string>
+	<vector>
+	"config.h"
+	<map>
+	<cpptl/smallmap.h>
+	<cpptl/forwards.h>
+
+1340175275 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\serializers\json\jsoncpp\forwards.h
+	"config.h"
+
+1340175275 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\serializers\json\jsoncpp\reader.h
+	"features.h"
+	"value.h"
+	<deque>
+	<stack>
+	<string>
+	<iostream>
+
+1340175275 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\serializers\json\jsoncpp\features.h
+	"forwards.h"
+
+1340175275 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\serializers\json\jsoncpp\writer.h
+	"value.h"
+	<vector>
+	<string>
+	<iostream>
+
+1342119191 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\src\serializers\json\jsonserializer.h
+	"../Serializer.h"
+	"JsonSerializable.h"
+
+1335364160 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\libs\curl\curl.h
+	"curlver.h"
+	"curlbuild.h"
+	"curlrules.h"
+	<stdio.h>
+	<limits.h>
+	<osreldate.h>
+	<sys/types.h>
+	<time.h>
+	<winsock2.h>
+	<ws2tcpip.h>
+	<sys/select.h>
+	<sys/socket.h>
+	<sys/time.h>
+	<support/SupportDefs.h>
+	"easy.h"
+	"multi.h"
+	"typecheck-gcc.h"
+
+1337872022 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\libs\curl\curlver.h
+
+1341165032 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\libs\curl\curlbuild.h
+	<windows.h>
+	<winsock2.h>
+	<ws2tcpip.h>
+	<sys/types.h>
+	<stdint.h>
+	<inttypes.h>
+	<sys/socket.h>
+
+1300544234 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\libs\curl\curlrules.h
+
+1320442376 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\libs\curl\easy.h
+
+1300544168 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\libs\curl\multi.h
+	"curl.h"
+
+1335364160 f:\postindustria_api2\api2_1\sources\wrappers\cpp_wrapper\libs\curl\typecheck-gcc.h
+

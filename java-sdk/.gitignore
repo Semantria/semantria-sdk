@@ -1,0 +1,8 @@
+*.class
+
+# Package Files #
+# SDK uses to jar libraries under the hood.
+# *.jar
+
+*.war
+*.ear

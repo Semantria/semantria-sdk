@@ -1,0 +1,218 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="CppWrapper" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin\Debug\libCppWrapper" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Debug\" />
+				<Option external_deps="libs\jsoncpp\libjson_mingw_libmt.a;libs\libxml2\bin\libxml2.dll;libs\iconv.dll;" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-Wfatal-errors" />
+					<Add option="-g" />
+					<Add directory="src\serializers\json\jsoncpp" />
+					<Add directory="libs\libxml2\include\libxml" />
+					<Add directory="libs\libxml2\include" />
+				</Compiler>
+				<Linker>
+					<Add library="libs\libxml2\lib\libxml2.lib" />
+					<Add library="libs\iconv.dll" />
+					<Add library="libs\libxml2\bin\libxml2.dll" />
+				</Linker>
+				<ExtraCommands>
+					<Add after='cmd /c copy &quot;$(PROJECT_DIR)$(TARGET_OUTPUT_FILE)&quot; &quot;F:\postindustria_api2\api2_1\sources\wrappers\Cpp_wrapper\tests\bin\Debug&quot;' />
+					<Add after='cmd /c copy &quot;$(PROJECT_DIR)$(TARGET_OUTPUT_FILE)&quot; &quot;F:\postindustria_api2\api2_1\sources\wrappers\Cpp_wrapper\TestApp\bin\Debug&quot;' />
+				</ExtraCommands>
+			</Target>
+			<Target title="Release">
+				<Option output="bin\Release\libCppWrapper" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj\Release\" />
+				<Option external_deps="libs\iconv.dll;libs\libxml2\bin\libxml2.dll;libs\jsoncpp\libjson_mingw_libmt.a;" />
+				<Option type="3" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Option createStaticLib="1" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add directory="libs\libxml2\include" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+					<Add library="libs\libxml2\lib\libxml2.lib" />
+				</Linker>
+				<ExtraCommands>
+					<Add after='cmd /c copy &quot;$(PROJECT_DIR)$(TARGET_OUTPUT_FILE)&quot; &quot;F:\postindustria_api2\api2_1\sources\wrappers\Cpp_wrapper\tests\bin\Release&quot;' />
+					<Add after='cmd /c copy &quot;$(PROJECT_DIR)$(TARGET_OUTPUT_FILE)&quot; &quot;F:\postindustria_api2\api2_1\sources\wrappers\Cpp_wrapper\TestApp\bin\Release&quot;' />
+					<Mode after="always" />
+				</ExtraCommands>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+			<Add directory="libs" />
+			<Add directory="src\serializers\json\jsoncpp" />
+		</Compiler>
+		<Linker>
+			<Add option="-static" />
+			<Add library="libs\iconv.dll" />
+			<Add library="libs\libxml2\bin\libxml2.dll" />
+			<Add library="libs\libcurl.dll.a" />
+			<Add library="libs\libxml2\lib\libxml2.lib" />
+		</Linker>
+		<Unit filename="src\Session.cpp" />
+		<Unit filename="src\Session.h" />
+		<Unit filename="src\common\Enums.h" />
+		<Unit filename="src\common\EnumsHelper.cpp" />
+		<Unit filename="src\common\EnumsHelper.h" />
+		<Unit filename="src\common\RequestArgs.cpp" />
+		<Unit filename="src\common\RequestArgs.h" />
+		<Unit filename="src\common\ResponseArgs.cpp" />
+		<Unit filename="src\common\ResponseArgs.h" />
+		<Unit filename="src\connection\AuthRequest.cpp" />
+		<Unit filename="src\connection\AuthRequest.h" />
+		<Unit filename="src\connection\HMAC_SHA1.cpp" />
+		<Unit filename="src\connection\HMAC_SHA1.h" />
+		<Unit filename="src\connection\Md5.cpp" />
+		<Unit filename="src\connection\Md5.h" />
+		<Unit filename="src\connection\SHA1M.cpp" />
+		<Unit filename="src\connection\SHA1M.h" />
+		<Unit filename="src\connection\base64.cpp" />
+		<Unit filename="src\connection\base64.h" />
+		<Unit filename="src\handlers\CallbackHandler.cpp" />
+		<Unit filename="src\handlers\CallbackHandler.h" />
+		<Unit filename="src\handlers\SimpleCallBackHandler.cpp" />
+		<Unit filename="src\handlers\SimpleCallBackHandler.h" />
+		<Unit filename="src\objects\configuration\Blacklisted.cpp" />
+		<Unit filename="src\objects\configuration\Blacklisted.h" />
+		<Unit filename="src\objects\configuration\Category.cpp" />
+		<Unit filename="src\objects\configuration\Category.h" />
+		<Unit filename="src\objects\configuration\Configuration.cpp" />
+		<Unit filename="src\objects\configuration\Configuration.h" />
+		<Unit filename="src\objects\configuration\Query.cpp" />
+		<Unit filename="src\objects\configuration\Query.h" />
+		<Unit filename="src\objects\configuration\SentimentPhrase.cpp" />
+		<Unit filename="src\objects\configuration\SentimentPhrase.h" />
+		<Unit filename="src\objects\configuration\UserEntity.cpp" />
+		<Unit filename="src\objects\configuration\UserEntity.h" />
+		<Unit filename="src\objects\output\Attribute.cpp" />
+		<Unit filename="src\objects\output\Attribute.h" />
+		<Unit filename="src\objects\output\CollAnalyticData.cpp" />
+		<Unit filename="src\objects\output\CollAnalyticData.h" />
+		<Unit filename="src\objects\output\CollEntity.cpp" />
+		<Unit filename="src\objects\output\CollEntity.h" />
+		<Unit filename="src\objects\output\CollTheme.cpp" />
+		<Unit filename="src\objects\output\CollTheme.h" />
+		<Unit filename="src\objects\output\CollTopic.cpp" />
+		<Unit filename="src\objects\output\CollTopic.h" />
+		<Unit filename="src\objects\output\Collection.cpp" />
+		<Unit filename="src\objects\output\Collection.h" />
+		<Unit filename="src\objects\output\DocAnalyticData.cpp" />
+		<Unit filename="src\objects\output\DocAnalyticData.h" />
+		<Unit filename="src\objects\output\DocEntity.cpp" />
+		<Unit filename="src\objects\output\DocEntity.h" />
+		<Unit filename="src\objects\output\DocPhrase.cpp" />
+		<Unit filename="src\objects\output\DocPhrase.h" />
+		<Unit filename="src\objects\output\DocTheme.cpp" />
+		<Unit filename="src\objects\output\DocTheme.h" />
+		<Unit filename="src\objects\output\DocTopic.cpp" />
+		<Unit filename="src\objects\output\DocTopic.h" />
+		<Unit filename="src\objects\output\Document.cpp" />
+		<Unit filename="src\objects\output\Document.h" />
+		<Unit filename="src\objects\output\Facet.cpp" />
+		<Unit filename="src\objects\output\Facet.h" />
+		<Unit filename="src\objects\output\ServiceStatus.cpp" />
+		<Unit filename="src\objects\output\ServiceStatus.h" />
+		<Unit filename="src\objects\output\Subscription.cpp" />
+		<Unit filename="src\objects\output\Subscription.h" />
+		<Unit filename="src\objects\stub\Stub_Blacklist.cpp" />
+		<Unit filename="src\objects\stub\Stub_Blacklist.h" />
+		<Unit filename="src\objects\stub\Stub_Categories.cpp" />
+		<Unit filename="src\objects\stub\Stub_Categories.h" />
+		<Unit filename="src\objects\stub\Stub_CollAnalyticDatas.cpp" />
+		<Unit filename="src\objects\stub\Stub_CollAnalyticDatas.h" />
+		<Unit filename="src\objects\stub\Stub_Configurations.cpp" />
+		<Unit filename="src\objects\stub\Stub_Configurations.h" />
+		<Unit filename="src\objects\stub\Stub_DocAnalyticDatas.cpp" />
+		<Unit filename="src\objects\stub\Stub_DocAnalyticDatas.h" />
+		<Unit filename="src\objects\stub\Stub_Entities.cpp" />
+		<Unit filename="src\objects\stub\Stub_Entities.h" />
+		<Unit filename="src\objects\stub\Stub_Queries.cpp" />
+		<Unit filename="src\objects\stub\Stub_Queries.h" />
+		<Unit filename="src\objects\stub\Stub_SentimentPhrase.cpp" />
+		<Unit filename="src\objects\stub\Stub_SentimentPhrase.h" />
+		<Unit filename="src\objects\stub\Stub_Tasks.cpp" />
+		<Unit filename="src\objects\stub\Stub_Tasks.h" />
+		<Unit filename="src\proxies\BlacklistUpdateProxy.cpp" />
+		<Unit filename="src\proxies\BlacklistUpdateProxy.h" />
+		<Unit filename="src\proxies\CategoryUpdateProxy.cpp" />
+		<Unit filename="src\proxies\CategoryUpdateProxy.h" />
+		<Unit filename="src\proxies\ConfigurationUpdateProxy.cpp" />
+		<Unit filename="src\proxies\ConfigurationUpdateProxy.h" />
+		<Unit filename="src\proxies\EntityUpdateProxy.cpp" />
+		<Unit filename="src\proxies\EntityUpdateProxy.h" />
+		<Unit filename="src\proxies\QueryUpdateProxy.cpp" />
+		<Unit filename="src\proxies\QueryUpdateProxy.h" />
+		<Unit filename="src\proxies\SentimentPhraseUpdateProxy.cpp" />
+		<Unit filename="src\proxies\SentimentPhraseUpdateProxy.h" />
+		<Unit filename="src\proxies\UpdateProxy.h" />
+		<Unit filename="src\serializers\Serializer.h" />
+		<Unit filename="src\serializers\json\JsonSerializable.h" />
+		<Unit filename="src\serializers\json\JsonSerializer.cpp" />
+		<Unit filename="src\serializers\json\JsonSerializer.h" />
+		<Unit filename="src\serializers\json\jsoncpp\autolink.h" />
+		<Unit filename="src\serializers\json\jsoncpp\config.h" />
+		<Unit filename="src\serializers\json\jsoncpp\features.h" />
+		<Unit filename="src\serializers\json\jsoncpp\forwards.h" />
+		<Unit filename="src\serializers\json\jsoncpp\json.h" />
+		<Unit filename="src\serializers\json\jsoncpp\json_batchallocator.h" />
+		<Unit filename="src\serializers\json\jsoncpp\json_internalarray.inl" />
+		<Unit filename="src\serializers\json\jsoncpp\json_internalmap.inl" />
+		<Unit filename="src\serializers\json\jsoncpp\json_reader.cpp" />
+		<Unit filename="src\serializers\json\jsoncpp\json_value.cpp" />
+		<Unit filename="src\serializers\json\jsoncpp\json_valueiterator.inl" />
+		<Unit filename="src\serializers\json\jsoncpp\json_writer.cpp" />
+		<Unit filename="src\serializers\json\jsoncpp\reader.h" />
+		<Unit filename="src\serializers\json\jsoncpp\value.h" />
+		<Unit filename="src\serializers\json\jsoncpp\writer.h" />
+		<Unit filename="src\serializers\xml\BlacklistXmlHandler.cpp" />
+		<Unit filename="src\serializers\xml\BlacklistXmlHandler.h" />
+		<Unit filename="src\serializers\xml\CategoryXmlHandler.cpp" />
+		<Unit filename="src\serializers\xml\CategoryXmlHandler.h" />
+		<Unit filename="src\serializers\xml\CollectionXmlHandler.cpp" />
+		<Unit filename="src\serializers\xml\CollectionXmlHandler.h" />
+		<Unit filename="src\serializers\xml\ConfigurationXmlHandler.cpp" />
+		<Unit filename="src\serializers\xml\ConfigurationXmlHandler.h" />
+		<Unit filename="src\serializers\xml\DocumentXmlHandler.cpp" />
+		<Unit filename="src\serializers\xml\DocumentXmlHandler.h" />
+		<Unit filename="src\serializers\xml\QueryXmlHandler.cpp" />
+		<Unit filename="src\serializers\xml\QueryXmlHandler.h" />
+		<Unit filename="src\serializers\xml\SentimentPhraseXmlHandler.cpp" />
+		<Unit filename="src\serializers\xml\SentimentPhraseXmlHandler.h" />
+		<Unit filename="src\serializers\xml\ServiceStatusXmlHandler.cpp" />
+		<Unit filename="src\serializers\xml\ServiceStatusXmlHandler.h" />
+		<Unit filename="src\serializers\xml\SubscriptionXmlHandler.cpp" />
+		<Unit filename="src\serializers\xml\SubscriptionXmlHandler.h" />
+		<Unit filename="src\serializers\xml\UserEntityXmlHandler.cpp" />
+		<Unit filename="src\serializers\xml\UserEntityXmlHandler.h" />
+		<Unit filename="src\serializers\xml\XmlSerializable.h" />
+		<Unit filename="src\serializers\xml\XmlSerializer.cpp" />
+		<Unit filename="src\serializers\xml\XmlSerializer.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder>
+				<lib name="gtest" />
+				<lib name="json_mingw_libmt" />
+			</lib_finder>
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
