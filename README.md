@@ -14,7 +14,7 @@ The SDKs include source code on 8 different languages:
 - JavaScript (browser based)
 - Apex ([Salesforce](www.salesforce.com/landing/apex.jsp) programming platform)
 
-A **Free trial** is available at [http://www.semantria.com/trial] 
+A **Free trial** is available at http://www.semantria.com/trial 
 
 Functionality includes
 
@@ -26,6 +26,6 @@ Functionality includes
 - [Semantic Rollups](http://www.semantria.com/technology/facets) (birds-eye view on your dataset, combining SPSS-like statistical analysis and full scale NLP approach)
 - [Full support of 5 languages](http://www.semantria.com/technology/multi-lingual-support) (entity extraction, categorization, sentiment analysis, etc): English, French, Portuguese, Spanish, and German.
 
-Semantria also has a **free Excel Add-In** that let’s you process content from inside your Excel without any coding, integration work, etc. It is a fully functional API client with an easy to use API configuration GUI. ([http://www.semantria.com/excel]) 
+Semantria also has a **free Excel Add-In** that let’s you process content from inside your Excel without any coding, integration work, etc. It is a fully functional API client with an easy to use API configuration GUI. (http://www.semantria.com/excel) 
 
-An Excel Add-In demo overview, categorization tutorial, custom entities set-up, and sentiment adjustment video are all  available here: [http://www.semantria.com/video]
+An Excel Add-In demo overview, categorization tutorial, custom entities set-up, and sentiment adjustment video are all  available here: http://www.semantria.com/video
