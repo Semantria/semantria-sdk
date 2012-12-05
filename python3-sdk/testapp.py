@@ -2,8 +2,6 @@ import semantria
 import uuid
 import time
 
-print("Semantria service demo ...", "\r\n")
-
 # the consumer key and secret
 consumerKey = ""
 consumerSecret = ""
@@ -28,8 +26,8 @@ def onDocsAutoResponse(sender, result):
 
 def onCollsAutoResponse(sender, result):
     print("\n", "AUTORESPONSE: ", len(result), result)
-
-print("Semantria service demo.", "\r\n")
+	
+print("Semantria service demo ...", "\r\n")
 	
 # Creates JSON serializer instance
 serializer = semantria.XmlSerializer()
@@ -76,14 +74,14 @@ for data in results:
     print("Document ", data["id"], " Sentiment score: ", data["sentiment_score"], "\r\n")
     
     # Printing of document themes
-    print("Document themes:", "\r\n")
     if data["themes"]:
+        print("Document themes:", "\r\n")
         for theme in data["themes"]:
             print("	", theme["title"], " (sentiment: ", theme["sentiment_score"], ")", "\r\n")
 
     # Printing of document entities
-    print("Entities:", "\r\n")
     if data["entities"]:
+        print("Entities:", "\r\n")
         for entity in data["entities"]:
             print("	", entity["title"], " : ", entity["entity_type"], " (sentiment: ", entity["sentiment_score"], ")", "\r\n")
 
