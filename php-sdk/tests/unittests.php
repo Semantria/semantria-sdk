@@ -6,10 +6,6 @@ require_once('semantria/session.php');
 require_once('semantria/jsonserializer.php');
 require_once('semantria/xmlserializer.php');
 
-// the consumer key and secret
-$consumerKey = "";
-$consumerSecret = "";
-
 $id = uniqid('');
 $message = "Amazon Web Services has announced a new feature called VM£Ware Import, which allows IT departments to move virtual machine images from their internal data centers to the cloud.";
 
@@ -49,14 +45,20 @@ class SessionCallbackHandler extends CallbackHandler
 class SemantriaTest extends PHPUnit_Framework_TestCase
 {
 	function setUp() {
-		$this->consumerKey = $GLOBALS["consumerKey"];
-		$this->consumerSecret = $GLOBALS["consumerSecret"];
+        ob_start();
+		$this->consumerKey = Config::$consumerKey;
+		$this->consumerSecret = Config::$consumerSecret;
 		$this->serializer = new XmlSerializer();
 		$this->session = new Session($this->consumerKey, $this->consumerSecret, $this->serializer);
 		
 		$callback = new SessionCallbackHandler();
 		$this->session->setCallbackHandler($callback);
 	}
+
+    function tearDown() {
+        $output = ob_get_contents();
+        ob_end_clean();
+    }
 
 	function testGetStatus() {
 		$status = $this->session->getStatus();

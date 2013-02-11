@@ -1,0 +1,5 @@
+<phpunit bootstrap="tests/bootstrap.php">
+    <testsuite name="Semantria PHP SDK Test Suite">
+        <directory suffix="tests.php">./tests</directory>
+    </testsuite>
+</phpunit>
