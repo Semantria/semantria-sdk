@@ -1,8 +1,8 @@
 <?php
 
-require_once('semantria/session.php');
-require_once('semantria/jsonserializer.php');
-require_once('semantria/xmlserializer.php');
+require_once 'Semantria/Session.php';
+require_once 'Semantria/JsonSerializer.php';
+require_once 'Semantria/XmlSerializer.php';
 
 require_once 'init.php';
 
@@ -48,15 +48,14 @@ class SessionCallbackHandler extends CallbackHandler
 echo "Semantria service demo .", "\r\n";
 
 // Creates JSON serializer instance
-$serializer = new JsonSerializer();
+$serializer = new Semantria_JsonSerializer();
 // Initializes new session with the serializer object and the keys.
-$session = new Session(Config::$consumerKey, Config::$consumerSecret, $serializer);
+$session = new Semantria_Session(Config::$consumerKey, Config::$consumerSecret, $serializer);
 // Initialize session callback handler
 $callback = new SessionCallbackHandler();
 $session->setCallbackHandler($callback);
 
-foreach ($initialTexts as $text)
-{
+foreach ($initialTexts as $text) {
     // Creates a sample document which need to be processed on Semantria
     // Unique document ID
     // Source text which need to be processed
@@ -89,27 +88,22 @@ while (count($results) < $length) {
     }
 }
 
-foreach ($results as $data)
-{
+foreach ($results as $data) {
     // Printing of document sentiment score
     echo "Document ", $data["id"], " Sentiment score: ", $data["sentiment_score"], "\r\n";
     
     // Printing of document themes
     echo "Document themes:", "\r\n";
-    if (isset($data["themes"]) && is_array($data['themes'])) 
-    {
-        foreach ($data["themes"] as $theme) 
-        {
+    if (isset($data["themes"]) && is_array($data['themes'])) {
+        foreach ($data["themes"] as $theme) {
             echo "	", $theme["title"], " (sentiment: ", $theme["sentiment_score"], ")", "\r\n";
         }
     }
     
     // Printing of document entities
     echo "Entities:", "\r\n";
-    if (isset($data["entities"]) && is_array($data['entities'])) 
-    {
-        foreach ($data["entities"] as $entity)
-        {
+    if (isset($data["entities"]) && is_array($data['entities'])) {
+        foreach ($data["entities"] as $entity) {
             echo "	", $entity["title"], " : ", $entity["entity_type"], " (sentiment: ", $entity["sentiment_score"], ")", "\r\n";
         }
     }
