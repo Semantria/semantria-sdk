@@ -3,6 +3,7 @@
 require_once 'Semantria/Session.php';
 require_once 'Semantria/JsonSerializer.php';
 require_once 'Semantria/XmlSerializer.php';
+require_once 'Semantria/CallbackHandler/Default.php';
 
 require_once 'init.php';
 
@@ -12,39 +13,6 @@ $initialTexts = array(
     "On this day in 1786 - In New York City  commercial ice cream was manufactured for the first time."
 );
 
-class SessionCallbackHandler extends CallbackHandler
-{
-    function onRequest($sender, $args)
-    {
-        //$s = json_encode($args);
-        //echo "REQUEST: ", htmlspecialchars($s), "\r\n";
-    }
-    
-    function onResponse($sender, $args)
-    {
-        //$s = json_encode($args);
-        //echo "RESPONSE: ", htmlspecialchars($s), "\r\n";
-    }
-    
-    function onError($sender, $args)
-    {
-        $s = json_encode($args);
-        echo "ERROR: ", htmlspecialchars($s), "\r\n";
-    }
-    
-    function onDocsAutoResponse($sender, $args)
-    {
-        //$s = json_encode($args);
-        //echo "DOCS AUTORESPONSE: ", htmlspecialchars($s), "\r\n";
-    }
-    
-    function onCollsAutoResponse($sender, $args)
-    {
-        //$s = json_encode($args);
-        //echo "COLLS AUTORESPONSE: ", htmlspecialchars($s), "\r\n";
-    }
-}
-
 echo "Semantria service demo .", "\r\n";
 
 // Creates JSON serializer instance
@@ -52,7 +20,7 @@ $serializer = new Semantria_JsonSerializer();
 // Initializes new session with the serializer object and the keys.
 $session = new Semantria_Session(Config::$consumerKey, Config::$consumerSecret, $serializer);
 // Initialize session callback handler
-$callback = new SessionCallbackHandler();
+$callback = new Semantria_CallbackHandler_Default();
 $session->setCallbackHandler($callback);
 
 foreach ($initialTexts as $text) {
