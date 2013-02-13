@@ -1,6 +1,6 @@
 <?php
 
-require_once 'Authrequest.php';
+require_once 'AuthRequest.php';
 require_once 'JsonSerializer.php';
 require_once 'XmlSerializer.php';
 require_once 'xmlhandlers.php';

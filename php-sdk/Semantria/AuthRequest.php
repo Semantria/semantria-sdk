@@ -35,14 +35,23 @@ class Semantria_AuthRequest
     protected $_applicationName;
     protected $_httpInfo;
 
-    public function __construct($consumerKey = null, $consumerSecret = null, $applicationName = null)
-    {
+    public function __construct(
+        $consumerKey = null,
+        $consumerSecret = null,
+        $applicationName = null
+    ) {
         if (empty($consumerKey)) {
-            throw new Exception('Parameter is null or empty "'.$consumerKey.'"');
+            throw new Exception(
+                'Parameter is null or empty "'
+                . $consumerKey . '"'
+            );
         }
 
         if (empty($consumerSecret)) {
-            throw new Exception('Parameter is null or empty "'.$consumerSecret.'"');
+            throw new Exception(
+                'Parameter is null or empty "'
+                . $consumerSecret . '"'
+            );
         }
 
         $this->_consumerKey = $consumerKey;
@@ -58,7 +67,7 @@ class Semantria_AuthRequest
         $authheader = $this->generateAuthHeader($query, $timestamp, $nonce);
 
         $headers = array();
-        $headers[] = 'Authorization: '.$authheader;
+        $headers[] = 'Authorization: ' . $authheader;
         if ($method == "POST") {
             $headers[] = 'Content-type: application/x-www-form-urlencoded';
         }
@@ -81,7 +90,9 @@ class Semantria_AuthRequest
             $ps['query'] = $np;
         }
 
-        $query = $ps['scheme'].'://'.$ps['host'].(isset($ps['port']) && $ps['port'] != '' ? (':'.$ps['port']) : '').$ps['path'].'?'.$ps['query'];
+        $query = $ps['scheme'] . '://' . $ps['host']
+            . (isset($ps['port']) && $ps['port'] != '' ? (':'
+            . $ps['port']) : '') . $ps['path'] . '?' . $ps['query'];
         return $query;
     }
 
@@ -102,9 +113,9 @@ class Semantria_AuthRequest
 
         ksort($headers);
 
-        $h   = array();
+        $h = array();
         foreach ($headers as $name => $value) {
-            $h[] = $name.'="'.$value.'"';
+            $h[] = $name . '="' . $value . '"';
         }
 
         $hs = implode(',', $h);
@@ -124,7 +135,7 @@ class Semantria_AuthRequest
 
         $h   = array();
         foreach ($headers as $name => $value) {
-            $h[] = $name.'='.$value;
+            $h[] = $name . '=' . $value;
         }
 
         $hs = implode($glue, $h);
@@ -213,7 +224,7 @@ class Semantria_AuthRequest
         $code = curl_getinfo($ci, CURLINFO_HTTP_CODE);
         $message = $response;
 
-        curl_close ($ci);
+        curl_close($ci);
 
         $result = array("status"=>$code, "message"=>$message);
         return $result;
