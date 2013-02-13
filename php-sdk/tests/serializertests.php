@@ -6,6 +6,7 @@ require_once('Semantria/Session.php');
 require_once('Semantria/JsonSerializer.php');
 require_once('Semantria/XmlSerializer.php');
 require_once('Semantria/xmlhandlers.php');
+require_once('Semantria/XmlHandler/Status.php');
 
 class SerializerTest extends PHPUnit_Framework_TestCase
 {
@@ -709,7 +710,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
                 "</status>";
 
         $serializer = new XmlSerializer();
-        $status = $serializer->deserialize($source, new GetStatusHandler());
+        $status = $serializer->deserialize($source, new Semantria_XmlHandler_Status());
         $this->assertEquals("online", $status['service_status']);
         $this->assertEquals("2.0", $status['api_version']);
         $this->assertEquals("1.0.2.63", $status['service_version']);
@@ -735,7 +736,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
             "}";
 
         $serializer = new Semantria_JsonSerializer();
-        $status = $serializer->deserialize($source, new GetStatusHandler());
+        $status = $serializer->deserialize($source, new Semantria_XmlHandler_Status());
         $this->assertEquals("online", $status['service_status']);
         $this->assertEquals("2.0", $status['api_version']);
         $this->assertEquals("1.0.2.63", $status['service_version']);

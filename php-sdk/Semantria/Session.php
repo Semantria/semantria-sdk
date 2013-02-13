@@ -443,7 +443,7 @@ class Semantria_Session
 
         #only for xml serializer
         if ($type == "get_status") {
-            return new GetStatusHandler();
+            return new Semantria_XmlHandler_Status();
         } elseif ($type == "get_subscription") {
             return new GetSubscriptionHandler();
         } elseif ($type == "get_configurations") {
