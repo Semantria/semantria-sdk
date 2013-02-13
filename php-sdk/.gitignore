@@ -3,4 +3,7 @@ LICENSE.txt
 # README.txt
 demos/
 extras/documentation
+coverage
+config.php
+.idea
 
