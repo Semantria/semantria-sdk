@@ -25,10 +25,11 @@ function string_format($str)
 
 function str2bool($str)
 {
-    if (strtolower($str) == "true")
+    if (strtolower($str) == "true") {
         return true;
-    else
+    } else {
         return false;
+    }
 }
 
 function is_assoc_X($arr)
@@ -56,7 +57,9 @@ function utf8Encode($array)
             continue;
         }
 
-        if (is_string($value) && mb_detect_encoding($value, 'UTF-8') != "UTF-8") {
+        if (is_string($value)
+            && mb_detect_encoding($value, 'UTF-8') != "UTF-8"
+        ) {
             $utf8EncodedArray[$key] = utf8_encode($value);
         } else {
             $utf8EncodedArray[$key] = $value;
@@ -97,7 +100,7 @@ function processUpdateProxyClonedElement($obj)
                 unset($clonedConfig['config_id']);
                 $obj["added"][] = $clonedConfig;
             }
-        } else if (is_assoc($obj["cloned"])) {
+        } elseif (is_assoc($obj["cloned"])) {
             $clonedConfig = $obj["cloned"];
             $clonedConfig['template'] = $clonedConfig['config_id'];
             unset($clonedConfig['config_id']);
