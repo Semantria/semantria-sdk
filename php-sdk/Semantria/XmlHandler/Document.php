@@ -162,11 +162,11 @@ class Semantria_XmlHandler_Document
         elseif ($this->current == "title") $this->title = $content;
         elseif ($this->current == "hitcount") $this->hitcount = (int) $content;
         elseif ($this->current == "summary") $this->summary = $content;
-        elseif ($this->current == "is_about") $this->is_about = str2bool($content);
-        elseif ($this->current == "confident") $this->confident = str2bool($content);
+        elseif ($this->current == "is_about") $this->is_about = Semantria_Common::str2bool($content);
+        elseif ($this->current == "confident") $this->confident = Semantria_Common::str2bool($content);
         elseif ($this->current == "entity_type") $this->entity_type = $content;
         elseif ($this->current == "negating_phrase") $this->negating_phrase = $content;
-        elseif ($this->current == "is_negated") $this->is_negated = str2bool($content);
+        elseif ($this->current == "is_negated") $this->is_negated = Semantria_Common::str2bool($content);
 
         if ($this->parent == "document")
         {

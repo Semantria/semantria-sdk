@@ -1,7 +1,5 @@
 <?php
 
-require_once 'common.php';
-
 class Semantria_Session
 {
     // the consumer key and secret
@@ -15,8 +13,12 @@ class Semantria_Session
 
     public $host = "https://api21.semantria.com";
 
-    public function __construct($consumerKey = null, $consumerSecret = null, $serializer = null, $applicationName = null)
-    {
+    public function __construct(
+        $consumerKey = null,
+        $consumerSecret = null,
+        $serializer = null,
+        $applicationName = null
+    ) {
         if (empty($consumerKey)) {
             throw new Exception('Parameter is null or empty "'.$consumerKey.'"');
         }
@@ -63,19 +65,19 @@ class Semantria_Session
 
     public function getStatus()
     {
-        $url = string_format('{0}/status.{1}', $this->host, $this->format);
+        $url = Semantria_Common::string_format('{0}/status.{1}', $this->host, $this->format);
         return $this->runRequest("GET", $url, "get_status");
     }
 
     public function verifySubscription()
     {
-        $url = string_format('{0}/subscription.{1}', $this->host, $this->format);
+        $url = Semantria_Common::string_format('{0}/subscription.{1}', $this->host, $this->format);
         return $this->runRequest("GET", $url, "get_subscription");
     }
 
     public function getConfigurations()
     {
-        $url = string_format('{0}/configurations.{1}', $this->host, $this->format);
+        $url = Semantria_Common::string_format('{0}/configurations.{1}', $this->host, $this->format);
         $result = $this->runRequest("GET", $url, "get_configurations");
 
         if (!isset($result)) {
@@ -86,7 +88,7 @@ class Semantria_Session
 
     public function updateConfigurations($updates)
     {
-        $url = string_format('{0}/configurations.{1}', $this->host, $this->format);
+        $url = Semantria_Common::string_format('{0}/configurations.{1}', $this->host, $this->format);
         $wrapper = $this->getTypeWrapper("update_configurations");
         $data = $this->serializer->serialize($updates, $wrapper);
         return $this->runRequest("POST", $url, null, $data);
@@ -95,9 +97,9 @@ class Semantria_Session
     public function getBlacklist($configId=null)
     {
         if (isset($configId)) {
-            $url = string_format('{0}/blacklist.{1}?config_id={2}', $this->host, $this->format, $configId);
+            $url = Semantria_Common::string_format('{0}/blacklist.{1}?config_id={2}', $this->host, $this->format, $configId);
         } else {
-            $url = string_format('{0}/blacklist.{1}', $this->host, $this->format);
+            $url = Semantria_Common::string_format('{0}/blacklist.{1}', $this->host, $this->format);
         }
 
         $result = $this->runRequest("GET", $url, "get_blacklist");
@@ -110,9 +112,9 @@ class Semantria_Session
     public function updateBlacklist($updates, $configId=null)
     {
         if (isset($configId)) {
-            $url = string_format('{0}/blacklist.{1}?config_id={2}', $this->host, $this->format, $configId);
+            $url = Semantria_Common::string_format('{0}/blacklist.{1}?config_id={2}', $this->host, $this->format, $configId);
         } else {
-            $url = string_format('{0}/blacklist.{1}', $this->host, $this->format);
+            $url = Semantria_Common::string_format('{0}/blacklist.{1}', $this->host, $this->format);
         }
 
         $wrapper = $this->getTypeWrapper("update_blacklist");
@@ -123,9 +125,9 @@ class Semantria_Session
     public function getCategories($configId=null)
     {
         if (isset($configId)) {
-            $url = string_format('{0}/categories.{1}?config_id={2}', $this->host, $this->format, $configId);
+            $url = Semantria_Common::string_format('{0}/categories.{1}?config_id={2}', $this->host, $this->format, $configId);
         } else {
-            $url = string_format('{0}/categories.{1}', $this->host, $this->format);
+            $url = Semantria_Common::string_format('{0}/categories.{1}', $this->host, $this->format);
         }
 
         $result = $this->runRequest("GET", $url, "get_categories");
@@ -138,9 +140,9 @@ class Semantria_Session
     public function updateCategories($updates, $configId=null)
     {
         if (isset($configId)) {
-            $url = string_format('{0}/categories.{1}?config_id={2}', $this->host, $this->format, $configId);
+            $url = Semantria_Common::string_format('{0}/categories.{1}?config_id={2}', $this->host, $this->format, $configId);
         } else {
-            $url = string_format('{0}/categories.{1}', $this->host, $this->format);
+            $url = Semantria_Common::string_format('{0}/categories.{1}', $this->host, $this->format);
         }
 
         $wrapper = $this->getTypeWrapper("update_categories");
@@ -151,9 +153,9 @@ class Semantria_Session
     public function getQueries($configId=null)
     {
         if (isset($configId)) {
-            $url = string_format('{0}/queries.{1}?config_id={2}', $this->host, $this->format, $configId);
+            $url = Semantria_Common::string_format('{0}/queries.{1}?config_id={2}', $this->host, $this->format, $configId);
         } else {
-            $url = string_format('{0}/queries.{1}', $this->host, $this->format);
+            $url = Semantria_Common::string_format('{0}/queries.{1}', $this->host, $this->format);
         }
 
         $result = $this->runRequest("GET", $url, "get_queries");
@@ -166,9 +168,9 @@ class Semantria_Session
     public function updateQueries($updates, $configId=null)
     {
         if (isset($configId)) {
-            $url = string_format('{0}/queries.{1}?config_id={2}', $this->host, $this->format, $configId);
+            $url = Semantria_Common::string_format('{0}/queries.{1}?config_id={2}', $this->host, $this->format, $configId);
         } else {
-            $url = string_format('{0}/queries.{1}', $this->host, $this->format);
+            $url = Semantria_Common::string_format('{0}/queries.{1}', $this->host, $this->format);
         }
 
         $wrapper = $this->getTypeWrapper("update_queries");
@@ -179,9 +181,9 @@ class Semantria_Session
     public function getSentimentPhrases($configId=null)
     {
         if (isset($configId)) {
-            $url = string_format('{0}/sentiment.{1}?config_id={2}', $this->host, $this->format, $configId);
+            $url = Semantria_Common::string_format('{0}/sentiment.{1}?config_id={2}', $this->host, $this->format, $configId);
         } else {
-            $url = string_format('{0}/sentiment.{1}', $this->host, $this->format);
+            $url = Semantria_Common::string_format('{0}/sentiment.{1}', $this->host, $this->format);
         }
 
         $result = $this->runRequest("GET", $url, "get_sentiment_phrases");
@@ -194,9 +196,9 @@ class Semantria_Session
     public function updateSentimentPhrases($updates, $configId=null)
     {
         if (isset($configId)) {
-            $url = string_format('{0}/sentiment.{1}?config_id={2}', $this->host, $this->format, $configId);
+            $url = Semantria_Common::string_format('{0}/sentiment.{1}?config_id={2}', $this->host, $this->format, $configId);
         } else {
-            $url = string_format('{0}/sentiment.{1}', $this->host, $this->format);
+            $url = Semantria_Common::string_format('{0}/sentiment.{1}', $this->host, $this->format);
         }
 
         $wrapper = $this->getTypeWrapper("update_sentiment_phrases");
@@ -207,9 +209,9 @@ class Semantria_Session
     public function getEntities($configId=null)
     {
         if (isset($configId)) {
-            $url = string_format('{0}/entities.{1}?config_id={2}', $this->host, $this->format, $configId);
+            $url = Semantria_Common::string_format('{0}/entities.{1}?config_id={2}', $this->host, $this->format, $configId);
         } else {
-            $url = string_format('{0}/entities.{1}', $this->host, $this->format);
+            $url = Semantria_Common::string_format('{0}/entities.{1}', $this->host, $this->format);
         }
 
         $result = $this->runRequest("GET", $url, "get_entities");
@@ -222,9 +224,9 @@ class Semantria_Session
     public function updateEntities($updates, $configId=null)
     {
         if (isset($configId)) {
-            $url = string_format('{0}/entities.{1}?config_id={2}', $this->host, $this->format, $configId);
+            $url = Semantria_Common::string_format('{0}/entities.{1}?config_id={2}', $this->host, $this->format, $configId);
         } else {
-            $url = string_format('{0}/entities.{1}', $this->host, $this->format);
+            $url = Semantria_Common::string_format('{0}/entities.{1}', $this->host, $this->format);
         }
 
         $wrapper = $this->getTypeWrapper("update_entities");
@@ -235,9 +237,9 @@ class Semantria_Session
     public function queueDocument($task, $configId=null)
     {
         if (isset($configId)) {
-            $url = string_format('{0}/document.{1}?config_id={2}', $this->host, $this->format, $configId);
+            $url = Semantria_Common::string_format('{0}/document.{1}?config_id={2}', $this->host, $this->format, $configId);
         } else {
-            $url = string_format('{0}/document.{1}', $this->host, $this->format);
+            $url = Semantria_Common::string_format('{0}/document.{1}', $this->host, $this->format);
         }
 
         $wrapper = $this->getTypeWrapper("queue_document");
@@ -255,9 +257,9 @@ class Semantria_Session
     public function queueBatchOfDocuments($batch, $configId=null)
     {
         if (isset($configId)) {
-            $url = string_format('{0}/document/batch.{1}?config_id={2}', $this->host, $this->format, $configId);
+            $url = Semantria_Common::string_format('{0}/document/batch.{1}?config_id={2}', $this->host, $this->format, $configId);
         } else {
-            $url = string_format('{0}/document/batch.{1}', $this->host, $this->format);
+            $url = Semantria_Common::string_format('{0}/document/batch.{1}', $this->host, $this->format);
         }
 
         $wrapper = $this->getTypeWrapper("queue_batch_documents");
@@ -275,13 +277,13 @@ class Semantria_Session
     {
         if (isset($configId)) {
             if (isset($id)) {
-                $url = string_format('{0}/document/{1}.{2}?config_id={3}', $this->host, $id, $this->format, $configId);
+                $url = Semantria_Common::string_format('{0}/document/{1}.{2}?config_id={3}', $this->host, $id, $this->format, $configId);
             } else {
                 throw new Exception('Parameter is null or empty "'.$id.'"');
             }
 
         } else {
-            $url = string_format('{0}/document/{1}.{2}', $this->host, $id, $this->format);
+            $url = Semantria_Common::string_format('{0}/document/{1}.{2}', $this->host, $id, $this->format);
         }
 
         return $this->runRequest("GET", $url, "get_document");
@@ -291,13 +293,13 @@ class Semantria_Session
     {
         if (isset($configId)) {
             if (isset($id)) {
-                $url = string_format('{0}/document/{1}.{2}?config_id={3}', $this->host, $id, $this->format, $configId);
+                $url = Semantria_Common::string_format('{0}/document/{1}.{2}?config_id={3}', $this->host, $id, $this->format, $configId);
             } else {
                 throw new Exception('Parameter is null or empty "'.$id.'"');
             }
 
         } else {
-            $url = string_format('{0}/document/{1}.{2}', $this->host, $id, $this->format);
+            $url = Semantria_Common::string_format('{0}/document/{1}.{2}', $this->host, $id, $this->format);
         }
 
         return $this->runRequest("DELETE", $url);
@@ -306,9 +308,9 @@ class Semantria_Session
     public function getProcessedDocuments($configId=null)
     {
         if (isset($configId)) {
-            $url = string_format('{0}/document/processed.{1}?config_id={2}', $this->host, $this->format, $configId);
+            $url = Semantria_Common::string_format('{0}/document/processed.{1}?config_id={2}', $this->host, $this->format, $configId);
         } else {
-            $url = string_format('{0}/document/processed.{1}', $this->host, $this->format);
+            $url = Semantria_Common::string_format('{0}/document/processed.{1}', $this->host, $this->format);
         }
 
         $result = $this->runRequest("GET", $url, "get_processed_documents");
@@ -321,9 +323,9 @@ class Semantria_Session
     public function queueCollection($task, $configId=null)
     {
         if (isset($configId)) {
-            $url = string_format('{0}/collection.{1}?config_id={2}', $this->host, $this->format, $configId);
+            $url = Semantria_Common::string_format('{0}/collection.{1}?config_id={2}', $this->host, $this->format, $configId);
         } else {
-            $url = string_format('{0}/collection.{1}', $this->host, $this->format);
+            $url = Semantria_Common::string_format('{0}/collection.{1}', $this->host, $this->format);
         }
 
         $wrapper = $this->getTypeWrapper("queue_collection");
@@ -341,13 +343,13 @@ class Semantria_Session
     {
         if (isset($configId)) {
             if (isset($id)) {
-                $url = string_format('{0}/collection/{1}.{2}?config_id={3}', $this->host, $id, $this->format, $configId);
+                $url = Semantria_Common::string_format('{0}/collection/{1}.{2}?config_id={3}', $this->host, $id, $this->format, $configId);
             } else {
                 throw new Exception('Parameter is null or empty "'.$id.'"');
             }
 
         } else {
-            $url = string_format('{0}/collection/{1}.{2}', $this->host, $id, $this->format);
+            $url = Semantria_Common::string_format('{0}/collection/{1}.{2}', $this->host, $id, $this->format);
         }
 
         return $this->runRequest("GET", $url, "get_collection");
@@ -357,13 +359,13 @@ class Semantria_Session
     {
         if (isset($configId)) {
             if (isset($id)) {
-                $url = string_format('{0}/collection/{1}.{2}?config_id={3}', $this->host, $id, $this->format, $configId);
+                $url = Semantria_Common::string_format('{0}/collection/{1}.{2}?config_id={3}', $this->host, $id, $this->format, $configId);
             } else {
                 throw new Exception('Parameter is null or empty "'.$id.'"');
             }
 
         } else {
-            $url = string_format('{0}/collection/{1}.{2}', $this->host, $id, $this->format);
+            $url = Semantria_Common::string_format('{0}/collection/{1}.{2}', $this->host, $id, $this->format);
         }
 
         return $this->runRequest("DELETE", $url);
@@ -372,9 +374,9 @@ class Semantria_Session
     public function getProcessedCollections($configId=null)
     {
         if (isset($configId)) {
-            $url = string_format('{0}/collection/processed.{1}?config_id={2}', $this->host, $this->format, $configId);
+            $url = Semantria_Common::string_format('{0}/collection/processed.{1}?config_id={2}', $this->host, $this->format, $configId);
         } else {
-            $url = string_format('{0}/collection/processed.{1}', $this->host, $this->format);
+            $url = Semantria_Common::string_format('{0}/collection/processed.{1}', $this->host, $this->format);
         }
 
         $result = $this->runRequest("GET", $url, "get_processed_collections");
@@ -528,4 +530,3 @@ class Semantria_Session
         }
     }
 }
-

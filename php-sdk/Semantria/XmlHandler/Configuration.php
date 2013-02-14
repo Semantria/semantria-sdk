@@ -151,9 +151,9 @@ class Semantria_XmlHandler_Configuration
                 $this->name .= $content;
             }
             $this->name = $content;
-        } elseif ($this->current == "is_primary") $this->is_primary = str2bool($content);
-        elseif ($this->current == "one_sentence") $this->one_sentence = str2bool($content);
-        elseif ($this->current == "auto_responding") $this->auto_responding = str2bool($content);
+        } elseif ($this->current == "is_primary") $this->is_primary = Semantria_Common::str2bool($content);
+        elseif ($this->current == "one_sentence") $this->one_sentence = Semantria_Common::str2bool($content);
+        elseif ($this->current == "auto_responding") $this->auto_responding = Semantria_Common::str2bool($content);
         elseif ($this->current == "language") $this->language = $content;
         elseif ($this->current == "chars_threshold") $this->chars_threshold = (int) $content;
         elseif ($this->current == "callback") $this->callback = $content;
