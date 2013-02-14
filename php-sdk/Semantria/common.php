@@ -16,7 +16,7 @@ function string_format($str)
 
         // start after $str
         for ($i=0; $i < $numArgs; $i++) {
-            $str = str_replace("{" . $i . "}", $arg_list[$i], $str);
+            $str = str_replace('{' . $i . '}', $arg_list[$i], $str);
         }
     }
 

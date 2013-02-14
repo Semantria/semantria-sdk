@@ -2,14 +2,10 @@
 
 require_once 'PHPUnit/Autoload.php';
 
-require_once('Semantria/Session.php');
-require_once('Semantria/JsonSerializer.php');
-require_once('Semantria/XmlSerializer.php');
-
 $id = uniqid('');
 $message = "Amazon Web Services has announced a new feature called VM£Ware Import, which allows IT departments to move virtual machine images from their internal data centers to the cloud.";
 
-class SessionCallbackHandler extends CallbackHandler
+class SessionCallbackHandler extends Semantria_CallbackHandler_Default
 {
     public function onRequest($sender, $args)
     {
@@ -48,7 +44,7 @@ class SemantriaTest extends PHPUnit_Framework_TestCase
         ob_start();
         $this->consumerKey = Config::$consumerKey;
         $this->consumerSecret = Config::$consumerSecret;
-        $this->serializer = new XmlSerializer();
+        $this->serializer = new Semantria_XmlSerializer();
         $this->session = new Semantria_Session($this->consumerKey, $this->consumerSecret, $this->serializer);
 
         $callback = new SessionCallbackHandler();

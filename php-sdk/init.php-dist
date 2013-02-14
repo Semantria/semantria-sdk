@@ -1,0 +1,26 @@
+<?php
+/**
+ * Initialization script
+ *
+ * @package SemantriaSdk
+ */
+
+$paths = array(
+    get_include_path(),
+    realpath(dirname(dirname(__FILE__))),
+);
+set_include_path(implode(PATH_SEPARATOR, $paths));
+
+$configFile = realpath(dirname(__FILE__)) . '/config.php';
+if (file_exists($configFile)) {
+    include_once $configFile;
+}
+
+/**
+ * Configuration settings for environment
+ *
+ * @package SemantriaSdk
+ */
+
+Config::$consumerKey = '';
+Config::$consumerSecret = '';

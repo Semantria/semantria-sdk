@@ -1,6 +1,6 @@
 <?php
 
-class Semantria_CallbackHandler_Default extends CallbackHandler
+class Semantria_CallbackHandler_Default extends Semantria_CallbackHandler
 {
     public function onRequest($sender, $args)
     {

@@ -33,7 +33,13 @@ class Semantria_XmlHandler_Status
         }
     }
 
-    # Call when an elements ends
+    /**
+     * Call when an elements ends
+     *
+     * @param $parser   todo: check php.net for handlers doc to find type
+     * @param string $tag    todo: type option: mixed, desc: Tag
+     * @return void
+     */
     function endElement($parser, $tag)
     {
         if ($tag == "status") {

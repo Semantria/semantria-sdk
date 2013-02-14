@@ -2,11 +2,8 @@
 
 require_once 'PHPUnit/Autoload.php';
 
-require_once('Semantria/Session.php');
-require_once('Semantria/JsonSerializer.php');
-require_once('Semantria/XmlSerializer.php');
 require_once('Semantria/xmlhandlers.php');
-require_once('Semantria/XmlHandler/Status.php');
+//require_once('Semantria/XmlHandler/Status.php'); // todo: see PSR-0 autoloader spl_autoloader
 
 class SerializerTest extends PHPUnit_Framework_TestCase
 {
@@ -93,7 +90,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
         $clonedConfig["is_primary"] = true;
         $clonedConfig["one_sentence"] = false;
 
-        $serializer = new XmlSerializer();
+        $serializer = new Semantria_XmlSerializer();
         $proxy = $this->session->createUpdateProxy();
         array_push($proxy["added"], $config);
         array_push($proxy["removed"], "45699836");
@@ -214,7 +211,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
                 </configuration>
             </configurations>";
 
-        $serializer = new XmlSerializer();
+        $serializer = new Semantria_XmlSerializer();
         $configs = $serializer->deserialize($source, new GetConfigurationsHandler());
         $config = $configs[0];
 
@@ -315,7 +312,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
                 "</removed>" .
             "</blacklist>";
 
-        $serializer = new XmlSerializer();
+        $serializer = new Semantria_XmlSerializer();
         $proxy = $this->session->createUpdateProxy();
         array_push($proxy["added"], 'Added Filter 1');
         array_push($proxy["removed"], "Removed Filter 1");
@@ -346,7 +343,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
                     "<item>Filter 2</item>" .
                 "</blacklist>";
 
-        $serializer = new XmlSerializer();
+        $serializer = new Semantria_XmlSerializer();
         $blacklist = $serializer->deserialize($source, new GetBlacklistHandler());
         $this->assertEquals(2, count($blacklist));
         $this->assertEquals("Filter 1", $blacklist[0]);
@@ -378,7 +375,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
                 "</removed>" .
             "</queries>";
 
-        $serializer = new XmlSerializer();
+        $serializer = new Semantria_XmlSerializer();
         $proxy = $this->session->createUpdateProxy();
         $addedQuery["name"] = "Query 1";
         $addedQuery["query"] = "Something AND something";
@@ -417,7 +414,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
                     "<query><name>Query 2</name><query>Something AND something</query></query>" .
                 "</queries>";
 
-        $serializer = new XmlSerializer();
+        $serializer = new Semantria_XmlSerializer();
         $queries = $serializer->deserialize($source, new GetQueriesHandler());
         $this->assertEquals(2, count($queries));
         $this->assertEquals("Query 1", $queries[0]['name']);
@@ -456,7 +453,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
                 "</removed>" .
             "</entities>";
 
-        $serializer = new XmlSerializer();
+        $serializer = new Semantria_XmlSerializer();
         $proxy = $this->session->createUpdateProxy();
         $addedQuery["name"] = "name 1";
         $addedQuery["type"] = "type 1";
@@ -497,7 +494,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
                     "</entity>" .
                 "</entities>";
 
-        $serializer = new XmlSerializer();
+        $serializer = new Semantria_XmlSerializer();
         $entities = $serializer->deserialize($source, new GetEntitiesHandler());
         $this->assertEquals(1, count($entities));
         $this->assertEquals("chair", $entities[0]['name']);
@@ -539,7 +536,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
                     "</removed>" .
                 "</categories>";
 
-        $serializer = new XmlSerializer();
+        $serializer = new Semantria_XmlSerializer();
         $proxy = $this->session->createUpdateProxy();
         $addedCategory["name"] = "Added Category 1";
         $addedCategory["weight"] = 0.2;
@@ -587,7 +584,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
                     "</category>" .
                 "</categories>";
 
-        $serializer = new XmlSerializer();
+        $serializer = new Semantria_XmlSerializer();
         $categories = $serializer->deserialize($source, new GetCategoriesHandler());
         $this->assertEquals(1, count($categories));
         $this->assertEquals("Feature: Cloud service", $categories[0]['name']);
@@ -631,7 +628,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
                 "</removed>" .
             "</phrases>";
 
-        $serializer = new XmlSerializer();
+        $serializer = new Semantria_XmlSerializer();
         $proxy = $this->session->createUpdateProxy();
         $addedPhrase["title"] = "name 1";
         $addedPhrase["weight"] = 0.3;
@@ -672,7 +669,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
                     "</phrase>" .
                 "</phrases>";
 
-        $serializer = new XmlSerializer();
+        $serializer = new Semantria_XmlSerializer();
         $phrases = $serializer->deserialize($source, new GetSentimentPhrasesHandler());
         $this->assertEquals(1, count($phrases));
         $this->assertEquals("chair", $phrases[0]['title']);
@@ -709,7 +706,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
                     "</supported_languages>" .
                 "</status>";
 
-        $serializer = new XmlSerializer();
+        $serializer = new Semantria_XmlSerializer();
         $status = $serializer->deserialize($source, new Semantria_XmlHandler_Status());
         $this->assertEquals("online", $status['service_status']);
         $this->assertEquals("2.0", $status['api_version']);
@@ -775,7 +772,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
                     "<limit_type>type limit</limit_type>" .
                 "</subscription>";
 
-        $serializer = new XmlSerializer();
+        $serializer = new Semantria_XmlSerializer();
         $subscription = $serializer->deserialize($source, new GetSubscriptionHandler());
         $this->assertEquals("name", $subscription['name']);
         $this->assertEquals("active", $subscription['status']);
@@ -913,7 +910,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
                 "</phrases>" .
             "</document>";
 
-        $serializer = new XmlSerializer();
+        $serializer = new Semantria_XmlSerializer();
         $doc = $serializer->deserialize($source, new GetDocumentHandler());
         // main
         $this->assertEquals("23498367", $doc['config_id']);
@@ -1112,7 +1109,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
                 "</topics>" .
             "</collection>";
 
-        $serializer = new XmlSerializer();
+        $serializer = new Semantria_XmlSerializer();
         $coll = $serializer->deserialize($source, new GetCollectionHandler());
         // main
         $this->assertEquals("23498367", $coll['config_id']);

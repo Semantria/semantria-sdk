@@ -1,8 +1,5 @@
 <?php
 
-require_once 'AuthRequest.php';
-require_once 'JsonSerializer.php';
-require_once 'XmlSerializer.php';
 require_once 'xmlhandlers.php';
 require_once 'common.php';
 
@@ -47,10 +44,10 @@ class Semantria_Session
 
     public function setCallbackHandler(&$callback)
     {
-        if (is_subclass_of($callback, "CallbackHandler")) {
+        if (is_subclass_of($callback, "Semantria_CallbackHandler_Default")) {
             $this->callback = $callback;
-        } else {
-            throw new Exception('Parameter is not subclass of CallbackHandler "'.$callback.'"');
+        } else { // todo: was echoing $callback and causing error since an object and not a string
+            throw new Exception('Parameter is not subclass of Semantria_CallbackHandler_Default.');
         }
     }
 
@@ -537,11 +534,3 @@ class Semantria_Session
     }
 }
 
-abstract class CallbackHandler
-{
-    abstract public function onRequest($sender, $args);
-    abstract public function onResponse($sender, $args);
-    abstract public function onError($sender, $args);
-    abstract public function onDocsAutoResponse($sender, $args);
-    abstract public function onCollsAutoResponse($sender, $args);
-}

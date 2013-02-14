@@ -2,7 +2,7 @@
 
 require_once('common.php');
 
-class XmlSerializer
+class Semantria_XmlSerializer
 {
     function getType()
     {
