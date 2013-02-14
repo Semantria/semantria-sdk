@@ -1,6 +1,5 @@
 <?php
 
-require_once 'xmlhandlers.php';
 require_once 'common.php';
 
 class Semantria_Session
@@ -446,19 +445,19 @@ class Semantria_Session
         } elseif ($type == "get_categories") {
             return new Semantria_XmlHandler_Category();
         } elseif ($type == "get_queries") {
-            return new GetQueriesHandler();
+            return new Semantria_XmlHandler_Query();
         } elseif ($type == "get_sentiment_phrases") {
-            return new GetSentimentPhrasesHandler();
+            return new Semantria_XmlHandler_SentimentPhrase();
         } elseif ($type == "get_entities") {
-            return new GetEntitiesHandler();
+            return new Semantria_XmlHandler_Entity();
         } elseif ($type == "get_document") {
-            return new GetDocumentHandler();
+            return new Semantria_XmlHandler_Document();
         } elseif ($type == "get_processed_documents") {
-            return new GetProcessedDocumentsHandler();
+            return new Semantria_XmlHandler_ProcessedDocument();
         } elseif ($type == "get_collection") {
-            return new GetCollectionHandler();
+            return new Semantria_XmlHandler_Collection();
         } elseif ($type == "get_processed_collections") {
-            return new GetProcessedCollectionsHandler();
+            return new Semantria_XmlHandler_ProcessedCollection();
         } else {
             return null;
         }

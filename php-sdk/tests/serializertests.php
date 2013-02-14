@@ -2,9 +2,6 @@
 
 require_once 'PHPUnit/Autoload.php';
 
-require_once('Semantria/xmlhandlers.php');
-//require_once('Semantria/XmlHandler/Status.php'); // todo: see PSR-0 autoloader spl_autoloader
-
 class SerializerTest extends PHPUnit_Framework_TestCase
 {
     /**
@@ -415,7 +412,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
                 "</queries>";
 
         $serializer = new Semantria_XmlSerializer();
-        $queries = $serializer->deserialize($source, new GetQueriesHandler());
+        $queries = $serializer->deserialize($source, new Semantria_XmlHandler_Query());
         $this->assertEquals(2, count($queries));
         $this->assertEquals("Query 1", $queries[0]['name']);
         $this->assertEquals("Something AND something", $queries[0]['query']);
@@ -433,7 +430,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
             "]";
 
         $serializer = new Semantria_JsonSerializer();
-        $queries = $serializer->deserialize($source, new GetQueriesHandler());
+        $queries = $serializer->deserialize($source, new Semantria_XmlHandler_Query());
         $this->assertEquals(1, count($queries));
         $this->assertEquals("Feature: Cloud service", $queries[0]['name']);
         $this->assertEquals("Amazon AND EC2 AND Cloud", $queries[0]['query']);
@@ -495,7 +492,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
                 "</entities>";
 
         $serializer = new Semantria_XmlSerializer();
-        $entities = $serializer->deserialize($source, new GetEntitiesHandler());
+        $entities = $serializer->deserialize($source, new Semantria_XmlHandler_Entity());
         $this->assertEquals(1, count($entities));
         $this->assertEquals("chair", $entities[0]['name']);
         $this->assertEquals("furniture", $entities[0]['type']);
@@ -511,7 +508,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
             "]";
 
         $serializer = new Semantria_JsonSerializer();
-        $entities = $serializer->deserialize($source, new GetEntitiesHandler());
+        $entities = $serializer->deserialize($source, new Semantria_XmlHandler_Entity());
         $this->assertEquals(1, count($entities));
         $this->assertEquals("chair", $entities[0]['name']);
         $this->assertEquals("furniture", $entities[0]['type']);
@@ -670,7 +667,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
                 "</phrases>";
 
         $serializer = new Semantria_XmlSerializer();
-        $phrases = $serializer->deserialize($source, new GetSentimentPhrasesHandler());
+        $phrases = $serializer->deserialize($source, new Semantria_XmlHandler_SentimentPhrase());
         $this->assertEquals(1, count($phrases));
         $this->assertEquals("chair", $phrases[0]['title']);
         $this->assertEquals(0.3, $phrases[0]['weight']);
@@ -686,7 +683,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
             "]";
 
         $serializer = new Semantria_JsonSerializer();
-        $phrases = $serializer->deserialize($source, new GetSentimentPhrasesHandler());
+        $phrases = $serializer->deserialize($source, new Semantria_XmlHandler_SentimentPhrase());
         $this->assertEquals(1, count($phrases));
         $this->assertEquals("chair", $phrases[0]['title']);
         $this->assertEquals(0.75, $phrases[0]['weight']);
@@ -911,7 +908,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
             "</document>";
 
         $serializer = new Semantria_XmlSerializer();
-        $doc = $serializer->deserialize($source, new GetDocumentHandler());
+        $doc = $serializer->deserialize($source, new Semantria_XmlHandler_Document());
         // main
         $this->assertEquals("23498367", $doc['config_id']);
         $this->assertEquals("6F9619FF8B86D011B42D00CF4FC964FF", $doc['id']);
@@ -1012,7 +1009,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
             "}]";
 
         $serializer = new Semantria_JsonSerializer();
-        $docs = $serializer->deserialize($source, new GetProcessedDocumentsHandler());
+        $docs = $serializer->deserialize($source, new Semantria_XmlHandler_ProcessedDocument());
         $this->assertEquals(1, count($docs));
         $doc = $docs[0];
         // main
@@ -1110,7 +1107,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
             "</collection>";
 
         $serializer = new Semantria_XmlSerializer();
-        $coll = $serializer->deserialize($source, new GetCollectionHandler());
+        $coll = $serializer->deserialize($source, new Semantria_XmlHandler_Collection());
         // main
         $this->assertEquals("23498367", $coll['config_id']);
         $this->assertEquals("6F9619FF8B86D011B42D00CF4FC964FF", $coll['id']);
@@ -1199,7 +1196,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
                 "}";
 
         $serializer = new Semantria_JsonSerializer();
-        $coll = $serializer->deserialize($source, new GetCollectionHandler());
+        $coll = $serializer->deserialize($source, new Semantria_XmlHandler_Collection());
         // main
         $this->assertEquals("23498367", $coll['config_id']);
         $this->assertEquals("6F9619FF8B86D011B42D00CF4FC964FF", $coll['id']);
