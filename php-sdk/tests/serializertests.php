@@ -344,7 +344,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
                 "</blacklist>";
 
         $serializer = new Semantria_XmlSerializer();
-        $blacklist = $serializer->deserialize($source, new GetBlacklistHandler());
+        $blacklist = $serializer->deserialize($source, new Semantria_XmlHandler_Blacklist());
         $this->assertEquals(2, count($blacklist));
         $this->assertEquals("Filter 1", $blacklist[0]);
         $this->assertEquals("Filter 2", $blacklist[1]);

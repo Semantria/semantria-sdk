@@ -442,7 +442,7 @@ class Semantria_Session
         } elseif ($type == "get_configurations") {
             return new Semantria_XmlHandler_Configuration();
         } elseif ($type == "get_blacklist") {
-            return new GetBlacklistHandler();
+            return new Semantria_XmlHandler_Blacklist();
         } elseif ($type == "get_categories") {
             return new GetCategoriesHandler();
         } elseif ($type == "get_queries") {

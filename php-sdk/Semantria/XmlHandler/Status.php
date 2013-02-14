@@ -70,4 +70,3 @@ class Semantria_XmlHandler_Status
         elseif ($this->current == "language") $this->language = $content;
     }
 }
-
