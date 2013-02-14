@@ -1,10 +1,5 @@
 <?php
 
-require_once 'Semantria/Session.php';
-require_once 'Semantria/JsonSerializer.php';
-require_once 'Semantria/XmlSerializer.php';
-require_once 'Semantria/CallbackHandler/Default.php';
-
 require_once 'init.php';
 
 $initialTexts = array(

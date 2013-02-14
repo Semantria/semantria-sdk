@@ -42,13 +42,9 @@ class Semantria_Session
         $this->format = $serializer->getType();
     }
 
-    public function setCallbackHandler(&$callback)
+    public function setCallbackHandler(Semantria_CallbackHandler_Default &$callback)
     {
-        if (is_subclass_of($callback, "Semantria_CallbackHandler_Default")) {
-            $this->callback = $callback;
-        } else { // todo: was echoing $callback and causing error since an object and not a string
-            throw new Exception('Parameter is not subclass of Semantria_CallbackHandler_Default.');
-        }
+        $this->callback = $callback;
     }
 
     public function registerSerializer($serializer)
