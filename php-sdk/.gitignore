@@ -5,5 +5,4 @@ demos/
 extras/documentation
 coverage
 .idea
-
-
+init.php
