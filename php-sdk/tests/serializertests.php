@@ -585,7 +585,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
                 "</categories>";
 
         $serializer = new Semantria_XmlSerializer();
-        $categories = $serializer->deserialize($source, new GetCategoriesHandler());
+        $categories = $serializer->deserialize($source, new Semantria_XmlHandler_Category());
         $this->assertEquals(1, count($categories));
         $this->assertEquals("Feature: Cloud service", $categories[0]['name']);
         $this->assertEquals(0.75, $categories[0]['weight']);
@@ -605,7 +605,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
             "]";
 
         $serializer = new Semantria_JsonSerializer();
-        $categories = $serializer->deserialize($source, new GetCategoriesHandler());
+        $categories = $serializer->deserialize($source, new Semantria_XmlHandler_Category());
         $this->assertEquals(1, count($categories));
         $this->assertEquals("Feature: Cloud service", $categories[0]['name']);
         $this->assertEquals(0.75, $categories[0]['weight']);

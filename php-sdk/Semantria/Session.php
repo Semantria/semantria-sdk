@@ -444,7 +444,7 @@ class Semantria_Session
         } elseif ($type == "get_blacklist") {
             return new Semantria_XmlHandler_Blacklist();
         } elseif ($type == "get_categories") {
-            return new GetCategoriesHandler();
+            return new Semantria_XmlHandler_Category();
         } elseif ($type == "get_queries") {
             return new GetQueriesHandler();
         } elseif ($type == "get_sentiment_phrases") {

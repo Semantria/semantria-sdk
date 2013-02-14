@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * (Pulled out of xmlhandlers.php)
+ *
+ * @package SemantriaSdk
+ * @author Scott Carpenter <scarpent@nerdery.com>
+ * @version $Id$
+ */
 class Semantria_XmlHandler_Blacklist
 {
     function __construct()
