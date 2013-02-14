@@ -212,7 +212,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
             </configurations>";
 
         $serializer = new Semantria_XmlSerializer();
-        $configs = $serializer->deserialize($source, new GetConfigurationsHandler());
+        $configs = $serializer->deserialize($source, new Semantria_XmlHandler_Configuration());
         $config = $configs[0];
 
         $this->assertNotNull($config);
@@ -273,7 +273,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
                 "]";
 
         $serializer = new Semantria_JsonSerializer();
-        $configs = $serializer->deserialize($source, new GetConfigurationsHandler());
+        $configs = $serializer->deserialize($source, new Semantria_XmlHandler_Configuration());
         $config = $configs[0];
         $this->assertNotNull($config);
         $this->assertEquals("A test configuration", $config['name']);

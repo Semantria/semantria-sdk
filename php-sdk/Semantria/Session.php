@@ -440,7 +440,7 @@ class Semantria_Session
         } elseif ($type == "get_subscription") {
             return new Semantria_XmlHandler_Subscription();
         } elseif ($type == "get_configurations") {
-            return new GetConfigurationsHandler();
+            return new Semantria_XmlHandler_Configuration();
         } elseif ($type == "get_blacklist") {
             return new GetBlacklistHandler();
         } elseif ($type == "get_categories") {
