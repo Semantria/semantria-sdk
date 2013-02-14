@@ -438,7 +438,7 @@ class Semantria_Session
         if ($type == "get_status") {
             return new Semantria_XmlHandler_Status();
         } elseif ($type == "get_subscription") {
-            return new GetSubscriptionHandler();
+            return new Semantria_XmlHandler_Subscription();
         } elseif ($type == "get_configurations") {
             return new GetConfigurationsHandler();
         } elseif ($type == "get_blacklist") {

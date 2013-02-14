@@ -773,7 +773,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
                 "</subscription>";
 
         $serializer = new Semantria_XmlSerializer();
-        $subscription = $serializer->deserialize($source, new GetSubscriptionHandler());
+        $subscription = $serializer->deserialize($source, new Semantria_XmlHandler_Subscription());
         $this->assertEquals("name", $subscription['name']);
         $this->assertEquals("active", $subscription['status']);
         $this->assertEquals("normal", $subscription['priority']);
@@ -828,7 +828,7 @@ class SerializerTest extends PHPUnit_Framework_TestCase
             "}";
 
         $serializer = new Semantria_JsonSerializer();
-        $subscription = $serializer->deserialize($source, new GetSubscriptionHandler());
+        $subscription = $serializer->deserialize($source, new Semantria_XmlHandler_Subscription());
         $this->assertEquals("Subscriber", $subscription['name']);
         $this->assertEquals("active", $subscription['status']);
         $this->assertEquals("normal", $subscription['priority']);
