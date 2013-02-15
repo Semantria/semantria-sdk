@@ -1,18 +1,7 @@
 <?php
-/**
- * Initialization script
- *
- * @package SemantriaSdk
- */
-
-$paths = array(
-    get_include_path(),
-    realpath(dirname(dirname(__FILE__))),
-);
-set_include_path(implode(PATH_SEPARATOR, $paths));
 
 /**
- * Container
+ * Container 
  *
  * @package SemantriaSdk
  * @author Jansen Price <jansen.price@nerdery.com>
@@ -33,9 +22,4 @@ class Config
      * @var string
      */
     public static $consumerSecret = '';
-}
-
-$configFile = realpath(dirname(__FILE__)) . '/config.php';
-if (file_exists($configFile)) {
-    include_once $configFile;
 }

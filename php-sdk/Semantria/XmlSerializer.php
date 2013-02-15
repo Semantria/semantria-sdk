@@ -1,8 +1,6 @@
 <?php
 
-require_once('common.php');
-
-class XmlSerializer
+class Semantria_XmlSerializer
 {
     function getType()
     {
@@ -11,17 +9,17 @@ class XmlSerializer
 
     function serialize($obj, $wrapper=null)
     {
-        $obj = processUpdateProxyClonedElement($obj);
-        $obj = utf8Encode($obj);
+        $obj = Semantria_Common::processUpdateProxyClonedElement($obj);
+        $obj = Semantria_Common::utf8Encode($obj);
 
         if ($wrapper == null) {
             throw new Exception('Parameter is null or empty "'.$wrapper.'"');
         }
 
-        if (is_assoc($obj)) {
-            $str = string_format('<{0}>{1}</{0}>', $wrapper["root"], $this->dictToXML($obj, $wrapper));
+        if (Semantria_Common::is_assoc($obj)) {
+            $str = Semantria_Common::string_format('<{0}>{1}</{0}>', $wrapper["root"], $this->dictToXML($obj, $wrapper));
         } elseif (is_array($obj)) {
-            $str = string_format('<{0}>{1}</{0}>', $wrapper["root"], $this->listToXML($obj, $wrapper));
+            $str = Semantria_Common::string_format('<{0}>{1}</{0}>', $wrapper["root"], $this->listToXML($obj, $wrapper));
         } else {
             throw new Exception('Unsupported object type: '.$obj);
         }
@@ -47,20 +45,20 @@ class XmlSerializer
     {
         $str = '';
         foreach ($obj as $key => $value) {
-            if (is_assoc($obj[$key])) {
-                $str = string_format('{0}<{1}>{2}</{1}>', $str, $key, $this->dictToXML($obj[$key], $wrapper));
+            if (Semantria_Common::is_assoc($obj[$key])) {
+                $str = Semantria_Common::string_format('{0}<{1}>{2}</{1}>', $str, $key, $this->dictToXML($obj[$key], $wrapper));
             } elseif (is_array($obj[$key])) {
-                $str = string_format('{0}<{1}>', $str, $key);
+                $str = Semantria_Common::string_format('{0}<{1}>', $str, $key);
 
                 foreach ($obj[$key] as $item) {
-                    if (is_assoc($item)) {
-                        $str = string_format('{0}<{1}>{2}</{1}>', $str, $wrapper[$key], $this->dictToXML($item, $wrapper));
+                    if (Semantria_Common::is_assoc($item)) {
+                        $str = Semantria_Common::string_format('{0}<{1}>{2}</{1}>', $str, $wrapper[$key], $this->dictToXML($item, $wrapper));
                     } else {
-                        $str = string_format('{0}<{1}>{2}</{1}>', $str, $wrapper[$key], $item);
+                        $str = Semantria_Common::string_format('{0}<{1}>{2}</{1}>', $str, $wrapper[$key], $item);
                     }
                 }
 
-                $str = string_format('{0}</{1}>', $str, $key);
+                $str = Semantria_Common::string_format('{0}</{1}>', $str, $key);
             } else {
                 $value = $obj[$key];
                 if (is_bool($value)) {
@@ -69,10 +67,10 @@ class XmlSerializer
                     else
                         $value_str = "false";
 
-                    $str = string_format('{0}<{1}>{2}</{1}>', $str, $key, $value_str);
+                    $str = Semantria_Common::string_format('{0}<{1}>{2}</{1}>', $str, $key, $value_str);
                 }
                 else
-                    $str = string_format('{0}<{1}>{2}</{1}>', $str, $key, $value);
+                    $str = Semantria_Common::string_format('{0}<{1}>{2}</{1}>', $str, $key, $value);
             }
         }
         return $str;
@@ -82,11 +80,11 @@ class XmlSerializer
     {
         $str = '';
         foreach ($obj as $item) {
-            if (is_assoc($item)) {
-                $str = string_format('{0}<{1}>{2}</{1}>', $str, $wrapper["item"], $this->dictToXML($item, $wrapper));
+            if (Semantria_Common::is_assoc($item)) {
+                $str = Semantria_Common::string_format('{0}<{1}>{2}</{1}>', $str, $wrapper["item"], $this->dictToXML($item, $wrapper));
             }
             else
-                $str = string_format('{0}<{1}>{2}</{1}>', $str, $wrapper["item"], $item);
+                $str = Semantria_Common::string_format('{0}<{1}>{2}</{1}>', $str, $wrapper["item"], $item);
         }
 
         return $str;

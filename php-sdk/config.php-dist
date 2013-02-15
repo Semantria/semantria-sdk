@@ -1,9 +1,0 @@
-<?php
-/**
- * Configuration settings for environment
- *
- * @package SemantriaSdk
- */
-
-Config::$consumerKey = '';
-Config::$consumerSecret = '';

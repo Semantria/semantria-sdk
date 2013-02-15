@@ -1,0 +1,25 @@
+<?php
+/**
+ * Initialization script
+ *
+ * @package SemantriaSdk
+ */
+
+require_once realpath(dirname(__FILE__)) . '/autoload.php';
+$autoloader = new SplClassLoader();
+$autoloader->setIncludePath(realpath(dirname(__FILE__)));
+$autoloader->register();
+
+$configFile = realpath(dirname(__FILE__)) . '/config.php';
+if (file_exists($configFile)) {
+    include_once $configFile;
+}
+
+/**
+ * Configuration settings for environment
+ *
+ * @package SemantriaSdk
+ */
+
+Config::$consumerKey = '';
+Config::$consumerSecret = '';

@@ -1,7 +1,5 @@
 <?php
 
-require_once 'common.php';
-
 class Semantria_JsonSerializer
 {
     public function getType()
@@ -11,8 +9,8 @@ class Semantria_JsonSerializer
 
     public function serialize($obj, $wrapper=null)
     {
-        $obj = processUpdateProxyClonedElement($obj);
-        $str = json_encode(utf8Encode($obj));
+        $obj = Semantria_Common::processUpdateProxyClonedElement($obj);
+        $str = json_encode(Semantria_Common::utf8Encode($obj));
         return $str;
     }
 
