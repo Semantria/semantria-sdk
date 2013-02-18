@@ -61,10 +61,11 @@ class Semantria_Common
                 continue;
             }
 
+            // todo: use strict mode for mb_detect_encoding? (3rd arg = true)
             if (is_string($value)
-                && mb_detect_encoding($value, 'UTF-8') != "UTF-8"
+                && mb_detect_encoding($value, 'UTF-8', true) != "UTF-8"
             ) {
-                $utf8EncodedArray[$key] = self::utf8_encode($value);
+                $utf8EncodedArray[$key] = utf8_encode($value);
             } else {
                 $utf8EncodedArray[$key] = $value;
             }
@@ -77,6 +78,8 @@ class Semantria_Common
     {
         $utf8DecodeArray = array();
 
+        if (! is_array($array))
+
         foreach ($array as $key => $value) {
             $key = utf8_decode($key);
 
@@ -86,7 +89,7 @@ class Semantria_Common
             }
 
             if (is_string($value)) {
-                $utf8DecodeArray[$key] = self::utf8_decode($value);
+                $utf8DecodeArray[$key] = utf8_decode($value);
             } else {
                 $utf8DecodeArray[$key] = $value;
             }

@@ -5,39 +5,6 @@ require_once 'PHPUnit/Autoload.php';
 $id = uniqid('');
 $message = "Amazon Web Services has announced a new feature called VM£Ware Import, which allows IT departments to move virtual machine images from their internal data centers to the cloud.";
 
-class SessionCallbackHandler extends Semantria_CallbackHandler_Default
-{
-    public function onRequest($sender, $args)
-    {
-        $s = json_encode($args);
-        echo "\nREQUEST: " . $s;
-    }
-
-    public function onResponse($sender, $args)
-    {
-        $s = json_encode($args);
-        echo "\nRESPONSE: " . $s;
-    }
-
-    public function onError($sender, $args)
-    {
-        $s = json_encode($args);
-        echo "\nERROR: " . $s;
-    }
-
-    public function onDocsAutoResponse($sender, $args)
-    {
-        $s = json_encode($args);
-        echo "\nDOCS AUTORESPONSE: " . $s;
-    }
-
-    public function onCollsAutoResponse($sender, $args)
-    {
-        $s = json_encode($args);
-        echo "\nCOLLS AUTORESPONSE: " . $s;
-    }
-}
-
 class SemantriaTest extends PHPUnit_Framework_TestCase
 {
     public function setUp() {
@@ -47,7 +14,7 @@ class SemantriaTest extends PHPUnit_Framework_TestCase
         $this->serializer = new Semantria_XmlSerializer();
         $this->session = new Semantria_Session($this->consumerKey, $this->consumerSecret, $this->serializer);
 
-        $callback = new SessionCallbackHandler();
+        $callback = new Semantria_CallbackHandler_Terminal();
         $this->session->setCallbackHandler($callback);
     }
 
@@ -239,5 +206,21 @@ class SemantriaTest extends PHPUnit_Framework_TestCase
     public function testGetProcessedCollections() {
         $status = $this->session->getProcessedCollections();
         $this->assertTrue(is_array($status));
+    }
+
+    public function testUtf8Encode() {
+        $encoded = Semantria_Common::utf8Encode(
+            array('a' => 'AA', 'b' => 1, 'c' => '€w', 'd' => 'áéóúZ')
+            );
+        $this->assertTrue(true);
+    }
+
+    public function testUtf8Decode() {
+        $encoded = Semantria_Common::utf8Encode(
+            array('a' => 'AA', 'b' => 1, 'c' => '€w', 'd' => 'áéóúZ')
+        );
+        print_r($encoded);
+        $decoded = Semantria_Common::utf8Decode(array($encoded));
+        $this->assertTrue(true);
     }
 }
