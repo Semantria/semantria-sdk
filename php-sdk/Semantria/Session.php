@@ -43,7 +43,7 @@ class Semantria_Session
         $this->format = $serializer->getType();
     }
 
-    public function setCallbackHandler(Semantria_CallbackHandler_Abstract $callback)
+    public function setCallbackHandler(Semantria_CallbackHandler_Interface $callback)
     {
         $this->callback = $callback;
     }
