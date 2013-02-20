@@ -1,36 +1,36 @@
 <?php
 
-class Semantria_CallbackHandler_Default
+class Semantria_CallbackHandler_Terminal
     extends Semantria_CallbackHandler_Abstract
     implements Semantria_CallbackHandler_Interface
 {
     public function onRequest($sender, $args)
     {
         $s = json_encode($args);
-        //echo "REQUEST: ", htmlspecialchars($s), "\r\n";
+        //echo "\nREQUEST: " . $s;
     }
-    
+
     public function onResponse($sender, $args)
     {
         $s = json_encode($args);
-        //echo "RESPONSE: ", htmlspecialchars($s), "\r\n";
+        //echo "\nRESPONSE: " . $s;
     }
-    
+
     public function onError($sender, $args)
     {
         $s = json_encode($args);
-        //echo "ERROR: ", htmlspecialchars($s), "\r\n";
+        //echo "\nERROR: " . $s;
     }
-    
+
     public function onDocsAutoResponse($sender, $args)
     {
         $s = json_encode($args);
-        //echo "DOCS AUTORESPONSE: ", htmlspecialchars($s), "\r\n";
+        //echo "\nDOCS AUTORESPONSE: " . $s;
     }
-    
+
     public function onCollsAutoResponse($sender, $args)
     {
         $s = json_encode($args);
-        //echo "COLLS AUTORESPONSE: ", htmlspecialchars($s), "\r\n";
+        //echo "\nCOLLS AUTORESPONSE: " . $s;
     }
 }

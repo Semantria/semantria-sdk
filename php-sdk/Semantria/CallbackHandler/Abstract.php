@@ -1,6 +1,7 @@
 <?php
 
-abstract class Semantria_CallbackHandler
+abstract class Semantria_CallbackHandler_Abstract
+    implements Semantria_CallbackHandler_Interface
 {
     abstract public function onRequest($sender, $args);
     abstract public function onResponse($sender, $args);
