@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuite failures="0" time="4.513" errors="0" skipped="0" tests="33" name="com.semantria.test.SerializerTest">
+  <properties>
+    <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
+    <property name="sun.boot.library.path" value="C:\SDK\glassfish3\jdk\jre\bin"/>
+    <property name="java.vm.version" value="19.1-b02"/>
+    <property name="java.vm.vendor" value="Sun Microsystems Inc."/>
+    <property name="java.vendor.url" value="http://java.sun.com/"/>
+    <property name="path.separator" value=";"/>
+    <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM"/>
+    <property name="file.encoding.pkg" value="sun.io"/>
+    <property name="idea.launcher.port" value="7543"/>
+    <property name="user.country" value="RU"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="sun.os.patch.level" value="Service Pack 1"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="user.dir" value="C:\work\Montreal\montreal\sources\wrappers\SemantriaJavaSDK"/>
+    <property name="java.runtime.version" value="1.6.0_24-b07"/>
+    <property name="java.awt.graphicsenv" value="sun.awt.Win32GraphicsEnvironment"/>
+    <property name="java.endorsed.dirs" value="C:\SDK\glassfish3\jdk\jre\lib\endorsed"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.io.tmpdir" value="C:\Users\ZXPHOE~1\AppData\Local\Temp\"/>
+    <property name="line.separator" value="
+"/>
+    <property name="java.vm.specification.vendor" value="Sun Microsystems Inc."/>
+    <property name="user.variant" value=""/>
+    <property name="os.name" value="Windows 7"/>
+    <property name="classworlds.conf" value="C:\SDK\springsource\maven-2.2.1.RELEASE\bin\m2.conf"/>
+    <property name="sun.jnu.encoding" value="Cp1251"/>
+    <property name="java.library.path" value="C:\SDK\glassfish3\jdk\bin;.;C:\Windows\Sun\Java\bin;C:\Windows\system32;C:\Windows;C:\Program Files (x86)\JetBrains\IntelliJ IDEA 12.0\bin\..\.\bin;C:\Program Files (x86)\AMD APP\bin\x86_64;C:\Program Files (x86)\AMD APP\bin\x86;C:\Program Files\Common Files\Microsoft Shared\Windows Live;C:\Program Files (x86)\Common Files\Microsoft Shared\Windows Live;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\ATI Technologies\ATI.ACE\Core-Static;C:\Program Files\WIDCOMM\Bluetooth Software\;C:\Program Files\WIDCOMM\Bluetooth Software\syswow64;C:\Program Files (x86)\Git\cmd;C:\Program Files (x86)\Windows Live\Shared;C:\Program Files (x86)\QuickTime\QTSystem\;C:\opt\salience\salience\bin;C:\Program Files (x86)\OpenVPN\bin;c:\install\putty;c:\SDK\jflex\bin;c:\SDK\glassfish3\jdk\bin;c:\program files (x86)\jetbrains\intellij idea 12.0\jre\jre\bin"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="java.class.version" value="50.0"/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Server Compiler"/>
+    <property name="os.version" value="6.1"/>
+    <property name="user.home" value="C:\Users\Виктор"/>
+    <property name="user.timezone" value="Europe/Helsinki"/>
+    <property name="java.awt.printerjob" value="sun.awt.windows.WPrinterJob"/>
+    <property name="java.specification.version" value="1.6"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="idea.launcher.bin.path" value="C:\Program Files (x86)\JetBrains\IntelliJ IDEA 12.0\bin"/>
+    <property name="user.name" value="Виктор"/>
+    <property name="java.class.path" value="C:\SDK\springsource\maven-2.2.1.RELEASE\boot\classworlds-1.1.jar;C:\Program Files (x86)\JetBrains\IntelliJ IDEA 12.0\lib\idea_rt.jar"/>
+    <property name="java.vm.specification.version" value="1.0"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="java.home" value="C:\SDK\glassfish3\jdk\jre"/>
+    <property name="java.specification.vendor" value="Sun Microsystems Inc."/>
+    <property name="user.language" value="ru"/>
+    <property name="awt.toolkit" value="sun.awt.windows.WToolkit"/>
+    <property name="java.vm.info" value="mixed mode"/>
+    <property name="java.version" value="1.6.0_24"/>
+    <property name="java.ext.dirs" value="C:\SDK\glassfish3\jdk\jre\lib\ext;C:\Windows\Sun\Java\lib\ext"/>
+    <property name="sun.boot.class.path" value="C:\SDK\glassfish3\jdk\jre\lib\resources.jar;C:\SDK\glassfish3\jdk\jre\lib\rt.jar;C:\SDK\glassfish3\jdk\jre\lib\sunrsasign.jar;C:\SDK\glassfish3\jdk\jre\lib\jsse.jar;C:\SDK\glassfish3\jdk\jre\lib\jce.jar;C:\SDK\glassfish3\jdk\jre\lib\charsets.jar;C:\SDK\glassfish3\jdk\jre\lib\modules\jdk.boot.jar;C:\SDK\glassfish3\jdk\jre\classes"/>
+    <property name="java.vendor" value="Sun Microsystems Inc."/>
+    <property name="maven.home" value="C:\SDK\springsource\maven-2.2.1.RELEASE"/>
+    <property name="file.separator" value="\"/>
+    <property name="java.vendor.url.bug" value="http://java.sun.com/cgi-bin/bugreport.cgi"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="sun.desktop" value="windows"/>
+    <property name="sun.cpu.isalist" value="amd64"/>
+  </properties>
+  <testcase time="0.404" classname="com.semantria.test.SerializerTest" name="testSerializingConfiguration"/>
+  <testcase time="0.343" classname="com.semantria.test.SerializerTest" name="testXmlDeserializingConfiguration"/>
+  <testcase time="0.006" classname="com.semantria.test.SerializerTest" name="testJsonDeserializingConfiguration"/>
+  <testcase time="0.082" classname="com.semantria.test.SerializerTest" name="testXmlSerializingBlacklist"/>
+  <testcase time="0.33" classname="com.semantria.test.SerializerTest" name="testXmlDeserializingBlacklist"/>
+  <testcase time="0.001" classname="com.semantria.test.SerializerTest" name="testJsonDeserializingBlacklist"/>
+  <testcase time="0.143" classname="com.semantria.test.SerializerTest" name="testSerializingQueries"/>
+  <testcase time="0.318" classname="com.semantria.test.SerializerTest" name="testXmlDeserializingQueries"/>
+  <testcase time="0.001" classname="com.semantria.test.SerializerTest" name="testJsonDeserializingQueries"/>
+  <testcase time="0.079" classname="com.semantria.test.SerializerTest" name="testSerializingEntities"/>
+  <testcase time="0.001" classname="com.semantria.test.SerializerTest" name="testJsonDeserializingEntities"/>
+  <testcase time="0.186" classname="com.semantria.test.SerializerTest" name="testSerializingCategories"/>
+  <testcase time="0.338" classname="com.semantria.test.SerializerTest" name="testXmlDeserializingCategories"/>
+  <testcase time="0.002" classname="com.semantria.test.SerializerTest" name="testJsonDeserializingCategories"/>
+  <testcase time="0.152" classname="com.semantria.test.SerializerTest" name="testSerializingSentimentPhrases"/>
+  <testcase time="0.001" classname="com.semantria.test.SerializerTest" name="testJsonSerializingSentimentPhrases"/>
+  <testcase time="0.001" classname="com.semantria.test.SerializerTest" name="testJsonDeserializingSentimentPhrases"/>
+  <testcase time="0.296" classname="com.semantria.test.SerializerTest" name="testXmlDeserializingAnalyticServiceStatus"/>
+  <testcase time="0.001" classname="com.semantria.test.SerializerTest" name="testJsonDeserializingAnalyticServiceStatus"/>
+  <testcase time="0.288" classname="com.semantria.test.SerializerTest" name="testXmlDeserializingSubscription"/>
+  <testcase time="0.002" classname="com.semantria.test.SerializerTest" name="testJsonDeserializingSubscription"/>
+  <testcase time="0.276" classname="com.semantria.test.SerializerTest" name="testXmlDeserializingDocumentAnalyticData"/>
+  <testcase time="0.003" classname="com.semantria.test.SerializerTest" name="testJsonDeserializingDocumentAnalyticData"/>
+  <testcase time="0.275" classname="com.semantria.test.SerializerTest" name="testXmlDeserializingCollectionAnalyticData"/>
+  <testcase time="0.003" classname="com.semantria.test.SerializerTest" name="testJsonDeserializingCollectionAnalyticData"/>
+  <testcase time="0.247" classname="com.semantria.test.SerializerTest" name="testXmlDeserializingCollectionsAnalyticData"/>
+  <testcase time="0.003" classname="com.semantria.test.SerializerTest" name="testJsonDeserializingCollectionsAnalyticData"/>
+  <testcase time="0.303" classname="com.semantria.test.SerializerTest" name="testXmlDeserializingDocumentsAnalyticData"/>
+  <testcase time="0.005" classname="com.semantria.test.SerializerTest" name="testJsonDeserializingDocumentsAnalyticData"/>
+  <testcase time="0.302" classname="com.semantria.test.SerializerTest" name="testXmlDeserializingStatistics"/>
+  <testcase time="0.002" classname="com.semantria.test.SerializerTest" name="testJsonDeserializingStatistics"/>
+  <testcase time="0.055" classname="com.semantria.test.SerializerTest" name="testXmlSerializationBatch"/>
+  <testcase time="0.064" classname="com.semantria.test.SerializerTest" name="testXmlSerializationDocument"/>
+</testsuite>

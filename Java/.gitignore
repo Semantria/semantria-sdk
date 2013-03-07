@@ -1,0 +1,49 @@
+# Packages #
+############
+# it's better to unpack these files and commit the raw source
+# git has its own built in compression methods
+*.7z
+*.dmg
+*.gz
+*.iso
+*.rar
+*.tar
+*.zip
+*.class
+
+# Logs and databases #
+######################
+*.log
+*.sqlite
+
+# OS generated files #
+######################
+.DS_Store?
+ehthumbs.db
+Icon?
+Thumbs.db
+
+# Aptana generated files #
+##########################
+sources/server/target
+sources/SchedulerService/target
+sources/AnalyticService/target
+sources/analyticService/target
+sources/backendServer/target
+sources/back/target
+sources/analyticService/
+bin
+
+.tmp_*.*
+
+# UberPost setup file #
+#######################
+UberPost.air
+
+# MS Office generated temp files #
+##################################
+~$*.doc
+~*.tmp
+.~*.doc#
+~*.~*
+*.*~

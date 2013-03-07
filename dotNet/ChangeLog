@@ -1,0 +1,12 @@
+CHANGELOG
+
+3.0.71 - ResponseErrorEventArgs type has been added for correct server-side errors handling.
+Session type, unit tests and test app enhanced with appropriate changes.
+
+3.0.70 - Added support of Semantria API 3.0.1. The changes are:
+	- Removed 'user_ntities' feature availability marker from Subscription for collection mode
+	- Added 'mentions' feature availability marker to Subscription for collection mode
+	- Added 'facet_mentions_limit' option to Configuration for collection mode
+	- Collection' mode output has neen enhanced with mentions for facets
+
+3.0.67 - Initial build of .Net SDK for Semantria API 3.0
