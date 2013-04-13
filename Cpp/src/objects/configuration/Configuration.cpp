@@ -5,7 +5,7 @@ Configuration::Configuration() {
     name = "";
     is_primary = false;
     auto_response = false;
-    
+
     //document
     entity_themes_limit = 0;
     summary_limit = 0;
@@ -20,11 +20,12 @@ Configuration::Configuration() {
     pos_types = "";
     possible_phrases_limit = 0;
     detect_language = true;
-    
+
     //collection
     facets_limit = 0;
     facet_atts_limit = 0;
     facet_mentions_limit = 0;
+    attribute_mentions_limit = 0;
     coll_themes_limit = 0;
     coll_query_topics_limit = 0;
     coll_concept_topics_limit = 0;
@@ -68,13 +69,14 @@ void Configuration::Serialize(Json::Value& root) {
     root["document"]["possible_phrases_limit"] = possible_phrases_limit;
     root["document"]["pos_types"] = pos_types;
     root["document"]["summary_limit"] = summary_limit;
-    root["document"]["detect_language"] = detect_language;    
+    root["document"]["detect_language"] = detect_language;
 
 
     //collection
     root["collection"]["facets_limit"] = facets_limit;
     root["collection"]["facet_atts_limit"] = facet_atts_limit;
     root["collection"]["facet_mentions_limit"] = facet_mentions_limit;
+    root["collection"]["attribute_mentions_limit"] = attribute_mentions_limit;
     root["collection"]["themes_limit"] = coll_themes_limit;
     root["collection"]["query_topics_limit"] = coll_query_topics_limit;
     root["collection"]["concept_topics_limit"] = coll_concept_topics_limit;
@@ -105,14 +107,15 @@ void Configuration::Deserialize(Json::Value& root) {
     possible_phrases_limit = doc.get("possible_phrases_limit", 0).asUInt();
     pos_types = doc.get("pos_types", "").asString();
     summary_limit = doc.get("summary_limit", 0).asUInt();
-    detect_language = doc.get("detect_language", true).asBool();    
-    
+    detect_language = doc.get("detect_language", true).asBool();
+
 
     //collection
     Json::Value coll = root.get("document", "");
     facets_limit = coll.get("facets_limit", 0).asUInt();
     facet_atts_limit = coll.get("facet_atts_limit", 0).asUInt();
     facet_mentions_limit = coll.get("facet_mentions_limit", 0).asUInt();
+    attribute_mentions_limit = coll.get("attribute_mentions_limit", 0).asUInt();
     coll_themes_limit = coll.get("themes_limit", 0).asUInt();
     coll_query_topics_limit = coll.get("query_topics_limit", 0).asUInt();
     coll_concept_topics_limit = coll.get("concept_topics_limit", 0).asUInt();

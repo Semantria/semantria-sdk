@@ -49,7 +49,7 @@ namespace {
     TEST(JsonSerializingConfigurations) {
         cout << "JsonSerializingConfigurations" << endl;
         JsonSerializer * serializer = new JsonSerializer();
-        string expectedResult = "[{\"auto_response\":true,\"callback\":\"https://anyapi.anydomain.com/processed/docs.json\",\"chars_threshold\":80,\"collection\":{\"concept_topics_limit\":5,\"facet_atts_limit\":5,\"facet_mentions_limit\":5,\"facets_limit\":15,\"named_entities_limit\":5,\"query_topics_limit\":5,\"themes_limit\":0},\"document\":{\"concept_topics_limit\":5,\"detect_language\":true,\"entity_themes_limit\":5,\"named_entities_limit\":5,\"named_relations_limit\":0,\"phrases_limit\":10,\"pos_types\":\"\",\"possible_phrases_limit\":0,\"query_topics_limit\":5,\"summary_limit\":0,\"themes_limit\":0,\"user_entities_limit\":5,\"user_relations_limit\":0},\"is_primary\":true,\"language\":\"English\",\"name\":\"A test configuration\",\"one_sentence\":false}]";
+        string expectedResult = "[{\"auto_response\":true,\"callback\":\"https://anyapi.anydomain.com/processed/docs.json\",\"chars_threshold\":80,\"collection\":{\"attribute_mentions_limit\":2,\"concept_topics_limit\":5,\"facet_atts_limit\":5,\"facet_mentions_limit\":5,\"facets_limit\":15,\"named_entities_limit\":5,\"query_topics_limit\":5,\"themes_limit\":0},\"document\":{\"concept_topics_limit\":5,\"detect_language\":true,\"entity_themes_limit\":5,\"named_entities_limit\":5,\"named_relations_limit\":0,\"phrases_limit\":10,\"pos_types\":\"\",\"possible_phrases_limit\":0,\"query_topics_limit\":5,\"summary_limit\":0,\"themes_limit\":0,\"user_entities_limit\":5,\"user_relations_limit\":0},\"is_primary\":true,\"language\":\"English\",\"name\":\"A test configuration\",\"one_sentence\":false}]";
 
         vector<Configuration*>* list = new vector<Configuration*>();
 
@@ -73,10 +73,13 @@ namespace {
         addedConfiguration->SetFacetsLimit(15);
         addedConfiguration->SetFacetMentionsLimit(5);
         addedConfiguration->SetFacetAttributesLimit(5);
+        addedConfiguration->SetAttributeMentionsLimit(2);
+
         addedConfiguration->SetCollConceptTopicsLimit(5);
         addedConfiguration->SetCollQueryTopicsLimit(5);
         addedConfiguration->SetCollNamedEntitiesLimit(5);
         addedConfiguration->SetCollThemesLimit(0);
+        addedConfiguration->SetOneSentence(false);
 
         list->push_back(addedConfiguration);
 
@@ -315,7 +318,7 @@ namespace {
         CHECK_EQUAL("active", subscription->GetStatus());
         CHECK_EQUAL("normal", subscription->GetPriority());
         CHECK_EQUAL(1293883200l, subscription->GetExpirationDate());
-        
+
         CHECK_EQUAL(87, subscription->GetCallsBalance());
         CHECK_EQUAL(100, subscription->GetCallsLimit());
         CHECK_EQUAL(60, subscription->GetCallsLimitInterval());
@@ -334,7 +337,7 @@ namespace {
         CHECK_EQUAL(2, subscription->GetAutoResponseLimit());
         CHECK_EQUAL(100, subscription->GetProcessedBatchLimit());
         CHECK_EQUAL(100, subscription->GetCallbackBatchLimit());
-        
+
         CHECK_EQUAL(true, subscription->GetFacets());
         CHECK_EQUAL(false, subscription->GetMentions());
 
@@ -344,7 +347,7 @@ namespace {
         delete serializer;
         delete subscription;
     }
-    
+
 
     TEST(JsonDeserializingSentimentPhrases) {
         cout << "JsonDeserializingSentimentPhrases" << endl;
@@ -369,7 +372,7 @@ namespace {
         delete serializer;
         delete stub;
     }
-    
+
 
     TEST(JsonDeserializingCategories) {
         cout << "JsonDeserializingCategories" << endl;
@@ -471,11 +474,11 @@ namespace {
         delete serializer;
         delete stub;
     }
-    
+
     TEST(JsonDeserializingStatistics) {
         cout << "JsonDeserializingSatistics" << endl;
         JsonSerializer * serializer = new JsonSerializer();
-        
+
         string source = "{\
         \"name\": \"Subscriber\",\
         \"status\": \"active\",\
@@ -518,22 +521,22 @@ namespace {
             }\
         ]\
         }";
-        
+
         Json::Value root;
         Json::Reader reader;
         if (!reader.parse( source, root )){
             CHECK(false);
             return;
         }
-        
+
         Statistics* statistic = new Statistics();
         serializer->Deserialize(source, statistic);
-                
+
         CHECK_EQUAL("Subscriber", statistic->GetName());
         CHECK_EQUAL(8000, statistic->GetCollsDocuments());
         CHECK_EQUAL("cd2e7341-a3c2-4fb4-9d3a-779e8b0a5eff", statistic->GetConfigurations()->at(0)->GetConfigId());
 
-        
+
         delete serializer;
         delete statistic;
     }
@@ -546,7 +549,7 @@ namespace {
                 \"config_id\":\"23498367\",\
                 \"status\":\"PROCESSED\",\
                 \"sentiment_score\":0.8295653,\
-                \"summary\":\"Summary of the documentâ€™s text.\",\
+                \"summary\":\"Summary of the document’s text.\",\
                 \"themes\":[\
                 {\
                         \"evidence\":1,\
@@ -614,7 +617,7 @@ namespace {
         CHECK_EQUAL("6F9619FF8B86D011B42D00CF4FC964FF", analyticData->GetId());
         CHECK_EQUAL(PROCESSED, analyticData->GetStatus());
         CHECK_EQUAL(0.8295653, analyticData->GetSentimentScore());
-        CHECK_EQUAL("Summary of the documentâ€™s text.", analyticData->GetSummary());
+        CHECK_EQUAL("Summary of the document’s text.", analyticData->GetSummary());
         CHECK_EQUAL(1, analyticData->GetThemes()->size());
         CHECK_EQUAL(1, analyticData->GetEntities()->size());
         CHECK_EQUAL(1, analyticData->GetTopics()->size());
@@ -684,7 +687,15 @@ namespace {
                         \"attributes\":[\
                             {\
                                 \"label\":\"Attribute\",\
-                                \"count\":5\
+                                \"count\":5,\
+                                \"mentions\" : [\
+                                      {\
+                                         \"label\" : \"something\",\
+                                         \"is_negated\" : true,\
+                                         \"negating_phrase\" : \"negator\",\
+                                         \"indexes\" : [ 5, 7, 17, 24, 56, 82, 99 ]\
+                                      }\
+                                ]\
                             }\
                         ],\
                         \"mentions\" : [\
@@ -749,16 +760,20 @@ namespace {
         CHECK_EQUAL(7, facetObj->GetNeutralCount());
         CHECK_EQUAL(1, facetObj->GetAttributes()->size());
 
-        
-        
+
         Attribute* attributeObj = facetObj->GetAttributes()->at(0);
         CHECK_EQUAL("Attribute", attributeObj->GetLabel());
         CHECK_EQUAL(5, attributeObj->GetCount());
 
+        Mention* attMention = attributeObj->GetMentions()->at(0);
+        CHECK_EQUAL("something", attMention->GetLabel());
+        CHECK_EQUAL(5, attMention->GetIndexes()->at(0));
+
+
         Mention* mention = facetObj->GetMentions()->at(0);
         CHECK_EQUAL("Mention_009", mention->GetLabel());
         CHECK_EQUAL(3, mention->GetIndexes()->at(0));
-        
+
         //Check Collection Themes
         CollTheme* themeObj = analyticData->GetThemes()->at(0);
         CHECK_EQUAL(1, themeObj->GetPhrasesCount());
@@ -784,9 +799,6 @@ namespace {
         CHECK_EQUAL("Something", topicObj->GetTitle());
         CHECK_EQUAL("concept", topicObj->GetType());
 
-
-
-        
         delete serializer;
         delete analyticData;
     }

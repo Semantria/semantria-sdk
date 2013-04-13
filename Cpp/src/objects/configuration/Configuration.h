@@ -33,6 +33,7 @@ public:
     int GetUserEntitiesLimit() {return user_entities_limit;}
     int GetFacetsLimit() {return facets_limit;}
     int GetFacetAttributesLimit() {return facet_atts_limit;}
+    int GetAttributeMentionsLimit() {return attribute_mentions_limit;}
     int GetCollThemesLimit() {return coll_themes_limit;}
     int GetCollQueryTopicsLimit() {return coll_query_topics_limit;}
     int GetCollConceptTopicsLimit() {return coll_concept_topics_limit;}
@@ -58,6 +59,8 @@ public:
     void SetFacetsLimit(int facets_limit) {this->facets_limit = facets_limit;}
     void SetFacetAttributesLimit(int facet_atts_limit) {this->facet_atts_limit = facet_atts_limit;}
     void SetFacetMentionsLimit(int facet_mentions_limit) {this->facet_mentions_limit = facet_mentions_limit;}
+    void SetAttributeMentionsLimit(int attribute_mentions_limit) {this->attribute_mentions_limit = attribute_mentions_limit;}
+
     void SetCollThemesLimit(int coll_themes_limit) {this->coll_themes_limit = coll_themes_limit;}
     void SetCollQueryTopicsLimit(int coll_query_topics_limit) {this->coll_query_topics_limit = coll_query_topics_limit;}
     void SetCollConceptTopicsLimit(int coll_concept_topics_limit) {this->coll_concept_topics_limit = coll_concept_topics_limit;}
@@ -89,18 +92,19 @@ private:
     string pos_types;
     int summary_limit;
     bool detect_language;
-    
-        
+
+
 
     //collection
     int facets_limit;
     int facet_atts_limit;
     int facet_mentions_limit;
+    int attribute_mentions_limit;
     int coll_concept_topics_limit;
     int coll_query_topics_limit;
     int coll_named_entities_limit;
     int coll_themes_limit;
-    
+
     //
 };
 

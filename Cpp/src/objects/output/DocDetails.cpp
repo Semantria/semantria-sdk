@@ -1,11 +1,3 @@
-//
-//  DocDetails.cpp
-//  semantria-sdk
-//
-//  Created by Michail Kropivka on 14.02.13.
-//  Copyright (c) 2013 Michail Kropivka. All rights reserved.
-//
-
 #include "DocDetails.h"
 
 

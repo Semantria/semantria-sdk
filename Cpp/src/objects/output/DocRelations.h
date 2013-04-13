@@ -1,11 +1,3 @@
-//
-//  DocRelations.h
-//  semantria-sdk
-//
-//  Created by Michail Kropivka on 15.02.13.
-//  Copyright (c) 2013 Michail Kropivka. All rights reserved.
-//
-
 #ifndef __semantria_sdk__DocRelations__
 #define __semantria_sdk__DocRelations__
 

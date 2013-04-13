@@ -1,11 +1,3 @@
-//
-//  DocRelEntities.cpp
-//  semantria-sdk
-//
-//  Created by Michail Kropivka on 15.02.13.
-//  Copyright (c) 2013 Michail Kropivka. All rights reserved.
-//
-
 #include "DocRelEntities.h"
 
 DocRelEntities::DocRelEntities() {}

@@ -1,11 +1,3 @@
-//
-//  Statistics.cpp
-//  semantria-sdk
-//
-//  Created by Michail Kropivka on 16.02.13.
-//  Copyright (c) 2013 Michail Kropivka. All rights reserved.
-//
-
 #include "Statistics.h"
 
 Statistics::Statistics() {

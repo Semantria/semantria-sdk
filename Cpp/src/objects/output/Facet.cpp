@@ -7,6 +7,7 @@ Facet::Facet() {
 
 Facet::~Facet() {
     delete attributes;
+    delete mentions;
 }
 
 void Facet::Serialize(Json::Value& root) {}
@@ -30,11 +31,11 @@ void Facet::Deserialize(Json::Value& root) {
         attr->Deserialize(attributesj[i]);
         this->attributes->push_back(attr);
     }
-    
+
     if (NULL == this->mentions) {
         this->mentions = new vector<Mention*>();
     }
-    
+
     Json::Value mentionsj = root["mentions"];
     for ( int i = 0; i < mentionsj.size(); ++i ) {
         Mention* attr = new Mention();
