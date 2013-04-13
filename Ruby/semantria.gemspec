@@ -12,7 +12,7 @@ Semantria offers Ruby SDK, that is the most convenient way to get started with t
 SDK implements all the available Semantria features and demonstrate best practices of API usage.'
 
 Gem::Specification.new do |s|
-  s.name = 'semantria'
+  s.name = 'semantria_sdk'
   s.version = Semantria::VERSION
   s.summary = 'Semantria Ruby SDK'
   s.description  = LONG_DESCRIPTION
