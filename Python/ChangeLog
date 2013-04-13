@@ -1,5 +1,9 @@
 CHANGELOG
 
+3.0.71 - Added support of Mentions for attributes of collection processing mode
+	- Added 'attribute_mentions_limit' configuration option for collection mode settings
+	- Added Mentions output for Attribute object of collection
+
 3.0.70 - Added support of Semantria API 3.0.1. The changes are:
 	- Removed 'user_ntities' feature availability marker from Subscription for collection mode
 	- Added 'mentions' feature availability marker to Subscription for collection mode
