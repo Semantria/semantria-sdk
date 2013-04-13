@@ -132,6 +132,10 @@ namespace Semantria.Com.Mapping.Configuration
         [XmlElementAttribute("facet_mentions_limit")]
         public int FacetMentionsLimit { get; set; }
 
+        [DataMember(Name = "attribute_mentions_limit")]
+        [XmlElementAttribute("attribute_mentions_limit")]
+        public int AttributeMentionsLimit { get; set; }
+
         [DataMember(Name = "concept_topics_limit")]
         [XmlElementAttribute("concept_topics_limit")]
         public int ConceptTopicsLimit { get; set; }

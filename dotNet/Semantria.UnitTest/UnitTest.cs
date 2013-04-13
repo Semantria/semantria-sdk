@@ -66,7 +66,7 @@ namespace Semantria.Com.TestUnitApi
         [TestInitialize()]
         public void MyTestInitialize() 
         {
-            _serializer = new XmlSerializer();
+            _serializer = new JsonSerializer();
             _session = Session.CreateSession(_consumerKey, _consumerSecret, _serializer);
 
             _session.Request += new Session.RequestHandler(session_Request);

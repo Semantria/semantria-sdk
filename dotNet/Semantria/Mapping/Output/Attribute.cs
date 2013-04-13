@@ -16,5 +16,10 @@ namespace Semantria.Com.Mapping.Output
         [DataMember(Name = "count")]
         [XmlElementAttribute("count")]
         public int Count { get; set; }
+
+        [DataMember(Name = "mentions")]
+        [XmlArrayAttribute("mentions")]
+        [XmlArrayItemAttribute("mention", typeof(Mention))]
+        public List<Mention> Mentions { get; set; }
     }
 }

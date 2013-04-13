@@ -1,7 +1,11 @@
 CHANGELOG
 
-3.0.71 - ResponseErrorEventArgs type has been added for correct server-side errors handling.
-Session type, unit tests and test app enhanced with appropriate changes.
+3.0.72 - Added support of Mentions for attributes of collection processing mode
+	- Added 'AttributeMentionsLimit' configuration option for collection mode settings
+	- Added Mentions output for Attribute object of collection
+
+3.0.71 - ResponseErrorEventArgs type has been added for correct server-side errors handling
+	- Session type, unit tests and test app enhanced with appropriate changes
 
 3.0.70 - Added support of Semantria API 3.0.1. The changes are:
 	- Removed 'user_ntities' feature availability marker from Subscription for collection mode
