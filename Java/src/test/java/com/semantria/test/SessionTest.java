@@ -70,7 +70,7 @@ public class SessionTest
 		conf.setName("TEST_CONFIG");
 		conf.setLanguage("English");
 		conf.setDocument(new DocConfiguration(5, 5, 5, 5, 5, 5, 5, 5, true, true, 5, "Noun", 5, 5));
-		conf.setCollection(new CollConfiguration(5, 5, 5, 5, 5, 5, 5));
+		conf.setCollection(new CollConfiguration(5, 5, 5, 5, 5, 5, 5, 5));
 
 		session.addConfigurations(Arrays.asList(conf));
 		
