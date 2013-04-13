@@ -1,4 +1,5 @@
 <?php
+namespace Semantria;
 
 class AuthRequest 
 {
@@ -23,14 +24,11 @@ class AuthRequest
 	function __construct($consumerKey = NULL, $consumerSecret = NULL, $applicationName = NULL, $use_compression = FALSE)
 	{
 		if (empty($consumerKey))
-		{
-			throw new Exception('Parameter is null or empty "'.$consumerKey.'"');
-		}
-		if (empty($consumerSecret))
-		{
-			throw new Exception('Parameter is null or empty "'.$consumerSecret.'"');
-		}
-		
+			throw new \Exception('Parameter is null or empty "'.$consumerKey.'"');
+
+        if (empty($consumerSecret))
+			throw new \Exception('Parameter is null or empty "'.$consumerSecret.'"');
+
 		$this->_consumerKey = $consumerKey;
 		$this->_consumerSecret = $consumerSecret;
 		$this->_applicationName = $applicationName;
@@ -42,10 +40,10 @@ class AuthRequest
 		$nonce = uniqid('');
 		$timestamp = time();
 		$query = $this->generateQuery($method, $url, $timestamp, $nonce);
-		$authheader = $this->generateAuthHeader($query, $timestamp, $nonce);
+		$auth_header = $this->generateAuthHeader($query, $timestamp, $nonce);
 		
 		$headers = array();
-		$headers[] = 'Authorization: '.$authheader;
+		$headers[] = 'Authorization: '.$auth_header;
 		if ($method == "POST") {
 			$headers[] = 'Content-type: application/x-www-form-urlencoded';
 		}
@@ -56,7 +54,7 @@ class AuthRequest
 		$response = $this->httpRequest($query, $method, $headers, $body);
 		return $response;
 	}
-	
+
 	protected function generateQuery($method, $url, $timestamp, $nonce)
 	{
 		$ps = @parse_url($url);
@@ -80,7 +78,7 @@ class AuthRequest
 		$hash = $this->getSHA1($md5cs, $escquery);
 		
 		$headers = array();
-		$headers["OAuth realm"] = "";
+		$headers['OAuth realm'] = "";
 		$headers[$this->OAuthVersionKey] = $this->OAuthVersion;
 		$headers[$this->OAuthTimestampKey] = $timestamp;
 		$headers[$this->OAuthNonceKey] = $nonce;

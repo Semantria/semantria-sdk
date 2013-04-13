@@ -11,7 +11,7 @@ $id = uniqid('');
 $message = "Amazon Web Services has announced a new feature called VM£Ware Import, which "
     . "allows IT departments to move virtual machine images from their internal data centers to the cloud.";
 
-class SessionCallbackHandler extends CallbackHandler
+class SessionCallbackHandler extends \Semantria\CallbackHandler
 {
     function onRequest($sender, $args)
     {
@@ -44,6 +44,10 @@ class SessionCallbackHandler extends CallbackHandler
     }
 }
 
+/**
+ * Class SemantriaTest
+ * @property \Semantria\Session $session
+ */
 class SemantriaTest extends PHPUnit_Framework_TestCase
 {
     private $consumerKey;
@@ -54,7 +58,7 @@ class SemantriaTest extends PHPUnit_Framework_TestCase
     {
         $this->consumerKey = CONSUMER_KEY;
         $this->consumerSecret = CONSUMER_SECRET;
-        $this->session = new Session($this->consumerKey, $this->consumerSecret, NULL, NULL, TRUE);
+        $this->session = new \Semantria\Session($this->consumerKey, $this->consumerSecret, NULL, NULL, TRUE);
 
         $callback = new SessionCallbackHandler();
         $this->session->setCallbackHandler($callback);

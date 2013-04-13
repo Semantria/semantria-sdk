@@ -1,4 +1,5 @@
 <?php
+namespace Semantria\Tools;
 
 /**
 * Formats a string with zero-based placeholders
@@ -99,7 +100,7 @@ function processUpdateProxyClonedElement($obj) {
 			unset($clonedConfig['config_id']);
 			$obj["added"][] = $clonedConfig;
 		} else {
-			throw new Exception('Unsupported object type: '.$obj);
+			throw new \Exception('Unsupported object type: '.$obj);
 		}
 		
 		unset($obj["cloned"]);

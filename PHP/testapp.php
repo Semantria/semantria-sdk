@@ -14,7 +14,7 @@ $initialTexts = array(
     "On this day in 1786 - In New York City  commercial ice cream was manufactured for the first time."
 );
 
-class SessionCallbackHandler extends CallbackHandler
+class SessionCallbackHandler extends \Semantria\CallbackHandler
 {
     function onRequest($sender, $args)
     {
@@ -48,7 +48,7 @@ class SessionCallbackHandler extends CallbackHandler
 }
 
 // Initializes new session with the serializer object and the keys.
-$session = new Session(CONSUMER_KEY, CONSUMER_SECRET, NULL, NULL, TRUE);
+$session = new \Semantria\Session(CONSUMER_KEY, CONSUMER_SECRET, NULL, NULL, TRUE);
 
 // Initialize session callback handler
 $callback = new SessionCallbackHandler();

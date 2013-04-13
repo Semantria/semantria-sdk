@@ -1,10 +1,11 @@
 <?php
+namespace Semantria;
 
 require_once('authrequest.php');
 require_once('jsonserializer.php');
-require_once('common.php');
+//require_once('common.php');
 
-define('WRAPPER_VERSION', "3.0.70");
+define('WRAPPER_VERSION', "3.0.71");
 
 class Session
 {
@@ -25,11 +26,11 @@ class Session
     public function __construct($consumerKey, $consumerSecret, $serializer = NULL, $applicationName = NULL, $use_compression = FALSE)
     {
         if (empty($consumerKey)) {
-            throw new Exception('Consumer KEY can\'t be empty.');
+            throw new \Exception('Consumer KEY can\'t be empty.');
         }
 
         if (empty($consumerSecret)) {
-            throw new Exception('Consumer SECRET can\'t be empty.');
+            throw new \Exception('Consumer SECRET can\'t be empty.');
         }
 
         $this->consumerKey = $consumerKey;
@@ -60,20 +61,24 @@ class Session
 
     public function setCallbackHandler(&$callback)
     {
-        if (is_subclass_of($callback, "CallbackHandler")) {
+        if (is_subclass_of($callback, '\Semantria\CallbackHandler')) {
             $this->callback = $callback;
         } else {
-            throw new Exception('Parameter is not subclass of CallbackHandler "' . $callback . '"');
+            throw new \Exception('Parameter is not subclass of CallbackHandler "' . $callback . '"');
         }
     }
 
+    /**
+     * @param $serializer
+     * @throws \Exception
+     */
     public function registerSerializer($serializer)
     {
         if (isset($serializer)) {
             $this->serializer = $serializer;
             $this->format = $serializer->getType();
         } else {
-            throw new Exception('Parameter is null or empty "' . $serializer . '"');
+            throw new \Exception('Parameter is null or empty "' . $serializer . '"');
         }
     }
 
@@ -128,9 +133,9 @@ class Session
     public function getBlacklist($configId = NULL)
     {
         if (isset($configId)) {
-            $url = string_format('{0}/blacklist.{1}?config_id={2}', $this->host, $this->format, $configId);
+            $url = "{$this->host}/blacklist.{$this->format}?config_id={$configId}";
         } else {
-            $url = string_format('{0}/blacklist.{1}', $this->host, $this->format);
+            $url = "{$this->host}/blacklist.{$this->format}";
         }
 
         $result = $this->runRequest("GET", $url, "get_blacklist");
@@ -148,9 +153,9 @@ class Session
     public function updateBlacklist($items, $configId = NULL)
     {
         if (isset($configId)) {
-            $url = string_format('{0}/blacklist.{1}?config_id={2}', $this->host, $this->format, $configId);
+            $url = "{$this->host}/blacklist.{$this->format}?config_id={$configId}";
         } else {
-            $url = string_format('{0}/blacklist.{1}', $this->host, $this->format);
+            $url = "{$this->host}/blacklist.{$this->format}";
         }
 
         $wrapper = $this->getTypeWrapper("update_blacklist");
@@ -161,9 +166,9 @@ class Session
     public function removeBlacklist($items, $configId = NULL)
     {
         if (isset($configId)) {
-            $url = string_format('{0}/blacklist.{1}?config_id={2}', $this->host, $this->format, $configId);
+            $url = "{$this->host}/blacklist.{$this->format}?config_id={$configId}";
         } else {
-            $url = string_format('{0}/blacklist.{1}', $this->host, $this->format);
+            $url = "{$this->host}/blacklist.{$this->format}";
         }
 
         $wrapper = $this->getTypeWrapper("remove_blacklist");
@@ -174,9 +179,9 @@ class Session
     public function getCategories($configId = NULL)
     {
         if (isset($configId)) {
-            $url = string_format('{0}/categories.{1}?config_id={2}', $this->host, $this->format, $configId);
+            $url = "{$this->host}/categories.{$this->format}?config_id={$configId}";
         } else {
-            $url = string_format('{0}/categories.{1}', $this->host, $this->format);
+            $url = "{$this->host}/categories.{$this->format}";
         }
 
         $result = $this->runRequest("GET", $url, "get_categories");
@@ -194,9 +199,9 @@ class Session
     public function updateCategories($items, $configId = NULL)
     {
         if (isset($configId)) {
-            $url = string_format('{0}/categories.{1}?config_id={2}', $this->host, $this->format, $configId);
+            $url = "{$this->host}/categories.{$this->format}?config_id={$configId}";
         } else {
-            $url = string_format('{0}/categories.{1}', $this->host, $this->format);
+            $url = "{$this->host}/categories.{$this->format}";
         }
 
         $wrapper = $this->getTypeWrapper("update_categories");
@@ -207,9 +212,9 @@ class Session
     public function removeCategories($items, $configId = NULL)
     {
         if (isset($configId)) {
-            $url = string_format('{0}/categories.{1}?config_id={2}', $this->host, $this->format, $configId);
+            $url = "{$this->host}/categories.{$this->format}?config_id={$configId}";
         } else {
-            $url = string_format('{0}/categories.{1}', $this->host, $this->format);
+            $url = "{$this->host}/categories.{$this->format}";
         }
 
         $wrapper = $this->getTypeWrapper("remove_categories");
@@ -220,9 +225,9 @@ class Session
     public function getQueries($configId = NULL)
     {
         if (isset($configId)) {
-            $url = string_format('{0}/queries.{1}?config_id={2}', $this->host, $this->format, $configId);
+            $url = "{$this->host}/queries.{$this->format}?config_id={$configId}";
         } else {
-            $url = string_format('{0}/queries.{1}', $this->host, $this->format);
+            $url = "{$this->host}/queries.{$this->format}";
         }
 
         $result = $this->runRequest("GET", $url, "get_queries");
@@ -240,9 +245,9 @@ class Session
     public function updateQueries($items, $configId = NULL)
     {
         if (isset($configId)) {
-            $url = string_format('{0}/queries.{1}?config_id={2}', $this->host, $this->format, $configId);
+            $url = "{$this->host}/queries.{$this->format}?config_id={$configId}";
         } else {
-            $url = string_format('{0}/queries.{1}', $this->host, $this->format);
+            $url = "{$this->host}/queries.{$this->format}";
         }
 
         $wrapper = $this->getTypeWrapper("update_queries");
@@ -253,9 +258,9 @@ class Session
     public function removeQueries($items, $configId = NULL)
     {
         if (isset($configId)) {
-            $url = string_format('{0}/queries.{1}?config_id={2}', $this->host, $this->format, $configId);
+            $url = "{$this->host}/queries.{$this->format}?config_id={$configId}";
         } else {
-            $url = string_format('{0}/queries.{1}', $this->host, $this->format);
+            $url = "{$this->host}/queries.{$this->format}";
         }
 
         $wrapper = $this->getTypeWrapper("remove_queries");
@@ -266,9 +271,9 @@ class Session
     public function getPhrases($configId = null)
     {
         if (isset($configId)) {
-            $url = string_format('{0}/phrases.{1}?config_id={2}', $this->host, $this->format, $configId);
+            $url = "{$this->host}/phrases.{$this->format}?config_id={$configId}";
         } else {
-            $url = string_format('{0}/phrases.{1}', $this->host, $this->format);
+            $url = "{$this->host}/phrases.{$this->format}";
         }
 
         $result = $this->runRequest("GET", $url, "get_phrases");
@@ -286,9 +291,9 @@ class Session
     public function updatePhrases($items, $configId = NULL)
     {
         if (isset($configId)) {
-            $url = string_format('{0}/phrases.{1}?config_id={2}', $this->host, $this->format, $configId);
+            $url = "{$this->host}/phrases.{$this->format}?config_id={$configId}";
         } else {
-            $url = string_format('{0}/phrases.{1}', $this->host, $this->format);
+            $url = "{$this->host}/phrases.{$this->format}";
         }
 
         $wrapper = $this->getTypeWrapper("update_phrases");
@@ -299,9 +304,9 @@ class Session
     public function removePhrases($items, $configId = NULL)
     {
         if (isset($configId)) {
-            $url = string_format('{0}/phrases.{1}?config_id={2}', $this->host, $this->format, $configId);
+            $url = "{$this->host}/phrases.{$this->format}?config_id={$configId}";
         } else {
-            $url = string_format('{0}/phrases.{1}', $this->host, $this->format);
+            $url = "{$this->host}/phrases.{$this->format}";
         }
 
         $wrapper = $this->getTypeWrapper("remove_phrases");
@@ -312,9 +317,9 @@ class Session
     public function getEntities($configId = NULL)
     {
         if (isset($configId)) {
-            $url = string_format('{0}/entities.{1}?config_id={2}', $this->host, $this->format, $configId);
+            $url = "{$this->host}/entities.{$this->format}?config_id={$configId}";
         } else {
-            $url = string_format('{0}/entities.{1}', $this->host, $this->format);
+            $url = "{$this->host}/entities.{$this->format}";
         }
 
         $result = $this->runRequest("GET", $url, "get_entities");
@@ -332,9 +337,9 @@ class Session
     public function updateEntities($items, $configId = NULL)
     {
         if (isset($configId)) {
-            $url = string_format('{0}/entities.{1}?config_id={2}', $this->host, $this->format, $configId);
+            $url = "{$this->host}/entities.{$this->format}?config_id={$configId}";
         } else {
-            $url = string_format('{0}/entities.{1}', $this->host, $this->format);
+            $url = "{$this->host}/entities.{$this->format}";
         }
 
         $wrapper = $this->getTypeWrapper("update_entities");
@@ -345,9 +350,9 @@ class Session
     public function removeEntities($items, $configId = NULL)
     {
         if (isset($configId)) {
-            $url = string_format('{0}/entities.{1}?config_id={2}', $this->host, $this->format, $configId);
+            $url = "{$this->host}/entities.{$this->format}?config_id={$configId}";
         } else {
-            $url = string_format('{0}/entities.{1}', $this->host, $this->format);
+            $url = "{$this->host}/entities.{$this->format}";
         }
 
         $wrapper = $this->getTypeWrapper("remove_entities");
@@ -358,9 +363,9 @@ class Session
     public function queueDocument($task, $configId = NULL)
     {
         if (isset($configId)) {
-            $url = string_format('{0}/document.{1}?config_id={2}', $this->host, $this->format, $configId);
+            $url = "{$this->host}/document.{$this->format}?config_id={$configId}";
         } else {
-            $url = string_format('{0}/document.{1}', $this->host, $this->format);
+            $url = "{$this->host}/document.{$this->format}";
         }
 
         $wrapper = $this->getTypeWrapper("queue_document");
@@ -378,9 +383,9 @@ class Session
     public function queueBatch($batch, $configId = NULL)
     {
         if (isset($configId)) {
-            $url = string_format('{0}/document/batch.{1}?config_id={2}', $this->host, $this->format, $configId);
+            $url = "{$this->host}/document/batch.{$this->format}?config_id={$configId}";
         } else {
-            $url = string_format('{0}/document/batch.{1}', $this->host, $this->format);
+            $url = "{$this->host}/document/batch.{$this->format}";
         }
 
         $wrapper = $this->getTypeWrapper("queue_batch_documents");
@@ -397,12 +402,12 @@ class Session
 
     public function getDocument($id, $configId = NULL)
     {
-        if (!isset($id)) throw new Exception('Document ID is null or empty');
+        if (!isset($id)) throw new \Exception('Document ID is null or empty');
 
         if (isset($configId)) {
-            $url = string_format('{0}/document/{1}.{2}?config_id={3}', $this->host, $id, $this->format, $configId);
+            $url = "{$this->host}/document/{$id}.{$this->format}?config_id={$configId}";
         } else {
-            $url = string_format('{0}/document/{1}.{2}', $this->host, $id, $this->format);
+            $url = "{$this->host}/document/{$id}.{$this->format}";
         }
 
         return $this->runRequest("GET", $url, "get_document");
@@ -410,12 +415,12 @@ class Session
 
     public function cancelDocument($id, $configId = NULL)
     {
-        if (!isset($id)) throw new Exception('Document ID is null or empty');
+        if (!isset($id)) throw new \Exception('Document ID is null or empty');
 
         if (isset($configId)) {
-            $url = string_format('{0}/document/{1}.{2}?config_id={3}', $this->host, $id, $this->format, $configId);
+            $url = "{$this->host}/document/{$id}.{$this->format}?config_id={$configId}";
         } else {
-            $url = string_format('{0}/document/{1}.{2}', $this->host, $id, $this->format);
+            $url = "{$this->host}/document/{$id}.{$this->format}";
         }
 
         return $this->runRequest("DELETE", $url);
@@ -424,9 +429,9 @@ class Session
     public function getProcessedDocuments($configId = NULL)
     {
         if (isset($configId)) {
-            $url = string_format('{0}/document/processed.{1}?config_id={2}', $this->host, $this->format, $configId);
+            $url = "{$this->host}/document/processed.{$this->format}?config_id={$configId}";
         } else {
-            $url = string_format('{0}/document/processed.{1}', $this->host, $this->format);
+            $url = "{$this->host}/document/processed.{$this->format}";
         }
 
         $result = $this->runRequest("GET", $url, "get_processed_documents");
@@ -439,9 +444,9 @@ class Session
     public function queueCollection($task, $configId = NULL)
     {
         if (isset($configId)) {
-            $url = string_format('{0}/collection.{1}?config_id={2}', $this->host, $this->format, $configId);
+            $url = "{$this->host}/collection.{$this->format}?config_id={$configId}";
         } else {
-            $url = string_format('{0}/collection.{1}', $this->host, $this->format);
+            $url = "{$this->host}/collection.{$this->format}";
         }
 
         $wrapper = $this->getTypeWrapper("queue_collection");
@@ -458,12 +463,12 @@ class Session
 
     public function getCollection($id, $configId = NULL)
     {
-        if (!isset($id)) throw new Exception('Collection ID is null or empty');
+        if (!isset($id)) throw new \Exception('Collection ID is null or empty');
 
         if (isset($configId)) {
-            $url = string_format('{0}/collection/{1}.{2}?config_id={3}', $this->host, $id, $this->format, $configId);
+            $url = "{$this->host}/collection/{$id}.{$this->format}?config_id={$configId}";
         } else {
-            $url = string_format('{0}/collection/{1}.{2}', $this->host, $id, $this->format);
+            $url = "{$this->host}/collection/{$id}.{$this->format}";
         }
 
         return $this->runRequest("GET", $url, "get_collection");
@@ -471,12 +476,12 @@ class Session
 
     public function cancelCollection($id, $configId = NULL)
     {
-        if (!isset($id)) throw new Exception('Collection ID is null or empty');
+        if (!isset($id)) throw new \Exception('Collection ID is null or empty');
 
         if (isset($configId)) {
-            $url = string_format('{0}/collection/{1}.{2}?config_id={3}', $this->host, $id, $this->format, $configId);
+            $url = "{$this->host}/collection/{$id}.{$this->format}?config_id={$configId}";
         } else {
-            $url = string_format('{0}/collection/{1}.{2}', $this->host, $id, $this->format);
+            $url = "{$this->host}/collection/{$id}.{$this->format}";
         }
 
         return $this->runRequest("DELETE", $url);
@@ -485,9 +490,9 @@ class Session
     public function getProcessedCollections($configId = NULL)
     {
         if (isset($configId)) {
-            $url = string_format('{0}/collection/processed.{1}?config_id={2}', $this->host, $this->format, $configId);
+            $url = "{$this->host}/collection/processed.{$this->format}?config_id={$configId}";
         } else {
-            $url = string_format('{0}/collection/processed.{1}', $this->host, $this->format);
+            $url = "{$this->host}/collection/processed.{$this->format}";
         }
 
         $result = $this->runRequest("GET", $url, "get_processed_collections");
@@ -538,7 +543,7 @@ class Session
         if ($status == 400 || $status == 401 || $status == 402 || $status == 403 || $status == 406 || $status == 500)
             $this->onError(array("status" => $status, "message" => $message));
         else
-            throw new Exception('Exception code: ' . $status . ' and message: ' . $message);
+            throw new \Exception('Exception code: ' . $status . ' and message: ' . $message);
     }
 
     private function getTypeHandler($type)
@@ -547,7 +552,9 @@ class Session
             return NULL;
         }
 
-        #only for xml serializer
+        // Only for xml serializer
+        // Need another implementations
+        /*
         if ($type == "get_status") {
             return new GetStatusHandler();
         } elseif ($type == "get_subscription") {
@@ -575,6 +582,7 @@ class Session
         } else {
             return null;
         }
+        */
     }
 
     private function getTypeWrapper($type)
@@ -583,7 +591,8 @@ class Session
             return null;
         }
 
-        #only for xml serializer
+        // Only for xml serializer
+        /*
         if ($type == "update_configurations") {
             return array("root" => "configurations", "added" => "configuration", "removed" => "configuration");
         } elseif ($type == "update_blacklist") {
@@ -605,6 +614,7 @@ class Session
         } else {
             return NULL;
         }
+        */
     }
 
     private function onRequest($request)

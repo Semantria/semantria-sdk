@@ -1,5 +1,5 @@
 <?php
-require_once('common.php');
+namespace Semantria;
 
 class JsonSerializer
 {
@@ -10,8 +10,8 @@ class JsonSerializer
 
     function serialize($obj, $wrapper = NULL)
     {
-        $obj = processUpdateProxyClonedElement($obj);
-        $str = json_encode(utf8Encode($obj));
+        //$obj = processUpdateProxyClonedElement($obj);
+        $str = json_encode($obj);
         return $str;
     }
 
