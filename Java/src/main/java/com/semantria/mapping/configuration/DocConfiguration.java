@@ -16,7 +16,6 @@ public class DocConfiguration
 	private Integer named_entities_limit = null;
 	private Integer user_entities_limit = null;
 	private Integer phrases_limit = null;
-	private Boolean detect_phrases = null;
 	private Boolean detect_language = null;
 	private Integer possible_phrases_limit = null;
 	private String pos_types = null;
@@ -25,7 +24,7 @@ public class DocConfiguration
 
 	public DocConfiguration(){};
 
-	public DocConfiguration(Integer entity_themes_limit, Integer summary_limit, Integer themes_limit, Integer query_topics_limit, Integer concept_topics_limit, Integer named_entities_limit, Integer user_entities_limit, Integer phrases_limit, Boolean detect_phrases, Boolean detect_language, Integer possible_phrases_limit, String pos_types, Integer named_relations_limit, Integer user_relations_limit)
+	public DocConfiguration(Integer entity_themes_limit, Integer summary_limit, Integer themes_limit, Integer query_topics_limit, Integer concept_topics_limit, Integer named_entities_limit, Integer user_entities_limit, Integer phrases_limit, Boolean detect_language, Integer possible_phrases_limit, String pos_types, Integer named_relations_limit, Integer user_relations_limit)
 	{
 		this.entity_themes_limit = entity_themes_limit;
 		this.summary_limit = summary_limit;
@@ -35,7 +34,6 @@ public class DocConfiguration
 		this.named_entities_limit = named_entities_limit;
 		this.user_entities_limit = user_entities_limit;
 		this.phrases_limit = phrases_limit;
-		this.detect_phrases = detect_phrases;
 		this.detect_language = detect_language;
 		this.possible_phrases_limit = possible_phrases_limit;
 		this.pos_types = pos_types;
@@ -59,8 +57,6 @@ public class DocConfiguration
 	public Integer getUserEntitiesLimit() { return user_entities_limit; }
 	@XmlElement(name="phrases_limit")
 	public Integer getPhrasesLimit() { return phrases_limit; }
-	@XmlElement(name = "detect_phrases")
-	public Boolean getDetectPhrases() { return detect_phrases; }
 	@XmlElement(name = "detect_language")
 	public Boolean getDetectLanguage() { return detect_language; }
 	@XmlElement(name="possible_phrases_limit")
@@ -80,7 +76,6 @@ public class DocConfiguration
 	public void setNamedEntitiesLimit( Integer limit ) { named_entities_limit = limit; }
 	public void setUserEntitiesLimit( Integer limit) { user_entities_limit = limit; }
 	public void setPhrasesLimit( Integer limit ) { phrases_limit = limit; }
-	public void setDetectPhrases(Boolean detect_phrases) { this.detect_phrases = detect_phrases; }
 	public void setDetectLanguage(Boolean detect_language) { this.detect_language = detect_language; }
 	public void setPossiblePhrasesLimit( Integer limit ) { possible_phrases_limit = limit; }
 	public void setPosTypes(String pos_types) { this.pos_types = pos_types; }
