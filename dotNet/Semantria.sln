@@ -1,11 +1,13 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Semantria.Com", "Semantria\Semantria.Com.csproj", "{E942AB83-DA93-4B16-A826-FF3993B47329}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Semantria.Com.UnitTest", "Semantria.UnitTest\Semantria.Com.UnitTest.csproj", "{E175AFD1-1DF8-4952-B3AC-BC2E2D4E480C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "TestApp\TestApp.csproj", "{04C6D294-F68C-4B08-BBCB-C4501CE915E9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DocTestApp", "DocTestApp\DocTestApp.csproj", "{04C6D294-F68C-4B08-BBCB-C4501CE915E9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CollTestApp", "CollTestApp\CollTestApp.csproj", "{E5F16089-C786-468A-B80D-05668B074AAF}"
 EndProject
 Global
 	GlobalSection(TestCaseManagementSettings) = postSolution
@@ -50,6 +52,16 @@ Global
 		{04C6D294-F68C-4B08-BBCB-C4501CE915E9}.Release|Mixed Platforms.Build.0 = Release|x86
 		{04C6D294-F68C-4B08-BBCB-C4501CE915E9}.Release|x86.ActiveCfg = Release|x86
 		{04C6D294-F68C-4B08-BBCB-C4501CE915E9}.Release|x86.Build.0 = Release|x86
+		{E5F16089-C786-468A-B80D-05668B074AAF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E5F16089-C786-468A-B80D-05668B074AAF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E5F16089-C786-468A-B80D-05668B074AAF}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{E5F16089-C786-468A-B80D-05668B074AAF}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{E5F16089-C786-468A-B80D-05668B074AAF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E5F16089-C786-468A-B80D-05668B074AAF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E5F16089-C786-468A-B80D-05668B074AAF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E5F16089-C786-468A-B80D-05668B074AAF}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{E5F16089-C786-468A-B80D-05668B074AAF}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{E5F16089-C786-468A-B80D-05668B074AAF}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

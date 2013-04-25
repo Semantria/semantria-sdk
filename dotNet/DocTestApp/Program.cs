@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Text;
 using System.Collections.Generic;
 
 using Semantria.Com;
@@ -7,7 +6,7 @@ using Semantria.Com.Serializers;
 using Semantria.Com.Mapping;
 using Semantria.Com.Mapping.Output;
 
-namespace TestApp
+namespace DocTestApp
 {
     class Program
     {
@@ -24,7 +23,7 @@ namespace TestApp
                 @"On this day in 1786 - In New York City  commercial ice cream was manufactured for the first time."
             };
 
-            System.Console.WriteLine("Semantria service demo.");
+            Console.WriteLine("Semantria Document processing mode demo.");
 
             // Creates JSON serializer instance
             ISerializer serializer = new XmlSerializer();
@@ -35,7 +34,7 @@ namespace TestApp
                 // Error callback handler. This event will be rised in case of server-side error
                 session.Error += new Session.ErrorHandler(delegate(object sender, ResponseErrorEventArgs ea)
                     {
-                        System.Console.WriteLine(string.Format("{0}: {1}", (int)ea.Status, ea.Message));
+                        Console.WriteLine(string.Format("{0}: {1}", (int)ea.Status, ea.Message));
                     });
 
                 foreach (string text in initialTexts)
@@ -52,9 +51,9 @@ namespace TestApp
 
                     // Queues document for processing on Semantria service
                     if (session.QueueDocument(doc) != -1)
-                        System.Console.WriteLine(string.Format("\"{0}\" document queued successfully.", docId));
+                        Console.WriteLine(string.Format("\"{0}\" document queued successfully.", docId));
                 }
-                System.Console.WriteLine();
+                Console.WriteLine();
 
                 // As Semantria isn't real-time solution you need to wait some time before getting of the processed results
                 // In real application here can be implemented two separate jobs, one for queuing of source data another one for retreiving
@@ -66,7 +65,7 @@ namespace TestApp
                     System.Threading.Thread.Sleep(2000);
 
                     // Requests processed results from Semantria service
-                    System.Console.WriteLine("Retrieving your processed results...");
+                    Console.WriteLine("Retrieving your processed results...");
                     ((List<DocAnalyticData>)results).AddRange(session.GetProcessedDocuments());
 
                     resCount -= results.Count;
@@ -75,29 +74,29 @@ namespace TestApp
                 foreach (DocAnalyticData data in results)
                 {
                     // Printing of document sentiment score
-                    System.Console.WriteLine(string.Format("Document {0}. Sentiment score: {1}", data.Id, data.SentimentScore));
+                    Console.WriteLine(string.Format("Document {0}. Sentiment score: {1}", data.Id, data.SentimentScore));
 
                     // Printing of document themes
                     if (data.Themes != null && data.Themes.Count > 0)
                     {
-                        System.Console.WriteLine("Document themes:");
+                        Console.WriteLine("Document themes:");
                         foreach (DocTheme theme in data.Themes)
-                            System.Console.WriteLine(string.Format("\t{0} (sentiment: {1})", theme.Title, theme.SentimentScore));
+                            Console.WriteLine(string.Format("\t{0} (sentiment: {1})", theme.Title, theme.SentimentScore));
                     }
                     
                     // Printing of document entities
                     if (data.Entities != null && data.Entities.Count > 0)
                     {
-                        System.Console.WriteLine("Entities:");
+                        Console.WriteLine("Entities:");
                         foreach (DocEntity entity in data.Entities)
-                            System.Console.WriteLine(string.Format("\t{0} : {1} (sentiment: {2})", entity.Title, entity.EntityType, entity.SentimentScore));
+                            Console.WriteLine(string.Format("\t{0} : {1} (sentiment: {2})", entity.Title, entity.EntityType, entity.SentimentScore));
                     }
                     
-                    System.Console.WriteLine();
+                    Console.WriteLine();
                 }
             }
 
-            System.Console.ReadKey(false);
+            Console.ReadKey(false);
         }
     }
 }

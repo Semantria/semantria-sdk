@@ -1,5 +1,12 @@
 CHANGELOG
 
+3.0.74 - Added demo application for collection processing mode
+	- Added CollTestApp for collection processing mode
+	- TestApp renamed to DocTestApp for document processing mode
+	- Some minor changes in AssemblyInfo files have been made
+
+3.0.73 - Removed unnecessary fields from Facet object for collection processing mode
+
 3.0.72 - Added support of Mentions for attributes of collection processing mode
 	- Added 'AttributeMentionsLimit' configuration option for collection mode settings
 	- Added Mentions output for Attribute object of collection
