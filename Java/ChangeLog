@@ -1,5 +1,7 @@
 CHANGELOG
 
+3.0.72 - Fixed the problem with failing of some unit tests.
+
 3.0.71 - Added support of Mentions for attributes of collection processing mode
 	- Added 'attribute_mentions_limit' configuration option for collection mode settings
 	- Added Mentions output for Attribute object of collection
