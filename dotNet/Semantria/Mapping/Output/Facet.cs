@@ -39,20 +39,5 @@ namespace Semantria.Com.Mapping.Output
         [XmlArrayAttribute("mentions")]
         [XmlArrayItemAttribute("mention", typeof(Mention))]
         public List<Mention> Mentions { get; set; }
-
-        [DataMember(Name = "entities")]
-        [XmlArrayAttribute("entities")]
-        [XmlArrayItemAttribute("entity", typeof(DocEntity))]
-        public List<DocEntity> Entities { get; set; }
-
-        [DataMember(Name = "topics")]
-        [XmlArrayAttribute("topics")]
-        [XmlArrayItemAttribute("topic", typeof(DocTopic))]
-        public List<DocTopic> Topics { get; set; }
-
-        [DataMember(Name = "themes")]
-        [XmlArrayAttribute("themes")]
-        [XmlArrayItemAttribute("theme", typeof(DocTheme))]
-        public List<DocTheme> Themes { get; set; }
     }
 }
