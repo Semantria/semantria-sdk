@@ -31,7 +31,7 @@ function Session(consumerKey, consumerSecret, serializer, applicationName, useCo
 	
     this.applicationName = applicationName ? applicationName + '/' : '';
     this.wrapperName = 'JavaScript';
-    this.wrapperVersion = '3.0.70';
+    this.wrapperVersion = '3.0.71';
 
 	this.serializer = serializer || new JsonSerializer();
 	this.format = this.serializer.getType();
