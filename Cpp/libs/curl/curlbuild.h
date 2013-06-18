@@ -143,7 +143,7 @@
 /* header file inttypes.h must be included by the external interface. */
 #define CURL_PULL_INTTYPES_H 1
 #ifdef CURL_PULL_INTTYPES_H
-#  include <inttypes.h>
+//#  include <inttypes.h>
 #endif
 
 /* Configure process defines this to 1 when it finds out that system    */

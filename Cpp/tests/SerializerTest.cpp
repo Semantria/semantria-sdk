@@ -49,12 +49,20 @@ namespace {
     TEST(JsonSerializingConfigurations) {
         cout << "JsonSerializingConfigurations" << endl;
         JsonSerializer * serializer = new JsonSerializer();
-        string expectedResult = "[{\"auto_response\":true,\"callback\":\"https://anyapi.anydomain.com/processed/docs.json\",\"chars_threshold\":80,\"collection\":{\"attribute_mentions_limit\":2,\"concept_topics_limit\":5,\"facet_atts_limit\":5,\"facet_mentions_limit\":5,\"facets_limit\":15,\"named_entities_limit\":5,\"query_topics_limit\":5,\"themes_limit\":0},\"document\":{\"concept_topics_limit\":5,\"detect_language\":true,\"entity_themes_limit\":5,\"named_entities_limit\":5,\"named_relations_limit\":0,\"phrases_limit\":10,\"pos_types\":\"\",\"possible_phrases_limit\":0,\"query_topics_limit\":5,\"summary_limit\":0,\"themes_limit\":0,\"user_entities_limit\":5,\"user_relations_limit\":0},\"is_primary\":true,\"language\":\"English\",\"name\":\"A test configuration\",\"one_sentence\":false}]";
+        string expectedResult = "[{\"auto_response\":true,\"callback\":\"https://anyapi.anydomain.com/processed/docs.json\",\"chars_threshold\":80,"
+        "\"collection\":{\"attribute_mentions_limit\":2,\"concept_topics_limit\":5,\"facet_atts_limit\":5,\"facet_mentions_limit\":5,"
+        "\"facets_limit\":15,\"named_entities_limit\":5,\"query_topics_limit\":5,\"themes_limit\":0},\"document\":{\"concept_topics_limit\":5,"
+        "\"detect_language\":true,\"entity_themes_limit\":5,\"named_entities_limit\":5,\"named_mentions_limit\":0,\"named_opinions_limit\":0,"
+        "\"named_relations_limit\":0,\"phrases_limit\":10,\"pos_types\":\"\",\"possible_phrases_limit\":0,\"query_topics_limit\":5,"
+        "\"summary_limit\":0,\"theme_mentions_limit\":0,\"themes_limit\":0,\"user_entities_limit\":5,\"user_mentions_limit\":0,"
+        "\"user_opinions_limit\":0,\"user_relations_limit\":0},\"is_primary\":true,\"language\":\"English\",\"name\":\"A test configuration\","
+        "\"one_sentence\":false,\"template\":\"template\"}]";
 
         vector<Configuration*>* list = new vector<Configuration*>();
 
         Configuration* addedConfiguration = new Configuration();
         addedConfiguration->SetName("A test configuration");
+        addedConfiguration->SetTemplate("template");
         addedConfiguration->SetIsPrimary(true);
         addedConfiguration->SetAutoResponding(true);
         addedConfiguration->SetLanguage("English");
@@ -132,10 +140,11 @@ namespace {
     TEST(JsonSerializingEntity) {
         cout << "JsonSerializingEntity" << endl;
         JsonSerializer * serializer = new JsonSerializer();
-        string expectedResult = "[{\"name\":\"chair\",\"type\":\"furniture\"}]";
+        string expectedResult = "[{\"label\":\"wiki\",\"name\":\"chair\",\"type\":\"furniture\"}]";
 
         vector<UserEntity*>* list = new vector<UserEntity*>();
         UserEntity* addedEntity = new UserEntity("chair", "furniture");
+        addedEntity->SetLabel("wiki");
         list->push_back(addedEntity);
 
         CHECK_EQUAL(expectedResult, eraseLastCharacter(serializer->Serialize((vector<JsonSerializable*>*)list)));
@@ -267,7 +276,9 @@ namespace {
                                 \"calls_limit_interval\" : 60,\
                                 \"docs_balance\" : 49897,\
                                 \"docs_limit\" : 0,\
-                                \"docs_limit_interval\" : 0\
+                                \"docs_limit_interval\" : 0,\
+                                \"docs_suggested\" : 12,\
+                                \"docs_suggested_interval\" : 30\
                             },\
                             \"basic_settings\":{\
                                 \"configurations_limit\" : 10,\
@@ -290,6 +301,8 @@ namespace {
                                     \"named_entities\": true,\
                                     \"user_entities\": true,\
                                     \"entity_themes\": false,\
+                                    \"mentions\" : false,\
+                                    \"opinions\" : false,\
                                     \"named_relations\": false,\
                                     \"user_relations\": false,\
                                     \"query_topics\": true,\
@@ -322,9 +335,14 @@ namespace {
         CHECK_EQUAL(87, subscription->GetCallsBalance());
         CHECK_EQUAL(100, subscription->GetCallsLimit());
         CHECK_EQUAL(60, subscription->GetCallsLimitInterval());
+
         CHECK_EQUAL(49897, subscription->GetDocsBalance());
         CHECK_EQUAL(0, subscription->GetDocsLimit());
         CHECK_EQUAL(0, subscription->GetDocsLimitInterval());
+
+        CHECK_EQUAL(12, subscription->GetDocsSuggested()   );
+        CHECK_EQUAL(30, subscription->GetDocsSuggestedInterval());
+
         CHECK_EQUAL(10, subscription->GetConfigurationsLimit());
         CHECK_EQUAL(100, subscription->GetBlacklistLimit());
         CHECK_EQUAL(100, subscription->GetCategoriesLimit());
@@ -337,6 +355,9 @@ namespace {
         CHECK_EQUAL(2, subscription->GetAutoResponseLimit());
         CHECK_EQUAL(100, subscription->GetProcessedBatchLimit());
         CHECK_EQUAL(100, subscription->GetCallbackBatchLimit());
+
+        CHECK_EQUAL(false, subscription->GetDocMentions());
+        CHECK_EQUAL(false, subscription->GetOpinions());
 
         CHECK_EQUAL(true, subscription->GetFacets());
         CHECK_EQUAL(false, subscription->GetMentions());
@@ -453,7 +474,7 @@ namespace {
     TEST(JsonDeserializingEntities) {
         cout << "JsonDeserializingEntities" << endl;
         JsonSerializer * serializer = new JsonSerializer();
-        string source = "[{\"name\":\"chair\",\"type\":\"furniture\"}]";
+        string source = "[{\"name\":\"chair\",\"type\":\"furniture\",\"label\":\"wiki\"}]";
 
         Json::Value root;
         Json::Reader reader;
@@ -470,6 +491,7 @@ namespace {
         CHECK_EQUAL(1, entities->size());
         CHECK_EQUAL("chair", entities->at(0)->GetName());
         CHECK_EQUAL("furniture", entities->at(0)->GetType());
+        CHECK_EQUAL("wiki", entities->at(0)->GetLabel());
 
         delete serializer;
         delete stub;
@@ -485,6 +507,7 @@ namespace {
         \"overall_texts\": 129863,\
         \"overall_batches\": 1300,\
         \"overall_calls\": 13769,\
+        \"overall_exceeded\" : 1200,\
         \"calls_system\": 21,\
         \"calls_data\": 13748,\
         \"overall_docs\": 121863,\
@@ -505,6 +528,7 @@ namespace {
                 \"overall_texts\": 129863,\
                 \"overall_batches\": 1300,\
                 \"overall_calls\": 13769,\
+                \"overall_exceeded\" : 1200,\
                 \"calls_system\": 21,\
                 \"calls_data\": 13748,\
                 \"overall_docs\": 121863,\
@@ -534,7 +558,11 @@ namespace {
 
         CHECK_EQUAL("Subscriber", statistic->GetName());
         CHECK_EQUAL(8000, statistic->GetCollsDocuments());
+        CHECK_EQUAL(1200, statistic->GetOverallExceeded());
+
         CHECK_EQUAL("cd2e7341-a3c2-4fb4-9d3a-779e8b0a5eff", statistic->GetConfigurations()->at(0)->GetConfigId());
+        CHECK_EQUAL(1200, statistic->GetConfigurations()->at(0)->GetOverallExceeded());
+
 
 
         delete serializer;
@@ -548,7 +576,11 @@ namespace {
                 \"id\":\"6F9619FF8B86D011B42D00CF4FC964FF\",\
                 \"config_id\":\"23498367\",\
                 \"status\":\"PROCESSED\",\
+                \"source_text\" : \"See Output Data Details chapter.\",\
+                \"language\" : \"English\",\
+                \"language_score\" : 0.6972651,\
                 \"sentiment_score\":0.8295653,\
+                \"sentiment_polarity\" : \"positive\",\
                 \"summary\":\"Summary of the document’s text.\",\
                 \"themes\":[\
                 {\
@@ -556,7 +588,20 @@ namespace {
                         \"is_about\":true,\
                         \"strength_score\":0.0,\
                         \"sentiment_score\":0.0,\
-                        \"title\":\"republican moderates\"\
+                        \"title\":\"republican moderates\",\
+                        \"mentions\" : [\
+                              {\
+                                 \"label\" : \"Something\",\
+                                 \"is_negated\" : false,\
+                                 \"negating_phrase\" : \"negator\",\
+                                 \"locations\" : [\
+                                     {\
+                                        \"offset\" : 987,\
+                                        \"length\" : 9\
+                                     }\
+                                 ]\
+                              }\
+                        ]\
                     }\
                 ],\
                 \"entities\":[\
@@ -567,18 +612,74 @@ namespace {
                     \"confident\":true,\
                     \"entity_type\":\"Place\",\
                     \"title\":\"WASHINGTON\",\
+                    \"label\" : \"The capital of the United States of America.\",\
                     \"sentiment_score\":1.0542796,\
+                    \"sentiment_polarity\" : \"positive\",\
+                    \"mentions\" : [\
+                              {\
+                                 \"label\" : \"Something\",\
+                                 \"is_negated\" : false,\
+                                 \"negating_phrase\" : \"negator\",\
+                                 \"locations\" : [\
+                                     {\
+                                        \"offset\" : 123,\
+                                        \"length\" : 9\
+                                     }\
+                                 ]\
+                              }\
+                        ],\
                     \"themes\":[\
                         {\
                             \"evidence\":1,\
                             \"is_about\":true,\
                             \"strength_score\":0.0,\
                             \"sentiment_score\":0.0,\
-                            \"title\":\"republican moderates\"\
+                            \"title\":\"republican moderates\",\
+                            \"mentions\" : [\
+                              {\
+                                 \"label\" : \"Something\",\
+                                 \"is_negated\" : false,\
+                                 \"negating_phrase\" : \"negator\",\
+                                 \"locations\" : [\
+                                     {\
+                                        \"offset\" : 321,\
+                                        \"length\" : 9\
+                                     }\
+                                 ]\
+                              }\
+                        ]\
                         }\
                     ]\
                     }\
                 ],\
+                \"relations\" : [ \
+                    {\
+                        \"type\" : \"named\",\
+                        \"relation_type\" : \"Occupation\",\
+                        \"confidence_score\" : 1.0,\
+                        \"extra\" : \"\", \
+                        \"entities\" : [\
+                            {\
+                                 \"title\" : \"head judge\",\
+                                \"entity_type\" : \"Job Title\" \
+                            },\
+                            { \
+                                \"title\" : \"John Snow\",\
+                                \"entity_type\" : \"Person\"\
+                            }\
+                        ]\
+                    }\
+                ],\
+                \"opinions\" : [ \
+                    { \
+                         \"quotation\" : \"Some expressed opinion of John Kerry about United States.\",\
+                         \"type\" : \"named\", \
+                         \"speaker\" : \"John Kerry\", \
+                         \"topic\" : \"United States\", \
+                         \"sentiment_score\" : 0.49 ,\
+                         \"sentiment_polarity\" : \"positive\"\
+                     } \
+                 ],\
                 \"topics\":[\
                     {\
                         \"title\":\"Something\",\
@@ -618,6 +719,12 @@ namespace {
         CHECK_EQUAL(PROCESSED, analyticData->GetStatus());
         CHECK_EQUAL(0.8295653, analyticData->GetSentimentScore());
         CHECK_EQUAL("Summary of the document’s text.", analyticData->GetSummary());
+
+        CHECK_EQUAL("See Output Data Details chapter.", analyticData->GetSourceText());
+        CHECK_EQUAL("English", analyticData->GetLanguage());
+        CHECK_EQUAL(0.6972651, analyticData->GetLanguageScore());
+        CHECK_EQUAL("positive", analyticData->GetSentimentPolarity());
+
         CHECK_EQUAL(1, analyticData->GetThemes()->size());
         CHECK_EQUAL(1, analyticData->GetEntities()->size());
         CHECK_EQUAL(1, analyticData->GetTopics()->size());
@@ -629,6 +736,14 @@ namespace {
         CHECK_EQUAL(0.0, themeObj->GetStrengthScore());
         CHECK_EQUAL("republican moderates", themeObj->GetTitle());
         CHECK(themeObj->GetIsAbout());
+        // mentions
+        MentionWithLocations* mention = themeObj->GetMentions()->at(0);
+        CHECK_EQUAL("Something", mention->GetLabel());
+        CHECK_EQUAL(false, mention->GetIsNedated());
+        CHECK_EQUAL("negator", mention->GetNegationPhrase());
+        Location* location = mention->GetLocations()->at(0);
+        CHECK_EQUAL(987, location->GetOffset());
+        CHECK_EQUAL(9, location->GetLength());
 
         //Check Document Entities
         DocEntity* entityObj = analyticData->GetEntities()->at(0);
@@ -636,9 +751,19 @@ namespace {
         CHECK(entityObj->GetIsAbout());
         CHECK(entityObj->GetConfident());
         CHECK_EQUAL("WASHINGTON", entityObj->GetTitle());
+        CHECK_EQUAL("The capital of the United States of America.", entityObj->GetLabel());
         CHECK_EQUAL(1.0542796, entityObj->GetSentimentScore());
+        CHECK_EQUAL("positive", entityObj->GetSentimentPolarity());
         CHECK_EQUAL("Place", entityObj->GetEntityType());
         CHECK_EQUAL("named", entityObj->GetType());
+        // mentions
+        MentionWithLocations* mention1 = entityObj->GetMentions()->at(0);
+        CHECK_EQUAL("Something", mention1->GetLabel());
+        CHECK_EQUAL(false, mention1->GetIsNedated());
+        CHECK_EQUAL("negator", mention1->GetNegationPhrase());
+        Location* location1 = mention1->GetLocations()->at(0);
+        CHECK_EQUAL(123, location1->GetOffset());
+        CHECK_EQUAL(9, location1->GetLength());
 
         //Check Entity Themes
         CHECK_EQUAL(1, entityObj->GetThemes()->size());
@@ -648,6 +773,35 @@ namespace {
         CHECK_EQUAL(0.0, entityThemeObj->GetStrengthScore());
         CHECK_EQUAL("republican moderates", entityThemeObj->GetTitle());
         CHECK(entityThemeObj->GetIsAbout());
+        // mentions
+        MentionWithLocations* mention2 = entityThemeObj->GetMentions()->at(0);
+        CHECK_EQUAL("Something", mention2->GetLabel());
+        CHECK_EQUAL(false, mention2->GetIsNedated());
+        CHECK_EQUAL("negator", mention2->GetNegationPhrase());
+        Location* location2 = mention2->GetLocations()->at(0);
+        CHECK_EQUAL(321, location2->GetOffset());
+        CHECK_EQUAL(9, location2->GetLength());
+
+        //Check Document Relations
+        CHECK_EQUAL(1, analyticData->GetRelations()->size());
+        DocRelations* relations = analyticData->GetRelations()->at(0);
+        CHECK_EQUAL("Occupation", relations->GetRelationType());
+        CHECK_EQUAL("named", relations->GetType());
+        CHECK_EQUAL(2, relations->GetEntitles()->size());
+        DocRelEntities* ent1 = relations->GetEntitles()->at(0);
+        CHECK_EQUAL("Job Title", ent1->GetEntityType());
+        CHECK_EQUAL("head judge", ent1->GetTitle());
+
+        //Check Document Opinions
+        CHECK_EQUAL(1, analyticData->GetOpinions()->size());
+        DocOpinion* opinion = analyticData->GetOpinions()->at(0);
+        CHECK_EQUAL("Some expressed opinion of John Kerry about United States.", opinion->GetQuotation());
+        CHECK_EQUAL("named", opinion->GetType());
+        CHECK_EQUAL("John Kerry", opinion->GetSpeaker());
+        CHECK_EQUAL("United States", opinion->GetTopic());
+        CHECK_EQUAL(0.49, opinion->GetSentimentScore());
+        CHECK_EQUAL("positive", opinion->GetSentimentPolarity());
+
 
         //Check Document Topics
         CHECK_EQUAL(1, analyticData->GetTopics()->size());
@@ -719,6 +873,7 @@ namespace {
                 \"entities\":[\
                     {\
                         \"type\":\"named\",\
+                        \"label\":\"label1\",\
                         \"entity_type\":\"Place\",\
                         \"title\":\"WASHINGTON\",\
                         \"count\":1,\
@@ -785,6 +940,7 @@ namespace {
         CollEntity* entityObj = analyticData->GetEntities()->at(0);
         CHECK_EQUAL("WASHINGTON", entityObj->GetTitle());
         CHECK_EQUAL("named", entityObj->GetType());
+        CHECK_EQUAL("label1", entityObj->GetLabel());
         CHECK_EQUAL("Place", entityObj->GetEntityType());
         CHECK_EQUAL(1, entityObj->GetCount());
         CHECK_EQUAL(1, entityObj->GetNegativeCount());
@@ -802,5 +958,6 @@ namespace {
         delete serializer;
         delete analyticData;
     }
+
 }
 

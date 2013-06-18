@@ -13,6 +13,7 @@ void Statistics::Serialize(Json::Value& root) {
     root["overall_texts"] = overall_texts;
     root["overall_batches"] = overall_batches;
     root["overall_calls"] = overall_calls;
+    root["overall_exceeded"] = overall_exceeded;
     root["calls_system"] = calls_system;
     root["calls_data"] = calls_data;
     root["overall_docs"] = overall_docs;
@@ -26,7 +27,7 @@ void Statistics::Serialize(Json::Value& root) {
     root["colls_documents"] = colls_documents;
     root["latest_used_app"] = latest_used_app;
     root["used_apps"] = used_apps;
-    
+
 	for (int i = 0; i < configurations->size(); ++i )  {
         Json::Value value;
         configurations->at(i)->Serialize(value);
@@ -40,6 +41,7 @@ void Statistics::Deserialize(Json::Value& root) {
     overall_texts = root.get("overall_texts", 0).asInt();
     overall_batches = root.get("overall_batches", 0).asInt();
     overall_calls = root.get("overall_calls", 0).asInt();
+    overall_exceeded = root.get("overall_exceeded", 0).asInt();
     calls_system = root.get("calls_system", 0).asInt();
     calls_data = root.get("calls_data", 0).asInt();
     overall_docs = root.get("overall_docs", 0).asInt();
@@ -57,13 +59,13 @@ void Statistics::Deserialize(Json::Value& root) {
     if (NULL == this->configurations) {
         this->configurations = new vector<StatConfigurations*>();
     }
-    
+
     Json::Value configurations = root["configurations"];
     for ( int i = 0; i < configurations.size(); ++i ) {
         StatConfigurations* w = new StatConfigurations();
         w->Deserialize(configurations[i]);
         this->configurations->push_back(w);
     }
-    
+
 }
 

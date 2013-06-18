@@ -119,6 +119,8 @@
 		<Unit filename="src/objects/output/DocDetails.h" />
 		<Unit filename="src/objects/output/DocEntity.cpp" />
 		<Unit filename="src/objects/output/DocEntity.h" />
+		<Unit filename="src/objects/output/DocOpinion.cpp" />
+		<Unit filename="src/objects/output/DocOpinion.h" />
 		<Unit filename="src/objects/output/DocPhrase.cpp" />
 		<Unit filename="src/objects/output/DocPhrase.h" />
 		<Unit filename="src/objects/output/DocRelEntities.cpp" />
@@ -135,8 +137,12 @@
 		<Unit filename="src/objects/output/Document.h" />
 		<Unit filename="src/objects/output/Facet.cpp" />
 		<Unit filename="src/objects/output/Facet.h" />
+		<Unit filename="src/objects/output/Location.cpp" />
+		<Unit filename="src/objects/output/Location.h" />
 		<Unit filename="src/objects/output/Mention.cpp" />
 		<Unit filename="src/objects/output/Mention.h" />
+		<Unit filename="src/objects/output/MentionWithLocations.cpp" />
+		<Unit filename="src/objects/output/MentionWithLocations.h" />
 		<Unit filename="src/objects/output/ServiceStatus.cpp" />
 		<Unit filename="src/objects/output/ServiceStatus.h" />
 		<Unit filename="src/objects/output/StatConfigurations.cpp" />

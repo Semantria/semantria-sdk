@@ -9,15 +9,16 @@ class StatConfigurations: public JsonSerializable {
 public:
     StatConfigurations();
     virtual ~StatConfigurations();
-    
+
     void Serialize(Json::Value& root);
     void Deserialize(Json::Value& root);
-    
+
     string GetConfigId()            {return config_id;}
     string GetName()                {return name;}
     int GetOverallTexts()           {return overall_texts ;}
     int GetOverallBatches()         {return overall_batches;}
     int GetOverallCalls()           {return overall_calls;}
+    int GetOverallExceeded()        {return overall_exceeded;}
     int GetCallsSystem()            {return calls_system;}
     int GetCallsData()              {return calls_data;}
     int GetOverallDocs()            {return overall_docs;}
@@ -31,14 +32,15 @@ public:
     int GetCollsDocuments()         {return colls_documents;}
     string GetLatestUsedApp()       {return latest_used_app;}
     string GetUsedApps()            {return used_apps;}
-    
-    
+
+
 private:
     string config_id;
     string name;
     int overall_texts;
     int overall_batches;
     int overall_calls;
+    int overall_exceeded;
     int calls_system;
     int calls_data;
     int overall_docs;

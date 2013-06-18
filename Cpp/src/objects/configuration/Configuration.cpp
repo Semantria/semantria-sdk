@@ -20,6 +20,11 @@ Configuration::Configuration() {
     pos_types = "";
     possible_phrases_limit = 0;
     detect_language = true;
+    named_mentions_limit = 0;
+    user_mentions_limit = 0;
+    theme_mentions_limit = 0;
+    named_opinions_limit = 0;
+    user_opinions_limit = 0;
 
     //collection
     facets_limit = 0;
@@ -70,6 +75,11 @@ void Configuration::Serialize(Json::Value& root) {
     root["document"]["pos_types"] = pos_types;
     root["document"]["summary_limit"] = summary_limit;
     root["document"]["detect_language"] = detect_language;
+    root["document"]["named_mentions_limit"] = named_mentions_limit;
+    root["document"]["user_mentions_limit"] = user_mentions_limit;
+    root["document"]["theme_mentions_limit"] = theme_mentions_limit;
+    root["document"]["named_opinions_limit"] = named_opinions_limit;
+    root["document"]["user_opinions_limit"] = user_opinions_limit;
 
 
     //collection
@@ -109,6 +119,11 @@ void Configuration::Deserialize(Json::Value& root) {
     summary_limit = doc.get("summary_limit", 0).asUInt();
     detect_language = doc.get("detect_language", true).asBool();
 
+    named_mentions_limit = doc.get("named_mentions_limit", 0).asUInt();
+    user_mentions_limit = doc.get("user_mentions_limit", 0).asUInt();
+    theme_mentions_limit = doc.get("theme_mentions_limit", 0).asUInt();
+    named_opinions_limit = doc.get("named_opinions_limit", 0).asUInt();
+    user_opinions_limit = doc.get("user_opinions_limit", 0).asUInt();
 
     //collection
     Json::Value coll = root.get("document", "");

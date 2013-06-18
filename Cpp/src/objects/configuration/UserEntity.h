@@ -18,12 +18,16 @@ public:
 
     string GetName() {return name;}
     string GetType() {return type;}
+    string GetLabel(){return label;}
+
     void SetName(string name) {this->name = name;}
     void SetType(string type) {this->type = type;}
+    void SetLabel(string label) {this->label = label;}
 
 private:
     string name;
     string type;
+    string label;
 };
 
 #endif // ENTITY_H

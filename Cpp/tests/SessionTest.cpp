@@ -46,18 +46,22 @@ namespace {
         delete sha;
     }
 
-    TEST(GetStatus) { 
+
+    TEST(GetStatus) {
         cout << "GetStatus" << endl;
         Session* session = Session::CreateSession(KEY, SECRET, new JsonSerializer());
+        session->SetCallbackHandler(new SimpleCallBackHandler());
+
         ServiceStatus* status = session->GetStatus();
         CHECK(NULL != status);
 
         CHECK_EQUAL("available", status->GetServiceStatus());
-        CHECK_EQUAL("3.0", status->GetApiVersion());
+        CHECK_EQUAL("3.1", status->GetApiVersion());
 
         delete session;
         delete status;
     }
+
 
     TEST(VerifySubscription) {
         cout << "VerifySubscription" << endl;
@@ -72,7 +76,7 @@ namespace {
             delete subscription;
         }
     }
- 
+
 
     TEST(ReceivingBlacklist) {
         cout << "ReceivingBlacklist" << endl;
@@ -85,6 +89,7 @@ namespace {
             delete blacklist;
         }
     }
+
 
     TEST(ReceivingCategories) {
         cout << "ReceivingCategories" << endl;
@@ -182,30 +187,30 @@ namespace {
             delete analyticData;
         }
     }
-    
+
     TEST(ReceivingProcessedCollections) {
         cout << "ReceivingProcessedCollections" << endl;
         Session* session = Session::CreateSession(KEY, SECRET);
         //session->SetCallbackHandler(new SimpleCallBackHandler);
-        
+
         // Initial texts for processing
         vector<string>* initialText = new vector<string>();
         initialText->push_back("Lisa - there's 2 Skinny cow coupons available $5 skinny cow ice cream coupons on special k boxes and Printable FPC from facebook - a teeny tiny cup of ice cream. I printed off 2 (1 from my account and 1 from dh's). I couldn't find them instore and i'm not going to walmart before the 19th. Oh well sounds like i'm not missing much ...lol");
         initialText->push_back("In Lake Louise - a ₤ guided walk for the family with Great Divide Nature Tours  rent a canoe on Lake Louise or Moraine Lake  go for a hike to the Lake Agnes Tea House. In between Lake Louise and Banff - visit Marble Canyon or Johnson Canyon or both for family friendly short walks. In Banff  a picnic at Johnson Lake  rent a boat at Lake Minnewanka  hike up Tunnel Mountain  walk to the Bow Falls and the Fairmont Banff Springs Hotel  visit the Banff Park Museum. The \"must-do\" in Banff is a visit to the Banff Gondola and some time spent on Banff Avenue - think candy shops and ice cream.");
         initialText->push_back("On this day in 1786 - In New York City  commercial ice cream was manufactured for the first time.");
-        
+
         Collection* collection = new Collection();
         collection->SetDocuments(initialText);
         collection->SetId("qpeoiwqoiepqowiepq");
         session->QueueCollection(collection);
 
-        
+
         vector<CollAnalyticData*>* analyticData = session->GetProcessedCollections();
         if( analyticData->size() ){
             CollAnalyticData* coll = analyticData->at(0);
             coll = 0;
         }
-        
+
         CHECK(NULL != analyticData);
 
         delete session;
@@ -213,8 +218,8 @@ namespace {
             delete analyticData;
         }
     }
-    
-    
+
+
     TEST(ReceivingStatistics) {
         cout << "ReceivingStatistics" << endl;
         Session* session = Session::CreateSession(KEY, SECRET);
@@ -223,7 +228,7 @@ namespace {
 
         Statistics* statistics = session->GetStatistics();
         CHECK(NULL != statistics);
-        
+
         delete session;
         if (NULL != statistics) {
             delete statistics;
@@ -326,9 +331,9 @@ namespace {
             cout << items->at(i)->GetName() << endl;
         }
         delete items;
-        
+
         cout << "AddConfigurations" << endl;
-        
+
         Configuration* addedItem1 = new Configuration();
         addedItem1->SetName("config1");
         addedItem1->SetAutoResponding(false);
@@ -340,7 +345,7 @@ namespace {
         CHECK_EQUAL(202, session->AddConfigurations( added ));
         delete added;
         delete addedItem1;
-        
+
         // Checking
         items = session->GetConfigurations();
         CHECK(NULL != items);
@@ -352,7 +357,7 @@ namespace {
             }
         }
         delete items;
-        
+
         cout << "UpdateConfigurations" << endl;
 
         Configuration* updatedItem = new Configuration();
@@ -377,7 +382,7 @@ namespace {
             cout << items->at(i)->GetName() << endl;
         }
         delete items;
-        
+
         cout << "DeleteConfigurations" << endl;
 
         vector<string> * remove = new vector<string>();
@@ -392,7 +397,7 @@ namespace {
 
         delete session;
     }
-    
+
 
     TEST(UpdateQueries) {
         cout << "UpdateQueries" << endl;
@@ -408,7 +413,7 @@ namespace {
             cout << items->at(i)->GetName() << endl;
         }
         delete items;
-        
+
 
         vector<Query*>* list = new vector<Query*>;
         Query* addedItem = new Query("new query #1", "query123");
@@ -427,11 +432,11 @@ namespace {
 
         //
         cout << "DeleteQueries" << endl;
-        
+
         vector<string> * remove = new vector<string>();
         remove->push_back("new query #1");
         CHECK_EQUAL(202, session->RemoveQueries(remove));
-        
+
         // Checking
         items = session->GetQueries();
         CHECK(NULL != items);

@@ -23,6 +23,7 @@ public:
     string GetLanguage() {return language;}
     int GetCharsThreshold() {return chars_threshold;}
     string GetCallback() {return callback;}
+
     int GetEntityThemesLimit() {return entity_themes_limit;}
     int GetSummaryLimit() {return summary_limit;}
     int GetPhrasesLimit() {return phrases_limit;}
@@ -31,8 +32,20 @@ public:
     int GetDocConceptTopicsLimit() {return doc_concept_topics_limit;}
     int GetDocNamedEntitiesLimit() {return doc_named_entities_limit;}
     int GetUserEntitiesLimit() {return user_entities_limit;}
+
+    string GetPosTypes() {return pos_types;}
+    bool GetDetectLanguage() {return detect_language;}
+
+    int GetNamedMentionsLimit() {return named_mentions_limit;}
+    int GetUserMentionsLimit() {return user_mentions_limit;}
+    int GetThemeMentionsLimit() {return theme_mentions_limit;}
+    int GetNamedOpinionsLimit() {return named_opinions_limit;}
+    int GetUserOpinionsLimit() {return user_opinions_limit;}
+
+
     int GetFacetsLimit() {return facets_limit;}
     int GetFacetAttributesLimit() {return facet_atts_limit;}
+    int GetFacetMentionsLimit() {return facet_mentions_limit;}
     int GetAttributeMentionsLimit() {return attribute_mentions_limit;}
     int GetCollThemesLimit() {return coll_themes_limit;}
     int GetCollQueryTopicsLimit() {return coll_query_topics_limit;}
@@ -48,6 +61,7 @@ public:
     void SetLanguage(string language) {this->language = language;}
     void SetCharsThreshold(int chars_threshold) {this->chars_threshold = chars_threshold;}
     void SetCallback(string callback) {this->callback = callback;}
+
     void SetEntityThemesLimit(int entity_themes_limit) {this->entity_themes_limit = entity_themes_limit;}
     void SetSummaryLimit(int summary_limit) {this->summary_limit = summary_limit;}
     void SetPhrasesLimit(int phrases_limit) {this->phrases_limit = phrases_limit;}
@@ -56,11 +70,20 @@ public:
     void SetDocConceptTopicsLimit(int doc_concept_topics_limit) {this->doc_concept_topics_limit = doc_concept_topics_limit;}
     void SetDocNamedEntitiesLimit(int doc_named_entities_limit) {this->doc_named_entities_limit = doc_named_entities_limit;}
     void SetUserEntitiesLimit(int user_entities_limit) {this->user_entities_limit = user_entities_limit;}
+    void SetPosTypes(string pos_types) {this->pos_types = pos_types;}
+    void SetDetectLanguage(bool detect_language) {this->detect_language = detect_language;}
+
+    void SetNamedMentionsLimit(int named_mentions_limit) {this->named_mentions_limit = named_mentions_limit;}
+    void SetUserMentionsLimit(int named_mentions_limit) {this->user_mentions_limit = user_mentions_limit;}
+    void SetThemeMentionsLimit(int named_mentions_limit) {this->theme_mentions_limit = theme_mentions_limit;}
+    void SetNamedOpinionsLimit(int named_mentions_limit) {this->named_opinions_limit = named_opinions_limit;}
+    void SetUserOpinionsLimit(int named_mentions_limit) {this->user_opinions_limit = user_opinions_limit;}
+
+
     void SetFacetsLimit(int facets_limit) {this->facets_limit = facets_limit;}
     void SetFacetAttributesLimit(int facet_atts_limit) {this->facet_atts_limit = facet_atts_limit;}
     void SetFacetMentionsLimit(int facet_mentions_limit) {this->facet_mentions_limit = facet_mentions_limit;}
     void SetAttributeMentionsLimit(int attribute_mentions_limit) {this->attribute_mentions_limit = attribute_mentions_limit;}
-
     void SetCollThemesLimit(int coll_themes_limit) {this->coll_themes_limit = coll_themes_limit;}
     void SetCollQueryTopicsLimit(int coll_query_topics_limit) {this->coll_query_topics_limit = coll_query_topics_limit;}
     void SetCollConceptTopicsLimit(int coll_concept_topics_limit) {this->coll_concept_topics_limit = coll_concept_topics_limit;}
@@ -78,7 +101,7 @@ private:
     int chars_threshold;
     string callback;
 
-    //document
+    // document
     int doc_concept_topics_limit;
     int doc_query_topics_limit;
     int doc_named_entities_limit;
@@ -89,11 +112,16 @@ private:
     int user_relations_limit;
     int phrases_limit;
     int possible_phrases_limit;
+
     string pos_types;
     int summary_limit;
     bool detect_language;
 
-
+    int named_mentions_limit;
+    int user_mentions_limit;
+    int theme_mentions_limit;
+    int named_opinions_limit;
+    int user_opinions_limit;
 
     //collection
     int facets_limit;

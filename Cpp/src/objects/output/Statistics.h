@@ -12,15 +12,16 @@ class Statistics: public JsonSerializable {
 public:
     Statistics();
     virtual ~Statistics();
-    
+
     void Serialize(Json::Value& root);
     void Deserialize(Json::Value& root);
-    
+
     string GetName()                {return name;}
     string GetStatus()              {return status;}
     int GetOverallTexts()           {return overall_texts ;}
     int GetOverallBatches()         {return overall_batches;}
     int GetOverallCalls()           {return overall_calls;}
+    int GetOverallExceeded()        {return overall_exceeded;}
     int GetCallsSystem()            {return calls_system;}
     int GetCallsData()              {return calls_data;}
     int GetOverallDocs()            {return overall_docs;}
@@ -32,9 +33,10 @@ public:
     int GetCollsFailed()            {return colls_failed;}
     int GetCollsResponded()         {return colls_responded;}
     int GetCollsDocuments()         {return colls_documents;}
+
     string GetLatestUsedApp()       {return latest_used_app;}
     string GetUsedApps()            {return used_apps;}
-    
+
     vector<StatConfigurations*>* GetConfigurations(){ return configurations;};
 
 private:
@@ -43,6 +45,7 @@ private:
     int overall_texts;
     int overall_batches;
     int overall_calls;
+    int overall_exceeded;
     int calls_system;
     int calls_data;
     int overall_docs;

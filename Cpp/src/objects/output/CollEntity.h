@@ -15,6 +15,7 @@ public:
 
     string GetTitle() {return title;}
     string GetType() {return type;}
+    string GetLabel() {return label;}
     string GetEntityType() {return entity_type;}
     int GetCount() {return count;}
     int GetNegativeCount() {return negative_count;}
@@ -23,6 +24,7 @@ public:
 
     void SetTitle(string title) {this->title = title;}
     void SetType(string type) {this->type = type;}
+    void SetLabel(string label) {this->label = label;}
     void SetEntityType(string entity_type) {this->entity_type = entity_type;}
     void SetCount(int count) {this->count = count;}
     void SetNegativeCount(int negative_count) {this->negative_count = negative_count;}
@@ -32,6 +34,7 @@ public:
 private:
     string title;
     string type;
+    string label;
     string entity_type;
     int count;
     int negative_count;

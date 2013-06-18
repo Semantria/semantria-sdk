@@ -2,6 +2,8 @@
 #define DOCTHEME_H
 
 #include "../../serializers/json/JsonSerializable.h"
+#include "../../objects/output/MentionWithLocations.h"
+
 
 using namespace std;
 
@@ -18,12 +20,15 @@ public:
     int GetEvidence() {return evidence;}
     bool GetIsAbout() {return is_about;}
     double GetStrengthScore() {return strength_score;}
+    vector<MentionWithLocations*>* GetMentions() {return mentions;}
+
 
     void SetTitle(string title) {this->title = title;}
     void SetSentimentScore(double sentiment_score) {this->sentiment_score = sentiment_score;}
     void SetEvidence(int evidence) {this->evidence = evidence;}
     void SetIsAbout(bool is_about) {this->is_about = is_about;}
     void SetStrengthScore(double strength_score) {this->strength_score = strength_score;}
+    void SetMentions(vector<MentionWithLocations*>* mentions) {this->mentions = mentions;}
 
 private:
     string title;
@@ -31,6 +36,8 @@ private:
     int evidence;
     bool is_about;
     double strength_score;
+
+    vector<MentionWithLocations*>* mentions;
 };
 
 #endif // DOCTHEME_H
