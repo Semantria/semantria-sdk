@@ -1,5 +1,15 @@
 CHANGELOG
 
+3.1.73 - SDK completely reworked in order to make it more consistent with JavaScript canons.
+
+3.1.72 - Tested on compatibility with Semantria API 3.1
+	- Mentions for entities and themes of document processing mode has been introduced.
+	- Opinions for named and user entities has been introduced.
+	- Added "label" field for named and user entities of document and collection processing modes.
+	- Added “language_score” property for the language detection feature.
+	- Added suggested docuemnts limit to user's Subscription.
+	- Added exceeded documents count to statistics that demonstrates the amount of texts exceeeded suggested limit.
+
 3.0.71 - Added support of Mentions for attributes of collection processing mode
 	- Added 'attribute_mentions_limit' configuration option for collection mode settings
 	- Added Mentions output for Attribute object of collection
