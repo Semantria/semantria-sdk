@@ -22,6 +22,7 @@ public class Details
 	private Long colls_responded = null;
 	private Long overall_batches = null;
 	private Long colls_documents = null;
+    private Long overall_exceeded = null;
 
 	public Details() {}
 
@@ -61,6 +62,8 @@ public class Details
 	public Long getOverallBatches() { return overall_batches; }
 	@XmlElement(name = "colls_documents")
 	public Long getCollsDocuments() { return colls_documents; }
+    @XmlElement(name = "overall_exceeded")
+    public Long getOverall_exceeded() { return overall_exceeded; }
 
 	public void setConfigId(String config_id) { this.config_id = config_id; }
 	public void setName(String name) { this.name = name; }
@@ -80,4 +83,5 @@ public class Details
 	public void setCollsResponded(Long colls_responded) { this.colls_responded = colls_responded; }
 	public void setOverallBatches(Long overall_batches) { this.overall_batches = overall_batches; }
 	public void setCollsDocuments(Long colls_documents) { this.colls_documents = colls_documents; }
+    public void setOverallExceeded(Long overall_exceeded) { this.overall_exceeded = overall_exceeded; }
 }

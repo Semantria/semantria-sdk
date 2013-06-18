@@ -21,6 +21,8 @@ public class Document
 	private Boolean pos_tagging = null;
 	private Boolean language_detection = null;
 	private Boolean phrases_detection = null;
+	private Boolean mentions = null;
+	private Boolean opinions = null;
 
 	public Document() {}
 
@@ -50,6 +52,10 @@ public class Document
 	public Boolean getLanguageDetection() { return language_detection == null ? false : language_detection; }
 	@XmlElement(name = "phrases_detection")
 	public Boolean getPhrasesDetection() { return phrases_detection; }
+	@XmlElement(name = "mentions")
+	public Boolean getMentions() { return mentions; }
+	@XmlElement(name = "opinions")
+	public Boolean getOpinions() { return opinions; }
 
 	public void setSummary(Boolean summary) { this.summary = summary; }
 	public void setThemes(Boolean themes) { this.themes = themes; }
@@ -64,4 +70,6 @@ public class Document
 	public void setPosTagging(Boolean pos_tagging) { this.pos_tagging = pos_tagging; }
 	public void setLanguageDetection(Boolean language_detection) { this.language_detection = language_detection; }
 	public void setPhrasesDetection(Boolean phrases_detection) { this.phrases_detection = phrases_detection; }
+    public void setMentions(Boolean mentions) { this.mentions = mentions; }
+    public void setOpinions(Boolean opinions) { this.opinions = opinions; }
 }

@@ -10,6 +10,7 @@ public class CollEntity {
     private Integer negative_count;
     private Integer neutral_count;
     private Integer positive_count;
+    private String label;
 
     @XmlElement(name="title")
     public String getTitle() { return title; }
@@ -25,6 +26,8 @@ public class CollEntity {
     public Integer getNeutralCount() { return neutral_count; }
     @XmlElement(name="positive_count")
     public Integer getPositiveCount() { return positive_count; }
+    @XmlElement(name="label")
+    public String getLabel() { return label; }
 
     public void setTitle(String title) { this.title = title; }
     public void setType(String type) { this.type = type; }
@@ -33,4 +36,6 @@ public class CollEntity {
     public void setNegativeCount(Integer negative_count) {this.negative_count = negative_count;}
     public void setNeutralCount(Integer neutral_count) {this.neutral_count = neutral_count;}
     public void setPositiveCount(Integer positive_count) {this.positive_count = positive_count;}
+    public void setLabel(String label) { this.label = label; }
+
 }

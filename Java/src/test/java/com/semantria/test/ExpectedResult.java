@@ -25,14 +25,19 @@ public class ExpectedResult
 						"<detect_language>true</detect_language>" +
 						"<entity_themes_limit>5</entity_themes_limit>" +
 						"<named_entities_limit>5</named_entities_limit>" +
+						"<named_mentions_limit>0</named_mentions_limit>" +
+						"<named_opinions_limit>0</named_opinions_limit>" +
 						"<named_relations_limit>0</named_relations_limit>" +
 						"<phrases_limit>0</phrases_limit>" +
 						"<pos_types>Noun</pos_types>" +
 						"<possible_phrases_limit>0</possible_phrases_limit>" +
 						"<query_topics_limit>5</query_topics_limit>" +
 						"<summary_limit>0</summary_limit>" +
+                        "<theme_mentions_limit>0</theme_mentions_limit>" +
 						"<themes_limit>0</themes_limit>" +
 						"<user_entities_limit>5</user_entities_limit>" +
+						"<user_mentions_limit>0</user_mentions_limit>" +
+						"<user_opinions_limit>0</user_opinions_limit>" +
 						"<user_relations_limit>0</user_relations_limit>" +
 					"</document>" +
 					"<is_primary>false</is_primary>" +
@@ -91,6 +96,7 @@ public class ExpectedResult
 				"<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" +
 				"<entities>" +
 					"<entity>" +
+                        "<label>label 1</label>" +
 						"<name>name 1</name>" +
 						"<type>type 1</type>" +
 					"</entity>" +
@@ -162,6 +168,8 @@ public class ExpectedResult
 						"<docs_balance>49897</docs_balance>" +
 						"<docs_limit>0</docs_limit>" +
 						"<docs_limit_interval>0</docs_limit_interval>" +
+                        "<docs_suggested>0</docs_suggested>"+
+                        "<docs_suggested_interval>0</docs_suggested_interval>" +
 					"</billing_settings>" +
 						"<basic_settings>" +
 						"<configurations_limit>10</configurations_limit>" +
@@ -194,6 +202,8 @@ public class ExpectedResult
 							"<phrases_detection>false</phrases_detection>" +
 							"<pos_tagging>false</pos_tagging>" +
 							"<language_detection>false</language_detection>" +
+                            "<mentions>false</mentions>" +
+                            "<opinions>false</opinions>" +
 						"</document>" +
 						"<collection>" +
 							"<facets>true</facets>" +
@@ -213,6 +223,7 @@ public class ExpectedResult
 					"<status>PROCESSED</status>" +
 					"<source_text>See Output Data Details chapter</source_text>" +
 					"<language>English</language>" +
+                    "<language_score>0.2398756</language_score>" +
 					"<sentiment_score>0.2398756</sentiment_score>" +
 					"<sentiment_polarity>positive</sentiment_polarity>" +
 					"<summary>Summary of the document's text.</summary>" +
@@ -249,6 +260,20 @@ public class ExpectedResult
 							"<sentiment_score>0.0</sentiment_score>" +
 							"<sentiment_polarity>neutral</sentiment_polarity>" +
 							"<title>republican moderates</title>" +
+                            "<mentions>" +
+                                "<mention>" +
+                                    "<label>Label</label>" +
+                                    "<is_negated>Is negated</is_negated>" +
+                                    "<negating_phrase>Phrase</negating_phrase>" +
+                                    "<locations>" +
+                                        "<location>1</location>" +
+                                        "<location>2</location>" +
+                                        "<location>3</location>" +
+                                    "</locations>" +
+                                    "<offset>5</offset>" +
+                                    "<length>5</length>" +
+                                "</mention>" +
+                            "</mentions>" +
 						"</theme>" +
 					"</themes>" +
 					"<entities>" +
@@ -260,7 +285,22 @@ public class ExpectedResult
 							"<sentiment_score>1.0542796</sentiment_score>" +
 							"<sentiment_polarity>positive</sentiment_polarity>" +
 							"<type>named</type>" +
+                            "<label>Label</label>" +
 							"<entity_type>Place</entity_type>" +
+                            "<mentions>" +
+                                "<mention>" +
+                                    "<label>Label</label>" +
+                                    "<is_negated>Is negated</is_negated>" +
+                                    "<negating_phrase>Phrase</negating_phrase>" +
+                                    "<locations>" +
+                                        "<location>1</location>" +
+                                        "<location>2</location>" +
+                                        "<location>3</location>" +
+                                    "</locations>" +
+                                    "<offset>5</offset>" +
+                                    "<length>5</length>" +
+                                "</mention>" +
+                            "</mentions>" +
 							"<themes>" +
 								"<theme>" +
 									"<evidence>1</evidence>" +
@@ -269,6 +309,20 @@ public class ExpectedResult
 									"<sentiment_score>0.0</sentiment_score>" +
 									"<sentiment_polarity>neutral</sentiment_polarity>" +
 									"<title>republican moderates</title>" +
+                                    "<mentions>" +
+                                        "<mention>" +
+                                            "<label>Label</label>" +
+                                            "<is_negated>Is negated</is_negated>" +
+                                            "<negating_phrase>Phrase</negating_phrase>" +
+                                            "<locations>" +
+                                                "<location>1</location>" +
+                                                "<location>2</location>" +
+                                                "<location>3</location>" +
+                                            "</locations>" +
+                                            "<offset>5</offset>" +
+                                            "<length>5</length>" +
+                                        "</mention>" +
+                                    "</mentions>" +
 								"</theme>" +
 							"</themes>" +
 						"</entity>" +
@@ -301,6 +355,16 @@ public class ExpectedResult
 							"<type>concept</type>" +
 						"</topic>" +
 					"</topics>" +
+                    "<opinions>" +
+                        "<opinion>" +
+                            "<quotation>Quotation</quotation>" +
+                            "<type>type</type>" +
+                            "<speaker>Speaker</speaker>" +
+                            "<topic></topic>" +
+                            "<sentiment_score>0.5</sentiment_score>" +
+                            "<sentiment_polarity>neutral</sentiment_polarity>" +
+                        "</opinion>" +
+                    "</opinions>" +
 				"</document>";
 
 		public static String collAnalyticData =
@@ -346,6 +410,7 @@ public class ExpectedResult
 						"<entity>" +
 							"<title>WASHINGTON</title>" +
 							"<type>named</type>" +
+                            "<label>Label</label>" +
 							"<entity_type>Place</entity_type>" +
 							"<count>1</count>" +
 							"<negative_count>1</negative_count>" +
@@ -384,6 +449,7 @@ public class ExpectedResult
 					"<colls_documents>8000</colls_documents>" +
 					"<latest_used_app>.Net</latest_used_app>" +
 					"<used_apps>.Net,Excel add-in x86,Python</used_apps>" +
+                    "<overall_exceeded>0</overall_exceeded>" +
 					"<configurations>" +
 						"<configuration>" +
 							"<config_id>cd2e7341-a3c2-4fb4-9d3a-779e8b0a5eff</config_id>" +
@@ -404,6 +470,7 @@ public class ExpectedResult
 							"<colls_documents>8000</colls_documents>" +
 							"<latest_used_app>.Net</latest_used_app>" +
 							"<used_apps>.Net,Excel add-in x86,Python</used_apps>" +
+                            "<overall_exceeded>0</overall_exceeded>" +
 						"</configuration>" +
 					"</configurations>" +
 				"</statistics>";
@@ -460,7 +527,12 @@ public class ExpectedResult
 								"\"possible_phrases_limit\":0," +
 								"\"pos_types\":\"Noun\"," +
 								"\"named_relations_limit\":0," +
-								"\"user_relations_limit\":0" +
+								"\"user_relations_limit\":0," +
+								"\"named_mentions_limit\":0," +
+                                "\"theme_mentions_limit\":0," +
+                                "\"user_mentions_limit\":0," +
+								"\"named_opinions_limit\":0," +
+								"\"user_opinions_limit\":0" +
 							"}," +
 							"\"collection\":{" +
 								"\"facets_limit\":15," +
@@ -518,7 +590,8 @@ public class ExpectedResult
 				"[" +
 					"{" +
 						"\"name\":\"name 1\"," +
-						"\"type\":\"type 1\"" +
+						"\"type\":\"type 1\"," +
+                        "\"label\":\"label 1\"" +
 					"}" +
 				"]";
 
@@ -582,7 +655,9 @@ public class ExpectedResult
 					"\"calls_limit_interval\" : 60," +
 					"\"docs_balance\" : 49897," +
 					"\"docs_limit\" : 0," +
-					"\"docs_limit_interval\" : 0" +
+					"\"docs_limit_interval\" : 0," +
+                    "\"docs_suggested\" : 0," +
+                    "\"docs_suggested_interval\" : 0" +
 				"}," +
 				"\"basic_settings\" : {" +
 					"\"configurations_limit\" : 10," +
@@ -614,7 +689,9 @@ public class ExpectedResult
 						"\"sentiment_phrases\" : true," +
 						"\"phrases_detection\" : false," +
 						"\"pos_tagging\" : false," +
-						"\"language_detection\" : false" +
+						"\"language_detection\" : false," +
+                        "\"mentions\" : false," +
+                        "\"opinions\" : false" +
 					"}," +
 					"\"collection\" : {" +
 						"\"facets\" : true," +
@@ -635,6 +712,7 @@ public class ExpectedResult
 				"\"status\" : \"PROCESSED\"," +
 				"\"source_text\" : \"See Output Data Details chapter\"," +
 				"\"language\" : \"English\"," +
+                "\"language_score\" : 0.2398756," +
 				"\"sentiment_score\" : 0.2398756," +
 				"\"sentiment_polarity\" : \"positive\"," +
 				"\"summary\" : \"Summary of the document's text.\"," +
@@ -670,7 +748,17 @@ public class ExpectedResult
 						"\"strength_score\" : 0.0," +
 						"\"sentiment_score\" : 0.0," +
 						"\"sentiment_polarity\" : \"neutral\"," +
-						"\"title\" : \"republican moderates\"" +
+						"\"title\" : \"republican moderates\"," +
+                        "\"mentions\" : [" +
+                            "{" +
+                                "\"label\" : \"Label\"," +
+                                "\"is_negated\" : false," +
+                                "\"negating_phrase\" : \"Phrase\"," +
+                                "\"locations\" : [{\"location\" : 1}, {\"location\" : 2}, {\"location\" : 3}]," +
+                                "\"offset\" : 5," +
+                                "\"length\" : 5" +
+                            "}" +
+                        "]" +
 					"}" +
 				"]," +
 				"\"entities\" : [" +
@@ -681,17 +769,38 @@ public class ExpectedResult
 						"\"is_about\" : true," +
 						"\"entity_type\" : \"Place\"," +
 						"\"title\" : \"WASHINGTON\"," +
+                        "\"label\" : \"Label\"," +
 						"\"sentiment_score\" : 1.0542796," +
 						"\"sentiment_polarity\" : \"positive\"," +
+                        "\"mentions\" : [" +
+                            "{" +
+                                "\"label\" : \"Label\"," +
+                                "\"is_negated\" : false," +
+                                "\"negating_phrase\" : \"Phrase\"," +
+                                "\"locations\" : [{\"location\" : 1}, {\"location\" : 2}, {\"location\" : 3}]," +
+                                "\"offset\" : 5," +
+                                "\"length\" : 5" +
+                            "}" +
+                        "]," +
 						"\"themes\" : [" +
 							"{" +
-							"\"evidence\" : 1," +
-							"\"is_about\" : true," +
-							"\"strength_score\" : 0.0," +
-							"\"sentiment_score\" : 0.0," +
-							"\"sentiment_polarity\" : \"neutral\"," +
-							"\"title\" : \"republican moderates\"" +
-							"}" +
+                                "\"evidence\" : 1," +
+                                "\"is_about\" : true," +
+                                "\"strength_score\" : 0.0," +
+                                "\"sentiment_score\" : 0.0," +
+                                "\"sentiment_polarity\" : \"neutral\"," +
+                                "\"title\" : \"republican moderates\"," +
+                                "\"mentions\" : [" +
+                                    "{" +
+                                        "\"label\" : \"Label\"," +
+                                        "\"is_negated\" : false," +
+                                        "\"negating_phrase\" : \"Phrase\"," +
+                                        "\"locations\" : [{\"location\" : 1}, {\"location\" : 2}, {\"location\" : 3}]," +
+                                        "\"offset\" : 5," +
+                                        "\"length\" : 5" +
+                                    "}" +
+                                "]" +
+                            "}" +
 						"]" +
 					"}" +
 				"]," +
@@ -722,8 +831,18 @@ public class ExpectedResult
 						"\"sentiment_score\" : 0.6133076," +
 						"\"sentiment_polarity\" : \"positive\"" +
 					"}" +
-				"]" +
-			"}";
+				"]," +
+                "\"opinions\" : [" +
+                    "{" +
+                        "\"quotation\" : \"Quotation\"," +
+                        "\"type\" : \"Type\"," +
+                        "\"speaker\" : \"Speaker\"," +
+                        "\"topic\" : \"Topic\"," +
+                        "\"sentiment_score\" : 0.5," +
+                        "\"sentiment_polarity\" : \"neutral\"" +
+                    "}"+
+                "]" +
+        "}";
 
 		public static String collAnalyticData =
 				"{"+
@@ -771,6 +890,7 @@ public class ExpectedResult
 							"\"type\":\"named\","+
 							"\"entity_type\":\"Place\","+
 							"\"title\":\"WASHINGTON\","+
+                            "\"label\" : \"Label\"," +
 							"\"count\":1,"+
 							"\"negative_count\":1,"+
 							"\"neutral_count\":1,"+
@@ -808,6 +928,7 @@ public class ExpectedResult
 					"\"colls_documents\" : 8000," +
 					"\"latest_used_app\" : \".Net\"," +
 					"\"used_apps\" : \".Net,Excel add-in x86,Python\"," +
+                    "\"overall_exceeded\" : 0," +
 					"\"configurations\" : [" +
 						"{" +
 						"\"config_id\" : \"cd2e7341-a3c2-4fb4-9d3a-779e8b0a5eff\"," +
@@ -827,7 +948,8 @@ public class ExpectedResult
 							"\"colls_responded\" : 8," +
 							"\"colls_documents\" : 8000," +
 							"\"latest_used_app\" : \".Net\"," +
-							"\"used_apps\" : \".Net,Excel add-in x86,Python\"" +
+							"\"used_apps\" : \".Net,Excel add-in x86,Python\"," +
+                            "\"overall_exceeded\" : 0" +
 						"}" +
 					"]" +
 				"}";

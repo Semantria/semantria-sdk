@@ -15,6 +15,8 @@ public final class DocEntity
 	private Boolean is_about = null;
     private Boolean confident = null;
 	private String sentiment_polarity = null;
+	private List<Mention> mentions = null;
+	private String label = null;
 
 	@XmlElement(name="title")
 	public String getTitle() { return title; }
@@ -35,7 +37,12 @@ public final class DocEntity
     public Boolean getConfident() { return confident; }
 	@XmlElement(name = "sentiment_polarity")
 	public String getSentimentPolarity() { return sentiment_polarity; }
-	
+	@XmlElementWrapper(name = "mentions")
+	@XmlElement(name = "mention")
+	public List<Mention> getMentions() { return mentions; }
+	@XmlElement(name = "label")
+	public String getLabel() { return label; }
+
 	public void setTitle(String title) { this.title = title; }
 	public void setType(String type) { this.type = type; }
 	public void setEntityType(String entity_type) { this.entity_type = entity_type; }
@@ -45,4 +52,6 @@ public final class DocEntity
 	public void setIsAbout(Boolean is_about) { this.is_about = is_about; }
     public void setConfident(Boolean confident) { this.confident = confident; }
 	public void setSentimentPolarity(String sentiment_polarity) { this.sentiment_polarity = sentiment_polarity; }
+	public void setMentions(List<Mention> mentions) { this.mentions = mentions; }
+	public void setLabel(String label) { this.label = label; }
 }

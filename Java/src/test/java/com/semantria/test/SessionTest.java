@@ -17,8 +17,8 @@ import static org.junit.Assert.*;
 
 public class SessionTest
 {
-    private String key = "";
-    private String secret = "";
+    private String key = "georgekey";
+    private String secret = "georgesecret";
 
 	private Configuration m_config = null;
 	private ISerializer serializer = new JsonSerializer();
@@ -69,7 +69,7 @@ public class SessionTest
 		conf.setIsPrimary(false);
 		conf.setName("TEST_CONFIG");
 		conf.setLanguage("English");
-		conf.setDocument(new DocConfiguration(5, 5, 5, 5, 5, 5, 5, 5, true, 5, "Noun", 5, 5));
+		conf.setDocument(new DocConfiguration(5, 5, 5, 5, 5, 5, 5, 5, true, 5, "Noun", 5, 5, 0, 0, 0, 0, 0));
 		conf.setCollection(new CollConfiguration(5, 5, 5, 5, 5, 5, 5, 5));
 
 		int status = session.addConfigurations(Arrays.asList(conf));

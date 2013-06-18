@@ -28,6 +28,7 @@ public class Statistics
 	private Long colls_responded = null;
 	private Long overall_batches = null;
 	private Long colls_documents = null;
+    private Long overall_exceeded = null;
 	private List<Details> configurations = null;
 	public Statistics() {}
 
@@ -70,6 +71,8 @@ public class Statistics
 	@XmlElementWrapper(name = "configurations")
 	@XmlElement(name = "configuration")
 	public List<Details> getConfigurations() { return configurations; }
+    @XmlElement(name = "overall_exceeded")
+    public Long getOverallExceeded() { return overall_exceeded; }
 
 	public void setName(String name) { this.name = name; }
 	public void setStatus(String status) { this.status = status; }
@@ -90,4 +93,5 @@ public class Statistics
 	public void setOverallBatches(Long overall_batches) { this.overall_batches = overall_batches; }
 	public void setCollsDocuments(Long colls_documents) { this.colls_documents = colls_documents; }
  	public void setConfigurations(List<Details> details) { this.configurations = details; }
+    public void setOverallExceeded(Long overall_exceeded) { this.overall_exceeded = overall_exceeded; }
 }

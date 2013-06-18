@@ -17,6 +17,8 @@ public class BillingSettings
 	private Long calls_balance = null;
 	private Long calls_limit = null;
 	private Integer calls_limit_interval = null;
+    private Long docs_suggested = null;
+    private Integer docs_suggested_interval = null;
 
 	public BillingSettings(){ }
 
@@ -39,7 +41,12 @@ public class BillingSettings
 	@XmlElement(name="calls_limit_interval")
 	public Integer getCallsLimitInterval() { return calls_limit_interval; }
 
-	public void setPriority(String priority) { this.priority = priority; }
+    @XmlElement(name="docs_suggested")
+    public Long getDocsSuggested() { return docs_suggested; }
+    @XmlElement(name="docs_suggested_interval")
+    public Integer getDocsSuggestedInterval() { return docs_suggested_interval; }
+
+    public void setPriority(String priority) { this.priority = priority; }
 	public void setExpirationDate(Long expiration_date) { this.expiration_date = expiration_date; }
 	public void setLimitType(String limit_type) { this.limit_type = limit_type; }
 	public void setDocsBalance(Long docs_balance) { this.docs_balance = docs_balance; }
@@ -48,4 +55,6 @@ public class BillingSettings
 	public void setCallsBalance(Long calls_balance) { this.calls_balance = calls_balance; }
 	public void setCallsLimit(Long calls_limit) { this.calls_limit = calls_limit; }
 	public void setCallsLimitInterval(Integer calls_limit_interval) { this.calls_limit_interval = calls_limit_interval; }
+    public void setDocsSuggested(Long docs_suggested) { this.docs_suggested = docs_suggested; }
+    public void setDocsSuggestedInterval(Integer docs_suggested_interval) { this.docs_suggested_interval = docs_suggested_interval; }
 }

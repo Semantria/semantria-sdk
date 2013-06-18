@@ -6,7 +6,7 @@
 
     <groupId>com.semantria</groupId>
     <artifactId>SemantriaJavaSDK</artifactId>
-    <version>3.0.72</version>
+    <version>3.1.73</version>
 
     <dependencies>
         <dependency>
@@ -71,14 +71,27 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
-
                             <outputDirectory>${project.build.directory}/lib</outputDirectory>
                         </configuration>
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>attached</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
-
-    
 </project>

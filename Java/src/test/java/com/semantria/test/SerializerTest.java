@@ -51,6 +51,11 @@ public class SerializerTest {
 		doc.setUserRelationsLimit(0);
 		doc.setDetectLanguage(true);
 		doc.setPossiblePhrasesLimit(0);
+		doc.setNamedMentionsLimit(0);
+		doc.setUserMentionsLimit(0);
+		doc.setUserOpinionsLimit(0);
+		doc.setNamedOpinionsLimit(0);
+        doc.setThemeMentionsLimit(0);
 		config.setDocument(doc);
 
 		CollConfiguration coll = new CollConfiguration();
@@ -164,8 +169,8 @@ public class SerializerTest {
 	{
 		ISerializer serializer = new XmlSerializer();
 		ISerializer jsonSerializer = new JsonSerializer();
-		assertEquals(ExpectedResult.XML.addEntity, serializer.serialize( ObjProxy.wrap( Arrays.asList( new UserEntity("name 1", "type 1") ), UserEntities.class, "POST")));
-		assertEquals(ExpectedResult.JSON.addEntity, jsonSerializer.serialize( Arrays.asList(new UserEntity("name 1", "type 1")) ));
+		assertEquals(ExpectedResult.XML.addEntity, serializer.serialize( ObjProxy.wrap( Arrays.asList( new UserEntity("name 1", "type 1", "label 1") ), UserEntities.class, "POST")));
+		assertEquals(ExpectedResult.JSON.addEntity, jsonSerializer.serialize( Arrays.asList(new UserEntity("name 1", "type 1", "label 1")) ));
 	}
 
 
@@ -466,6 +471,10 @@ public class SerializerTest {
 		assertEquals(new Integer(0), doc.getPossiblePhrasesLimit());
 		assertEquals(new Integer(0), doc.getNamedRelationsLimit());
 		assertEquals(new Integer(0), doc.getUserRelationsLimit());
+		assertEquals(new Integer(0), doc.getNamedMentionsLimit());
+		assertEquals(new Integer(0), doc.getUserMentionsLimit());
+		assertEquals(new Integer(0), doc.getNamedOpinionsLimit());
+		assertEquals(new Integer(0), doc.getUserOpinionsLimit());
 		assertTrue(doc.getDetectLanguage());
 		assertEquals(new Integer(0), doc.getSummaryLimit());
 		assertEquals("Noun", doc.getPosTypes());
