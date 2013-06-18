@@ -68,6 +68,14 @@ namespace Semantria.Com.Mapping.Output
         [DataMember(Name = "docs_limit_interval")]
         [XmlElementAttribute("docs_limit_interval")]
         public int DocsLimitInterval { get; set; }
+
+		[DataMember(Name = "docs_suggested")]
+		[XmlElementAttribute("docs_suggested")]
+		public int DocsSuggested{ get; set; }
+
+		[DataMember(Name = "docs_suggested_interval")]
+		[XmlElementAttribute("docs_suggested_interval")]
+		public int DocsSuggestedInterval { get; set; }
     }
 
     [DataContract(Name = "basic_settings")]
@@ -85,6 +93,10 @@ namespace Semantria.Com.Mapping.Output
         [DataMember(Name = "categories_limit")]
         [XmlElementAttribute("categories_limit")]
         public int CategoriesLimit { get; set; }
+
+		[DataMember(Name = "category_samples_limit")]
+		[XmlElementAttribute("category_samples_limit")]
+		public int CategorySamplesLimit { get; set; }
 
         [DataMember(Name = "queries_limit")]
         [XmlElementAttribute("queries_limit")]
@@ -121,6 +133,10 @@ namespace Semantria.Com.Mapping.Output
         [DataMember(Name = "callback_batch_limit")]
         [XmlElementAttribute("callback_batch_limit")]
         public int CallbackBatchLimit { get; set; }
+
+		[DataMember(Name = "return_source_text")]
+		[XmlElementAttribute("return_source_text")]
+		public bool ReturnSourceText { get; set; }
     }
 
     [DataContract(Name = "feature_settings")]
@@ -163,6 +179,14 @@ namespace Semantria.Com.Mapping.Output
         [DataMember(Name = "entity_themes")]
         [XmlElementAttribute("entity_themes")]
         public bool EntityThemes { get; set; }
+
+		[DataMember(Name = "mentions")]
+		[XmlElementAttribute("mentions")]
+		public bool Mentions { get; set; }
+
+		[DataMember(Name = "opinions")]
+		[XmlElementAttribute("opinions")]
+		public bool Opinions { get; set; }
 
         [DataMember(Name = "named_relations")]
         [XmlElementAttribute("named_relations")]

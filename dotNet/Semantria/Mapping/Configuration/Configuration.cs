@@ -83,9 +83,21 @@ namespace Semantria.Com.Mapping.Configuration
         [XmlElementAttribute("entity_themes_limit")]
         public int EntityThemesLimit { get; set; }
 
+		[DataMember(Name = "named_mentions_limit")]
+		[XmlElementAttribute("named_mentions_limit")]
+		public int NamedMentionsLimit { get; set; }
+
+		[DataMember(Name = "user_mentions_limit")]
+		[XmlElementAttribute("user_mentions_limit")]
+		public int UserMentionsLimit { get; set; }
+
         [DataMember(Name = "themes_limit")]
         [XmlElementAttribute("themes_limit")]
         public int ThemesLimit { get; set; }
+
+		[DataMember(Name = "theme_mentions_limit")]
+		[XmlElementAttribute("theme_mentions_limit")]
+		public int ThemeMentionsLimit { get; set; }
 
         [DataMember(Name = "phrases_limit")]
         [XmlElementAttribute("phrases_limit")]
@@ -106,6 +118,14 @@ namespace Semantria.Com.Mapping.Configuration
         [DataMember(Name = "user_relations_limit")]
         [XmlElementAttribute("user_relations_limit")]
         public int UserRelationsLimit { get; set; }
+
+		[DataMember(Name = "named_opinions_limit")]
+		[XmlElementAttribute("named_opinions_limit")]
+		public int NamedOpinionsLimit { get; set; }
+
+		[DataMember(Name = "user_opinions_limit")]
+		[XmlElementAttribute("user_opinions_limit")]
+		public int UserOpinionsLimit { get; set; }
 
         [DataMember(Name = "pos_types")]
         [XmlElementAttribute("pos_types")]

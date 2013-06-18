@@ -13,6 +13,10 @@ namespace Semantria.Com.Mapping.Output
         [XmlElementAttribute("title")]
         public string Title { get; set; }
 
+		[DataMember(Name = "label")]
+		[XmlElementAttribute("label")]
+		public string Label { get; set; }
+
         [DataMember(Name = "type")]
         [XmlElementAttribute("type")]
         public string Type { get; set; }

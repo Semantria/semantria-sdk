@@ -32,5 +32,10 @@ namespace Semantria.Com.Mapping.Output
         [DataMember(Name = "title")]
         [XmlElementAttribute("title")]
         public string Title { get; set; }
+
+		[DataMember(Name = "mentions")]
+		[XmlArrayAttribute("mentions")]
+		[XmlArrayItemAttribute("mention", typeof(DocMention))]
+		public List<DocMention> Mentions { get; set; }
     }
 }

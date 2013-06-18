@@ -45,6 +45,7 @@ namespace FacetsTest
 			CollAnalyticData result = null;
 			//Creates JSON serializer to use JSON as data format
 			JsonSerializer serializer = new JsonSerializer();
+
 			//Initializes Semantria Session
 			using (Session session = Semantria.Com.Session.CreateSession(consumerKey, consumerSecret, serializer))
 			{

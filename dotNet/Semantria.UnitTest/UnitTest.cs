@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Diagnostics;
+using System.Text;
+
 using Semantria.Com.Mapping.Configuration;
 using Semantria.Com.Mapping.Output;
 using Semantria.Com.Serializers;
 using Semantria.Com.Mapping;
-using System.Text;
 
 namespace Semantria.Com.TestUnitApi
 {
@@ -125,19 +126,20 @@ namespace Semantria.Com.TestUnitApi
         [TestMethod]
         public void UpdateConfiguration()
         {
-            List<Configuration> result = _session.GetConfigurations();
+			List<Configuration> result = _session.GetConfigurations();
             Assert.IsNotNull(result);
             if (result == null) return;
 
             foreach (Configuration item in result)
             {
-                if (item.Name == "default")
+                if (item.IsPrimary == true)
                 {
                     item.AutoResponse = false;
-                    item.CharsThreshold = 5;
-                    item.IsPrimary = true;
+                    item.CharsThreshold = 50;
+					item.OneSentence = true;
                 }
             }
+
             int res = _session.UpdateConfigurations(result);
             Assert.IsTrue(res == 202, "RESULT: " + res);
         }

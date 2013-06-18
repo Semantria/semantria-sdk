@@ -19,7 +19,7 @@ namespace Semantria.Com.Mapping.Output
 
         [DataMember(Name = "mentions")]
         [XmlArrayAttribute("mentions")]
-        [XmlArrayItemAttribute("mention", typeof(Mention))]
-        public List<Mention> Mentions { get; set; }
+        [XmlArrayItemAttribute("mention", typeof(CollMention))]
+        public List<CollMention> Mentions { get; set; }
     }
 }

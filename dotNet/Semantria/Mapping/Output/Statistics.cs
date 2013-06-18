@@ -48,16 +48,6 @@ namespace Semantria.Com.Mapping.Output
         [XmlElementAttribute("name")]
         public virtual string Name { get; set; }
 
-        [ReadOnly(true), Category("Common"), DisplayName("Last used app"), Description("The latest used application")]
-        [DataMember(Name = "latest_used_app")]
-        [XmlElementAttribute("latest_used_app")]
-        public string LatestUsedApp { get; set; }
-
-        [ReadOnly(true), Category("Common"), DisplayName("All used apps"), Description("All used applications")]
-        [DataMember(Name = "used_apps")]
-        [XmlElementAttribute("used_apps")]
-        public string UsedApp { get; set; }
-
         [ReadOnly(true), Category("Overall"), DisplayName("Processed texts"), Description("Total number of processed texts")]
         [DataMember(Name = "overall_texts")]
         [XmlElementAttribute("overall_texts")]
@@ -72,6 +62,11 @@ namespace Semantria.Com.Mapping.Output
         [DataMember(Name = "overall_calls")]
         [XmlElementAttribute("overall_calls")]
         public int OverallCalls { get; set; }
+
+		[ReadOnly(true), Category("Overall"), DisplayName("Overall texts exceeded"), Description("Total number of all texts exceeded suggested limit")]
+		[DataMember(Name = "overall_exceeded")]
+		[XmlElementAttribute("overall_exceeded")]
+		public int OverallExceeded { get; set; }
 
         [ReadOnly(true), Category("Overall"), DisplayName("System API calls"), Description("Number of performed system API calls")]
         [DataMember(Name = "calls_system")]
@@ -127,5 +122,15 @@ namespace Semantria.Com.Mapping.Output
         [DataMember(Name = "colls_documents")]
         [XmlElementAttribute("colls_documents")]
         public int CollsDocuments { get; set; }
+
+		[ReadOnly(true), Category("Common"), DisplayName("Last used app"), Description("The latest used application")]
+		[DataMember(Name = "latest_used_app")]
+		[XmlElementAttribute("latest_used_app")]
+		public string LatestUsedApp { get; set; }
+
+		[ReadOnly(true), Category("Common"), DisplayName("All used apps"), Description("All used applications")]
+		[DataMember(Name = "used_apps")]
+		[XmlElementAttribute("used_apps")]
+		public string UsedApp { get; set; }
     }
 }

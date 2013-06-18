@@ -70,7 +70,7 @@ namespace Semantria.Com
         private string _appName = "";
         private ISerializer _serializer = null;
         private string _format = "json";
-        private string _host = "https://api30.semantria.com";
+		private string _host = "https://api30.semantria.com";
         private bool _useCompression = false;
         private const string WRAPPER_NAME = "dotNet";
 

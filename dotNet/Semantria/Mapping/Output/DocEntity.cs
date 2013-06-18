@@ -33,6 +33,10 @@ namespace Semantria.Com.Mapping.Output
         [XmlElementAttribute("title")]
         public string Title { get; set; }
 
+		[DataMember(Name = "label")]
+		[XmlElementAttribute("label")]
+		public string Label { get; set; }
+
         [DataMember(Name = "sentiment_score")]
         [XmlElementAttribute("sentiment_score")]
         public float SentimentScore { get; set; }
@@ -40,6 +44,11 @@ namespace Semantria.Com.Mapping.Output
         [DataMember(Name = "sentiment_polarity")]
         [XmlElementAttribute("sentiment_polarity")]
         public string SentimentPolarity { get; set; }
+
+		[DataMember(Name = "mentions")]
+		[XmlArrayAttribute("mentions")]
+		[XmlArrayItemAttribute("mention", typeof(DocMention))]
+		public List<DocMention> Mentions { get; set; }
 
         [DataMember(Name = "themes")]
         [XmlArrayAttribute("themes")]

@@ -11,7 +11,7 @@ namespace Semantria.Com.Mapping.Output
     {
         [DataMember(Name = "service_status")]
         [XmlElementAttribute("service_status")]
-        public string Service { get; set; }
+        public string ServiceStatus { get; set; }
 
         [DataMember(Name = "api_version")]
         [XmlElementAttribute("api_version")]

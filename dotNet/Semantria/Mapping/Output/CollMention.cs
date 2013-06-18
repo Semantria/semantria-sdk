@@ -8,7 +8,7 @@ namespace Semantria.Com.Mapping.Output
 {
     [DataContract(Name = "mention")]
     [XmlRootAttribute("mention", Namespace = "")]
-    public class Mention
+    public class CollMention
     {
         [DataMember(Name = "label")]
         [XmlElementAttribute("label")]
