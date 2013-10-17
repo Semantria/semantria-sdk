@@ -410,11 +410,12 @@
 			headers["Authorization"] = this.generateAuthHeader(query, timestamp, nonce);
 
 			if (method == "POST") {
-				headers["Content-type"] = "application/x-www-form-urlencoded";
+				headers["Content-Type"] = "application/x-www-form-urlencoded";
 			}
 
     		headers["x-app-name"] = this.applicationName;
-			headers["Accept-Encoding"] = this.acceptEncoding;
+			if (typeof navigator != "undefined" && !/WebKit/.test(navigator.userAgent))
+				headers["Accept-Encoding"] = this.acceptEncoding;
 
 			return headers;
 		},
@@ -484,13 +485,18 @@
 		 * @var {String} SDK_VERSION
 		 * @constant
 		 */
-		SDK_VERSION: "3.1.73",
+		SDK_VERSION: "3.1",
 		
 		/**
 		 * @var {String} HOST
 		 * @constant
 		 */
 		API_HOST: "https://api30.semantria.com",
+
+		/**
+		 * @var {Object} eventHandlers
+		 */
+		eventHandlers: null,
 
 		/**
 		 * @param {String} string
@@ -602,7 +608,7 @@
 		 * @param {Object} params
 		 */
 		addConfigurations: function(params) {
-    		this.updateConfigurations.apply(this, arguments);
+    		return this.updateConfigurations.apply(this, arguments);
 		},
 
 		/**
@@ -678,7 +684,7 @@
 		 * @param {Number} configId
 		 */
 		addCategories: function(params, configId) {
-    		this.updateCategories.apply(this, arguments);
+    		return this.updateCategories.apply(this, arguments);
 		},
 
 		/**
@@ -699,7 +705,7 @@
 		 * @param {Number} configId
 		 */
 		removeCategories: function(params, configId) {
-			return this.runRequest("DELETE", "/configurations", {
+			return this.runRequest("DELETE", "/categories", {
 				getParams: {
 					config_id: configId
 				},
@@ -723,7 +729,7 @@
 		 * @param {Number} configId
 		 */
 		addQueries: function(params, configId) {
-    		this.updateQueries.apply(this, arguments);
+    		return this.updateQueries.apply(this, arguments);
     	},
 
     	/**
@@ -768,7 +774,7 @@
 		 * @param {Number} configId
 		 */
 		addEntities: function(params, configId) {
-		    this.updateEntities.apply(this, arguments);
+		    return this.updateEntities.apply(this, arguments);
 		},
 
 		/**
@@ -815,7 +821,7 @@
 		 * @param {Number} configId
 		 */
 		addPhrases: function(params, configId) {
-		    this.updatePhrases.apply(this, arguments);
+		    return this.updatePhrases.apply(this, arguments);
 		},
 
 
@@ -823,7 +829,7 @@
 		 * @param {Object} params
 		 * @param {Number} configId
 		 */
-		updatePhrases: function(proxy, configId) {
+		updatePhrases: function(params, configId) {
     		return this.runRequest("POST", "/phrases", {
 				getParams: {
 					config_id: configId
@@ -915,7 +921,7 @@
 			}
 
 			var url = "/document/" + id;
-			var result = this.runRequest("POST", url, {
+			var result = this.runRequest("GET", url, {
 				getParams: {
 					config_id: configId
 				}
@@ -938,7 +944,7 @@
 				throw "Specified document's ID is empty";
 			}
 
-			return this.runRequest("POST", "/collection/" + id, {
+			return this.runRequest("GET", "/collection/" + id, {
 				getParams: {
 					config_id: configId
 				}
@@ -1047,7 +1053,7 @@
 			method = method.toLowerCase();
 
 			if(method == "delete") {
-				if (status === 200) {
+				if (status === 202) {
 					return status;
 				}
 

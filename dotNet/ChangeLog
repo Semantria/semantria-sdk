@@ -1,5 +1,7 @@
 CHANGELOG
 
+3.1.76 - Added missed "sentiment_polarity" field to CollTheme type.
+
 3.1.75 - Added support of Semantria API 3.1
 	- Mentions for entities and themes of document processing mode has been introduced.
 	- Opinions for named and user entities has been introduced.

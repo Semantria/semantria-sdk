@@ -1,5 +1,7 @@
 CHANGELOG
 
+3.1.74 - Tests have been added to re-worked version of SDK.
+
 3.1.73 - SDK completely reworked in order to make it more consistent with JavaScript canons.
 
 3.1.72 - Tested on compatibility with Semantria API 3.1

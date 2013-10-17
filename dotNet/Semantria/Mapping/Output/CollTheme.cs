@@ -21,6 +21,10 @@ namespace Semantria.Com.Mapping.Output
         [XmlElementAttribute("sentiment_score")]
         public float SentimentScore { get; set; }
 
+        [DataMember(Name = "sentiment_polarity")]
+        [XmlElementAttribute("sentiment_polarity")]
+        public string SentimentPolarity { get; set; }
+
         [DataMember(Name = "title")]
         [XmlElementAttribute("title")]
         public string Title { get; set; }
