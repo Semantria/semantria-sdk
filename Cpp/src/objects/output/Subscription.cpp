@@ -28,6 +28,7 @@ void Subscription::Deserialize(Json::Value& root) {
 
     bs = root.get("basic_settings", Json::Value(Json::objectValue));
     configurations_limit = bs.get("configurations_limit", 0).asInt();
+    output_data_limit = bs.get("output_data_limit", 0).asInt();
     blacklist_limit = bs.get("blacklist_limit", 0).asInt();
     categories_limit = bs.get("categories_limit", 0).asInt();
     category_samples_limit = bs.get("category_samples_limit", 0).asInt();
@@ -46,6 +47,7 @@ void Subscription::Deserialize(Json::Value& root) {
 
     Json::Value doc = fs.get("document", Json::Value(Json::objectValue));
     summary = doc.get("summary", 0).asBool();
+    auto_categories = doc.get("auto_categories", 0).asBool();
     doc_themes = doc.get("themes", 0).asBool();
     doc_named_entities = doc.get("named_entities", 0).asBool();
     doc_user_entities = doc.get("user_entities", 0).asBool();
@@ -71,6 +73,7 @@ void Subscription::Deserialize(Json::Value& root) {
     coll_concept_topics = collection.get("concept_topics", 0).asBool();
 
     supported_languages = fs.get("supported_languages", "").asString();
+    html_processing = fs.get("html_processing", "").asBool();
 }
 
 void Subscription::Deserialize(string source) {

@@ -35,6 +35,7 @@ public:
 
 
     int GetConfigurationsLimit()                    {return configurations_limit;}
+    int GetOutputDataLimit()                        {return output_data_limit;}
     int GetBlacklistLimit()                         {return blacklist_limit;}
     int GetCategoriesLimit()                        {return categories_limit;}
     int GetCategorySamplesLimit()                   {return category_samples_limit;}
@@ -50,6 +51,7 @@ public:
     int GetCallbackBatchLimit()                     {return callback_batch_limit; }
 
     bool GetSummary()                               {return summary;}
+    bool GetAutoCategories()                        {return auto_categories;}
     bool GetDocThemes()                             {return doc_themes;}
     bool GetDocNamedEntities()                      {return doc_named_entities;}
     bool GetDocUserEntities()                       {return doc_user_entities;}
@@ -74,6 +76,7 @@ public:
     bool GetCollConceptTopics()                     {return coll_concept_topics;}
 
     string GetSupportedLanguages()                  {return supported_languages;}
+    bool GetHtmlProcessing()                       {return html_processing;}
 
 
 
@@ -96,6 +99,7 @@ public:
 
 
     void SetConfigurationsLimit(int configurations_limit)       {this->configurations_limit = configurations_limit;}
+    void SetOutputDataLimit(int output_data_limit)              {this->output_data_limit = output_data_limit;}
     void SetBlacklistLimit(int blacklist_limit)                 {this->blacklist_limit = blacklist_limit;}
     void SetCategoriesLimit(int categories_limit)               {this->categories_limit = categories_limit;}
     void SetCategorySamplesLimit(int category_samples_limit)    {this->category_samples_limit = category_samples_limit;};
@@ -111,6 +115,7 @@ public:
     void SetCallbackBatchLimit(int callback_batch_limit)        {this->callback_batch_limit = callback_batch_limit;}
 
     void SetSummary(bool summary)                               {this->summary = summary;}
+    void SetAutoCategories(bool auto_categories)                {this->auto_categories = auto_categories;}
     void SetDocThemes(bool doc_themes)                          {this->doc_themes = doc_themes;}
     void SetDocNamedEntities(bool doc_named_entities)           {this->doc_named_entities = doc_named_entities;}
     void SetDocUserEntities(bool doc_user_entities)             {this->doc_user_entities = doc_user_entities;}
@@ -136,6 +141,7 @@ public:
     void SetCollConceptTopics(bool coll_concept_topics)         {this->coll_concept_topics = coll_concept_topics;}
 
     void SetSupportedLanguages(string supported_languages)      {this->supported_languages = supported_languages;}
+    void SetHtmlProcessing(bool html_processing)                {this->html_processing = html_processing;}
 
 
 private:
@@ -157,10 +163,11 @@ private:
 
     // basic_settings
     int configurations_limit;
+    int output_data_limit;
     int blacklist_limit;
     int categories_limit;
-    int category_samples_limit; //new
-    bool return_source_text; // new
+    int category_samples_limit;
+    bool return_source_text;
     int queries_limit;
     int entities_limit;
     int sentiment_limit;
@@ -174,6 +181,7 @@ private:
     // feature setting
     //-- document
     bool summary;
+    bool auto_categories;
     bool doc_themes;
     bool doc_named_entities;
     bool doc_user_entities;
@@ -199,6 +207,7 @@ private:
     bool coll_concept_topics;
 
     string supported_languages;
+    bool html_processing;
 };
 
 #endif // SUBSCRIPTION_H

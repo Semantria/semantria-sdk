@@ -24,6 +24,10 @@ namespace Semantria.Com.Mapping.Output
         [DataMember(Name = "sentiment_score")]
         [XmlElementAttribute("sentiment_score")]
         public float SentimentScore { get; set; }
+
+        [DataMember(Name = "is_negated")]
+        [XmlElementAttribute("is_negated")]
+        public bool IsNegated { get; set; }
     }
 }
 

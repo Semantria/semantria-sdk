@@ -2,6 +2,7 @@
 #define COLLENTITY_H
 
 #include "../../serializers/json/JsonSerializable.h"
+#include "../../objects/output/Attribute.h"
 
 using namespace std;
 
@@ -21,6 +22,7 @@ public:
     int GetNegativeCount() {return negative_count;}
     int GetNeutralCount() {return neutral_count;}
     int GetPositiveCount() {return positive_count;}
+    vector<Mention*>* GetMentions() {return mentions;}
 
     void SetTitle(string title) {this->title = title;}
     void SetType(string type) {this->type = type;}
@@ -30,6 +32,8 @@ public:
     void SetNegativeCount(int negative_count) {this->negative_count = negative_count;}
     void SetNeutralCount(int neutral_count) {this->neutral_count = neutral_count;}
     void SetPositiveCount(int positive_count) {this->positive_count = positive_count;}
+    void SetMentions(vector<Mention*>* mentions) {this->mentions = mentions;}
+    void AddMentions(Mention* mention) {this->mentions->push_back(mention);}
 
 private:
     string title;
@@ -40,6 +44,8 @@ private:
     int negative_count;
     int neutral_count;
     int positive_count;
+
+    vector<Mention*>* mentions;
 };
 
 #endif // COLLENTITY_H

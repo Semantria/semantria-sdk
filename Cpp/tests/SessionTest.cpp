@@ -12,14 +12,13 @@
 #include "../src/connection/base64.h"
 
 namespace {
-
     string KEY = "";
     string SECRET = "";
 
     TEST(AuthWebRequestFunctionality) {
         cout << "AuthWebRequestFunctionality" << endl;
         AuthRequest* request = new AuthRequest(KEY, SECRET);
-        request->authWebRequest("https://api30.semantria.com/status.xml", GET);
+        request->authWebRequest("https://api35.semantria.com/status.xml", GET);
         CHECK("" != request->GetReceivedData());
 
         delete request;
@@ -56,7 +55,7 @@ namespace {
         CHECK(NULL != status);
 
         CHECK_EQUAL("available", status->GetServiceStatus());
-        CHECK_EQUAL("3.1", status->GetApiVersion());
+        CHECK_EQUAL("3.5", status->GetApiVersion());
 
         delete session;
         delete status;
@@ -276,6 +275,7 @@ namespace {
         delete session;
     }
 
+
     TEST(UpdateCategories) {
         cout << "UpdateCategories" << endl;
         Session* session = Session::CreateSession(KEY, SECRET);
@@ -289,14 +289,13 @@ namespace {
 
         vector<Category*>* list = new vector<Category*>;
         vector<string>* samples = new vector<string>();
-        samples->push_back("sample 1");
-        samples->push_back("sample 2");
-        Category* addedItem = new Category("category 1", 1.45, samples);
+        samples->push_back("sample0");
+        samples->push_back("sample1");
+        Category* addedItem = new Category("Category011", 1.45, samples);
         list->push_back(addedItem);
 
         CHECK_EQUAL(202, session->AddCategories(list));
         delete list;
-
 
         // Checking
         items = session->GetCategories();
@@ -306,7 +305,7 @@ namespace {
 
         //
         vector<string>* removeList = new vector<string>;
-        removeList->push_back("category 1");
+        removeList->push_back("Category011");
         CHECK_EQUAL(202, session->RemoveCategories(removeList));
         delete removeList;
 
@@ -519,4 +518,5 @@ namespace {
 
         delete session;
     }
+
 }

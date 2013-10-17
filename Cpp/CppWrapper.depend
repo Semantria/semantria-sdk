@@ -118,11 +118,13 @@
 	"../objects/output/DocAnalyticData.h"
 	"../objects/output/CollAnalyticData.h"
 
-1369945072 c:\_projects\semantria\cpp-sdk\src\objects\output\docanalyticdata.h
+1381293009 c:\_projects\semantria\cpp-sdk\src\objects\output\docanalyticdata.h
 	"../../serializers/json/JsonSerializable.h"
 	"../../serializers/xml/XmlSerializable.h"
 	"../../common/Enums.h"
 	"../../common/EnumsHelper.h"
+	"../../objects/output/DocAutoCategories.h"
+	"../../objects/output/DocDetails.h"
 	"../../objects/output/DocEntity.h"
 	"../../objects/output/DocTopic.h"
 	"../../objects/output/DocTheme.h"
@@ -327,7 +329,7 @@
 1369742785 c:\_projects\semantria\cpp-sdk\src\objects\output\docphrase.h
 	"../../serializers/json/JsonSerializable.h"
 
-1369742785 c:\_projects\semantria\cpp-sdk\src\objects\output\collanalyticdata.h
+1381294066 c:\_projects\semantria\cpp-sdk\src\objects\output\collanalyticdata.h
 	"../../serializers/json/JsonSerializable.h"
 	"../../serializers/xml/XmlSerializable.h"
 	"../../common/Enums.h"
@@ -337,14 +339,16 @@
 	"../../objects/output/CollTheme.h"
 	"../../objects/output/Facet.h"
 
-1369945861 c:\_projects\semantria\cpp-sdk\src\objects\output\collentity.h
+1381295154 c:\_projects\semantria\cpp-sdk\src\objects\output\collentity.h
 	"../../serializers/json/JsonSerializable.h"
+	"../../objects/output/Attribute.h"
 
 1369742785 c:\_projects\semantria\cpp-sdk\src\objects\output\colltopic.h
 	"../../serializers/json/JsonSerializable.h"
 
-1369742785 c:\_projects\semantria\cpp-sdk\src\objects\output\colltheme.h
+1381295153 c:\_projects\semantria\cpp-sdk\src\objects\output\colltheme.h
 	"../../serializers/json/JsonSerializable.h"
+	"../../objects/output/Attribute.h"
 
 1362490416 c:\_projects\semantria\cpp-sdk\src\objects\output\facet.h
 	"../../serializers/json/JsonSerializable.h"
@@ -355,8 +359,9 @@
 	"../../serializers/json/JsonSerializable.h"
 	"../../objects/output/Mention.h"
 
-1363969063 c:\_projects\semantria\cpp-sdk\src\objects\output\mention.h
+1381297994 c:\_projects\semantria\cpp-sdk\src\objects\output\mention.h
 	"../../serializers/json/JsonSerializable.h"
+	"../../objects/output/Location.h"
 
 1369742785 source:c:\_projects\semantria\cpp-sdk\src\handlers\simplecallbackhandler.cpp
 	"SimpleCallBackHandler.h"
@@ -389,16 +394,16 @@
 1369742785 c:\_projects\semantria\cpp-sdk\src\objects\configuration\sentimentphrase.h
 	"../../serializers/json/JsonSerializable.h"
 
-1369816722 source:c:\_projects\semantria\cpp-sdk\src\objects\configuration\userentity.cpp
+1381288145 source:c:\_projects\semantria\cpp-sdk\src\objects\configuration\userentity.cpp
 	"UserEntity.h"
 
-1369816628 c:\_projects\semantria\cpp-sdk\src\objects\configuration\userentity.h
+1381288145 c:\_projects\semantria\cpp-sdk\src\objects\configuration\userentity.h
 	"../../serializers/json/JsonSerializable.h"
 
 1369821525 source:c:\_projects\semantria\cpp-sdk\src\objects\output\attribute.cpp
 	"Attribute.h"
 
-1369742785 source:c:\_projects\semantria\cpp-sdk\src\objects\output\collanalyticdata.cpp
+1381294066 source:c:\_projects\semantria\cpp-sdk\src\objects\output\collanalyticdata.cpp
 	"CollAnalyticData.h"
 	"../../serializers/xml/CollectionXmlHandler.h"
 
@@ -423,16 +428,16 @@
 	"../../serializers/json/JsonSerializable.h"
 	"../../serializers/xml/XmlSerializable.h"
 
-1369742785 source:c:\_projects\semantria\cpp-sdk\src\objects\output\collentity.cpp
+1381295274 source:c:\_projects\semantria\cpp-sdk\src\objects\output\collentity.cpp
 	"CollEntity.h"
 
-1369742785 source:c:\_projects\semantria\cpp-sdk\src\objects\output\colltheme.cpp
+1381295274 source:c:\_projects\semantria\cpp-sdk\src\objects\output\colltheme.cpp
 	"CollTheme.h"
 
 1369742785 source:c:\_projects\semantria\cpp-sdk\src\objects\output\colltopic.cpp
 	"CollTopic.h"
 
-1369825543 source:c:\_projects\semantria\cpp-sdk\src\objects\output\docanalyticdata.cpp
+1381293016 source:c:\_projects\semantria\cpp-sdk\src\objects\output\docanalyticdata.cpp
 	"DocAnalyticData.h"
 	"../../serializers/xml/DocumentXmlHandler.h"
 
@@ -452,7 +457,7 @@
 	"../../serializers/json/JsonSerializable.h"
 	"../../objects/output/DocWords.h"
 
-1363969051 c:\_projects\semantria\cpp-sdk\src\objects\output\docwords.h
+1381289287 c:\_projects\semantria\cpp-sdk\src\objects\output\docwords.h
 	"../../serializers/json/JsonSerializable.h"
 
 1369945572 source:c:\_projects\semantria\cpp-sdk\src\objects\output\docentity.cpp
@@ -483,13 +488,13 @@
 1369742785 source:c:\_projects\semantria\cpp-sdk\src\objects\output\document.cpp
 	"Document.h"
 
-1363969045 source:c:\_projects\semantria\cpp-sdk\src\objects\output\docwords.cpp
+1381289201 source:c:\_projects\semantria\cpp-sdk\src\objects\output\docwords.cpp
 	"DocWords.h"
 
-1363918761 source:c:\_projects\semantria\cpp-sdk\src\objects\output\facet.cpp
+1381295274 source:c:\_projects\semantria\cpp-sdk\src\objects\output\facet.cpp
 	"Facet.h"
 
-1363969057 source:c:\_projects\semantria\cpp-sdk\src\objects\output\mention.cpp
+1381297994 source:c:\_projects\semantria\cpp-sdk\src\objects\output\mention.cpp
 	"Mention.h"
 
 1369742785 source:c:\_projects\semantria\cpp-sdk\src\objects\output\servicestatus.cpp
@@ -516,10 +521,10 @@
 	"../../serializers/json/JsonSerializable.h"
 	"../../objects/output/StatConfigurations.h"
 
-1369812764 source:c:\_projects\semantria\cpp-sdk\src\objects\output\subscription.cpp
+1381283197 source:c:\_projects\semantria\cpp-sdk\src\objects\output\subscription.cpp
 	"Subscription.h"
 
-1369812531 c:\_projects\semantria\cpp-sdk\src\objects\output\subscription.h
+1381283197 c:\_projects\semantria\cpp-sdk\src\objects\output\subscription.h
 	"../../serializers/json/JsonSerializable.h"
 	"../../serializers/xml/XmlSerializable.h"
 	"../../serializers/xml/SubscriptionXmlHandler.h"
@@ -562,14 +567,14 @@
 	"../../serializers/xml/XmlSerializable.h"
 	"../../serializers/xml/ConfigurationXmlHandler.h"
 
-1369815484 c:\_projects\semantria\cpp-sdk\src\objects\configuration\configuration.h
+1381285789 c:\_projects\semantria\cpp-sdk\src\objects\configuration\configuration.h
 	"../../serializers/json/JsonSerializable.h"
 	"../../serializers/xml/XmlSerializable.h"
 
 1369742785 c:\_projects\semantria\cpp-sdk\src\serializers\xml\configurationxmlhandler.h
 	"../../objects/stub/Stub_Configurations.h"
 
-1369742785 source:c:\_projects\semantria\cpp-sdk\src\objects\stub\stub_docanalyticdatas.cpp
+1381291052 source:c:\_projects\semantria\cpp-sdk\src\objects\stub\stub_docanalyticdatas.cpp
 	"Stub_DocAnalyticDatas.h"
 
 1369742785 source:c:\_projects\semantria\cpp-sdk\src\objects\stub\stub_entities.cpp
@@ -712,7 +717,7 @@
 	"../Serializer.h"
 	"XmlSerializable.h"
 
-1369827659 source:c:\_projects\semantria\cpp-sdk\src\session.cpp
+1381291052 source:c:\_projects\semantria\cpp-sdk\src\session.cpp
 	"Session.h"
 
 1363867863 c:\_projects\semantria\cpp-sdk\src\session.h
@@ -738,17 +743,17 @@
 	"objects/output/Subscription.h"
 	"connection/AuthRequest.h"
 
-1369815451 source:c:\_projects\semantria\cpp-sdk\src\objects\configuration\configuration.cpp
+1381285789 source:c:\_projects\semantria\cpp-sdk\src\objects\configuration\configuration.cpp
 	"Configuration.h"
 
 1369821162 c:\_projects\semantria\cpp-sdk\src\objects\output\mentionwithlocations.h
 	"../../serializers/json/JsonSerializable.h"
 	"../../objects/output/Location.h"
 
-1369822266 c:\_projects\semantria\cpp-sdk\src\objects\output\location.h
+1381294243 c:\_projects\semantria\cpp-sdk\src\objects\output\location.h
 	"../../serializers/json/JsonSerializable.h"
 
-1369821079 source:c:\_projects\semantria\cpp-sdk\src\objects\output\location.cpp
+1381294225 source:c:\_projects\semantria\cpp-sdk\src\objects\output\location.cpp
 	"Location.h"
 
 1369822524 source:c:\_projects\semantria\cpp-sdk\src\objects\output\mentionwithlocations.cpp
@@ -759,4 +764,17 @@
 
 1369945072 source:c:\_projects\semantria\cpp-sdk\src\objects\output\docopinion.cpp
 	"DocOpinion.h"
+
+1381290683 c:\_projects\semantria\cpp-sdk\src\objects\output\docautocategories.h
+	"../../serializers/json/JsonSerializable.h"
+	"../../objects/output/DocCategories.h"
+
+1381290528 c:\_projects\semantria\cpp-sdk\src\objects\output\doccategories.h
+	"../../serializers/json/JsonSerializable.h"
+
+1381290975 source:c:\_projects\semantria\cpp-sdk\src\objects\output\docautocategories.cpp
+	"DocAutoCategories.h"
+
+1381290942 source:c:\_projects\semantria\cpp-sdk\src\objects\output\doccategories.cpp
+	"DocCategories.h"
 

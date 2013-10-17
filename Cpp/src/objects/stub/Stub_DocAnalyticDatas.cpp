@@ -22,7 +22,7 @@ void Stub_DocAnalyticDatas::Deserialize(Json::Value& root) {
         this->analyticData = new vector<DocAnalyticData*>();
     }
 
-    for ( int i = 0; i < root.size(); ++i ) {
+    for ( unsigned int i = 0; i < root.size(); ++i ) {
         DocAnalyticData* data = new DocAnalyticData();
         data->Deserialize(root[i]);
         this->analyticData->push_back(data);

@@ -34,6 +34,7 @@ public class SerializerTest {
 		config.setOneSentence(true);
 		config.setAutoResponse(true);
 		config.setLanguage("English");
+        config.setProcessHtml(true);
 		config.setCharsThreshold(80);
 		config.setCallback("https://anyapi.anydomain.com/processed/docs.json");
 
@@ -56,6 +57,7 @@ public class SerializerTest {
 		doc.setUserOpinionsLimit(0);
 		doc.setNamedOpinionsLimit(0);
         doc.setThemeMentionsLimit(0);
+        doc.setAutoCategoriesLimit(10);
 		config.setDocument(doc);
 
 		CollConfiguration coll = new CollConfiguration();
@@ -66,6 +68,8 @@ public class SerializerTest {
 		coll.setNamedEntitiesLimit(5);
 		coll.setThemesLimit(0);
 		coll.setFacetMentionsLimit(0);
+        coll.setThemeMentionsLimit(10);
+        coll.setNamedMentionsLimit(10);
 		config.setCollection(coll);
 
 		Configuration clonedConfig = new Configuration();
@@ -169,8 +173,8 @@ public class SerializerTest {
 	{
 		ISerializer serializer = new XmlSerializer();
 		ISerializer jsonSerializer = new JsonSerializer();
-		assertEquals(ExpectedResult.XML.addEntity, serializer.serialize( ObjProxy.wrap( Arrays.asList( new UserEntity("name 1", "type 1", "label 1") ), UserEntities.class, "POST")));
-		assertEquals(ExpectedResult.JSON.addEntity, jsonSerializer.serialize( Arrays.asList(new UserEntity("name 1", "type 1", "label 1")) ));
+		assertEquals(ExpectedResult.XML.addEntity, serializer.serialize( ObjProxy.wrap( Arrays.asList( new UserEntity("name 1", "type 1", "label 1", "normalized") ), UserEntities.class, "POST")));
+		assertEquals(ExpectedResult.JSON.addEntity, jsonSerializer.serialize( Arrays.asList(new UserEntity("name 1", "type 1", "label 1", "normalized")) ));
 	}
 
 
@@ -504,6 +508,7 @@ public class SerializerTest {
 		assertEquals(0, subscriptionObj.getBillingSettings().getDocsLimitInterval().intValue());
 		assertEquals("pay-as-you-go", subscriptionObj.getBillingSettings().getLimitType());
 
+        assertEquals(10, subscriptionObj.getBasicSettings().getOutputDataLimit().intValue());
 		assertEquals(10, subscriptionObj.getBasicSettings().getConfigurationsLimit().intValue());
 		assertEquals(100, subscriptionObj.getBasicSettings().getBlacklistLimit().intValue());
 		assertEquals(100, subscriptionObj.getBasicSettings().getCategoriesLimit().intValue());
@@ -519,6 +524,8 @@ public class SerializerTest {
 		assertEquals(10, subscriptionObj.getBasicSettings().getCategorySamplesLimit().intValue());
 		assertFalse(subscriptionObj.getBasicSettings().getReturnSourceText().booleanValue());
 
+        assertTrue(subscriptionObj.getFeatureSettings().getHtmlProcessing());
+        assertTrue(subscriptionObj.getFeatureSettings().getDocument().getAutoCategories());
 		assertTrue(subscriptionObj.getFeatureSettings().getDocument().getSummary());
 		assertTrue( subscriptionObj.getFeatureSettings().getDocument().getThemes() );
 		assertTrue( subscriptionObj.getFeatureSettings().getDocument().getNamedEntities() );
@@ -545,6 +552,7 @@ public class SerializerTest {
 	{
 		assertTrue(null != analyticData);
 		assertEquals("cd2e7341-a3c2-4fb4-9d3a-779e8b0a5eff", analyticData.getConfigId());
+        assertEquals("tag", analyticData.getTag());
 		assertEquals("6F9619FF8B86D011B42D00CF4FC964FF", analyticData.getId());
 		assertEquals(TaskStatus.PROCESSED, analyticData.getStatus());
 		assertEquals(new Float(0.2398756), analyticData.getSentimentScore());
@@ -556,6 +564,7 @@ public class SerializerTest {
 		assertEquals(1, analyticData.getEntities().size());
 		assertEquals(1, analyticData.getTopics().size());
 		assertEquals(1, analyticData.getPhrases().size());
+        assertEquals(new Float(0.1), analyticData.getAutoCategories().get(0).getCategories().get(0).getStrengthScore());
 
 		//Check Document Themes
 		DocTheme themeObj = analyticData.getThemes().get(0);
@@ -565,6 +574,7 @@ public class SerializerTest {
 		assertEquals("republican moderates", themeObj.getTitle());
 		assertTrue(themeObj.getIsAbout());
 		assertEquals("neutral", themeObj.getSentimentPolarity());
+        assertEquals(new Integer(1), themeObj.getMentions().get(0).getLocations().get(0).getOffset());
 
 		//Check Document Entities
 		DocEntity entityObj = analyticData.getEntities().get(0);
@@ -637,6 +647,7 @@ public class SerializerTest {
 	{
 		assert(null != analyticData);
 		assertEquals("23498367", analyticData.getConfigId());
+        assertEquals("tag", analyticData.getTag());
 		assertEquals("6F9619FF8B86D011B42D00CF4FC964FF", analyticData.getId());
 		assertEquals(TaskStatus.PROCESSED, analyticData.getStatus());
 		assertEquals(1, analyticData.getFacets().size());
@@ -655,7 +666,7 @@ public class SerializerTest {
 
 		assertEquals("Attribute", attributeObj.getLabel());
 		assertEquals(new Integer(5), attributeObj.getCount());
-		assertEquals("something", mentionObj.getLabel());
+		assertEquals("Label", mentionObj.getLabel());
 
 		//Check Collection Themes
 		CollTheme themeObj = analyticData.getThemes().get(0);

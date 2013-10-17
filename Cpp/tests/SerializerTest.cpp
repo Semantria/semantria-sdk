@@ -51,12 +51,12 @@ namespace {
         JsonSerializer * serializer = new JsonSerializer();
         string expectedResult = "[{\"auto_response\":true,\"callback\":\"https://anyapi.anydomain.com/processed/docs.json\",\"chars_threshold\":80,"
         "\"collection\":{\"attribute_mentions_limit\":2,\"concept_topics_limit\":5,\"facet_atts_limit\":5,\"facet_mentions_limit\":5,"
-        "\"facets_limit\":15,\"named_entities_limit\":5,\"query_topics_limit\":5,\"themes_limit\":0},\"document\":{\"concept_topics_limit\":5,"
+        "\"facets_limit\":15,\"named_entities_limit\":5,\"named_mentions_limit\":0,\"query_topics_limit\":5,\"theme_mentions_limit\":0,\"themes_limit\":0},\"document\":{\"auto_categories_limit\":5,\"concept_topics_limit\":5,"
         "\"detect_language\":true,\"entity_themes_limit\":5,\"named_entities_limit\":5,\"named_mentions_limit\":0,\"named_opinions_limit\":0,"
         "\"named_relations_limit\":0,\"phrases_limit\":10,\"pos_types\":\"\",\"possible_phrases_limit\":0,\"query_topics_limit\":5,"
         "\"summary_limit\":0,\"theme_mentions_limit\":0,\"themes_limit\":0,\"user_entities_limit\":5,\"user_mentions_limit\":0,"
         "\"user_opinions_limit\":0,\"user_relations_limit\":0},\"is_primary\":true,\"language\":\"English\",\"name\":\"A test configuration\","
-        "\"one_sentence\":false,\"template\":\"template\"}]";
+        "\"one_sentence\":false,\"process_html\":false,\"template\":\"template\"}]";
 
         vector<Configuration*>* list = new vector<Configuration*>();
 
@@ -91,7 +91,8 @@ namespace {
 
         list->push_back(addedConfiguration);
 
-        CHECK_EQUAL(expectedResult, eraseLastCharacter(serializer->Serialize((vector<JsonSerializable*>*)list)));
+        string result = eraseLastCharacter(serializer->Serialize((vector<JsonSerializable*>*)list));
+        CHECK_EQUAL(expectedResult, result);
 
         delete serializer;
         delete addedConfiguration;
@@ -140,11 +141,12 @@ namespace {
     TEST(JsonSerializingEntity) {
         cout << "JsonSerializingEntity" << endl;
         JsonSerializer * serializer = new JsonSerializer();
-        string expectedResult = "[{\"label\":\"wiki\",\"name\":\"chair\",\"type\":\"furniture\"}]";
+        string expectedResult = "[{\"label\":\"wiki\",\"name\":\"chair\",\"normalized\":\"norm\",\"type\":\"furniture\"}]";
 
         vector<UserEntity*>* list = new vector<UserEntity*>();
         UserEntity* addedEntity = new UserEntity("chair", "furniture");
         addedEntity->SetLabel("wiki");
+        addedEntity->SetNormalized("norm");
         list->push_back(addedEntity);
 
         CHECK_EQUAL(expectedResult, eraseLastCharacter(serializer->Serialize((vector<JsonSerializable*>*)list)));
@@ -282,6 +284,7 @@ namespace {
                             },\
                             \"basic_settings\":{\
                                 \"configurations_limit\" : 10,\
+                                \"output_data_limit\" : 20,\
                                 \"blacklist_limit\" : 100,\
                                 \"categories_limit\" : 100,\
                                 \"queries_limit\" : 100,\
@@ -310,7 +313,8 @@ namespace {
                                     \"sentiment_phrases\": true,\
                                     \"phrases_detection\": false,\
                                     \"pos_tagging\": false,\
-                                    \"language_detection\": false\
+                                    \"language_detection\": false,\
+                                    \"auto_categories\": false\
                                 },\
                                 \"collection\": {\
                                     \"facets\": true,\
@@ -320,7 +324,8 @@ namespace {
                                     \"query_topics\": true,\
                                     \"concept_topics\": false\
                                 },\
-                                \"supported_languages\" : \"English, French, Spanish\"\
+                                \"supported_languages\" : \"English, French, Spanish\",\
+                                \"html_processing\" : false\
                             }\
                         }";
         Subscription* subscription = new Subscription();
@@ -344,6 +349,7 @@ namespace {
         CHECK_EQUAL(30, subscription->GetDocsSuggestedInterval());
 
         CHECK_EQUAL(10, subscription->GetConfigurationsLimit());
+        CHECK_EQUAL(20, subscription->GetOutputDataLimit());
         CHECK_EQUAL(100, subscription->GetBlacklistLimit());
         CHECK_EQUAL(100, subscription->GetCategoriesLimit());
         CHECK_EQUAL(100, subscription->GetQueriesLimit());
@@ -362,8 +368,11 @@ namespace {
         CHECK_EQUAL(true, subscription->GetFacets());
         CHECK_EQUAL(false, subscription->GetMentions());
 
+        CHECK_EQUAL(false, subscription->GetAutoCategories());
+
         CHECK_EQUAL("throughput", subscription->GetLimitType());
         CHECK_EQUAL("English, French, Spanish", subscription->GetSupportedLanguages());
+        CHECK_EQUAL(false, subscription->GetHtmlProcessing());
 
         delete serializer;
         delete subscription;
@@ -575,6 +584,7 @@ namespace {
         string source = "[{\
                 \"id\":\"6F9619FF8B86D011B42D00CF4FC964FF\",\
                 \"config_id\":\"23498367\",\
+                \"tag\":\"mytag\",\
                 \"status\":\"PROCESSED\",\
                 \"source_text\" : \"See Output Data Details chapter.\",\
                 \"language\" : \"English\",\
@@ -582,6 +592,33 @@ namespace {
                 \"sentiment_score\":0.8295653,\
                 \"sentiment_polarity\" : \"positive\",\
                 \"summary\":\"Summary of the document’s text.\",\
+                \"details\" : [ \
+                { \
+                    \"is_imperative\" : false, \
+                    \"is_polar\" : false, \
+                    \"words\" : \
+                    [ { \
+                        \"tag\" : \"NNP\", \
+                        \"type\" : \"Noun\", \
+                        \"title\" : \"Aaron\", \
+                        \"stemmed\" : \"Aaron\", \
+                        \"is_negated\" : false, \
+                        \"sentiment_score\" : 0.569 \
+                        } \
+                        ] \
+                    } \
+                ],\
+                \"auto_categories\" :[ \
+                { \
+                    \"title\" : \"Automotive\", \
+                    \"type\" : \"node\", \
+                    \"strength_score\" : 0.378, \
+                    \"categories\" : [ { \
+                        \"title\" : \"Moto\", \
+                        \"type\" : \"leaf\",\
+                        \"strength_score\" : 0.67 \
+                        } ] } \
+                ],\
                 \"themes\":[\
                 {\
                         \"evidence\":1,\
@@ -716,6 +753,7 @@ namespace {
 
         CHECK_EQUAL("23498367", analyticData->GetConfigId());
         CHECK_EQUAL("6F9619FF8B86D011B42D00CF4FC964FF", analyticData->GetId());
+        CHECK_EQUAL("mytag", analyticData->GetTag());
         CHECK_EQUAL(PROCESSED, analyticData->GetStatus());
         CHECK_EQUAL(0.8295653, analyticData->GetSentimentScore());
         CHECK_EQUAL("Summary of the document’s text.", analyticData->GetSummary());
@@ -728,6 +766,28 @@ namespace {
         CHECK_EQUAL(1, analyticData->GetThemes()->size());
         CHECK_EQUAL(1, analyticData->GetEntities()->size());
         CHECK_EQUAL(1, analyticData->GetTopics()->size());
+
+        //Check Details
+        DocDetails* detailsObj = analyticData->GetDetails()->at(0);
+        CHECK_EQUAL(false, detailsObj->GetIsPolar());
+        CHECK_EQUAL(false, detailsObj->GetIsImperative());
+        DocWords* docWObj = detailsObj->GetWords()->at(0);
+        CHECK_EQUAL("NNP", docWObj->GetTag());
+        CHECK_EQUAL("Aaron", docWObj->GetTitle());
+        CHECK_EQUAL("Noun", docWObj->GetType());
+        CHECK_EQUAL("Aaron", docWObj->GetStemmed());
+        CHECK_EQUAL(false, docWObj->GetIsNegated());
+        CHECK_EQUAL(0.569, docWObj->GetSentimentScore());
+
+        //Check Auto Categories
+        DocAutoCategories* autoCategoriesObj = analyticData->GetAutoCategories()->at(0);
+        CHECK_EQUAL("Automotive", autoCategoriesObj->GetTitle());
+        CHECK_EQUAL("node", autoCategoriesObj->GetType());
+        CHECK_EQUAL(0.378, autoCategoriesObj->GetStrengthScore());
+        DocCategories* categoryObj = autoCategoriesObj->GetCategories()->at(0);
+        CHECK_EQUAL("Moto", categoryObj->GetTitle());
+        CHECK_EQUAL("leaf", categoryObj->GetType());
+        CHECK_EQUAL(0.67, categoryObj->GetStrengthScore());
 
         //Check Document Themes
         DocTheme* themeObj = analyticData->GetThemes()->at(0);
@@ -830,6 +890,7 @@ namespace {
         string source = "{\
                 \"id\":\"6F9619FF8B86D011B42D00CF4FC964FF\",\
                 \"config_id\":\"23498367\",\
+                \"tag\":\"mytag\",\
                 \"status\":\"PROCESSED\",\
                 \"facets\":[\
                     {\
@@ -847,7 +908,11 @@ namespace {
                                          \"label\" : \"something\",\
                                          \"is_negated\" : true,\
                                          \"negating_phrase\" : \"negator\",\
-                                         \"indexes\" : [ 5, 7, 17, 24, 56, 82, 99 ]\
+                                         \"locations\" : [ {\
+                                             \"index\" : 17,\
+                                             \"offset\" : 987,\
+                                             \"length\" : 9\
+                                          }]\
                                       }\
                                 ]\
                             }\
@@ -857,7 +922,11 @@ namespace {
                                 \"label\" : \"Mention_009\",\
                                 \"is_negated\" : true,\
                                 \"negating_phrase\" : \"negator\",\
-                                \"indexes\" : [ 3, 7, 17, 24, 56, 82, 99 ]\
+                                \"locations\" : [ {\
+                                     \"index\" : 117,\
+                                     \"offset\" : 1987,\
+                                     \"length\" : 19\
+                                  }]\
                             }\
                         ]\
                     }\
@@ -867,7 +936,19 @@ namespace {
                         \"phrases_count\":1,\
                         \"themes_count\":1,\
                         \"sentiment_score\":0.0,\
-                        \"title\":\"republican moderates\"\
+                        \"title\":\"republican moderates\",\
+                        \"mentions\" : [\
+                            {\
+                                \"label\" : \"Mention_007\",\
+                                \"is_negated\" : true,\
+                                \"negating_phrase\" : \"negator\",\
+                                \"locations\" : [ {\
+                                     \"index\" : 62,\
+                                     \"offset\" : 1987,\
+                                     \"length\" : 19\
+                                  }]\
+                            }\
+                        ]\
                     }\
                 ],\
                 \"entities\":[\
@@ -879,7 +960,19 @@ namespace {
                         \"count\":1,\
                         \"negative_count\":1,\
                         \"neutral_count\":1,\
-                        \"positive_count\":1\
+                        \"positive_count\":1,\
+                        \"mentions\" : [\
+                            {\
+                                \"label\" : \"Mention_003\",\
+                                \"is_negated\" : false,\
+                                \"negating_phrase\" : \"negator\",\
+                                \"locations\" : [ {\
+                                     \"index\" : 3,\
+                                     \"offset\" : 5,\
+                                     \"length\" : 6\
+                                  }]\
+                            }\
+                        ]\
                     }\
                 ],\
                 \"topics\":[\
@@ -904,9 +997,11 @@ namespace {
 
         CHECK_EQUAL("23498367", analyticData->GetConfigId());
         CHECK_EQUAL("6F9619FF8B86D011B42D00CF4FC964FF", analyticData->GetId());
+        CHECK_EQUAL("mytag", analyticData->GetTag());
         CHECK_EQUAL(1, analyticData->GetFacets()->size());
         CHECK_EQUAL(PROCESSED, analyticData->GetStatus());
 
+        // Check Fasets
         Facet* facetObj = analyticData->GetFacets()->at(0);
         CHECK_EQUAL("Something", facetObj->GetLabel());
         CHECK_EQUAL(10, facetObj->GetCount());
@@ -915,19 +1010,23 @@ namespace {
         CHECK_EQUAL(7, facetObj->GetNeutralCount());
         CHECK_EQUAL(1, facetObj->GetAttributes()->size());
 
-
         Attribute* attributeObj = facetObj->GetAttributes()->at(0);
         CHECK_EQUAL("Attribute", attributeObj->GetLabel());
         CHECK_EQUAL(5, attributeObj->GetCount());
 
         Mention* attMention = attributeObj->GetMentions()->at(0);
         CHECK_EQUAL("something", attMention->GetLabel());
-        CHECK_EQUAL(5, attMention->GetIndexes()->at(0));
 
+        Location* location = attMention->GetLocations()->at(0);
+        CHECK_EQUAL(17, location->GetIndex());
 
         Mention* mention = facetObj->GetMentions()->at(0);
         CHECK_EQUAL("Mention_009", mention->GetLabel());
-        CHECK_EQUAL(3, mention->GetIndexes()->at(0));
+        {
+            Location* location = mention->GetLocations()->at(0);
+            CHECK_EQUAL(117, location->GetIndex());
+        }
+
 
         //Check Collection Themes
         CollTheme* themeObj = analyticData->GetThemes()->at(0);
@@ -935,6 +1034,13 @@ namespace {
         CHECK_EQUAL(1, themeObj->GetThemesCount());
         CHECK_EQUAL(0.0, themeObj->GetSentimentScore());
         CHECK_EQUAL("republican moderates", themeObj->GetTitle());
+        {
+            Mention* mention = themeObj->GetMentions()->at(0);
+            CHECK_EQUAL("Mention_007", mention->GetLabel());
+
+            Location* location = mention->GetLocations()->at(0);
+            CHECK_EQUAL(62, location->GetIndex());
+        }
 
         //Check Collection Entities
         CollEntity* entityObj = analyticData->GetEntities()->at(0);
@@ -946,6 +1052,17 @@ namespace {
         CHECK_EQUAL(1, entityObj->GetNegativeCount());
         CHECK_EQUAL(1, entityObj->GetNeutralCount());
         CHECK_EQUAL(1, entityObj->GetPositiveCount());
+        {
+            Mention* mention = entityObj->GetMentions()->at(0);
+            CHECK_EQUAL("Mention_003", mention->GetLabel());
+            CHECK_EQUAL(false, mention->GetIsNedated());
+            CHECK_EQUAL("negator", mention->GetNegatingPhrase());
+
+            Location* location = mention->GetLocations()->at(0);
+            CHECK_EQUAL(3, location->GetIndex());
+            CHECK_EQUAL(5, location->GetOffset());
+            CHECK_EQUAL(6, location->GetLength());
+        }
 
         //Check Collection Topics
         CHECK_EQUAL(1, analyticData->GetTopics()->size());

@@ -75,6 +75,7 @@
     <Compile Include="Mapping\Configuration\UserEntity.cs" />
     <Compile Include="Mapping\Document.cs" />
     <Compile Include="Mapping\Output\CollAnalyticData.cs" />
+    <Compile Include="Mapping\Output\CollLocation.cs" />
     <Compile Include="Mapping\Output\DocAnalyticData.cs" />
     <Compile Include="Mapping\Configuration\Blacklist.cs" />
     <Compile Include="Mapping\Configuration\Category.cs" />
@@ -83,6 +84,7 @@
     <Compile Include="Mapping\Output\CollTheme.cs" />
     <Compile Include="Mapping\Output\CollEntity.cs" />
     <Compile Include="Mapping\Output\CollMention.cs" />
+    <Compile Include="Mapping\Output\DocCategory.cs" />
     <Compile Include="Mapping\Output\DocMention.cs" />
     <Compile Include="Mapping\Output\DocOpinion.cs" />
     <Compile Include="Mapping\Output\Statistics.cs" />

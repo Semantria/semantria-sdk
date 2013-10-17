@@ -27,6 +27,7 @@ public:
 
     string GetId() {return id;}
     string GetConfigId() {return config_id;}
+    string GetTag() {return tag;}
     TaskStatus GetStatus() {return status;}
     string GetStatusAsString();
     vector<CollEntity*>* GetEntities() {return entities;}
@@ -36,6 +37,7 @@ public:
 
     void SetId(string id) {this->id = id;}
     void SetConfigId(string config_id) {this->config_id = config_id;}
+    void SetTag(string tag) {this->tag = tag;}
     void SetStatus(TaskStatus status) {this->status = status;}
     void SetStatusFromString(string status);
     void SetEntities(vector<CollEntity*>* entities) {this->entities = entities;}
@@ -50,6 +52,7 @@ public:
 private:
     string id;
     string config_id;
+    string tag;
     TaskStatus status;
     vector<Facet*>* facets;
     vector<CollEntity*>* entities;

@@ -32,5 +32,9 @@ namespace Semantria.Com.Mapping.Output
         [DataMember(Name = "sentiment_polarity")]
         [XmlElementAttribute("sentiment_polarity")]
         public string SentimentPolarity { get; set; }
+
+        [DataMember(Name = "label")]
+        [XmlElementAttribute("label")]
+        public string Label { get; set; }
     }
 }

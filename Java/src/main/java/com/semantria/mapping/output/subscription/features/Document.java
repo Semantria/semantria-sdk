@@ -24,6 +24,8 @@ public class Document
 	private Boolean mentions = null;
 	private Boolean opinions = null;
 
+    private Boolean auto_categories = null;
+
 	public Document() {}
 
 	@XmlElement(name = "summary")
@@ -56,6 +58,8 @@ public class Document
 	public Boolean getMentions() { return mentions; }
 	@XmlElement(name = "opinions")
 	public Boolean getOpinions() { return opinions; }
+    @XmlElement(name = "auto_categories")
+    public Boolean getAutoCategories() { return auto_categories; }
 
 	public void setSummary(Boolean summary) { this.summary = summary; }
 	public void setThemes(Boolean themes) { this.themes = themes; }
@@ -72,4 +76,5 @@ public class Document
 	public void setPhrasesDetection(Boolean phrases_detection) { this.phrases_detection = phrases_detection; }
     public void setMentions(Boolean mentions) { this.mentions = mentions; }
     public void setOpinions(Boolean opinions) { this.opinions = opinions; }
+    public void setAutoCategories(Boolean auto_categories) { this.auto_categories = auto_categories; }
 }

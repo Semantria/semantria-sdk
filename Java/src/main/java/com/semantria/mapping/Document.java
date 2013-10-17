@@ -7,6 +7,7 @@ public final class Document
 {
 	private String id = null;
 	private String text = null;
+    private String tag = null;
 	
 	public Document() {}
 
@@ -16,11 +17,21 @@ public final class Document
 		this.text = text;
 	}
 
+    public Document(String id, String text, String tag)
+    {
+        this.id = id;
+        this.text = text;
+        this.tag = tag;
+    }
+
 	@XmlElement(name="id")
 	public String getId() { return id; }
 	@XmlElement(name="text")
 	public String getText() { return text; }
+    @XmlElement(name = "tag")
+    public String getTag() { return tag; }
 	
 	public void setId(String id) { this.id = id; }
 	public void setText(String text) { this.text = text; }
+    public void setTag(String tag) { this.tag = tag; }
 }

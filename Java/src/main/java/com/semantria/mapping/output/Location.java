@@ -1,21 +1,30 @@
 package com.semantria.mapping.output;
 
+import javax.xml.bind.annotation.XmlElement;
+
 public class Location
 {
-	private Integer m_offset = null;
-	private Integer m_length = null;
+	private Integer offset = null;
+	private Integer length = null;
+    private Integer index = null;
 
 	public Location() {}
 
-	public Location(Integer offset, Integer length)
+	public Location(Integer offset, Integer length, Integer index)
 	{
-		m_offset = offset;
-		m_length = length;
+		this.offset = offset;
+		this.length = length;
+        this.index = index;
 	}
 
-	public Integer getOffset() { return m_offset; }
-	public Integer getLength() { return m_length; }
+    @XmlElement(name = "offset")
+	public Integer getOffset() { return offset; }
+    @XmlElement(name = "length")
+	public Integer getLength() { return length; }
+    @XmlElement(name = "index")
+    public Integer getIndex() { return index; }
 
-	public void setOffset(Integer offset) { m_offset = offset; }
-	public void setLength(Integer length) { m_length = length;	}
+	public void setOffset(Integer offset) { this.offset = offset; }
+	public void setLength(Integer length) { this.length = length;	}
+    public void setIndex(Integer index) { this.index = index; }
 }

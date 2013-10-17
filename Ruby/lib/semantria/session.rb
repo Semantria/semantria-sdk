@@ -9,7 +9,7 @@ class Session
 
   # Create a new instance
   def initialize(consumer_key, consumer_secret, application_name = nil, use_compression = false, serializer = nil)
-    @host = 'https://api30.semantria.com'
+    @host = 'https://api35.semantria.com'
     @wrapper_name = "Ruby/#{Semantria::VERSION}"
     @consumer_key = consumer_key
     @consumer_secret = consumer_secret

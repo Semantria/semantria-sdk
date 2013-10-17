@@ -1,5 +1,16 @@
 CHANGELOG
 
+3.5.73 - Tested on compatibility with Semantria API 3.5.1
+	- Introduced support of Chinese language. Almost all feature except opinions and relationships are supported.
+	- HTML processing is now supported out of the box. Switch on HTML processing in configuration and Semantria will cut the tags automatically.
+	- Auto-categories feature. Since API 3.5.1 Semantria returns auto-categories which are technically the same concept topics but generated automatically based on Wikipedia ontology.
+	- Added Mentions for Themes and Entities of collection processing mode, both limits can be configured through configuration.
+	- Added “Normalized” field to custom entities configuration through the API. Normalized field allow to normalize different entity mentions to the common one.
+	- Introduced query grammar for entities configuration, now entities extraction can be controlled by the queries.
+	- Added long-waiting Tag field to the incoming/outgoing documents. It can be used as free text marker that Semantria will return back to the user.
+	- Added “IsInverted” marker to words returned by POS tagging feature. Marker indicates whether word is a part of sentiment inverting construction like negator.
+	- Modified “Location” output for collection processing mode. Now it returns not only index of the document where entity was mentioned but byte of set and its length as well.
+
 3.1.72 - Tested on compatibility with Semantria API 3.1
 	- Mentions for entities and themes of document processing mode has been introduced.
 	- Opinions for named and user entities has been introduced.

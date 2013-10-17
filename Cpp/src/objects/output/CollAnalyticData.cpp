@@ -28,6 +28,7 @@ void CollAnalyticData::Serialize(Json::Value& root) {}
 void CollAnalyticData::Deserialize(Json::Value& root) {
     id = root.get("id", "").asString();
     config_id = root.get("config_id", "").asString();
+    tag = root.get("tag", "").asString();
     this->SetStatusFromString(root.get("status", "").asString());
 
     // Facets

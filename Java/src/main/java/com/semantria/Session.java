@@ -33,7 +33,7 @@ public final class Session
 	private ISerializer serializer = null;
 	private String requestFormat = "json";
 	private ICallbackHandler callback = null;
-	private String serviceUrl = "https://api30.semantria.com";
+	private String serviceUrl = "https://api35.semantria.com";
 	public  boolean useCompression = false;
 
 
@@ -620,6 +620,7 @@ public final class Session
 		String method = "POST";
 		String url = serviceUrl + "/document." + requestFormat;
 		String body = serializer.serialize(task);
+        System.out.println("> " + body.getBytes().length);
 		AuthRequest ar = new AuthRequest(url, method, key, secret, body, config_id, appName, useCompression);
 		Integer status = ar.doRequest();
 		if(callback != null)

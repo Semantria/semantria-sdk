@@ -17,10 +17,13 @@ public class ExpectedResult
 						"<facet_mentions_limit>0</facet_mentions_limit>" +
 						"<facets_limit>15</facets_limit>" +
 						"<named_entities_limit>5</named_entities_limit>" +
+                        "<named_mentions_limit>10</named_mentions_limit>" +
 						"<query_topics_limit>5</query_topics_limit>" +
+                        "<theme_mentions_limit>10</theme_mentions_limit>" +
 						"<themes_limit>0</themes_limit>" +
 					"</collection>" +
 					"<document>" +
+                        "<auto_categories_limit>10</auto_categories_limit>" +
 						"<concept_topics_limit>5</concept_topics_limit>" +
 						"<detect_language>true</detect_language>" +
 						"<entity_themes_limit>5</entity_themes_limit>" +
@@ -44,7 +47,8 @@ public class ExpectedResult
 					"<language>English</language>" +
 					"<name>New configuration</name>" +
 					"<one_sentence>true</one_sentence>" +
-				"</configuration>" +
+                    "<process_html>true</process_html>" +
+                    "</configuration>" +
 			"</configurations>";
 
 		public static String cloneConfig =
@@ -98,6 +102,7 @@ public class ExpectedResult
 					"<entity>" +
                         "<label>label 1</label>" +
 						"<name>name 1</name>" +
+                        "<normalized>normalized</normalized>" +
 						"<type>type 1</type>" +
 					"</entity>" +
 				"</entities>";
@@ -171,8 +176,9 @@ public class ExpectedResult
                         "<docs_suggested>0</docs_suggested>"+
                         "<docs_suggested_interval>0</docs_suggested_interval>" +
 					"</billing_settings>" +
-						"<basic_settings>" +
+				    "<basic_settings>" +
 						"<configurations_limit>10</configurations_limit>" +
+                        "<output_data_limit>10</output_data_limit>" +
 						"<blacklist_limit>100</blacklist_limit>" +
 						"<categories_limit>100</categories_limit>" +
 						"<category_samples_limit>10</category_samples_limit>" +
@@ -188,8 +194,10 @@ public class ExpectedResult
 						"<callback_batch_limit>100</callback_batch_limit>" +
 					"</basic_settings>" +
 					"<feature_settings>" +
+                        "<html_processing>true</html_processing>" +
 						"<document>" +
 							"<summary>true</summary>" +
+                            "<auto_categories>true</auto_categories>" +
 							"<themes>true</themes>" +
 							"<named_entities>true</named_entities>" +
 							"<user_entities>true</user_entities>" +
@@ -220,6 +228,7 @@ public class ExpectedResult
 				"<document>" +
 					"<config_id>cd2e7341-a3c2-4fb4-9d3a-779e8b0a5eff</config_id>" +
 					"<id>6F9619FF8B86D011B42D00CF4FC964FF</id>" +
+                    "<tag>tag</tag>" +
 					"<status>PROCESSED</status>" +
 					"<source_text>See Output Data Details chapter</source_text>" +
 					"<language>English</language>" +
@@ -227,21 +236,22 @@ public class ExpectedResult
 					"<sentiment_score>0.2398756</sentiment_score>" +
 					"<sentiment_polarity>positive</sentiment_polarity>" +
 					"<summary>Summary of the document's text.</summary>" +
-						"<details>" +
-							"<sentence>" +
-								"<is_imperative>false</is_imperative>" +
-								"<is_polar>false</is_polar>" +
-								"<words>" +
-									"<word>" +
-										"<tag>NNP</tag>" +
-										"<type>Noun</type>" +
-										"<title>Aaron</title>" +
-										"<stemmed>Aaron</stemmed>" +
-										"<sentiment_score>0.569</sentiment_score>" +
-									"</word>" +
-								"</words>" +
-							"</sentence>" +
-						"</details>" +
+                    "<details>" +
+                        "<sentence>" +
+                            "<is_imperative>false</is_imperative>" +
+                            "<is_polar>false</is_polar>" +
+                            "<words>" +
+                                "<word>" +
+                                    "<tag>NNP</tag>" +
+                                    "<type>Noun</type>" +
+                                    "<title>Aaron</title>" +
+                                    "<stemmed>Aaron</stemmed>" +
+                                    "<sentiment_score>0.569</sentiment_score>" +
+                                    "<is_negated>true</is_negated>" +
+                                "</word>" +
+                            "</words>" +
+                        "</sentence>" +
+                    "</details>" +
 					"<phrases>" +
 						"<phrase>" +
 							"<title>friendly</title>" +
@@ -266,12 +276,11 @@ public class ExpectedResult
                                     "<is_negated>Is negated</is_negated>" +
                                     "<negating_phrase>Phrase</negating_phrase>" +
                                     "<locations>" +
-                                        "<location>1</location>" +
-                                        "<location>2</location>" +
-                                        "<location>3</location>" +
+                                        "<location>" +
+                                            "<offset>1</offset>" +
+                                            "<length>2</length>" +
+                                        "</location>"+
                                     "</locations>" +
-                                    "<offset>5</offset>" +
-                                    "<length>5</length>" +
                                 "</mention>" +
                             "</mentions>" +
 						"</theme>" +
@@ -289,16 +298,15 @@ public class ExpectedResult
 							"<entity_type>Place</entity_type>" +
                             "<mentions>" +
                                 "<mention>" +
-                                    "<label>Label</label>" +
-                                    "<is_negated>Is negated</is_negated>" +
-                                    "<negating_phrase>Phrase</negating_phrase>" +
+                                "<label>Label</label>" +
+                                "<is_negated>Is negated</is_negated>" +
+                                "<negating_phrase>Phrase</negating_phrase>" +
                                     "<locations>" +
-                                        "<location>1</location>" +
-                                        "<location>2</location>" +
-                                        "<location>3</location>" +
+                                        "<location>" +
+                                            "<offset>1</offset>" +
+                                            "<length>2</length>" +
+                                        "</location>"+
                                     "</locations>" +
-                                    "<offset>5</offset>" +
-                                    "<length>5</length>" +
                                 "</mention>" +
                             "</mentions>" +
 							"<themes>" +
@@ -311,16 +319,15 @@ public class ExpectedResult
 									"<title>republican moderates</title>" +
                                     "<mentions>" +
                                         "<mention>" +
-                                            "<label>Label</label>" +
-                                            "<is_negated>Is negated</is_negated>" +
-                                            "<negating_phrase>Phrase</negating_phrase>" +
+                                        "<label>Label</label>" +
+                                        "<is_negated>Is negated</is_negated>" +
+                                        "<negating_phrase>Phrase</negating_phrase>" +
                                             "<locations>" +
-                                                "<location>1</location>" +
-                                                "<location>2</location>" +
-                                                "<location>3</location>" +
+                                                "<location>" +
+                                                    "<offset>1</offset>" +
+                                                    "<length>2</length>" +
+                                                "</location>"+
                                             "</locations>" +
-                                            "<offset>5</offset>" +
-                                            "<length>5</length>" +
                                         "</mention>" +
                                     "</mentions>" +
 								"</theme>" +
@@ -365,13 +372,28 @@ public class ExpectedResult
                             "<sentiment_polarity>neutral</sentiment_polarity>" +
                         "</opinion>" +
                     "</opinions>" +
+                    "<auto_categories>" +
+                        "<category>" +
+                            "<title>title</title>" +
+                            "<type>type</type>" +
+                            "<strength_score>0.1</strength_score>" +
+                            "<categories>" +
+                                "<category>" +
+                                    "<title>title</title>" +
+                                    "<type>type</type>" +
+                                    "<strength_score>0.1</strength_score>" +
+                                "</category>" +
+                            "</categories>" +
+                        "</category>" +
+                    "</auto_categories>" +
 				"</document>";
 
 		public static String collAnalyticData =
 				"<collection>" +
 					"<config_id>23498367</config_id>" +
 					"<id>6F9619FF8B86D011B42D00CF4FC964FF</id>" +
-					"<status>PROCESSED</status>" +
+                    "<tag>tag</tag>" +
+                    "<status>PROCESSED</status>" +
 					"<facets>" +
 						"<facet>" +
 							"<label>Something</label>" +
@@ -385,16 +407,20 @@ public class ExpectedResult
 									"<count>5</count>" +
 								"</attribute>" +
 							"</attributes>" +
-							"<mentions>" +
-								"<mention>" +
-									"<label>something</label>" +
-									"<is_negated>true</is_negated>" +
-									"<negating_phrase>some</negating_phrase>" +
-									"<indexes>" +
-										"<index>3</index>" +
-									"</indexes>" +
-								"</mention>" +
-							"</mentions>" +
+                            "<mentions>" +
+                                "<mention>" +
+                                    "<label>Label</label>" +
+                                    "<is_negated>Is negated</is_negated>" +
+                                    "<negating_phrase>Phrase</negating_phrase>" +
+                                    "<locations>" +
+                                        "<location>" +
+                                            "<offset>1</offset>" +
+                                            "<length>2</length>" +
+                                            "<index>1</index>" +
+                                        "</location>"+
+                                    "</locations>" +
+                                "</mention>" +
+                            "</mentions>" +
 						"</facet>" +
 					"</facets>" +
 					"<themes>" +
@@ -532,7 +558,8 @@ public class ExpectedResult
                                 "\"theme_mentions_limit\":0," +
                                 "\"user_mentions_limit\":0," +
 								"\"named_opinions_limit\":0," +
-								"\"user_opinions_limit\":0" +
+								"\"user_opinions_limit\":0," +
+                                "\"auto_categories_limit\":10" +
 							"}," +
 							"\"collection\":{" +
 								"\"facets_limit\":15," +
@@ -541,9 +568,12 @@ public class ExpectedResult
 								"\"named_entities_limit\":5," +
 								"\"query_topics_limit\":5," +
 								"\"concept_topics_limit\":5," +
-								"\"facet_mentions_limit\":0" +
+								"\"facet_mentions_limit\":0," +
+                                "\"theme_mentions_limit\":10," +
+                                "\"named_mentions_limit\":10" +
 							"}," +
-							"\"callback\":\"https://anyapi.anydomain.com/processed/docs.json\"" +
+							"\"callback\":\"https://anyapi.anydomain.com/processed/docs.json\"," +
+                            "\"process_html\":true" +
 						"}" +
 					"]";
 
@@ -591,8 +621,9 @@ public class ExpectedResult
 					"{" +
 						"\"name\":\"name 1\"," +
 						"\"type\":\"type 1\"," +
-                        "\"label\":\"label 1\"" +
-					"}" +
+                        "\"label\":\"label 1\"," +
+                        "\"normalized\":\"normalized\"" +
+                    "}" +
 				"]";
 
 		public static String addCategory =
@@ -660,6 +691,7 @@ public class ExpectedResult
                     "\"docs_suggested_interval\" : 0" +
 				"}," +
 				"\"basic_settings\" : {" +
+                    "\"output_data_limit\" : 10," +
 					"\"configurations_limit\" : 10," +
 					"\"blacklist_limit\" : 100," +
 					"\"categories_limit\" : 100," +
@@ -676,8 +708,10 @@ public class ExpectedResult
 					"\"callback_batch_limit\" : 100" +
 				"}," +
 				"\"feature_settings\" : {" +
+                    "\"html_processing\" : true," +
 					"\"document\" : {" +
 						"\"summary\" : true," +
+                        "\"auto_categories\" : true," +
 						"\"themes\" : true," +
 						"\"named_entities\" : true," +
 						"\"user_entities\" : true," +
@@ -710,6 +744,7 @@ public class ExpectedResult
 				"\"id\" : \"6F9619FF8B86D011B42D00CF4FC964FF\"," +
 				"\"config_id\" : \"cd2e7341-a3c2-4fb4-9d3a-779e8b0a5eff\"," +
 				"\"status\" : \"PROCESSED\"," +
+                "\"tag\":\"tag\","+
 				"\"source_text\" : \"See Output Data Details chapter\"," +
 				"\"language\" : \"English\"," +
                 "\"language_score\" : 0.2398756," +
@@ -726,7 +761,8 @@ public class ExpectedResult
 								"\"type\" : \"Noun\"," +
 								"\"title\" : \"Aaron\"," +
 								"\"stemmed\" : \"Aaron\"," +
-								"\"sentiment_score\" : 0.569" +
+								"\"sentiment_score\" : 0.569," +
+                                "\"is_negated\" : \"true\"" +
 							"}" +
 						"]" +
 					"}" +
@@ -749,16 +785,19 @@ public class ExpectedResult
 						"\"sentiment_score\" : 0.0," +
 						"\"sentiment_polarity\" : \"neutral\"," +
 						"\"title\" : \"republican moderates\"," +
-                        "\"mentions\" : [" +
+                        "\"mentions\": [" +
                             "{" +
-                                "\"label\" : \"Label\"," +
-                                "\"is_negated\" : false," +
-                                "\"negating_phrase\" : \"Phrase\"," +
-                                "\"locations\" : [{\"location\" : 1}, {\"location\" : 2}, {\"location\" : 3}]," +
-                                "\"offset\" : 5," +
-                                "\"length\" : 5" +
-                            "}" +
-                        "]" +
+                                "\"label\":\"Label\"," +
+                                "\"is_negated\":true," +
+                                "\"negating_phrase\":\"negator\"," +
+                                "\"locations\": [" +
+                                    "{" +
+                                        "\"offset\":1," +
+                                        "\"length\":1" +
+                                    "}" +
+                                "]" +
+                            "}"+
+                        "]"+
 					"}" +
 				"]," +
 				"\"entities\" : [" +
@@ -772,17 +811,20 @@ public class ExpectedResult
                         "\"label\" : \"Label\"," +
 						"\"sentiment_score\" : 1.0542796," +
 						"\"sentiment_polarity\" : \"positive\"," +
-                        "\"mentions\" : [" +
-                            "{" +
-                                "\"label\" : \"Label\"," +
-                                "\"is_negated\" : false," +
-                                "\"negating_phrase\" : \"Phrase\"," +
-                                "\"locations\" : [{\"location\" : 1}, {\"location\" : 2}, {\"location\" : 3}]," +
-                                "\"offset\" : 5," +
-                                "\"length\" : 5" +
-                            "}" +
-                        "]," +
-						"\"themes\" : [" +
+                    "\"mentions\": [" +
+                        "{" +
+                            "\"label\":\"Label\"," +
+                            "\"is_negated\":true," +
+                            "\"negating_phrase\":\"negator\"," +
+                            "\"locations\": [" +
+                                "{" +
+                                    "\"offset\":1," +
+                                    "\"length\":1" +
+                                "}" +
+                            "]" +
+                        "}"+
+                    "],"+
+                    "\"themes\" : [" +
 							"{" +
                                 "\"evidence\" : 1," +
                                 "\"is_about\" : true," +
@@ -790,16 +832,19 @@ public class ExpectedResult
                                 "\"sentiment_score\" : 0.0," +
                                 "\"sentiment_polarity\" : \"neutral\"," +
                                 "\"title\" : \"republican moderates\"," +
-                                "\"mentions\" : [" +
+                                "\"mentions\": [" +
                                     "{" +
-                                        "\"label\" : \"Label\"," +
-                                        "\"is_negated\" : false," +
-                                        "\"negating_phrase\" : \"Phrase\"," +
-                                        "\"locations\" : [{\"location\" : 1}, {\"location\" : 2}, {\"location\" : 3}]," +
-                                        "\"offset\" : 5," +
-                                        "\"length\" : 5" +
-                                    "}" +
-                                "]" +
+                                        "\"label\":\"Label\"," +
+                                        "\"is_negated\":true," +
+                                        "\"negating_phrase\":\"negator\"," +
+                                        "\"locations\": [" +
+                                            "{" +
+                                                "\"offset\":1," +
+                                                "\"length\":1" +
+                                            "}" +
+                                        "]" +
+                                    "}"+
+                                "]"+
                             "}" +
 						"]" +
 					"}" +
@@ -841,6 +886,20 @@ public class ExpectedResult
                         "\"sentiment_score\" : 0.5," +
                         "\"sentiment_polarity\" : \"neutral\"" +
                     "}"+
+                "]," +
+                "\"auto_categories\" : [" +
+                    "{" +
+                        "\"title\" : \"title\"," +
+                        "\"type\" : \"type\"," +
+                        "\"strength_score\" : 0.1," +
+                        "\"categories\" : [" +
+                            "{" +
+                                "\"title\" : \"title\"," +
+                                "\"type\" : \"type\"," +
+                                "\"strength_score\" : 0.1" +
+                            "}"+
+                        "]" +
+                    "}"+
                 "]" +
         "}";
 
@@ -849,6 +908,7 @@ public class ExpectedResult
 					"\"id\":\"6F9619FF8B86D011B42D00CF4FC964FF\","+
 					"\"config_id\":\"23498367\","+
 					"\"status\":\"PROCESSED\","+
+                    "\"tag\":\"tag\","+
 					"\"facets\":["+
 						"{"+
 							"\"label\":\"Something\","+
@@ -865,12 +925,16 @@ public class ExpectedResult
 							"\"mentions\":" +
 							"[" +
 								"{" +
-									"\"label\":\"something\"," +
+									"\"label\":\"Label\"," +
 									"\"is_negated\":true," +
 									"\"negating_phrase\":\"negator\"," +
-									"\"indexes\":" +
+									"\"locations\":" +
 									"[" +
-										"3" +
+										"{" +
+                                            "\"offset\":1," +
+                                            "\"length\":1," +
+                                            "\"index\":1" +
+                                        "}" +
 									"]" +
 								"}"+
 							"]"+
@@ -882,8 +946,22 @@ public class ExpectedResult
 							"\"themes_count\":1,"+
 							"\"sentiment_score\":0.0,"+
 							"\"title\":\"republican moderates\","+
-							"\"sentiment_polarity\":\"positive\""+
-						"}"+
+							"\"sentiment_polarity\":\"positive\","+
+                            "\"mentions\": [" +
+                                "{" +
+                                    "\"label\":\"Label\"," +
+                                    "\"is_negated\":true," +
+                                    "\"negating_phrase\":\"negator\"," +
+                                    "\"locations\": [" +
+                                        "{" +
+                                            "\"offset\":1," +
+                                            "\"length\":1," +
+                                            "\"index\":1" +
+                                        "}" +
+                                    "]" +
+                                "}"+
+                            "]"+
+                        "}"+
 					"],"+
 					"\"entities\":["+
 						"{"+
@@ -894,8 +972,22 @@ public class ExpectedResult
 							"\"count\":1,"+
 							"\"negative_count\":1,"+
 							"\"neutral_count\":1,"+
-							"\"positive_count\":1"+
-						"}"+
+							"\"positive_count\":1,"+
+                            "\"mentions\": [" +
+                                "{" +
+                                    "\"label\":\"Label\"," +
+                                    "\"is_negated\":true," +
+                                    "\"negating_phrase\":\"negator\"," +
+                                    "\"locations\": [" +
+                                        "{" +
+                                            "\"offset\":1," +
+                                            "\"length\":1," +
+                                            "\"index\":1" +
+                                        "}" +
+                                    "]" +
+                                "}"+
+                            "]"+
+                        "}"+
 					"],"+
 					"\"topics\":["+
 						"{"+

@@ -2,6 +2,7 @@
 #define __semantria_sdk__Mentions__
 
 #include "../../serializers/json/JsonSerializable.h"
+#include "../../objects/output/Location.h"
 
 using namespace std;
 
@@ -9,25 +10,25 @@ class Mention: public JsonSerializable {
 public:
     Mention();
     virtual ~Mention();
-    
+
     void Serialize(Json::Value& root);
     void Deserialize(Json::Value& root);
-    
+
     string GetLabel()           {return label;}
     bool GetIsNedated()         {return is_negated;}
-    string GetNegationPhrase()  {return negation_phrase;}
-    vector<int>* GetIndexes()   {return indexes;}
+    string GetNegatingPhrase()  {return negating_phrase;}
+    vector<Location*>* GetLocations()   {return locations;}
 
     void SetLabel(string label)                     {this->label = label;}
     void SetIsNedated(bool is_negated)              {this->is_negated = is_negated;}
-    void SetNegationPhrase(string negation_phrase)  {this->negation_phrase = negation_phrase;}
-    void SetIndexes(vector<int>* indexes)           {this->indexes = indexes;}
+    void SetNegatingPhrase(string negating_phrase)  {this->negating_phrase = negating_phrase;}
+    void SetLocations(vector<Location*>* locations) {this->locations = locations;}
 
 private:
     string label;
     bool is_negated;
-    string negation_phrase;
-    vector<int>* indexes;
+    string negating_phrase;
+    vector<Location*>* locations;
 };
 
 #endif /* defined(__semantria_sdk__Mentions__) */

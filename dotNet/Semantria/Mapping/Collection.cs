@@ -13,6 +13,10 @@ namespace Semantria.Com.Mapping
         [XmlElementAttribute("id")]
         public string Id { get; set; }
 
+        [DataMember(Name = "tag")]
+        [XmlElementAttribute("tag")]
+        public string Tag { get; set; }
+
         [DataMember(Name = "documents", EmitDefaultValue = false)]
         [XmlArrayAttribute("documents")]
         [XmlArrayItemAttribute("document", typeof(string))]

@@ -485,13 +485,13 @@
 		 * @var {String} SDK_VERSION
 		 * @constant
 		 */
-		SDK_VERSION: "3.1",
+		SDK_VERSION: "3.5.75",
 		
 		/**
 		 * @var {String} HOST
 		 * @constant
 		 */
-		API_HOST: "https://api30.semantria.com",
+		API_HOST: "https://api35.semantria.com",
 
 		/**
 		 * @var {Object} eventHandlers

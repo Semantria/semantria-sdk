@@ -6,7 +6,7 @@ from semantria.version import WRAPPER_VERSION
 
 
 class Session(object):
-    host = 'https://api30.semantria.com'
+    host = 'https://api35.semantria.com'
     wrapperName = 'Python/' + WRAPPER_VERSION
 
     def __init__(self, consumerKey, consumerSecret, serializer=None, applicationName=None, use_compression=False):

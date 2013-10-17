@@ -22,6 +22,7 @@ public class BasicSettings
 	private Integer callback_batch_limit = null;
 	private Boolean return_source_text = null;
 	private Integer characters_limit = null;
+    private Integer output_data_limit = null;
 
 	public BasicSettings() { }
 
@@ -53,6 +54,8 @@ public class BasicSettings
 	public Boolean getReturnSourceText() { return return_source_text; }
 	@XmlElement(name="characters_limit")
 	public Integer getCharactersLimit() { return characters_limit; }
+    @XmlElement(name = "output_data_limit")
+    public Integer getOutputDataLimit() { return output_data_limit; }
 
 	public void setConfigurationsLimit(Integer configurations_limit) { this.configurations_limit = configurations_limit; }
 	public void setBlacklistLimit(Integer blacklist_limit) { this.blacklist_limit = blacklist_limit; }
@@ -68,4 +71,5 @@ public class BasicSettings
 	public void setCallbackBatchLimit(Integer callback_batch_limit) { this.callback_batch_limit = callback_batch_limit; }
  	public void setReturnSourceText(Boolean return_source_text) { this.return_source_text = return_source_text; }
 	public void setCharactersLimit(Integer characters_limit) { this.characters_limit = characters_limit; }
+    public void setOutputDataLimit(Integer output_data_limit) { this.output_data_limit = output_data_limit; }
 }

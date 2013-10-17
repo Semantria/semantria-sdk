@@ -147,6 +147,10 @@ namespace Semantria.Com.Mapping.Output
         [XmlElementAttribute("supported_languages")]
         public string SupportedLanguages { get; set; }
 
+        [DataMember(Name = "html_processing")]
+        [XmlElementAttribute("html_processing")]
+        public bool HtmlProcessing { get; set; }
+
         [DataMember(Name = "document")]
         [XmlElementAttribute("document")]
         public DocsFeatureSettings Document { get; set; }
@@ -163,6 +167,10 @@ namespace Semantria.Com.Mapping.Output
         [DataMember(Name = "summary")]
         [XmlElementAttribute("summary")]
         public bool Summary { get; set; }
+
+        [DataMember(Name = "auto_categories")]
+        [XmlElementAttribute("auto_categories")]
+        public bool AutoCategories { get; set; }
 
         [DataMember(Name = "themes")]
         [XmlElementAttribute("themes")]

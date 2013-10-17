@@ -1,3 +1,3 @@
 module Semantria
-  VERSION = '3.1.72'
+  VERSION = '3.5.73'
 end

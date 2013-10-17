@@ -5,7 +5,7 @@ require_once('authrequest.php');
 require_once('jsonserializer.php');
 //require_once('common.php');
 
-define('WRAPPER_VERSION', "3.1.74");
+define('WRAPPER_VERSION', "3.5.75");
 
 class Session
 {
@@ -18,7 +18,7 @@ class Session
     protected $format = 'json';
     protected $wrapperName = 'PHP';
 
-    private $host = "https://api30.semantria.com";
+    private $host = "https://api35.semantria.com";
     private $callback;
     private $use_compression = FALSE;
     private $request;

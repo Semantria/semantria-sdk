@@ -40,5 +40,10 @@ namespace Semantria.Com.Mapping.Output
         [DataMember(Name = "positive_count")]
         [XmlElementAttribute("positive_count")]
         public int PositiveCount { get; set; }
+
+        [DataMember(Name = "mentions")]
+        [XmlArrayAttribute("mentions")]
+        [XmlArrayItemAttribute("mention", typeof(CollMention))]
+        public List<CollMention> Mentions { get; set; }
     }
 }

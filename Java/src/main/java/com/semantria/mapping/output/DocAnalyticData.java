@@ -25,6 +25,8 @@ public final class DocAnalyticData
 	private String source_text = null;
 	private String sentiment_polarity = null;
 	private List<Opinion> opinions = null;
+    private String tag = null;
+    private List<DocCategory> auto_categories = null;
 
 	public DocAnalyticData() { };
 
@@ -67,6 +69,11 @@ public final class DocAnalyticData
 	@XmlElementWrapper(name = "opinions")
 	@XmlElement(name = "opinion")
 	public List<Opinion> getOpinions() { return opinions; }
+    @XmlElement(name = "tag")
+    public String getTag() { return tag; }
+    @XmlElementWrapper(name = "auto_categories")
+    @XmlElement(name = "category")
+    public List<DocCategory> getAutoCategories() { return auto_categories; }
 
 	public void setId(String id) { this.id = id; }
 	public void setConfigId(String id) { this.config_id = id; }
@@ -84,5 +91,7 @@ public final class DocAnalyticData
 	public void setSourceText(String source_text) { this.source_text = source_text; }
 	public void setSentimentPolarity(String sentiment_polarity) { this.sentiment_polarity = sentiment_polarity; }
 	public void setOpinions(List<Opinion> opinions) { this.opinions = opinions; }
+    public void setTag(String tag) { this.tag = tag; }
+    public void setAutoCategories(List<DocCategory> auto_categories) { this.auto_categories = auto_categories; }
 }
 

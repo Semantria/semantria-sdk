@@ -6,7 +6,7 @@
 
     <groupId>com.semantria</groupId>
     <artifactId>SemantriaJavaSDK</artifactId>
-    <version>3.1.73</version>
+    <version>3.5.75</version>
 
     <dependencies>
         <dependency>
@@ -19,6 +19,12 @@
             <artifactId>junit</artifactId>
             <version>4.10</version>
         </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+            <version>2.6</version>
+        </dependency>
+
     </dependencies>
 
     <build>

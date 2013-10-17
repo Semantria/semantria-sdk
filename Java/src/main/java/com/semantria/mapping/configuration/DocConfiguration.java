@@ -26,10 +26,11 @@ public class DocConfiguration
 	private Integer user_mentions_limit = null;
 	private Integer named_opinions_limit = null;
 	private Integer user_opinions_limit = null;
+    private Integer auto_categories_limit = null;
 
 	public DocConfiguration(){};
 
-	public DocConfiguration(Integer entity_themes_limit, Integer summary_limit, Integer themes_limit, Integer query_topics_limit, Integer concept_topics_limit, Integer named_entities_limit, Integer user_entities_limit, Integer phrases_limit, Boolean detect_language, Integer possible_phrases_limit, String pos_types, Integer named_relations_limit, Integer user_relations_limit, Integer named_mentions_limit, Integer user_mentions_limit, Integer named_opinions_limit, Integer user_opinions_limit, Integer theme_mentrions_limit)
+	public DocConfiguration(Integer entity_themes_limit, Integer summary_limit, Integer themes_limit, Integer query_topics_limit, Integer concept_topics_limit, Integer named_entities_limit, Integer user_entities_limit, Integer phrases_limit, Boolean detect_language, Integer possible_phrases_limit, String pos_types, Integer named_relations_limit, Integer user_relations_limit, Integer named_mentions_limit, Integer user_mentions_limit, Integer named_opinions_limit, Integer user_opinions_limit, Integer theme_mentrions_limit, Integer auto_categories_limit)
 	{
 		this.entity_themes_limit = entity_themes_limit;
 		this.summary_limit = summary_limit;
@@ -49,6 +50,7 @@ public class DocConfiguration
 		this.named_opinions_limit = named_opinions_limit;
 		this.user_opinions_limit = user_opinions_limit;
         this.theme_mentions_limit = theme_mentrions_limit;
+        this.auto_categories_limit = auto_categories_limit;
 	}
 
 	@XmlElement(name="entity_themes_limit")
@@ -87,6 +89,8 @@ public class DocConfiguration
 	public Integer getNamedOpinionsLimit() { return named_opinions_limit; }
 	@XmlElement(name = "user_opinions_limit")
 	public Integer getUserOpinionsLimit() { return user_opinions_limit; }
+    @XmlElement(name = "auto_categories_limit")
+    public Integer getAutoCategoriesLimit() { return auto_categories_limit; }
 
 
 	public void setEntityThemesLimit(Integer limit) { entity_themes_limit = limit; }
@@ -107,4 +111,5 @@ public class DocConfiguration
     public void setThemeMentionsLimit(Integer limit) { theme_mentions_limit = limit; }
 	public void setNamedOpinionsLimit(Integer limit) { named_opinions_limit = limit; }
 	public void setUserOpinionsLimit(Integer limit) { user_opinions_limit = limit; }
+    public void setAutoCategoriesLimit(Integer limit) { auto_categories_limit = limit; }
 }

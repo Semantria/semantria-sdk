@@ -15,10 +15,11 @@ public final class Configuration
 	private DocConfiguration document = null;
 	private CollConfiguration collection = null;
 	private String callback = null;
+    private Boolean process_html = null;
 
 	public Configuration() {}
 
-	public Configuration(String id, String template, String name, Boolean auto_response, Boolean is_primary, Boolean one_sentence, String language, Integer chars_threshold, DocConfiguration document, CollConfiguration collection, String callback)
+	public Configuration(String id, String template, String name, Boolean auto_response, Boolean is_primary, Boolean one_sentence, String language, Integer chars_threshold, DocConfiguration document, CollConfiguration collection, String callback, Boolean process_html)
 	{
 		this.config_id = id;
 		this.template = template;
@@ -31,6 +32,7 @@ public final class Configuration
 		this.document = document;
 		this.collection = collection;
 		this.callback = callback;
+        this.process_html = process_html;
 	}
 
 	@XmlElement(name="template")
@@ -55,6 +57,8 @@ public final class Configuration
 	public String getCallback() { return callback; }
 	@XmlElement(name="one_sentence")
 	public Boolean getOneSentence() { return one_sentence; }
+    @XmlElement(name = "process_html")
+    public Boolean getProcessHtml() { return  process_html; }
 
 	public void setId(String id) { this.config_id = id; }
 	public void setAutoResponse(Boolean auto_response) { this.auto_response = auto_response; }
@@ -67,4 +71,5 @@ public final class Configuration
 	public void setCallback(String url) { callback = url; }
 	public void setOneSentence(Boolean value) { one_sentence = value; }
 	public void setTemplate(String template) { this.template = template; }
+    public void setProcessHtml(Boolean process_html) { this.process_html = process_html; }
 }

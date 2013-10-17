@@ -26,7 +26,7 @@ public final class AuthRequest
 	private String secret = "";
 	private String response = "";
 	private String rurl = "";
-	private String appName = "Java/3.1.73/";
+	private String appName = "Java/3.5.75/";
 	private boolean  useCompression = false;
 	private String errorMsg = null;
 

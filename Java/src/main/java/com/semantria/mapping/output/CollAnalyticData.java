@@ -16,6 +16,7 @@ public class CollAnalyticData
     private List<CollTheme> themes = null;
     private List<CollEntity> entities = null;
 	private String summary = null;
+    private String tag = null;
 	
 	@XmlElement(name="id")
 	public String getId() { return id; }
@@ -37,6 +38,8 @@ public class CollAnalyticData
     public List<CollTheme> getThemes() { return themes; }
 	@XmlElement(name="summary")
 	public String getSummary() { return summary; };
+    @XmlElement(name = "tag")
+    public String getTag() { return tag; }
 	
 	public void setId(String cid) { id = cid; }
 	public void setConfigId(String config) { config_id = config; }
@@ -46,4 +49,5 @@ public class CollAnalyticData
     public void setTopics(List<CollTopic> atopics) { topics = atopics; }
     public void setThemes(List<CollTheme> athemes) { themes = athemes; }
 	public void setSummary(String summary) { this.summary = summary; }
+    public void setTag(String tag) { this.tag = tag; }
 }

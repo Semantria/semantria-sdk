@@ -115,6 +115,10 @@
 		<Unit filename="src/objects/output/Collection.h" />
 		<Unit filename="src/objects/output/DocAnalyticData.cpp" />
 		<Unit filename="src/objects/output/DocAnalyticData.h" />
+		<Unit filename="src/objects/output/DocAutoCategories.cpp" />
+		<Unit filename="src/objects/output/DocAutoCategories.h" />
+		<Unit filename="src/objects/output/DocCategories.cpp" />
+		<Unit filename="src/objects/output/DocCategories.h" />
 		<Unit filename="src/objects/output/DocDetails.cpp" />
 		<Unit filename="src/objects/output/DocDetails.h" />
 		<Unit filename="src/objects/output/DocEntity.cpp" />

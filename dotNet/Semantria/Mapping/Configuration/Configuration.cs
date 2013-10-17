@@ -24,6 +24,10 @@ namespace Semantria.Com.Mapping.Configuration
         [DataMember(Name = "one_sentence")]
         [XmlElementAttribute("one_sentence")]
         public bool OneSentence { get; set; }
+
+        [DataMember(Name = "process_html")]
+        [XmlElementAttribute("process_html")]
+        public bool ProcessHtml { get; set; }
         
         [DataMember(Name = "is_primary")]
         [XmlElementAttribute("is_primary")]
@@ -75,6 +79,10 @@ namespace Semantria.Com.Mapping.Configuration
         [XmlElementAttribute("named_entities_limit")]
         public int NamedEntitiesLimit { get; set; }
 
+		[DataMember(Name = "named_mentions_limit")]
+		[XmlElementAttribute("named_mentions_limit")]
+		public int NamedMentionsLimit { get; set; }
+
         [DataMember(Name = "user_entities_limit")]
         [XmlElementAttribute("user_entities_limit")]
         public int UserEntitiesLimit { get; set; }
@@ -82,10 +90,6 @@ namespace Semantria.Com.Mapping.Configuration
         [DataMember(Name = "entity_themes_limit")]
         [XmlElementAttribute("entity_themes_limit")]
         public int EntityThemesLimit { get; set; }
-
-		[DataMember(Name = "named_mentions_limit")]
-		[XmlElementAttribute("named_mentions_limit")]
-		public int NamedMentionsLimit { get; set; }
 
 		[DataMember(Name = "user_mentions_limit")]
 		[XmlElementAttribute("user_mentions_limit")]
@@ -134,6 +138,10 @@ namespace Semantria.Com.Mapping.Configuration
         [DataMember(Name = "detect_language")]
         [XmlElementAttribute("detect_language")]
         public bool DetectLanguage { get; set; }
+
+        [DataMember(Name = "auto_categories_limit")]
+        [XmlElementAttribute("auto_categories_limit")]
+        public int AutoCategoriesLimit { get; set; }
     }
 
     [DataContract(Name = "collection")]
@@ -171,7 +179,10 @@ namespace Semantria.Com.Mapping.Configuration
         [DataMember(Name = "themes_limit")]
         [XmlElementAttribute("themes_limit")]
         public int ThemesLimit { get; set; }
-    }
+
+        [DataMember(Name = "theme_mentions_limit")]
+        [XmlElementAttribute("theme_mentions_limit")]
+        public int ThemeMentionsLimit { get; set; }    }
 }
 
 namespace Semantria.Com.Mapping.Configuration.Stub

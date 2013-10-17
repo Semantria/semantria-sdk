@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite failures="0" time="4.867" errors="0" skipped="0" tests="33" name="com.semantria.test.SerializerTest">
+<testsuite failures="0" time="5.881" errors="0" skipped="0" tests="33" name="com.semantria.test.SerializerTest">
   <properties>
     <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
     <property name="sun.boot.library.path" value="C:\SDK\glassfish3\jdk\jre\bin"/>
@@ -9,7 +9,7 @@
     <property name="path.separator" value=";"/>
     <property name="java.vm.name" value="Java HotSpot(TM) 64-Bit Server VM"/>
     <property name="file.encoding.pkg" value="sun.io"/>
-    <property name="idea.launcher.port" value="7540"/>
+    <property name="idea.launcher.port" value="7535"/>
     <property name="user.country" value="RU"/>
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="sun.os.patch.level" value="Service Pack 1"/>
@@ -27,7 +27,7 @@
     <property name="os.name" value="Windows 7"/>
     <property name="classworlds.conf" value="C:\SDK\springsource\maven-2.2.1.RELEASE\bin\m2.conf"/>
     <property name="sun.jnu.encoding" value="Cp1251"/>
-    <property name="java.library.path" value="C:\SDK\glassfish3\jdk\bin;.;C:\Windows\Sun\Java\bin;C:\Windows\system32;C:\Windows;C:\Program Files (x86)\JetBrains\IntelliJ IDEA 12.1.1\bin\..\.\bin;C:\Program Files (x86)\AMD APP\bin\x86_64;C:\Program Files (x86)\AMD APP\bin\x86;C:\Program Files\Common Files\Microsoft Shared\Windows Live;C:\Program Files (x86)\Common Files\Microsoft Shared\Windows Live;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\ATI Technologies\ATI.ACE\Core-Static;C:\Program Files\WIDCOMM\Bluetooth Software\;C:\Program Files\WIDCOMM\Bluetooth Software\syswow64;C:\Program Files (x86)\Git\cmd;C:\Program Files (x86)\Windows Live\Shared;C:\Program Files (x86)\QuickTime\QTSystem\;C:\opt\salience\salience\bin;C:\Program Files (x86)\OpenVPN\bin;c:\install\putty;c:\SDK\jflex\bin;c:\SDK\glassfish3\jdk\bin;c:\program files (x86)\jetbrains\intellij idea 12.1.1\jre\jre\bin"/>
+    <property name="java.library.path" value="C:\SDK\glassfish3\jdk\bin;.;C:\Windows\Sun\Java\bin;C:\Windows\system32;C:\Windows;C:\Program Files (x86)\JetBrains\IntelliJ IDEA 12.1.1\bin\..\.\bin;C:\Program Files (x86)\AMD APP\bin\x86_64;C:\Program Files (x86)\AMD APP\bin\x86;C:\Program Files\Common Files\Microsoft Shared\Windows Live;C:\Program Files (x86)\Common Files\Microsoft Shared\Windows Live;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Program Files (x86)\ATI Technologies\ATI.ACE\Core-Static;C:\Program Files\WIDCOMM\Bluetooth Software\;C:\Program Files\WIDCOMM\Bluetooth Software\syswow64;C:\Program Files (x86)\Git\cmd;C:\Program Files (x86)\Windows Live\Shared;C:\Program Files (x86)\QuickTime\QTSystem\;C:\Program Files\Perforce;C:\Program Files\TortoiseGit\bin;C:\Program Files (x86)\Lexalytics\salience\bin;C:\opt\salience\salience\bin;C:\Program Files (x86)\OpenVPN\bin;c:\install\putty;c:\SDK\jflex\bin;c:\SDK\glassfish3\jdk\bin;c:\program files (x86)\jetbrains\intellij idea 12.1.1\jre\jre\bin"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.class.version" value="50.0"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Server Compiler"/>
@@ -59,37 +59,37 @@
     <property name="sun.desktop" value="windows"/>
     <property name="sun.cpu.isalist" value="amd64"/>
   </properties>
-  <testcase time="0.418" classname="com.semantria.test.SerializerTest" name="testSerializingConfiguration"/>
-  <testcase time="0.426" classname="com.semantria.test.SerializerTest" name="testXmlDeserializingConfiguration"/>
-  <testcase time="0.008" classname="com.semantria.test.SerializerTest" name="testJsonDeserializingConfiguration"/>
-  <testcase time="0.13" classname="com.semantria.test.SerializerTest" name="testXmlSerializingBlacklist"/>
-  <testcase time="0.38" classname="com.semantria.test.SerializerTest" name="testXmlDeserializingBlacklist"/>
+  <testcase time="0.47" classname="com.semantria.test.SerializerTest" name="testSerializingConfiguration"/>
+  <testcase time="0.375" classname="com.semantria.test.SerializerTest" name="testXmlDeserializingConfiguration"/>
+  <testcase time="0.009" classname="com.semantria.test.SerializerTest" name="testJsonDeserializingConfiguration"/>
+  <testcase time="0.055" classname="com.semantria.test.SerializerTest" name="testXmlSerializingBlacklist"/>
+  <testcase time="0.453" classname="com.semantria.test.SerializerTest" name="testXmlDeserializingBlacklist"/>
   <testcase time="0.001" classname="com.semantria.test.SerializerTest" name="testJsonDeserializingBlacklist"/>
-  <testcase time="0.165" classname="com.semantria.test.SerializerTest" name="testSerializingQueries"/>
-  <testcase time="0.384" classname="com.semantria.test.SerializerTest" name="testXmlDeserializingQueries"/>
-  <testcase time="0.001" classname="com.semantria.test.SerializerTest" name="testJsonDeserializingQueries"/>
-  <testcase time="0.098" classname="com.semantria.test.SerializerTest" name="testSerializingEntities"/>
+  <testcase time="0.216" classname="com.semantria.test.SerializerTest" name="testSerializingQueries"/>
+  <testcase time="0.482" classname="com.semantria.test.SerializerTest" name="testXmlDeserializingQueries"/>
+  <testcase time="0.002" classname="com.semantria.test.SerializerTest" name="testJsonDeserializingQueries"/>
+  <testcase time="0.115" classname="com.semantria.test.SerializerTest" name="testSerializingEntities"/>
   <testcase time="0.001" classname="com.semantria.test.SerializerTest" name="testJsonDeserializingEntities"/>
-  <testcase time="0.172" classname="com.semantria.test.SerializerTest" name="testSerializingCategories"/>
-  <testcase time="0.336" classname="com.semantria.test.SerializerTest" name="testXmlDeserializingCategories"/>
-  <testcase time="0.001" classname="com.semantria.test.SerializerTest" name="testJsonDeserializingCategories"/>
-  <testcase time="0.158" classname="com.semantria.test.SerializerTest" name="testSerializingSentimentPhrases"/>
+  <testcase time="0.224" classname="com.semantria.test.SerializerTest" name="testSerializingCategories"/>
+  <testcase time="0.379" classname="com.semantria.test.SerializerTest" name="testXmlDeserializingCategories"/>
+  <testcase time="0.002" classname="com.semantria.test.SerializerTest" name="testJsonDeserializingCategories"/>
+  <testcase time="0.207" classname="com.semantria.test.SerializerTest" name="testSerializingSentimentPhrases"/>
   <testcase time="0.001" classname="com.semantria.test.SerializerTest" name="testJsonSerializingSentimentPhrases"/>
-  <testcase time="0.002" classname="com.semantria.test.SerializerTest" name="testJsonDeserializingSentimentPhrases"/>
-  <testcase time="0.283" classname="com.semantria.test.SerializerTest" name="testXmlDeserializingAnalyticServiceStatus"/>
+  <testcase time="0.001" classname="com.semantria.test.SerializerTest" name="testJsonDeserializingSentimentPhrases"/>
+  <testcase time="0.373" classname="com.semantria.test.SerializerTest" name="testXmlDeserializingAnalyticServiceStatus"/>
   <testcase time="0" classname="com.semantria.test.SerializerTest" name="testJsonDeserializingAnalyticServiceStatus"/>
-  <testcase time="0.286" classname="com.semantria.test.SerializerTest" name="testXmlDeserializingSubscription"/>
-  <testcase time="0.002" classname="com.semantria.test.SerializerTest" name="testJsonDeserializingSubscription"/>
-  <testcase time="0.299" classname="com.semantria.test.SerializerTest" name="testXmlDeserializingDocumentAnalyticData"/>
+  <testcase time="0.396" classname="com.semantria.test.SerializerTest" name="testXmlDeserializingSubscription"/>
+  <testcase time="0.003" classname="com.semantria.test.SerializerTest" name="testJsonDeserializingSubscription"/>
+  <testcase time="0.343" classname="com.semantria.test.SerializerTest" name="testXmlDeserializingDocumentAnalyticData"/>
   <testcase time="0.005" classname="com.semantria.test.SerializerTest" name="testJsonDeserializingDocumentAnalyticData"/>
-  <testcase time="0.268" classname="com.semantria.test.SerializerTest" name="testXmlDeserializingCollectionAnalyticData"/>
-  <testcase time="0.003" classname="com.semantria.test.SerializerTest" name="testJsonDeserializingCollectionAnalyticData"/>
-  <testcase time="0.291" classname="com.semantria.test.SerializerTest" name="testXmlDeserializingCollectionsAnalyticData"/>
-  <testcase time="0.003" classname="com.semantria.test.SerializerTest" name="testJsonDeserializingCollectionsAnalyticData"/>
-  <testcase time="0.318" classname="com.semantria.test.SerializerTest" name="testXmlDeserializingDocumentsAnalyticData"/>
-  <testcase time="0.006" classname="com.semantria.test.SerializerTest" name="testJsonDeserializingDocumentsAnalyticData"/>
-  <testcase time="0.274" classname="com.semantria.test.SerializerTest" name="testXmlDeserializingStatistics"/>
+  <testcase time="0.418" classname="com.semantria.test.SerializerTest" name="testXmlDeserializingCollectionAnalyticData"/>
+  <testcase time="0.004" classname="com.semantria.test.SerializerTest" name="testJsonDeserializingCollectionAnalyticData"/>
+  <testcase time="0.385" classname="com.semantria.test.SerializerTest" name="testXmlDeserializingCollectionsAnalyticData"/>
+  <testcase time="0.004" classname="com.semantria.test.SerializerTest" name="testJsonDeserializingCollectionsAnalyticData"/>
+  <testcase time="0.386" classname="com.semantria.test.SerializerTest" name="testXmlDeserializingDocumentsAnalyticData"/>
+  <testcase time="0.007" classname="com.semantria.test.SerializerTest" name="testJsonDeserializingDocumentsAnalyticData"/>
+  <testcase time="0.372" classname="com.semantria.test.SerializerTest" name="testXmlDeserializingStatistics"/>
   <testcase time="0.002" classname="com.semantria.test.SerializerTest" name="testJsonDeserializingStatistics"/>
-  <testcase time="0.069" classname="com.semantria.test.SerializerTest" name="testXmlSerializationBatch"/>
-  <testcase time="0.076" classname="com.semantria.test.SerializerTest" name="testXmlSerializationDocument"/>
+  <testcase time="0.088" classname="com.semantria.test.SerializerTest" name="testXmlSerializationBatch"/>
+  <testcase time="0.102" classname="com.semantria.test.SerializerTest" name="testXmlSerializationDocument"/>
 </testsuite>

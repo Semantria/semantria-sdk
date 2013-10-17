@@ -12,6 +12,7 @@ public class Collection
 	private Boolean named_entities = null;
 	private Boolean query_topics = null;
 	private Boolean concept_topics = null;
+    private Boolean mentions = null;
 
 	public Collection() {}
 
@@ -25,10 +26,13 @@ public class Collection
 	public Boolean getQueryTopics() { return query_topics == null ? false : query_topics; }
 	@XmlElement(name = "concept_topics")
 	public Boolean getConceptTopics() { return concept_topics == null ? false : concept_topics; }
+    @XmlElement(name = "mentions")
+    public Boolean getEntions() { return mentions == null ? false : mentions; }
 
-	public void setFacets(Boolean facets_and_attributes) { this.facets = facets_and_attributes; }
+    public void setFacets(Boolean facets_and_attributes) { this.facets = facets_and_attributes; }
 	public void setThemes(Boolean themes) { this.themes = themes; }
 	public void setNamedEntities(Boolean named_entities) { this.named_entities = named_entities; }
 	public void setQueryTopics(Boolean query_topics) { this.query_topics = query_topics; }
 	public void setConceptTopics(Boolean concept_topics) { this.concept_topics = concept_topics; }
+    public void setMentions(Boolean mentions) { this.mentions = mentions; }
 }

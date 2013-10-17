@@ -19,15 +19,18 @@ public:
     string GetName() {return name;}
     string GetType() {return type;}
     string GetLabel(){return label;}
+    string GetNormalized(){return normalized;}
 
     void SetName(string name) {this->name = name;}
     void SetType(string type) {this->type = type;}
     void SetLabel(string label) {this->label = label;}
+    void SetNormalized(string normalized) {this->normalized = normalized;}
 
 private:
     string name;
     string type;
     string label;
+    string normalized;
 };
 
 #endif // ENTITY_H

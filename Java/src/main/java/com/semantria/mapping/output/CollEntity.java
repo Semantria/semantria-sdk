@@ -1,6 +1,8 @@
 package com.semantria.mapping.output;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import java.util.List;
 
 public class CollEntity {
     private String title;
@@ -11,6 +13,7 @@ public class CollEntity {
     private Integer neutral_count;
     private Integer positive_count;
     private String label;
+    private List<Mention> mentions;
 
     @XmlElement(name="title")
     public String getTitle() { return title; }
@@ -28,6 +31,9 @@ public class CollEntity {
     public Integer getPositiveCount() { return positive_count; }
     @XmlElement(name="label")
     public String getLabel() { return label; }
+    @XmlElementWrapper(name = "mentions")
+    @XmlElement(name = "mention")
+    public List<Mention> getMentions() { return mentions; }
 
     public void setTitle(String title) { this.title = title; }
     public void setType(String type) { this.type = type; }
@@ -37,5 +43,6 @@ public class CollEntity {
     public void setNeutralCount(Integer neutral_count) {this.neutral_count = neutral_count;}
     public void setPositiveCount(Integer positive_count) {this.positive_count = positive_count;}
     public void setLabel(String label) { this.label = label; }
+    public void setMentions(List<Mention> mentions) { this.mentions = mentions; }
 
 }

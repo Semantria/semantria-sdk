@@ -13,6 +13,10 @@ namespace Semantria.Com.Mapping.Output
 		[XmlElementAttribute("id")]
 		public string Id { get; set; }
 
+        [DataMember(Name = "tag")]
+        [XmlElementAttribute("tag")]
+        public string Tag { get; set; }
+
 		[DataMember(Name = "config_id")]
 		[XmlElementAttribute("config_id")]
 		public string ConfigId { get; set; }

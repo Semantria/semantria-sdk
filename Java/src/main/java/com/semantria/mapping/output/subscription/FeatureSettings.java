@@ -13,6 +13,7 @@ public class FeatureSettings
 	private Collection collection = null;
 	private Document document = null;
 	private String supported_languages = null;
+    private Boolean html_processing = null;
 
 	public FeatureSettings() { }
 
@@ -22,8 +23,11 @@ public class FeatureSettings
 	public Document getDocument() { return document; }
 	@XmlElement(name = "supported_languages")
 	public String getSupportedLanguages() { return supported_languages; }
+    @XmlElement(name = "html_processing")
+    public Boolean getHtmlProcessing() { return html_processing; }
 
 	public void setCollection(Collection collection) { this.collection = collection; }
 	public void setDocument(Document document) { this.document = document; }
 	public void setSupportedLanguages(String supported_languages) { this.supported_languages = supported_languages; }
+    public void setHtmlProcessing(Boolean html_processing) { this.html_processing = html_processing; }
 }

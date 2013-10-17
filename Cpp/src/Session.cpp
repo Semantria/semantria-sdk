@@ -1,8 +1,8 @@
 #include "Session.h"
 
-const string Session::host = "https://api30.semantria.com";
+const string Session::host = "https://api35.semantria.com";
 const string Session::wrapperName = "Cpp";
-const string Session::wrapperVersion = "3.1.72";
+const string Session::wrapperVersion = "3.5.75";
 
 Session::Session() {
     init((string)"", (string)"", (void*)NULL, "");
@@ -234,7 +234,7 @@ int Session::UpdateConfigurations( vector<Configuration*>* configurations ){
 
     // serialize
     Json::Value root( Json::arrayValue );
-    for(int i = 0; i != configurations->size(); i++) {
+    for( unsigned int i = 0; i != configurations->size(); i++) {
         Json::Value addedElement;
         configurations->at(i)->Serialize(addedElement);
         root.append(addedElement);
@@ -649,7 +649,7 @@ int Session::RemoveItems(string path, vector<string>* removeIds, string configId
 
 string Session::SerializeVectorOfStringsToJson(vector<string>* list){
     Json::Value root( Json::arrayValue );
-    for(int i = 0; i != list->size(); i++) {
+    for( unsigned int i = 0; i != list->size(); i++) {
         string item = list->at(i);
         root.append(Json::Value( item ));
     }

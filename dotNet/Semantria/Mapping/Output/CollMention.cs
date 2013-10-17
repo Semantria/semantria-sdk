@@ -22,9 +22,9 @@ namespace Semantria.Com.Mapping.Output
         [XmlElementAttribute("negating_phrase")]
         public string NegatingPhrase { get; set; }
 
-        [DataMember(Name = "indexes")]
-        [XmlArrayAttribute("indexes")]
-        [XmlArrayItemAttribute("index", typeof(int))]
-        public List<int> Indexes { get; set; }
+        [DataMember(Name = "locations")]
+        [XmlArrayAttribute("locations")]
+        [XmlArrayItemAttribute("location", typeof(CollLocation))]
+        public List<CollLocation> Locations { get; set; }
     }
 }

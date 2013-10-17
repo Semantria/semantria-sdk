@@ -5,6 +5,8 @@
 #include "../../serializers/xml/XmlSerializable.h"
 #include "../../common/Enums.h"
 #include "../../common/EnumsHelper.h"
+#include "../../objects/output/DocAutoCategories.h"
+#include "../../objects/output/DocDetails.h"
 #include "../../objects/output/DocEntity.h"
 #include "../../objects/output/DocTopic.h"
 #include "../../objects/output/DocTheme.h"
@@ -30,6 +32,7 @@ public:
 
     string GetId() {return id;}
     string GetConfigId() {return config_id;}
+    string GetTag() {return tag;}
     TaskStatus GetStatus() {return status;}
     string GetStatusAsString();
     string GetSourceText() {return source_text;};
@@ -39,6 +42,8 @@ public:
     string GetSentimentPolarity() {return sentiment_polarity;};
     string GetSummary() {return summary;}
 
+    vector<DocDetails*>* GetDetails() {return details;}
+    vector<DocAutoCategories*>* GetAutoCategories() {return auto_categories;}
     vector<DocEntity*>* GetEntities() {return entities;}
     vector<DocTopic*>* GetTopics() {return topics;}
     vector<DocTheme*>* GetThemes() {return themes;}
@@ -49,6 +54,7 @@ public:
 
     void SetId(string id) {this->id = id;}
     void SetConfigId(string config_id) {this->config_id = config_id;}
+    void SetTag(string tag) {this->tag = tag;}
     void SetSummary(string summary) {this->summary = summary;}
     void SetStatus(TaskStatus status) {this->status = status;}
     void SetStatusFromString(string status);
@@ -69,6 +75,7 @@ public:
 private:
     string id;
     string config_id;
+    string tag;
     TaskStatus status;
     string source_text;
     string language;
@@ -77,7 +84,8 @@ private:
     string sentiment_polarity;
     string summary;
 
-    //vector<DocDetails*>* details;
+    vector<DocAutoCategories*>* auto_categories;
+    vector<DocDetails*>* details;
     vector<DocPhrase*>* phrases;
     vector<DocTheme*>* themes;
     vector<DocEntity*>* entities;

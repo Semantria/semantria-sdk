@@ -2,26 +2,30 @@
 
 
 Mention::Mention() {
-    indexes = new vector<int>();
-
+    locations = new vector<Location*>();
 }
-Mention::~Mention() {}
+
+Mention::~Mention() {
+    delete locations;
+}
 
 void Mention::Serialize(Json::Value& root) {}
 
 void Mention::Deserialize(Json::Value& root) {
     label = root.get("label", "").asString();
-    
+
     is_negated = root.get("is_negated", true).asBool();
-    negation_phrase = root.get("negation_phrase", "").asString();
-    
-    if (NULL == this->indexes) {
-        this->indexes = new vector<int>();
+    negating_phrase = root.get("negating_phrase", "").asString();
+
+    // Locations
+    if (NULL == this->locations) {
+        this->locations = new vector<Location*>();
     }
-    
-    Json::Value indexesj = root["indexes"];
-    for ( int i = 0; i < indexesj.size(); ++i ) {
-        int index = indexesj[i].asInt();
-        this->indexes->push_back(index);
+
+    Json::Value locations = root["locations"];
+    for ( unsigned int i = 0; i < locations.size(); ++i ) {
+        Location* location = new Location();
+        location->Deserialize(locations[i]);
+        this->locations->push_back(location);
     }
 }
