@@ -8,158 +8,160 @@ require 'digest/sha1'
 require 'net/http'
 require 'net/https'
 
-OAUTH_VERSION = '1.0'
-OAuthParameterPrefix = "oauth_"
-OAuthConsumerKeyKey = "oauth_consumer_key"
-OAuthVersionKey = "oauth_version"
-OAuthSignatureMethodKey = "oauth_signature_method"
-OAuthSignatureKey = "oauth_signature"
-OAuthTimestampKey = "oauth_timestamp"
-OAuthNonceKey = "oauth_nonce"
+module Semantria
+  OAUTH_VERSION = '1.0'
+  OAuthParameterPrefix = "oauth_"
+  OAuthConsumerKeyKey = "oauth_consumer_key"
+  OAuthVersionKey = "oauth_version"
+  OAuthSignatureMethodKey = "oauth_signature_method"
+  OAuthSignatureKey = "oauth_signature"
+  OAuthTimestampKey = "oauth_timestamp"
+  OAuthNonceKey = "oauth_nonce"
 
-class AuthRequest
-  # Create a new instance
-  def initialize(consumer_key, consumer_secret, application_name, use_compression = false)
-    @consumer_key = consumer_key
-    @consumer_secret = consumer_secret
-    @application_name = application_name
-    @use_compression = use_compression
-  end
-
-  def authWebRequest(method, url, post_data = nil)
-    nonce = generateNonce()
-    timestamp = generateTimestamp()
-    query = generate_query(method, url, timestamp, nonce)
-    auth_header = generate_auth_header(query, timestamp, nonce)
-    headers = {'Authorization' => auth_header}
-
-    headers['Content-type'] = 'application/x-www-form-urlencoded' if method == 'POST'
-    headers['x-api-version'] = '3'
-    headers['x-app-name'] = @application_name
-
-    headers['Accept-Encoding'] = 'gzip' if @use_compression
-
-    uri = URI.parse(query)
-    conn = Net::HTTP.new(uri.host, 443)
-    conn.use_ssl = true
-    conn.verify_mode = OpenSSL::SSL::VERIFY_NONE
-
-    path = uri.request_uri #'%s?%s' % [qpath, qquery]
-    request = get_request(method, path, headers, post_data)
-    response = conn.request(request)
-
-    data = nil
-    if response.header['Content-Encoding'].eql? 'gzip'
-      sio = StringIO.new( response.body )
-      gz = Zlib::GzipReader.new( sio )
-      data = gz.read()
-    else
-      data = response.body
+  class AuthRequest
+    # Create a new instance
+    def initialize(consumer_key, consumer_secret, application_name, use_compression = false)
+      @consumer_key = consumer_key
+      @consumer_secret = consumer_secret
+      @application_name = application_name
+      @use_compression = use_compression
     end
 
-    {status: response.code.to_i, reason: response.message, data: data}
-  end
+    def authWebRequest(method, url, post_data = nil)
+      nonce = generateNonce()
+      timestamp = generateTimestamp()
+      query = generate_query(method, url, timestamp, nonce)
+      auth_header = generate_auth_header(query, timestamp, nonce)
+      headers = {'Authorization' => auth_header}
 
-  private
-  # create the http request object for a given http_method and path
-  def get_request(method, path, headers, post_data = nil)
-    request = nil
-    case method
-      when 'POST'
-        request = Net::HTTP::Post.new(path, headers)
-      when 'PUT'
-        request = Net::HTTP::Put.new(path, headers)
-      when 'GET'
-        request = Net::HTTP::Get.new(path, headers)
-      when 'DELETE'
-        request = Net::HTTP::Delete.new(path, headers)
+      headers['Content-type'] = 'application/x-www-form-urlencoded' if method == 'POST'
+      headers['x-api-version'] = '3'
+      headers['x-app-name'] = @application_name
+
+      headers['Accept-Encoding'] = 'gzip' if @use_compression
+
+      uri = URI.parse(query)
+      conn = Net::HTTP.new(uri.host, 443)
+      conn.use_ssl = true
+      conn.verify_mode = OpenSSL::SSL::VERIFY_NONE
+
+      path = uri.request_uri #'%s?%s' % [qpath, qquery]
+      request = get_request(method, path, headers, post_data)
+      response = conn.request(request)
+
+      data = nil
+      if response.header['Content-Encoding'].eql? 'gzip'
+        sio = StringIO.new( response.body )
+        gz = Zlib::GzipReader.new( sio )
+        data = gz.read()
       else
-        fail ArgumentError, "Don't know how to handle method: :#{method}"
+        data = response.body
+      end
+
+      {status: response.code.to_i, reason: response.message, data: data}
     end
 
-    unless post_data.nil?
-      request.body = post_data
-      request['Content-Length'] = request.body.length.to_s
+    private
+    # create the http request object for a given http_method and path
+    def get_request(method, path, headers, post_data = nil)
+      request = nil
+      case method
+        when 'POST'
+          request = Net::HTTP::Post.new(path, headers)
+        when 'PUT'
+          request = Net::HTTP::Put.new(path, headers)
+        when 'GET'
+          request = Net::HTTP::Get.new(path, headers)
+        when 'DELETE'
+          request = Net::HTTP::Delete.new(path, headers)
+        else
+          fail ArgumentError, "Don't know how to handle method: :#{method}"
+      end
+
+      unless post_data.nil?
+        request.body = post_data
+        request['Content-Length'] = request.body.length.to_s
+      end
+
+      request
     end
 
-    request
-  end
+    def generate_query(method, url, timestamp, nonce)
+      uri = URI.parse(url)
+      np = get_normalized_parameters(timestamp, nonce)
 
-  def generate_query(method, url, timestamp, nonce)
-    uri = URI.parse(url)
-    np = get_normalized_parameters(timestamp, nonce)
+      if uri.query
+        uri.query = '%s&%s' % [uri.query, np]
+      else
+        uri.query = '%s' % np
+      end
 
-    if uri.query
-      uri.query = '%s&%s' % [uri.query, np]
-    else
-      uri.query = '%s' % np
+      uri.to_s
     end
 
-    uri.to_s
-  end
+    def generate_auth_header(query, timestamp, nonce)
+      md5cs = get_md5_hash(@consumer_secret)
+      esc_query = escape(query)
+      hash = get_sha1(md5cs, esc_query)
+      hash = escape(hash)
 
-  def generate_auth_header(query, timestamp, nonce)
-    md5cs = get_md5_hash(@consumer_secret)
-    esc_query = escape(query)
-    hash = get_sha1(md5cs, esc_query)
-    hash = escape(hash)
+      items = Hash.new()
+      items['OAuth realm'] = ''
+      items[OAuthVersionKey] = "%s" % OAUTH_VERSION
+      items[OAuthTimestampKey] = "%s" % timestamp
+      items[OAuthNonceKey] = "%s" % nonce
+      items[OAuthSignatureMethodKey] = "HMAC-SHA1"
+      items[OAuthConsumerKeyKey] = "%s" % @consumer_key
+      items[OAuthSignatureKey] = "%s" % hash
 
-    items = Hash.new()
-    items['OAuth realm'] = ''
-    items[OAuthVersionKey] = "%s" % OAUTH_VERSION
-    items[OAuthTimestampKey] = "%s" % timestamp
-    items[OAuthNonceKey] = "%s" % nonce
-    items[OAuthSignatureMethodKey] = "HMAC-SHA1"
-    items[OAuthConsumerKeyKey] = "%s" % @consumer_key
-    items[OAuthSignatureKey] = "%s" % hash
+      params = []
+      items.keys.sort.each do |key|
+        params.push('%s="%s"' % [key, items[key]])
+      end
 
-    params = []
-    items.keys.sort.each do |key|
-      params.push('%s="%s"' % [key, items[key]])
+      params.join(',')
     end
 
-    params.join(',')
-  end
+    def get_normalized_parameters(timestamp, nonce)
+      items = Hash.new()
+      items[OAuthVersionKey] = OAUTH_VERSION
+      items[OAuthTimestampKey] = timestamp
+      items[OAuthNonceKey] = nonce
+      items[OAuthSignatureMethodKey] = "HMAC-SHA1"
+      items[OAuthConsumerKeyKey] = @consumer_key
 
-  def get_normalized_parameters(timestamp, nonce)
-    items = Hash.new()
-    items[OAuthVersionKey] = OAUTH_VERSION
-    items[OAuthTimestampKey] = timestamp
-    items[OAuthNonceKey] = nonce
-    items[OAuthSignatureMethodKey] = "HMAC-SHA1"
-    items[OAuthConsumerKeyKey] = @consumer_key
+      params = []
+      for key in items.keys.sort
+        params.push('%s=%s' % [key, items[key]])
+      end
 
-    params = []
-    for key in items.keys.sort
-      params.push('%s=%s' % [key, items[key]])
+      np = params.join('&')
+      # Encode signature parameters per Oauth Core 1.0 protocol
+      # Spaces must be encoded with "%20" instead of "+"
+      return np.gsub('+', '%20').gsub('%7E', '~')
     end
 
-    np = params.join('&')
-    # Encode signature parameters per Oauth Core 1.0 protocol
-    # Spaces must be encoded with "%20" instead of "+"
-    return np.gsub('+', '%20').gsub('%7E', '~')
-  end
+    def get_md5_hash(str)
+      md5hash = Digest::MD5.hexdigest(str)
+    end
 
-  def get_md5_hash(str)
-    md5hash = Digest::MD5.hexdigest(str)
-  end
+    def get_sha1(md5cs, query)
+      digest = OpenSSL::Digest::Digest.new('sha1')
+      # our composite signing key now has the token secret after the ampersand
+      sha1res = OpenSSL::HMAC.digest(digest, md5cs, query)
+      Base64.encode64(sha1res).chomp.gsub(/\n/, '')
+    end
 
-  def get_sha1(md5cs, query)
-    digest = OpenSSL::Digest::Digest.new('sha1')
-    # our composite signing key now has the token secret after the ampersand
-    sha1res = OpenSSL::HMAC.digest(digest, md5cs, query)
-    Base64.encode64(sha1res).chomp.gsub(/\n/, '')
-  end
+    def generateTimestamp()
+      Time.now.to_i.to_s
+    end
 
-  def generateTimestamp()
-    Time.now.to_i.to_s
-  end
+    def generateNonce(length = 20)
+      rand(10 ** length).to_s.rjust(length, '0')
+    end
 
-  def generateNonce(length = 20)
-    rand(10 ** length).to_s.rjust(length, '0')
+    def escape(s)
+      CGI::escape(s)
+    end
   end
-
-  def escape(s)
-    CGI::escape(s)
-  end
-end  
+end

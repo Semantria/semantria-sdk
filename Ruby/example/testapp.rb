@@ -23,7 +23,7 @@ $initial_texts = [
     'On this day in 1786 - In New York City  commercial ice cream was manufactured for the first time.'
 ]
 
-class SessionCallbackHandler < CallbackHandler
+class SessionCallbackHandler < Semantria::CallbackHandler
   def onRequest(sender, args)
     #print "Request: ", args, "\n"
   end
@@ -47,7 +47,7 @@ end
 
 # Initializes new session with the keys and app name.
 # We also will use compression.
-session = Session.new($consumer_key, $consumer_secret, 'TestApp', true)
+session = Semantria::Session.new($consumer_key, $consumer_secret, 'TestApp', true)
 # Initialize session callback handlers
 callback = SessionCallbackHandler.new()
 session.setCallbackHandler(callback)
