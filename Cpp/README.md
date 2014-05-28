@@ -5,7 +5,7 @@
 [Semantria](https://semantria.com) offers **C++ SDK**, that is the most convenient way to get started with the Semantria API on C++.
 SDK implements all the available Semantria features and demonstrate best practices of API usage.
 
-A **free trial** is available at https://semantria.com/trial 
+A **free trial** is available at https://semantria.com/trial.
 Please visit out [developer portal](https://semantria.com/developer) for integration information.
 
 Features include
