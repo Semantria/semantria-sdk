@@ -2,7 +2,7 @@
 
 [Semantria](https://semantria.com) is a **text analytics and sentiment analysis API**. It allows you to gain valuable insights from your unstructured text content by extracting categories, topics, themes, facets, and sentiment. It is based on [Lexalytics' Salience](http://www.lexalytics.com/technical-info/salience-engine-for-text-analysis) engine, which is used by Oracle, Cisco, Thomson Reuters, Saleforce.com - Radian6, Visible, Lithium, and 50+ other leaders in the space.
 
-[Semantria](https://semantria.com) offers Java SDK, that is the most convenient way to get started with the Semantria API on Java platform.
+[Semantria](https://semantria.com) offers **Java SDK**, that is the most convenient way to get started with the Semantria API on Java platform.
 SDK implements all the available Semantria features and demonstrate best practices of API usage.
 
 A **free trial** is available at https://semantria.com/trial.
