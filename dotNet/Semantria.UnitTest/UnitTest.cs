@@ -27,7 +27,7 @@ namespace Semantria.Com.TestUnitApi
         private string _consumerKey = "";
         private string _consumerSecret = "";
 
-        private string _id = "74215b37-8144-4811-a7de-c5b642aa6db1"; 
+        private string _id = ""; 
         private string _message = "Amazon Web Services has announced a new feature called VM₤Ware Import, which allows IT departments to move virtual machine images from their internal data centers to the cloud.";
         
         private ISerializer _serializer = null;

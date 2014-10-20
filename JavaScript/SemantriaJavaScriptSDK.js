@@ -414,6 +414,7 @@
 			}
 
     		headers["x-app-name"] = this.applicationName;
+			headers["x-api-version"] = "3";
 			if (typeof navigator != "undefined" && !/WebKit/.test(navigator.userAgent))
 				headers["Accept-Encoding"] = this.acceptEncoding;
 
@@ -485,13 +486,13 @@
 		 * @var {String} SDK_VERSION
 		 * @constant
 		 */
-		SDK_VERSION: "3.5.75",
+		SDK_VERSION: "3.5.77",
 		
 		/**
 		 * @var {String} HOST
 		 * @constant
 		 */
-		API_HOST: "https://api35.semantria.com",
+		API_HOST: "https://api.semantria.com",
 
 		/**
 		 * @var {Object} eventHandlers

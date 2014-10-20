@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Semantria")]
 [assembly: AssemblyProduct("Semantria unit tests")]
-[assembly: AssemblyCopyright("Copyright © Semantria, LLC 2013")]
+[assembly: AssemblyCopyright("Copyright © Semantria, LLC 2014")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("3.5.77")]
-[assembly: AssemblyFileVersion("3.5.77")]
+[assembly: AssemblyVersion("3.5.79")]
+[assembly: AssemblyFileVersion("3.5.79")]

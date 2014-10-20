@@ -1,7 +1,14 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 from io import BytesIO
 import gzip
-import httplib
+
+try:
+    import http.client as httplib
+except ImportError:
+    import httplib
+
 import urllib
 import time
 import random

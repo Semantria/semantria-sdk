@@ -7,7 +7,10 @@ import com.semantria.mapping.Document;
 import com.semantria.mapping.configuration.*;
 import com.semantria.mapping.output.*;
 import com.semantria.serializer.JsonSerializer;
+
 import org.junit.Test;
+import org.junit.FixMethodOrder;
+import org.junit.runners.MethodSorters;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -15,6 +18,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class SessionTest
 {
     private String key = "";
@@ -24,14 +28,14 @@ public class SessionTest
 	private ISerializer serializer = new JsonSerializer();
 
 	@Test
-	public void testCreateSessionStringStringISerializer()
+	public void test01CreateSessionStringStringISerializer()
 	{
 		Session session = Session.createSession(key, secret, serializer);
 		assertEquals(Session.class, session.getClass());
 	}
 
 	@Test
-	public void testGetStatus() 
+	public void test02GetStatus() 
 	{
 		Session session = Session.createSession(key, secret, serializer);
 		session.setCallbackHandler(new CallbackHandler());
@@ -40,7 +44,7 @@ public class SessionTest
 	}
 
 	@Test
-	public void testGetSubscription()
+	public void test03GetSubscription()
 	{
 		Session session = Session.createSession(key, secret, serializer);
 		session.setCallbackHandler(new CallbackHandler());
@@ -49,7 +53,7 @@ public class SessionTest
 	}
 
 	@Test
-	public void testStatistics()
+	public void test04Statistics()
 	{
 		Session session = Session.createSession(key, secret, serializer);
 		session.setCallbackHandler(new CallbackHandler());
@@ -58,7 +62,7 @@ public class SessionTest
 	}
 
 	@Test
-	public void testCreateUpdateCloneConfiguration()
+	public void test05CreateUpdateCloneConfiguration()
 	{
 		Session session = Session.createSession(key, secret, serializer);
 		////////////////////////////////////////////////
@@ -117,10 +121,8 @@ public class SessionTest
 		assertEquals(new Integer(20), m_config.getCharsThreshold());
 	}
 
-
-	
 	@Test
-	public void testCRUDCategory()
+	public void test06CRUDCategory()
 	{
 		String configId = null;
 		Session session = Session.createSession(key, secret, serializer);
@@ -180,7 +182,7 @@ public class SessionTest
 	}
 
 	@Test
-	public void testCRUDQuery()
+	public void test07CRUDQuery()
 	{
 		String configId = null;
 		Session session = Session.createSession(key, secret, serializer);
@@ -240,7 +242,7 @@ public class SessionTest
 	}
 
     @Test
-    public void testCRUDSentimentPhrase()
+    public void test08CRUDSentimentPhrase()
     {
         String configId = null;
         Session session = Session.createSession(key, secret, serializer);
@@ -279,7 +281,7 @@ public class SessionTest
     }
 
 	@Test
-	public void testCRUDBlacklist() 
+	public void test09CRUDBlacklist() 
 	{
 		String configId = null;
 		Session session = Session.createSession(key, secret, serializer);
@@ -321,7 +323,7 @@ public class SessionTest
 	}
 
 	@Test
-	public void testCRUDEntities()
+	public void test10CRUDEntities()
 	{
 		String configId = null;
 		Session session = Session.createSession(key, secret, serializer);
@@ -381,7 +383,7 @@ public class SessionTest
 	}
 
 	@Test
-	public void testQueueTask() 
+	public void test11AnalyzeSingleDocument() 
 	{
 		String configId = null;
 		Session session = Session.createSession(key, secret, serializer);
@@ -398,23 +400,29 @@ public class SessionTest
 
 		session.queueDocument(new Document("TEST_ID_1", "Amazon Web Services has announced a new feature called VM£Ware Import, which allows IT departments to move virtual machine images from their internal data centers to the cloud. It will cost 30£", "tag"), configId);
 
-		try
+		DocAnalyticData task = null;
+		for ( int i = 0; i < 5; i++ )
 		{
-			Thread.sleep(5000L);
-		} catch (InterruptedException e)
-		{
-			e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+			task = session.getDocument("TEST_ID_1", configId);
+			if (task != null)
+			{
+				break;
+			}
+			
+			try
+			{
+				Thread.sleep(1000L);
+			} catch (InterruptedException e)
+			{
+				e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+			}
 		}
 
-		DocAnalyticData task = session.getDocument("TEST_ID_1", configId);
 		assertEquals(  TaskStatus.PROCESSED, task.getStatus() );
-		
-		session.cancelDocument("test1", configId);
-
 	}
 
 	@Test
-	public void testQueueBatch() 
+	public void test12AnalyzeBatchOfDocuments() 
 	{
 		String configId = null;
 		Session session = Session.createSession(key, secret, serializer);
@@ -432,64 +440,44 @@ public class SessionTest
 		List<Document> tasks = new ArrayList<Document>();
 		tasks.add(new Document("BATCH_1", "DUMMY_TEXT"));
 		tasks.add(new Document("BATCH_2", "DUMMY_TEXT"));
+		
 		session.queueBatch(tasks, configId);
-
-		try
+		
+		List<DocAnalyticData> data = null;
+		for ( int i = 0; i < 5; i++ )
 		{
-			Thread.sleep(5000L);
-		} catch (InterruptedException e)
-		{
-			e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-		}
-
-	}
-
-	@Test
-	public void testGetProcessedTask()
-	{
-		String configId = null;
-		Session session = Session.createSession(key, secret, serializer);
-		////////////////////////////////////////////////
-		session.setCallbackHandler(new CallbackHandler());
-		for(Configuration config : session.getConfigurations())
-		{
-			if(config.getName().equals("TEST_CONFIG"))
+			data = session.getProcessedDocuments(configId);
+			if (data != null)
 			{
-				configId = config.getId();
+				break;
+			}
+			
+			try
+			{
+				Thread.sleep(1000L);
+			} catch (InterruptedException e)
+			{
+				e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
 			}
 		}
-		assertNotNull(configId);
-
-		try
-		{
-			Thread.sleep(5000L);
-		} catch (InterruptedException e)
-		{
-			e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-		}
-
-		List<DocAnalyticData> data = session.getProcessedDocuments(configId);
-		assertNotNull(data);
-
+		
 		DocAnalyticData doc = null;
-
 		if( data != null && data.isEmpty() == false )
 		{
 			for (DocAnalyticData docAnalyticData : data)
 			{
-				if( docAnalyticData.getId().equals("BATCH_1") )
+				if( docAnalyticData.getId().equals("BATCH_1") || docAnalyticData.getId().equals("BATCH_2") )
 				{
 					doc = docAnalyticData;
 				}
 			}
 		}
+		
 		assertNotNull(doc);
 	}
 
-
-
 	@Test
-	public void testQueueCollection()
+	public void test13AnalyzeCollection()
 	{
 		String configId = null;
 		Session session = Session.createSession(key, secret, serializer);
@@ -512,53 +500,44 @@ public class SessionTest
 		documents.add("test test for processing - 2");
 		documents.add("test test for processing - 3");
 		coll.setDocuments(documents);
+		
 		session.queueCollection(coll, configId);
-	}
-
-	@Test
-	public void testGetProcessedCollections()
-	{
-		String configId = null;
-		Session session = Session.createSession(key, secret, serializer);
-		////////////////////////////////////////////////
-		session.setCallbackHandler(new CallbackHandler());
-		for(Configuration config : session.getConfigurations())
+		
+		List<CollAnalyticData> data = null;
+		for ( int i = 0; i < 5; i++ )
 		{
-			if(config.getName().equals("TEST_CONFIG"))
+			data = session.getProcessedCollections(configId);
+			if (data != null)
 			{
-				configId = config.getId();
+				break;
+			}
+			
+			try
+			{
+				Thread.sleep(1000L);
+			} catch (InterruptedException e)
+			{
+				e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
 			}
 		}
-		assertNotNull(configId);
-
-		try
-		{
-			Thread.sleep(5000L);
-		} catch (InterruptedException e)
-		{
-			//e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-		}
-
-		List<CollAnalyticData> data = session.getProcessedCollections(configId);
-		assertNotNull(data);
-
-		CollAnalyticData coll = null;
-
+		
+		CollAnalyticData col = null;
 		if( data != null && data.isEmpty() == false )
 		{
-			for (CollAnalyticData collAnalyticData : data)
+			for (CollAnalyticData colAnalyticData : data)
 			{
-				if( collAnalyticData.getId().equals("TEST_COLLECTION_ID") )
+				if( colAnalyticData.getId().equals("TEST_COLLECTION_ID") )
 				{
-					coll = collAnalyticData;
+					col = colAnalyticData;
 				}
 			}
 		}
-		assertNotNull(coll);
+		
+		assertNotNull(col);
 	}
 
 	@Test
-	public void testCleanup()
+	public void test14Cleanup()
 	{
 		Session session = Session.createSession(key, secret, serializer);
 

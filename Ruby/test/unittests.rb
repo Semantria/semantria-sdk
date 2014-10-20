@@ -12,7 +12,7 @@ $id = rand(10 ** 10).to_s.rjust(10, '0')
 $message = 'Amazon Web Services has announced a new feature called VM₤Ware Import, which
   allows IT departments to move virtual machine images from their internal data centers to the cloud.'
 
-class SessionCallbackHandler < CallbackHandler
+class SessionCallbackHandler < Semantria::CallbackHandler
   def onRequest(sender, args)
     print 'Request: ', args, "\n"
   end
@@ -37,7 +37,7 @@ end
 #Semantria API tests
 class SemantriaSessionTest < Test::Unit::TestCase
   def setup
-    @session = Session.new(CONSUMER_KEY, CONSUMER_SECRET, nil, true)
+    @session = Semantria::Session.new(CONSUMER_KEY, CONSUMER_SECRET, nil, true)
     @callback = SessionCallbackHandler.new()
     @session.setCallbackHandler(@callback)
   end

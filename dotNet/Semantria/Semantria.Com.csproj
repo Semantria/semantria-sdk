@@ -89,7 +89,7 @@
     <Compile Include="Mapping\Output\DocOpinion.cs" />
     <Compile Include="Mapping\Output\Statistics.cs" />
     <Compile Include="Mapping\Output\DocWord.cs" />
-    <Compile Include="Mapping\Output\DocDetail.cs" />
+    <Compile Include="Mapping\Output\DocSentence.cs" />
     <Compile Include="Mapping\Output\DocRelation.cs" />
     <Compile Include="Mapping\Output\Facet.cs" />
     <Compile Include="Mapping\Output\DocPhrase.cs" />

@@ -40,6 +40,10 @@ namespace Semantria.Com.Mapping.Output
 			set { _status = value.ToString(); }
 		}
 
+        [DataMember(Name = "summary")]
+        [XmlElementAttribute("summary")]
+        public string Summary { get; set; }
+
 		[DataMember(Name = "facets")]
 		[XmlArrayAttribute("facets")]
 		[XmlArrayItemAttribute("facet", typeof(Facet))]

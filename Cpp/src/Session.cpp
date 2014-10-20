@@ -2,7 +2,7 @@
 
 const string Session::host = "https://api35.semantria.com";
 const string Session::wrapperName = "Cpp";
-const string Session::wrapperVersion = "3.5.75";
+const string Session::wrapperVersion = "3.5.76";
 
 Session::Session() {
     init((string)"", (string)"", (void*)NULL, "");

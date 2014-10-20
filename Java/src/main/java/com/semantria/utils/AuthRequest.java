@@ -26,9 +26,10 @@ public final class AuthRequest
 	private String secret = "";
 	private String response = "";
 	private String rurl = "";
-	private String appName = "Java/3.5.75/";
+	private String appName = "Java/3.5.77/";
 	private boolean  useCompression = false;
 	private String errorMsg = null;
+    private int CONNECTION_TIMEOUT = 120000;
 
 	public AuthRequest(String curl, String cmethod, String ckey, String csecret, boolean useCompression)
 	{	 
@@ -97,6 +98,7 @@ public final class AuthRequest
 		{
 			initSSLContext();
 			HttpURLConnection conn = getOAuthSignedConnection();
+            conn.setConnectTimeout(CONNECTION_TIMEOUT);
         	conn.connect();
         	sendRequestBodyIfSetted(conn);
         	receiveResponseFromServer(conn);
@@ -166,10 +168,8 @@ public final class AuthRequest
 
 		conn.setRequestProperty("Authorization", "OAuth,oauth_consumer_key=\"" + key + "\",oauth_signature=\""
     					+ URLEncoder.encode(signupRequest(rurl, secret), "UTF-8") + "\"");
+		conn.setRequestProperty("x-app-name", appName);
 		conn.setRequestProperty("x-api-version", "3");
-		if (null != appName) {
-			conn.setRequestProperty("x-app-name", appName);
-		}
 	}
 	
 	private void sendRequestBodyIfSetted(HttpURLConnection conn) throws IOException {

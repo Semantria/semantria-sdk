@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 import json
 from semantria.error import SemantriaError
 
@@ -26,6 +28,7 @@ class JsonSerializer:
         #encoder = json.JSONEncoder()
         return json.dumps(obj)
 
-    def deserialize(self, str_, handler=None):
+    def deserialize(self, string, handler=None):
         #decoder = json.JSONDecoder()
-        return json.loads(str_.decode('utf-8'))
+        #return json.loads(string.decode('utf-8'))
+        return json.loads(string)

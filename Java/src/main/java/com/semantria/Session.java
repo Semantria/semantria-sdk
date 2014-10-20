@@ -33,7 +33,7 @@ public final class Session
 	private ISerializer serializer = null;
 	private String requestFormat = "json";
 	private ICallbackHandler callback = null;
-	private String serviceUrl = "https://api35.semantria.com";
+	private String serviceUrl = "https://api.semantria.com";
 	public  boolean useCompression = false;
 
 
@@ -688,7 +688,12 @@ public final class Session
 	{
 		return queueBatch(tasks, null);
 	}
-	
+
+    public Integer queueCollection(Collection collection)
+    {
+        return queueCollection(collection, null);
+    }
+        
 	public Integer queueCollection(Collection collection, String config_id)
 	{
 		String body = serializer.serialize(collection);

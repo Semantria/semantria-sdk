@@ -1,5 +1,17 @@
 CHANGELOG
 
+3.5.81 - Added AutoCategories list to the DocAnalyticData type.
+
+3.5.80 - Minor changes to types related to POS tagging feature
+	- DocDetail class renamed to DocSentence.
+	- Added “Type” field to DocWord class.
+
+3.5.79 - Added new AutoResponseTestApp application for demo purposes of auto-response feature.
+
+3.5.78 - Renamed test applications according to new naming convention.
+	- DocTestApp project was renamed to BasicTestApp one.
+	- CollTestApp project was renamed to DiscoveryTestApp one.
+
 3.5.77 - Added support of Semantria API 3.5.1.
 	- Introduced support of Chinese language. Almost all feature except opinions and relationships are supported.
 	- HTML processing is now supported out of the box. Switch on HTML processing in configuration and Semantria will cut the tags automatically.

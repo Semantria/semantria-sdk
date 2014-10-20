@@ -1,5 +1,7 @@
 CHANGELOG
 
+3.5.76 - Added sample test application for discovery analysis mode.
+
 3.5.75 - Added support of Semantria API 3.5.1.
 	- Introduced support of Chinese language. Almost all feature except opinions and relationships are supported.
 	- HTML processing is now supported out of the box. Switch on HTML processing in configuration and Semantria will cut the tags automatically.

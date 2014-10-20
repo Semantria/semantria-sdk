@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 from semantria.authrequest import *
 from semantria.error import SemantriaError
 from semantria.jsonserializer import * 

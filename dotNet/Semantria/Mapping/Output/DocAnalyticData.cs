@@ -74,6 +74,11 @@ namespace Semantria.Com.Mapping.Output
         [XmlArrayItemAttribute("topic", typeof(DocTopic))]
         public List<DocTopic> Topics { get; set; }
 
+        [DataMember(Name = "auto_categories")]
+        [XmlArrayAttribute("auto_categories")]
+        [XmlArrayItemAttribute("category", typeof(DocCategory))]
+        public List<DocCategory> AutoCategories { get; set; }
+
         [DataMember(Name = "themes")]
         [XmlArrayAttribute("themes")]
         [XmlArrayItemAttribute("theme", typeof(DocTheme))]
@@ -96,8 +101,8 @@ namespace Semantria.Com.Mapping.Output
 
         [DataMember(Name = "details")]
         [XmlArrayAttribute("details")]
-        [XmlArrayItemAttribute("detail", typeof(DocDetail))]
-        public List<DocDetail> Details { get; set; }
+        [XmlArrayItemAttribute("detail", typeof(DocSentence))]
+        public List<DocSentence> Details { get; set; }
     }
 }
 

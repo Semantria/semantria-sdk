@@ -58,6 +58,7 @@ int AuthRequest::authWebRequest(string url, QueryMethod method, string body) {
     vector<string> headers;
     headers.push_back("Authorization: " + authHeader);
     headers.push_back("x-api-version: 3");
+	headers.push_back("x-app-id: CppSDK");
     if ("" != applicationName) {
         headers.push_back("x-app-name: " + applicationName);
     }

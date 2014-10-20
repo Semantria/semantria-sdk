@@ -9,6 +9,10 @@ namespace Semantria.Com.Mapping.Output
     [XmlRootAttribute("word", Namespace = "")]
     public class DocWord
     {
+        [DataMember(Name = "type")]
+        [XmlElementAttribute("type")]
+        public string Type { get; set; }
+
         [DataMember(Name = "tag")]
         [XmlElementAttribute("tag")]
         public string Tag { get; set; }

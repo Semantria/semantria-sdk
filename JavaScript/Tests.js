@@ -415,7 +415,6 @@
 	 */
 	(function() {
 		var phrases = session.getPhrases();
-		
 		if(phrases instanceof Array) {
 			return success("getPhrases()");
 		} else {
