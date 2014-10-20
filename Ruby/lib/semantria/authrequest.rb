@@ -145,7 +145,7 @@ class AuthRequest
   end
 
   def get_sha1(md5cs, query)
-    digest = OpenSSL::Digest::Digest.new('sha1')
+    digest = OpenSSL::Digest.new('sha1')
     # our composite signing key now has the token secret after the ampersand
     sha1res = OpenSSL::HMAC.digest(digest, md5cs, query)
     Base64.encode64(sha1res).chomp.gsub(/\n/, '')
