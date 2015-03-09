@@ -8,6 +8,10 @@
     <artifactId>SemantriaJavaSDK</artifactId>
     <version>3.5.75</version>
 
+    <properties>
+         <skipTests>true</skipTests>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -34,10 +38,7 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>2.12.4</version>
                 <configuration>
-                        <test>
-                            SerializerTest
-                        </test>
-                    <!--<skipTests>true</skipTests>-->
+                    <skipTests>${skipTests}</skipTests>
                 </configuration>
             </plugin>
             <plugin>
