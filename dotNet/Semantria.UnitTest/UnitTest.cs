@@ -27,7 +27,7 @@ namespace Semantria.Com.TestUnitApi
         private string _consumerKey = "";
         private string _consumerSecret = "";
 
-        private string _id = ""; 
+        private string _id = "3E08B37B-0D74-4BF0-9380-E4D7E8C0279E"; 
         private string _message = "Amazon Web Services has announced a new feature called VM₤Ware Import, which allows IT departments to move virtual machine images from their internal data centers to the cloud.";
         
         private ISerializer _serializer = null;
@@ -116,6 +116,13 @@ namespace Semantria.Com.TestUnitApi
         }
 
         [TestMethod]
+        public void GetSupportedFeatures()
+        {
+            IList<FeaturesSet> features = _session.GetSupportedFeatures();
+            Assert.IsNotNull(features);
+        }
+
+        [TestMethod]
         public void GetConfigurations()
         {
             List<Configuration> result = _session.GetConfigurations();
@@ -130,6 +137,7 @@ namespace Semantria.Com.TestUnitApi
             Assert.IsNotNull(result);
             if (result == null) return;
 
+            Configuration primaryConf = null;
             foreach (Configuration item in result)
             {
                 if (item.IsPrimary == true)
@@ -138,9 +146,11 @@ namespace Semantria.Com.TestUnitApi
                     item.CharsThreshold = 50;
 					item.OneSentence = true;
                 }
+
+                primaryConf = item;
             }
 
-            int res = _session.UpdateConfigurations(result);
+            int res = _session.UpdateConfigurations(new List<Configuration>() { primaryConf });
             Assert.IsTrue(res == 202, "RESULT: " + res);
         }
 

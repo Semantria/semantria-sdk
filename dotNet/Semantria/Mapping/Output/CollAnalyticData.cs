@@ -21,6 +21,10 @@ namespace Semantria.Com.Mapping.Output
 		[XmlElementAttribute("config_id")]
 		public string ConfigId { get; set; }
 
+        [DataMember(Name = "job_id")]
+        [XmlElementAttribute("job_id")]
+        public string JobId { get; set; }
+
 		[DataMember(Name = "status")]
 		private string _status;
 		[XmlElementAttribute("status")]

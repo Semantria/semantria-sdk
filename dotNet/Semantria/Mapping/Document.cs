@@ -17,6 +17,10 @@ namespace Semantria.Com.Mapping
         [XmlElementAttribute("tag")]
         public string Tag { get; set; }
 
+        [DataMember(Name = "job_id")]
+        [XmlElementAttribute("job_id")]
+        public string JobId { get; set; }
+
 		[DataMember(Name = "text")]
 		[XmlElementAttribute("text")]
 		public string Text { get; set; }

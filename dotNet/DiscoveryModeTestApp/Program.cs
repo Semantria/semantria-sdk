@@ -8,7 +8,7 @@ using Semantria.Com.Serializers;
 using Semantria.Com.Mapping;
 using Semantria.Com.Mapping.Output;
 
-namespace FacetsTest
+namespace DiscoveryModeTestApp
 {
 	class Program
 	{
@@ -19,7 +19,7 @@ namespace FacetsTest
 
 			Collection collection = new Collection() { Id = Guid.NewGuid().ToString(), Documents = new List<string>() };
 
-			Console.WriteLine("Semantria Collection processing mode demo.");
+			Console.WriteLine("Semantria Discovery processing mode demo.");
             Console.WriteLine();
 
 			string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "source.txt");

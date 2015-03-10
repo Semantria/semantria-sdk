@@ -7,8 +7,8 @@
     <ProjectGuid>{E5F16089-C786-468A-B80D-05668B074AAF}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CollTestApp</RootNamespace>
-    <AssemblyName>CollTestApp</AssemblyName>
+    <RootNamespace>DiscoveryModeTestApp</RootNamespace>
+    <AssemblyName>DiscoveryModeTestApp</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -34,10 +34,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />

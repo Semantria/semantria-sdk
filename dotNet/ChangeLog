@@ -1,5 +1,26 @@
 CHANGELOG
 
+3.8.85 - Added API 3.8 features support
+	- Added Normalized and Stemmed forms (fields) to the Theme object.
+	- Enhanced Subscription object with the new limits introduced by API 3.8.
+		* Data calls limit / interval / balance represent limit for data API calls the user can send to the API in certain interval. 
+		* Polling calls limit / interval / balance represent limit for polling API calls the user can make to get analysis results from API. 
+		* Settings calls limit / interval / balance represent limit for settings API calls the user can make to adjust analysis results. 
+	- Enhanced Statistics object with the new fields which reflect Settings and Polling calls statistics.
+	- Added new GetSupportedFeatures method that returns supported features from new API end-point.
+	- Reworked test application for Detailed analysis mode. Application tracks document IDs to get data for sent documents.
+	- Added new Entities threshold option to configuration that control entities reporting threshold.
+	- Added User Entities feature support on SDK level.
+		* new User entities limit and User mentions limit in Configuration (collection mode).
+		* new User entities marker in Subscription object that represents whether feature enabled for certain subscription.
+
+3.7.83 - Added "categories_threshold" option to Configuration object. New option defines minimum strength score for user categories to be reported.
+
+3.7.82 - Added support of Intentions feature.
+	- Intentions list in DocAnalyticData object.
+	- Intentions flag in Subscription object that identifies whether intentions supported by subscription or not.
+	- Intentions option on Configuration level for Document analysis, to control intentions in the output.
+
 3.5.81 - Added AutoCategories list to the DocAnalyticData type.
 
 3.5.80 - Minor changes to types related to POS tagging feature

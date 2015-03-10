@@ -45,6 +45,14 @@ namespace Semantria.Com.Mapping.Configuration
         [XmlElementAttribute("chars_threshold")]
         public int CharsThreshold { get; set; }
 
+        [DataMember(Name = "categories_threshold", EmitDefaultValue = false)]
+        [XmlElementAttribute("categories_threshold")]
+        public float CategoriesThreshold { get; set; }
+
+        [DataMember(Name = "entities_threshold", EmitDefaultValue = false)]
+        [XmlElementAttribute("entities_threshold")]
+        public int EntitiesThreshold { get; set; }
+
         [DataMember(Name = "callback")]
         [XmlElementAttribute("callback")]
         public string Callback { get; set; }
@@ -67,6 +75,10 @@ namespace Semantria.Com.Mapping.Configuration
     [XmlRootAttribute("document", Namespace = "")]
     public class DocConfiguration
     {
+        [DataMember(Name = "intentions")]
+        [XmlElementAttribute("intentions")]
+        public bool Intentions { get; set; }
+
         [DataMember(Name = "concept_topics_limit")]
         [XmlElementAttribute("concept_topics_limit")]
         public int ConceptTopicsLimit { get; set; }
@@ -175,6 +187,18 @@ namespace Semantria.Com.Mapping.Configuration
         [DataMember(Name = "named_entities_limit")]
         [XmlElementAttribute("named_entities_limit")]
         public int NamedEntitiesLimit { get; set; }
+
+        [DataMember(Name = "named_mentions_limit")]
+        [XmlElementAttribute("named_mentions_limit")]
+        public int NamedMentionsLimit { get; set; }
+
+        [DataMember(Name = "user_entities_limit")]
+        [XmlElementAttribute("user_entities_limit")]
+        public int UserEntitiesLimit { get; set; }
+
+        [DataMember(Name = "user_mentions_limit")]
+        [XmlElementAttribute("user_mentions_limit")]
+        public int UserMentionsLimit { get; set; }
 
         [DataMember(Name = "themes_limit")]
         [XmlElementAttribute("themes_limit")]

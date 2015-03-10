@@ -68,12 +68,17 @@ namespace Semantria.Com.Mapping.Output
 		[XmlElementAttribute("overall_exceeded")]
 		public int OverallExceeded { get; set; }
 
-        [ReadOnly(true), Category("Overall"), DisplayName("System API calls"), Description("Number of performed system API calls")]
-        [DataMember(Name = "calls_system")]
-        [XmlElementAttribute("calls_system")]
-        public int CallsSystem { get; set; }
+        [ReadOnly(true), Category("Overall"), DisplayName("Settings API calls"), Description("Number of performed settings API calls")]
+        [DataMember(Name = "calls_settings")]
+        [XmlElementAttribute("calls_settings")]
+        public int CallsSettings { get; set; }
 
-        [ReadOnly(true), Category("Overall"), DisplayName("Data API calls"), Description("Number of performed data calls")]
+        [ReadOnly(true), Category("Overall"), DisplayName("Polling API calls"), Description("Number of performed polling API calls")]
+        [DataMember(Name = "calls_polling")]
+        [XmlElementAttribute("calls_polling")]
+        public int CallsPolling { get; set; }
+
+        [ReadOnly(true), Category("Overall"), DisplayName("Data API calls"), Description("Number of performed data API calls")]
         [DataMember(Name = "calls_data")]
         [XmlElementAttribute("calls_data")]
         public int CallsData { get; set; }

@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{526DBCA9-19CD-47A7-A8E5-F4B620E32616}</ProjectGuid>
+    <ProjectGuid>{F251A655-FFA4-437B-AC2C-3B7A962E0DD6}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>AutoResponseTestApp</RootNamespace>
-    <AssemblyName>AutoResponseTestApp</AssemblyName>
+    <RootNamespace>JobIdFeatureTestApp</RootNamespace>
+    <AssemblyName>JobIdFeatureTestApp</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -34,17 +34,10 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="source.txt" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Semantria\Semantria.Com.csproj">

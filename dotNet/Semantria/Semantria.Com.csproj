@@ -85,8 +85,10 @@
     <Compile Include="Mapping\Output\CollEntity.cs" />
     <Compile Include="Mapping\Output\CollMention.cs" />
     <Compile Include="Mapping\Output\DocCategory.cs" />
+    <Compile Include="Mapping\Output\DocIntention.cs" />
     <Compile Include="Mapping\Output\DocMention.cs" />
     <Compile Include="Mapping\Output\DocOpinion.cs" />
+    <Compile Include="Mapping\Output\FeaturesSet.cs" />
     <Compile Include="Mapping\Output\Statistics.cs" />
     <Compile Include="Mapping\Output\DocWord.cs" />
     <Compile Include="Mapping\Output\DocSentence.cs" />

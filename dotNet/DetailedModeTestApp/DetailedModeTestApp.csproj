@@ -8,8 +8,8 @@
     <ProjectGuid>{04C6D294-F68C-4B08-BBCB-C4501CE915E9}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DocTestApp</RootNamespace>
-    <AssemblyName>DocTestApp</AssemblyName>
+    <RootNamespace>DetailedModeTestApp</RootNamespace>
+    <AssemblyName>DetailedModeTestApp</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <PublishUrl>publish\</PublishUrl>
@@ -50,10 +50,6 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Program.cs" />

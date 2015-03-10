@@ -229,6 +229,40 @@ namespace Semantria.Com
             AuthResponse authResponse = this.RunRequest(QueryMethod.GET, url, null);
             return this.ProcessGetResponse<Statistics>(authResponse);
         }
+
+        public IList<FeaturesSet> GetSupportedFeatures(string language = null)
+        {
+            //GET https://api.semantria.com/features.json
+            string url = String.Format("{0}/features.{1}", _host, _format);
+
+            if (!String.IsNullOrEmpty(language))
+            {
+                url = String.Format("{0}/features.{1}?language={2}", _host, _format, language);
+            }
+
+            AuthResponse authResponse = this.RunRequest(QueryMethod.GET, url, null);
+            List<FeaturesSet> obj = new List<FeaturesSet>();
+
+            switch (_format)
+            {
+                case "json":
+                    {
+                        List<FeaturesSet> result = this.ProcessGetResponse<List<FeaturesSet>>(authResponse);
+                        if (result != null) obj = result;
+                    }
+                    break;
+                case "xml":
+                    {
+                        FeaturesSetList result = this.ProcessGetResponse<FeaturesSetList>(authResponse);
+                        if (result != null) obj = result.Data;
+                    }
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            return obj;
+        }
        
         #endregion
 
@@ -585,6 +619,18 @@ namespace Semantria.Com
             return result;
         }
 
+        public IList<DocAnalyticData> GetProcessedDocumentsByJobId(string jobId)
+        {
+            if (String.IsNullOrEmpty(jobId))
+            {
+                throw new ArgumentNullException("jobId", "jobId parameter can not be null or string empty.");
+            }
+
+            string url = String.Format("{0}/document/processed.{1}?job_id={2}", _host, _format, jobId);
+            IList<DocAnalyticData> result = this.RequestProcessedDocuments(url);
+            return result;
+        }
+
         private List<DocAnalyticData> RequestProcessedDocuments(string url)
         {
             AuthResponse authResponse = this.RunRequest(QueryMethod.GET, url, null);
@@ -670,6 +716,18 @@ namespace Semantria.Com
             {
                 url = String.Format("{0}/collection/processed.{1}?config_id={2}", _host, _format, configId);
             }
+            IList<CollAnalyticData> result = this.RequestProcessedCollections(url);
+            return result;
+        }
+
+        public IList<CollAnalyticData> GetProcessedCollectionsByJobId(string jobId)
+        {
+            if (String.IsNullOrEmpty(jobId))
+            {
+                throw new ArgumentNullException("jobId", "jobId parameter can not be null or string empty.");
+            }
+
+            string url = String.Format("{0}/collection/processed.{1}?job_id={2}", _host, _format, jobId);
             IList<CollAnalyticData> result = this.RequestProcessedCollections(url);
             return result;
         }

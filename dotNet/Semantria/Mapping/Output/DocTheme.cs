@@ -33,6 +33,14 @@ namespace Semantria.Com.Mapping.Output
         [XmlElementAttribute("title")]
         public string Title { get; set; }
 
+        [DataMember(Name = "stemmed")]
+        [XmlElementAttribute("stemmed")]
+        public string StemmedForm { get; set; }
+
+        [DataMember(Name = "normalized")]
+        [XmlElementAttribute("normalized")]
+        public string NormalizedForm { get; set; }
+
 		[DataMember(Name = "mentions")]
 		[XmlArrayAttribute("mentions")]
 		[XmlArrayItemAttribute("mention", typeof(DocMention))]

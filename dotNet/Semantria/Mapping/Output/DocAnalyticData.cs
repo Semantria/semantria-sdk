@@ -21,6 +21,10 @@ namespace Semantria.Com.Mapping.Output
         [XmlElementAttribute("config_id")]
         public string ConfigId { get; set; }
 
+        [DataMember(Name = "job_id")]
+        [XmlElementAttribute("job_id")]
+        public string JobId { get; set; }
+
         [DataMember(Name = "status")]
         private string _status;
         [XmlElementAttribute("status")]
@@ -63,6 +67,11 @@ namespace Semantria.Com.Mapping.Output
 		[DataMember(Name = "language_score")]
 		[XmlElementAttribute("language_score")]
 		public string LanguageScore { get; set; }
+
+        [DataMember(Name = "intentions")]
+        [XmlArrayAttribute("intentions")]
+        [XmlArrayItemAttribute("intention", typeof(DocIntention))]
+        public List<DocIntention> Intentions { get; set; }
 
         [DataMember(Name = "entities")]
         [XmlArrayAttribute("entities")]

@@ -45,17 +45,41 @@ namespace Semantria.Com.Mapping.Output
         [XmlElementAttribute("limit_type")]
         public string LimitType { get; set; }
 
-        [DataMember(Name = "calls_balance")]
-        [XmlElementAttribute("calls_balance")]
-        public int CallsBalance { get; set; }
+        [DataMember(Name = "settings_calls_limit")]
+        [XmlElementAttribute("settings_calls_limit")]
+        public int SettingsCallsLimit { get; set; }
 
-        [DataMember(Name = "calls_limit")]
-        [XmlElementAttribute("calls_limit")]
-        public int CallsLimit { get; set; }
+        [DataMember(Name = "settings_calls_limit_interval")]
+        [XmlElementAttribute("settings_calls_limit_interval")]
+        public int SettingsCallsLimitInterval { get; set; }
 
-        [DataMember(Name = "calls_limit_interval")]
-        [XmlElementAttribute("calls_limit_interval")]
-        public int CallsLimitInterval { get; set; }
+        [DataMember(Name = "settings_calls_balance")]
+        [XmlElementAttribute("settings_calls_balance")]
+        public int SettingsCallsBalance { get; set; }
+
+        [DataMember(Name = "polling_calls_limit")]
+        [XmlElementAttribute("polling_calls_limit")]
+        public int PollingCallsLimit { get; set; }
+
+        [DataMember(Name = "polling_calls_limit_interval")]
+        [XmlElementAttribute("polling_calls_limit_interval")]
+        public int PollingCallsLimitInterval { get; set; }
+
+        [DataMember(Name = "polling_calls_balance")]
+        [XmlElementAttribute("polling_calls_balance")]
+        public int PollingCallsLimitBalance { get; set; }
+
+        [DataMember(Name = "data_calls_limit")]
+        [XmlElementAttribute("data_calls_limit")]
+        public int DataCallsLimit { get; set; }
+
+        [DataMember(Name = "data_calls_limit_interval")]
+        [XmlElementAttribute("data_calls_limit_interval")]
+        public int DataCallsLimitInterval { get; set; }
+
+        [DataMember(Name = "data_calls_balance")]
+        [XmlElementAttribute("data_calls_balance")]
+        public int DataCallsLimitBalance { get; set; }
 
         [DataMember(Name = "docs_balance")]
         [XmlElementAttribute("docs_balance")]
@@ -76,6 +100,14 @@ namespace Semantria.Com.Mapping.Output
 		[DataMember(Name = "docs_suggested_interval")]
 		[XmlElementAttribute("docs_suggested_interval")]
 		public int DocsSuggestedInterval { get; set; }
+
+        [DataMember(Name = "app_seats_permitted")]
+        [XmlElementAttribute("app_seats_permitted")]
+        public int AppSeatsPermitted { get; set; }
+
+        [DataMember(Name = "app_seats_allocated")]
+        [XmlElementAttribute("app_seats_allocated")]
+        public int AppSeatsAllocated { get; set; }
     }
 
     [DataContract(Name = "basic_settings")]
@@ -164,6 +196,10 @@ namespace Semantria.Com.Mapping.Output
     [XmlRootAttribute("document", Namespace = "")]
     public class DocsFeatureSettings
     {
+        [DataMember(Name = "intentions")]
+        [XmlElementAttribute("intentions")]
+        public bool Intentions { get; set; }
+
         [DataMember(Name = "summary")]
         [XmlElementAttribute("summary")]
         public bool Summary { get; set; }
@@ -244,6 +280,10 @@ namespace Semantria.Com.Mapping.Output
         [DataMember(Name = "named_entities")]
         [XmlElementAttribute("named_entities")]
         public bool NamedEntities { get; set; }
+
+        [DataMember(Name = "user_entities")]
+        [XmlElementAttribute("user_entities")]
+        public bool UserEntities { get; set; }
 
         [DataMember(Name = "mentions")]
         [XmlElementAttribute("mentions")]

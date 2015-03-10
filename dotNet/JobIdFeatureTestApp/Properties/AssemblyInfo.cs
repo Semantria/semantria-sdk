@@ -5,12 +5,12 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("AutoResponseTestApp")]
-[assembly: AssemblyDescription("Auto-response feature test application")]
+[assembly: AssemblyTitle("JobIdFeatureTestApp")]
+[assembly: AssemblyDescription("JobID feature test application")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Semantria")]
-[assembly: AssemblyProduct("AutoResponseTestApp")]
-[assembly: AssemblyCopyright("Copyright © Semantria, LLC 2014")]
+[assembly: AssemblyProduct("JobIdFeatureTestApp")]
+[assembly: AssemblyCopyright("Copyright © Semantria, LLC 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("fa9561d7-4b45-426a-a9e3-a31d787d0b24")]
+[assembly: Guid("9f5fba7e-4985-47fe-bea1-06ab73ca062a")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("3.5.79")]
-[assembly: AssemblyFileVersion("3.5.79")]
+[assembly: AssemblyVersion("3.8.85")]
+[assembly: AssemblyFileVersion("3.8.85")]
