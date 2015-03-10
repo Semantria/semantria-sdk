@@ -14,7 +14,7 @@ SDK implements all the available Semantria features and demonstrate best practic
 
 setup(
     name='semantria_sdk',
-    version='3.0.70',
+    version='3.8.77',
     packages=['semantria'],
     url='https://semantria.com',
     license='GPL v3',
@@ -22,7 +22,7 @@ setup(
     author_email='support@semantria.com',
     description='Semantria Python SDK',
     long_description=LONG_DESCRIPTION,
-    keywords='semantria sdk analytics',
+    keywords='semantria sdk text analytics',
     classifiers=[
         'Programming Language :: Python',
         'Programming Language :: Python :: 3'

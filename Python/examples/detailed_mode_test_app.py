@@ -4,7 +4,7 @@ import semantria
 import uuid
 import time
 
-print("Semantria service demo ...", "\r\n")
+print("Semantria Detailed mode demo ...", "\r\n")
 
 # the consumer key and secret
 consumerKey = ""
@@ -52,12 +52,12 @@ for text in initialTexts:
     # Creates a sample document which need to be processed on Semantria
     # Unique document ID
     # Source text which need to be processed
-    doc = {"id": str(uuid.uuid1()).replace("-", ""), "text": text}
+    doc = {"id": str(uuid.uuid1()).replace("-", ""), "text": text }
     # Queues document for processing on Semantria service
     status = session.queueDocument(doc)
     # Check status from Semantria service
     if status == 202:
-        print("\"", doc["id"], "\" document queued successfully.", "\r\n")
+        print("\"",doc["id"],"\" document queued successfully.")
 
 # Count of the sample documents which need to be processed on Semantria
 length = len(initialTexts)
@@ -69,7 +69,7 @@ while len(results) < length:
     # In real application here can be implemented two separate jobs, one for queuing of source data
     # another one for retreiving
     # Wait ten seconds while Semantria process queued document
-    time.sleep(2)	
+    time.sleep(0.5)	
     # Requests processed results from Semantria service
     status = session.getProcessedDocuments()
     # Check status from Semantria service

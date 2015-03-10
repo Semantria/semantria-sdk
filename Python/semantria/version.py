@@ -1,4 +1,4 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-WRAPPER_VERSION = '3.5.75'
+WRAPPER_VERSION = '3.8.77'

@@ -15,7 +15,7 @@ def onError(sender, result):
     print("\n", "ERROR: ", result)
 
 if __name__ == "__main__":
-	print("Semantria Collection processing mode demo.")
+	print("Semantria Discovery mode demo.")
 
 	docs = []
 	print("Reading collection from file...")

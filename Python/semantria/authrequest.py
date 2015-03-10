@@ -44,7 +44,7 @@ class AuthRequest:
         headers = {"Authorization": authheader}
         if method == "POST":
             headers["Content-type"] = "application/x-www-form-urlencoded"
-        headers["x-api-version"] = "3"
+        headers["x-api-version"] = "3.8"
         headers["x-app-name"] = self.applicationName
         if self.use_compression:
             headers["Accept-encoding"] = "gzip"

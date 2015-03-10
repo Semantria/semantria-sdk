@@ -8,7 +8,7 @@ from semantria.version import WRAPPER_VERSION
 
 
 class Session(object):
-    host = 'https://api35.semantria.com'
+    host = 'https://api.semantria.com'
     wrapperName = 'Python/' + WRAPPER_VERSION
 
     def __init__(self, consumerKey, consumerSecret, serializer=None, applicationName=None, use_compression=False):
@@ -55,6 +55,13 @@ class Session(object):
     def getStatus(self):
         url = '{0}/status.{1}'.format(self.host, self.format)
         return self._runRequest("GET", url, "get_status")
+
+    def getSupportedFeatures(self, language):
+        url = '{0}/features.{1}'.format(self.host, self.format)
+        if language:
+            url = '{0}?language={1}'.format(url, language)
+
+        return self._runRequest("GET", url, "get_features")
 
     def getSubscription(self):
         url = '{0}/subscription.{1}'.format(self.host, self.format)
@@ -373,6 +380,14 @@ class Session(object):
             result = []
         return result
 
+    def getProcessedDocumentsByJobId(self, job_id):
+        url = '{0}/document/processed.{1}?job_id={2}'.format(self.host, self.format, job_id)
+
+        result = self._runRequest("GET", url, "get_processed_documents_by_job_id")
+        if result is None:
+            result = []
+        return result
+
     def queueCollection(self, task, config_id=None):
         if config_id:
             url = '{0}/collection.{1}?config_id={2}'.format(self.host, self.format, config_id)
@@ -416,6 +431,14 @@ class Session(object):
             url = '{0}/collection/processed.{1}'.format(self.host, self.format)
 
         result = self._runRequest("GET", url, "get_processed_collections")
+        if result is None:
+            result = []
+        return result
+
+    def getProcessedCollectionsByJobId(self, job_id):
+        url = '{0}/collection/processed.{1}?job_id={2}'.format(self.host, self.format, job_id)
+
+        result = self._runRequest("GET", url, "get_processed_collections_by_job_id")
         if result is None:
             result = []
         return result
