@@ -1,0 +1,22 @@
+Metadata-Version: 1.1
+Name: semantria-sdk
+Version: 3.8.77
+Summary: Semantria Python SDK
+Home-page: https://semantria.com
+Author: Semantria, LLC
+Author-email: support@semantria.com
+License: GPL v3
+Description: 
+        Semantria is a text analytics and sentiment analysis API. It allows you to gain valuable
+        insights from your unstructured text content. It is based on Lexalytics’ Salience – a text
+        analytics and sentiment analysis engine. It is the same engine as the one being used by
+        Oracle, Cisco, Thomson Reuters, Saleforce.com - Radian6, Visible, Lithium, and 50+ other
+        leaders in the space.
+        
+        Semantria offers Python SDK, that is the most convenient way to get started with the Semantria API on Python.
+        SDK implements all the available Semantria features and demonstrate best practices of API usage.
+        
+Keywords: semantria sdk analytics
+Platform: UNKNOWN
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
