@@ -10,6 +10,7 @@ public class CollAnalyticData
 {
 	private String id = null;
 	private String config_id = null;
+    private String job_id = null;
 	private TaskStatus status = null;
 	private List<Facet> facets = null;
     private List<CollTopic> topics = null;
@@ -22,6 +23,8 @@ public class CollAnalyticData
 	public String getId() { return id; }
 	@XmlElement(name="config_id")
 	public String getConfigId() { return config_id; }
+    @XmlElement(name="job_id")
+    public String getJobId() { return job_id; }
 	@XmlElement(name="status")
 	public TaskStatus getStatus() { return status; }
 	@XmlElementWrapper(name="facets")
@@ -42,7 +45,8 @@ public class CollAnalyticData
     public String getTag() { return tag; }
 	
 	public void setId(String cid) { id = cid; }
-	public void setConfigId(String config) { config_id = config; }
+	public void setConfigId(String configId) { config_id = configId; }
+    public void setJobId(String jobId) { config_id = jobId; }
 	public void setStatus(TaskStatus cstatus) { status = cstatus; }
 	public void setFacets(List<Facet> list) { facets = list; }
     public void setEntities(List<CollEntity> sentities) { entities = sentities; }

@@ -6,7 +6,7 @@
 
     <groupId>com.semantria</groupId>
     <artifactId>SemantriaJavaSDK</artifactId>
-    <version>3.5.75</version>
+    <version>3.7.78</version>
 
     <dependencies>
         <dependency>
@@ -35,9 +35,9 @@
                 <version>2.12.4</version>
                 <configuration>
                         <test>
-                            SerializerTest
+                            com.semantria.test
                         </test>
-                    <!--<skipTests>true</skipTests>-->
+                    <skipTests>true</skipTests>
                 </configuration>
             </plugin>
             <plugin>
@@ -57,7 +57,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>com.semantria.BasicTestApp</mainClass>
+                            <mainClass>com.semantria.DetailedModeTestApp</mainClass>
                             <packageName>com.semantria</packageName>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>

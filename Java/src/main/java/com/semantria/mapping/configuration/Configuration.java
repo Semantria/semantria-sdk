@@ -12,6 +12,8 @@ public final class Configuration
 	private Boolean one_sentence = null;
 	private String language = null;
 	private Integer chars_threshold = null;
+	private Float categories_threshold = null;
+    private Integer entities_threshold = null;
 	private DocConfiguration document = null;
 	private CollConfiguration collection = null;
 	private String callback = null;
@@ -19,21 +21,18 @@ public final class Configuration
 
 	public Configuration() {}
 
-	public Configuration(String id, String template, String name, Boolean auto_response, Boolean is_primary, Boolean one_sentence, String language, Integer chars_threshold, DocConfiguration document, CollConfiguration collection, String callback, Boolean process_html)
+	public Configuration(String id, String name)
 	{
 		this.config_id = id;
-		this.template = template;
 		this.name = name;
-		this.auto_response = auto_response;
-		this.is_primary = is_primary;
-		this.one_sentence = one_sentence;
-		this.language = language;
-		this.chars_threshold = chars_threshold;
-		this.document = document;
-		this.collection = collection;
-		this.callback = callback;
-        this.process_html = process_html;
 	}
+
+    public Configuration(String id, String name, String template)
+    {
+        this.config_id = id;
+        this.name = name;
+        this.template = template;
+    }
 
 	@XmlElement(name="template")
 	public String getTemplate() { return template; }
@@ -49,6 +48,10 @@ public final class Configuration
 	public String getName() { return name; }
 	@XmlElement(name="chars_threshold")
 	public Integer getCharsThreshold() { return chars_threshold; }
+	@XmlElement(name="categories_threshold")
+	public Float getCategoriesThreshold() { return categories_threshold; }
+    @XmlElement(name="entities_threshold")
+    public Integer getEntitiesThreshold() { return entities_threshold; }
 	@XmlElement(name="document")
 	public DocConfiguration getDocument() { return document; }
 	@XmlElement(name="collection")
@@ -68,6 +71,8 @@ public final class Configuration
 	public void setDocument(DocConfiguration document) { this.document = document;	}
 	public void setLanguage(String lang) { language = lang; }
 	public void setCharsThreshold(Integer chars_threshold) { this.chars_threshold = chars_threshold; }
+	public void setCategoriesThreshold(Float categories_threshold) { this.categories_threshold = categories_threshold; }
+    public void setEntitiesThreshold(Integer entities_threshold) { this.entities_threshold = entities_threshold; }
 	public void setCallback(String url) { callback = url; }
 	public void setOneSentence(Boolean value) { one_sentence = value; }
 	public void setTemplate(String template) { this.template = template; }

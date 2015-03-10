@@ -43,8 +43,17 @@ public class SessionTest
 		assertEquals("available", status.getServiceStatus());
 	}
 
+    @Test
+    public void test03GetSupportedFeatures()
+    {
+        Session session = Session.createSession(key, secret, serializer);
+        session.setCallbackHandler(new CallbackHandler());
+        List<FeaturesSet> features = session.getSupportedFeatures("English");
+        assertEquals("English", features.get(0).getLanguage());
+    }
+
 	@Test
-	public void test03GetSubscription()
+	public void test04GetSubscription()
 	{
 		Session session = Session.createSession(key, secret, serializer);
 		session.setCallbackHandler(new CallbackHandler());
@@ -53,7 +62,7 @@ public class SessionTest
 	}
 
 	@Test
-	public void test04Statistics()
+	public void test05Statistics()
 	{
 		Session session = Session.createSession(key, secret, serializer);
 		session.setCallbackHandler(new CallbackHandler());
@@ -62,7 +71,7 @@ public class SessionTest
 	}
 
 	@Test
-	public void test05CreateUpdateCloneConfiguration()
+	public void test06CreateUpdateCloneConfiguration()
 	{
 		Session session = Session.createSession(key, secret, serializer);
 		////////////////////////////////////////////////
@@ -73,8 +82,8 @@ public class SessionTest
 		conf.setIsPrimary(false);
 		conf.setName("TEST_CONFIG");
 		conf.setLanguage("English");
-		conf.setDocument(new DocConfiguration(5, 5, 5, 5, 5, 5, 5, 5, true, 5, "Noun", 5, 5, 0, 0, 0, 0, 0, 5));
-		conf.setCollection(new CollConfiguration(5, 5, 5, 5, 5, 5, 5, 5, 5, 5));
+		conf.setDocument(new DocConfiguration(false, 0, 5, 5, 5, 5, 5, 5, 5, true, 0, "", 0, 0, 0, 0, 0, 0, 0, 5));
+		conf.setCollection(new CollConfiguration(5, 5, 5, 5, 0, 5, 5, 0, 0, 0, 0, 0));
 
 		int status = session.addConfigurations(Arrays.asList(conf));
 		System.out.println(status);
@@ -122,7 +131,7 @@ public class SessionTest
 	}
 
 	@Test
-	public void test06CRUDCategory()
+	public void test07CRUDCategory()
 	{
 		String configId = null;
 		Session session = Session.createSession(key, secret, serializer);
@@ -182,7 +191,7 @@ public class SessionTest
 	}
 
 	@Test
-	public void test07CRUDQuery()
+	public void test08CRUDQuery()
 	{
 		String configId = null;
 		Session session = Session.createSession(key, secret, serializer);
@@ -242,7 +251,7 @@ public class SessionTest
 	}
 
     @Test
-    public void test08CRUDSentimentPhrase()
+    public void test09CRUDSentimentPhrase()
     {
         String configId = null;
         Session session = Session.createSession(key, secret, serializer);
@@ -281,7 +290,7 @@ public class SessionTest
     }
 
 	@Test
-	public void test09CRUDBlacklist() 
+	public void test10CRUDBlacklist()
 	{
 		String configId = null;
 		Session session = Session.createSession(key, secret, serializer);
@@ -323,7 +332,7 @@ public class SessionTest
 	}
 
 	@Test
-	public void test10CRUDEntities()
+	public void test11CRUDEntities()
 	{
 		String configId = null;
 		Session session = Session.createSession(key, secret, serializer);
@@ -383,7 +392,7 @@ public class SessionTest
 	}
 
 	@Test
-	public void test11AnalyzeSingleDocument() 
+	public void test12AnalyzeSingleDocument()
 	{
 		String configId = null;
 		Session session = Session.createSession(key, secret, serializer);
@@ -422,7 +431,7 @@ public class SessionTest
 	}
 
 	@Test
-	public void test12AnalyzeBatchOfDocuments() 
+	public void test13AnalyzeBatchOfDocuments()
 	{
 		String configId = null;
 		Session session = Session.createSession(key, secret, serializer);
@@ -477,7 +486,7 @@ public class SessionTest
 	}
 
 	@Test
-	public void test13AnalyzeCollection()
+	public void test14AnalyzeCollection()
 	{
 		String configId = null;
 		Session session = Session.createSession(key, secret, serializer);
@@ -537,7 +546,7 @@ public class SessionTest
 	}
 
 	@Test
-	public void test14Cleanup()
+	public void test15Cleanup()
 	{
 		Session session = Session.createSession(key, secret, serializer);
 

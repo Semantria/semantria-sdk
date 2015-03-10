@@ -8,6 +8,7 @@ import com.semantria.mapping.configuration.stub.*;
 import com.semantria.mapping.output.*;
 import com.semantria.mapping.output.stub.CollsAnalyticData;
 import com.semantria.mapping.output.stub.DocsAnalyticData;
+import com.semantria.mapping.output.stub.FeaturesList;
 
 import java.lang.reflect.Type;
 import java.util.List;
@@ -89,6 +90,11 @@ public final class JsonSerializer implements ISerializer
 			{
 				object = gson.fromJson(string, Statistics.class);
 			}
+            else if(type.equals(FeaturesList.class))
+            {
+                Type listType = new TypeToken< List<FeaturesSet>>() {}.getType();
+                object = new FeaturesList( (List<FeaturesSet>)gson.fromJson(string, listType));
+            }
 
 		}
 		return object;

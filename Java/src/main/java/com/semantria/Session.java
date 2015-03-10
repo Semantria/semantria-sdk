@@ -1,6 +1,8 @@
 package com.semantria;
 
 
+import com.semantria.mapping.output.*;
+import com.semantria.mapping.output.stub.FeaturesList;
 import com.semantria.utils.AuthRequest;
 import com.semantria.utils.ObjProxy;
 import com.semantria.interfaces.ICallbackHandler;
@@ -12,16 +14,13 @@ import com.semantria.mapping.Collection;
 import com.semantria.mapping.Document;
 import com.semantria.mapping.configuration.*;
 import com.semantria.mapping.configuration.stub.*;
-import com.semantria.mapping.output.CollAnalyticData;
-import com.semantria.mapping.output.ServiceStatus;
-import com.semantria.mapping.output.Statistics;
-import com.semantria.mapping.output.Subscription;
 import com.semantria.mapping.output.stub.CollsAnalyticData;
 import com.semantria.mapping.output.stub.DocsAnalyticData;
 import com.semantria.serializer.JsonSerializer;
 import com.semantria.serializer.XmlSerializer;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public final class Session 
@@ -286,6 +285,27 @@ public final class Session
 		handleResponse(status, ar);
 		return adata;
 	}
+
+    public List<com.semantria.mapping.output.DocAnalyticData> getProcessedDocumentsByJobId(final String jobId)
+    {
+        String method = "GET";
+        String url = serviceUrl + "/document/processed."+ requestFormat;
+        List<com.semantria.mapping.output.DocAnalyticData> adata = new ArrayList<com.semantria.mapping.output.DocAnalyticData>();
+        AuthRequest ar = new AuthRequest(url, method, key, secret, null, appName, useCompression, new HashMap<String, String>() {{ put("job_id", jobId); }});
+        Integer status = ar.doRequest();
+        DocsAnalyticData taskList = new DocsAnalyticData();
+        if (200 == status) {
+            taskList = (DocsAnalyticData)serializer.deserialize(ar.getResponse(), DocsAnalyticData.class);
+        }
+
+        if(taskList != null)
+        {
+            adata = taskList.getDocuments();
+        }
+        handleRequest(method, ar.getRequestUrl(), null);
+        handleResponse(status, ar);
+        return adata;
+    }
 	
 	public List<com.semantria.mapping.output.DocAnalyticData> getProcessedDocuments()
 	{
@@ -312,6 +332,27 @@ public final class Session
 		handleResponse(status, ar);
 		return adata;
 	}
+
+    public List<com.semantria.mapping.output.CollAnalyticData> getProcessedCollectionsByJobId(final String jobId)
+    {
+        String method = "GET";
+        String url = serviceUrl + "/collection/processed."+ requestFormat;
+        List<com.semantria.mapping.output.CollAnalyticData> adata = new ArrayList<com.semantria.mapping.output.CollAnalyticData>();
+        AuthRequest ar = new AuthRequest(url, method, key, secret, null, appName, useCompression, new HashMap<String, String>() {{ put("job_id", jobId); }});
+        Integer status = ar.doRequest();
+        CollsAnalyticData taskList = new CollsAnalyticData();
+        if (200 == status) {
+            taskList = (CollsAnalyticData)serializer.deserialize(ar.getResponse(), CollsAnalyticData.class);
+        }
+
+        if(taskList != null)
+        {
+            adata = taskList.getDocuments();
+        }
+        handleRequest(method, ar.getRequestUrl(), null);
+        handleResponse(status, ar);
+        return adata;
+    }
 	
 	public List<com.semantria.mapping.output.CollAnalyticData> getProcessedCollections()
 	{
@@ -388,6 +429,26 @@ public final class Session
 		handleResponse(status, req);
 		return statistics;
 	};
+
+    public List<FeaturesSet> getSupportedFeatures(final String language)
+    {
+        String method = "GET";
+        String url = serviceUrl + "/features."+ requestFormat;
+        AuthRequest req = null;
+
+        if (language == null) {
+            req = new AuthRequest(url, method, key, secret, null, appName, useCompression);
+        }
+        else {
+            req = new AuthRequest(url, method, key, secret, null, appName, useCompression, new HashMap<String, String>() {{ put("language", language); }});
+        }
+
+        Integer status = req.doRequest();
+        FeaturesList supportedFeatures = (FeaturesList)serializer.deserialize(req.getResponse(), FeaturesList.class);
+        handleRequest(method, req.getRequestUrl(), null);
+        handleResponse(status, req);
+        return supportedFeatures.getFeatures();
+    }
 
 	//--------end of getters
 	

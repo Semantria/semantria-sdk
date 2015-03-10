@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class DiscoveryTestApp
+public class DiscoveryModeTestApp
 {
     private static final int TIMEOUT_BEFORE_GETTING_RESPONSE = 5000; //in millisec
 
@@ -29,7 +29,7 @@ public class DiscoveryTestApp
 
         System.out.println("Semantria Collection processing mode demo.");
 
-        File file = new File( BasicTestApp.class.getProtectionDomain().getCodeSource().getLocation().toString().replace("/target/classes", "/src/main/java/" + DiscoveryTestApp.class.getPackage().getName().replace(".","/")).replace("file:/", "")+ "/source.txt");
+        File file = new File( DetailedModeTestApp.class.getProtectionDomain().getCodeSource().getLocation().toString().replace("/target/classes", "/src/main/java/" + DiscoveryModeTestApp.class.getPackage().getName().replace(".","/")).replace("file:/", "")+ "/source.txt");
 
         if( !file.exists() )
         {

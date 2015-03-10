@@ -12,6 +12,8 @@ public final class DocAnalyticData
 	private String id = null;
 	private TaskStatus status = null;
 	private String config_id = null;
+    private String job_id = null;
+	private List<DocIntention> intentions = null;
 	private List<DocEntity> entities = null;
 	private List<DocTopic> topics = null;
 	private List<DocTheme> themes = null;
@@ -34,8 +36,13 @@ public final class DocAnalyticData
 	public String getId() { return id; }
 	@XmlElement(name="config_id")
 	public String getConfigId() { return config_id; }
+    @XmlElement(name="job_id")
+    public String getJobId() { return job_id; }
 	@XmlElement
 	public TaskStatus getStatus() { return status; }
+	@XmlElementWrapper(name="intentions")
+	@XmlElement(name="intention")
+	public List<DocIntention> getIntentions() { return intentions; }
 	@XmlElementWrapper(name="entities")
 	@XmlElement(name="entity")
 	public List<DocEntity> getEntities() { return entities; }
@@ -76,7 +83,8 @@ public final class DocAnalyticData
     public List<DocCategory> getAutoCategories() { return auto_categories; }
 
 	public void setId(String id) { this.id = id; }
-	public void setConfigId(String id) { this.config_id = id; }
+	public void setConfigId(String configId) { this.config_id = configId; }
+    public void setJobId(String jobId) { this.config_id = jobId; }
 	public void setStatus(TaskStatus status) { this.status = status; }
 	public void setEntities(List<DocEntity> entities) { this.entities = entities; }
 	public void setTopics(List<DocTopic> topic) { topics = topic; }

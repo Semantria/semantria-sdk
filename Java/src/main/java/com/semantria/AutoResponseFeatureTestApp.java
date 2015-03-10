@@ -19,7 +19,7 @@ import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
 
-public class AutoResponseTestApp {
+public class AutoResponseFeatureTestApp {
 	
 	public static void main(String [] args) throws InterruptedException 
 	{
@@ -33,7 +33,7 @@ public class AutoResponseTestApp {
 		System.out.println("Semantria Auto-response feature demo.");
 		System.out.println();
 		
-		File file = new File( System.getProperty("user.dir") + "\\src\\main\\java\\" + DiscoveryTestApp.class.getPackage().getName().replace(".","\\") + "\\source.txt");
+		File file = new File( System.getProperty("user.dir") + "\\src\\main\\java\\" + DiscoveryModeTestApp.class.getPackage().getName().replace(".","\\") + "\\source.txt");
         
         if( !file.exists() )
         {

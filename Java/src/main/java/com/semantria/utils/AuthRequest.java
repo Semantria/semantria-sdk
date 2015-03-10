@@ -26,8 +26,8 @@ public final class AuthRequest
 	private String secret = "";
 	private String response = "";
 	private String rurl = "";
-	private String appName = "Java/3.5.77/";
-	private boolean  useCompression = false;
+	private String appName = "Java/3.8.81/";
+	private boolean useCompression = false;
 	private String errorMsg = null;
     private int CONNECTION_TIMEOUT = 120000;
 
@@ -41,35 +41,44 @@ public final class AuthRequest
 		this(curl, cmethod, ckey, csecret, cbody, config, null, useCompression);
 	}
 
-	public AuthRequest(String curl, String cmethod, String ckey, String csecret, String cbody, String config, String app_name, boolean useCompression)
+	public AuthRequest(String curl, String cmethod, String ckey, String csecret, String cbody, final String config, String app_name, boolean useCompression)
 	{
-		this(curl, cmethod, ckey, csecret, cbody, config, null, null, useCompression);
+		this(curl, cmethod, ckey, csecret, cbody, app_name, useCompression, new HashMap<String, String>() {{ put("config_id", config); }});
 	}
 
-	public AuthRequest(String curl, String cmethod, String ckey, String csecret, String cbody, String config, String app_name, String interval, boolean useCompression)
-	{	 
-		try
-		{
-			this.useCompression = useCompression;
-			url = curl;
-			method = cmethod;
-			key = ckey; 
-			secret = hashMD5(csecret);
-			if(config != null)
-			{
-				params = new HashMap<String, String>();
-				params.put("config_id", config);
-			}
+    public AuthRequest(String curl, String cmethod, String ckey, String csecret, String cbody, final String config, String app_name, final String interval, boolean useCompression)
+    {
+        this(curl, cmethod, ckey, csecret, cbody, app_name, useCompression, new HashMap<String, String>() {{ put("interval", interval); put("config_id", config); }});
+    }
 
-			if( interval != null )
-			{
-				if( params == null )
-				{
-					params = new HashMap<String, String>();
-				}
+	public AuthRequest(String curl, String cmethod, String ckey, String csecret, String cbody, String app_name, boolean useCompression, HashMap<String, String> parameters)
+	{
+		try {
+            this.useCompression = useCompression;
+            url = curl;
+            method = cmethod;
+            key = ckey;
+            secret = hashMD5(csecret);
 
-				params.put("interval", interval);
-			}
+            if (!parameters.isEmpty()) {
+                if (parameters.containsKey("config_id")) {
+                    String config = parameters.get("config_id");
+                    if (config == null) {
+                        parameters.remove("config_id");
+                    }
+                }
+
+                if (parameters.containsKey("interval")) {
+                    String config = parameters.get("interval");
+                    if (config == null) {
+                        parameters.remove("interval");
+                    }
+                }
+
+                if (!parameters.isEmpty()) {
+                    params = parameters;
+                }
+            }
 
 			if(app_name != null)
 			{
@@ -169,7 +178,7 @@ public final class AuthRequest
 		conn.setRequestProperty("Authorization", "OAuth,oauth_consumer_key=\"" + key + "\",oauth_signature=\""
     					+ URLEncoder.encode(signupRequest(rurl, secret), "UTF-8") + "\"");
 		conn.setRequestProperty("x-app-name", appName);
-		conn.setRequestProperty("x-api-version", "3");
+		conn.setRequestProperty("x-api-version", "3.8");
 	}
 	
 	private void sendRequestBodyIfSetted(HttpURLConnection conn) throws IOException {

@@ -10,6 +10,7 @@ public class Collection
 	private String id;
 	private List<String> documents;
     private String tag;
+    private String job_id;
 
 	public Collection() {}
 
@@ -30,9 +31,11 @@ public class Collection
 	public List<String> getDocuments() { return documents; }
     @XmlElement(name = "gat")
     public String getTag() { return tag; }
+    @XmlElement(name = "job_id")
+    public String getJobId() { return job_id; }
 	
 	public void setId(String sid) { id = sid; }
 	public void setDocuments(List<String> docs) { documents = docs; }
     public void setTag(String tag) { this.tag = tag; }
-	
+    public void setJobId(String jobId) { this.job_id = jobId; }
 }

@@ -8,6 +8,7 @@ import com.semantria.mapping.configuration.stub.*;
 import com.semantria.mapping.output.*;
 import com.semantria.mapping.output.stub.CollsAnalyticData;
 import com.semantria.mapping.output.stub.DocsAnalyticData;
+import com.semantria.mapping.output.stub.FeaturesList;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -35,9 +36,10 @@ public final class XmlSerializer implements ISerializer
 						DocAnalyticData.class,
 						DocsAnalyticData.class,
 						CollAnalyticData.class,
+                        CollsAnalyticData.class,
 						ServiceStatus.class,
 						Subscription.class,
-						CollsAnalyticData.class,
+                        FeaturesList.class,
 						Statistics.class
 				);
 				Unmarshaller unmarshaller = jc.createUnmarshaller();

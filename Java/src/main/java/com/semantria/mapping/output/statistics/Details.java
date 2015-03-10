@@ -10,7 +10,8 @@ public class Details
 	private String used_apps = null;
 	private Long overall_texts = null;
 	private Long overall_calls = null;
-	private Long calls_system = null;
+	private Long calls_settings = null;
+    private Long calls_polling = null;
 	private Long calls_data = null;
 	private Long overall_docs = null;
 	private Long docs_processed = null;
@@ -38,8 +39,10 @@ public class Details
 	public Long getOverallTexts() { return overall_texts; }
 	@XmlElement(name = "overall_calls")
 	public Long getOverallCalls() { return overall_calls; }
-	@XmlElement(name = "calls_system")
-	public Long getCallsSystem() { return calls_system; }
+	@XmlElement(name = "calls_settings")
+	public Long getCallsSettings() { return calls_settings; }
+    @XmlElement(name = "calls_polling")
+    public Long getCallsPolling() { return calls_polling; }
 	@XmlElement(name = "calls_data")
 	public Long getCallsData() { return calls_data; }
 	@XmlElement(name = "overall_docs")
@@ -71,7 +74,8 @@ public class Details
 	public void setUsedApps(String used_apps) { this.used_apps = used_apps; }
 	public void setOverallTexts(Long overall_texts) { this.overall_texts = overall_texts; }
 	public void setOverallCalls(Long overall_calls) { this.overall_calls = overall_calls; }
-	public void setCallsSystem(Long calls_system) { this.calls_system = calls_system; }
+	public void setCallsSettings(Long calls_settings) { this.calls_settings = calls_settings; }
+    public void setCallsPolling(Long calls_polling) { this.calls_polling = calls_polling; }
 	public void setCallsData(Long calls_data) { this.calls_data = calls_data; }
 	public void setOverallDocs(Long overall_docs) { this.overall_docs = overall_docs; }
 	public void setDocsProcessed(Long docs_processed) { this.docs_processed = docs_processed; }
