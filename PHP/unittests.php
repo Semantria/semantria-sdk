@@ -70,6 +70,12 @@ class SemantriaTest extends PHPUnit_Framework_TestCase
         $this->assertInternalType('array', $response);
     }
 
+    function testGetSupportedFeatures()
+    {
+        $response = $this->session->getSupportedFeatures();
+        $this->assertInternalType('array', $response);
+    }
+
     function testGetSubscription()
     {
         $response = $this->session->getSubscription();

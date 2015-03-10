@@ -5,7 +5,7 @@ require_once('authrequest.php');
 require_once('jsonserializer.php');
 //require_once('common.php');
 
-define('WRAPPER_VERSION', "3.5.76");
+define('WRAPPER_VERSION', "3.8.79");
 
 class Session
 {
@@ -18,7 +18,7 @@ class Session
     protected $format = 'json';
     protected $wrapperName = 'PHP';
 
-    private $host = "https://api35.semantria.com";
+    private $host = "https://api.semantria.com";
     private $callback;
     private $use_compression = FALSE;
     private $request;
@@ -86,6 +86,16 @@ class Session
     {
         $url = "{$this->host}/status.{$this->format}";
         return $this->runRequest("GET", $url, "get_status");
+    }
+
+    public function getSupportedFeatures($language)
+    {
+	    if (isset($language)) {
+            $url = "{$this->host}/features.{$this->format}?language={$language}";
+        } else {
+            $url = "{$this->host}/features.{$this->format}";
+        }
+        return $this->runRequest("GET", $url, "get_features");
     }
 
     public function getSubscription()
@@ -441,6 +451,16 @@ class Session
         return $result;
     }
 
+    public function getProcessedDocumentsByJobId($jobId)
+    {
+        $url = "{$this->host}/document/processed.{$this->format}?job_id={$jobId}";
+        $result = $this->runRequest("GET", $url, "get_processed_documents_by_job_id");
+        if (!isset($result)) {
+            $result = array();
+        }
+        return $result;
+    }
+
     public function queueCollection($task, $configId = NULL)
     {
         if (isset($configId)) {
@@ -502,6 +522,16 @@ class Session
         return $result;
     }
 
+    public function getProcessedCollectionsByJobId($jobId)
+    {
+        $url = "{$this->host}/collection/processed.{$this->format}?job_id={$jobId}";
+        $result = $this->runRequest("GET", $url, "get_processed_collections_by_job_id");
+        if (!isset($result)) {
+            $result = array();
+        }
+        return $result;
+    }
+
     private function runRequest($method, $url, $type = NULL, $postData = NULL)
     {
         $this->onRequest(array("method" => $method, "url" => $url, "message" => $postData));
@@ -540,7 +570,7 @@ class Session
 
     private function resolveError($status, $message = NULL)
     {
-        if ($status == 400 || $status == 401 || $status == 402 || $status == 403 || $status == 406 || $status == 500)
+        if ($status == 400 || $status == 401 || $status == 402 || $status == 403 || $status == 406 || $status == 413 || $status == 500)
             $this->onError(array("status" => $status, "message" => $message));
         else
             throw new \Exception('Exception code: ' . $status . ' and message: ' . $message);

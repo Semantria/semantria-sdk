@@ -47,8 +47,7 @@ class AuthRequest
 		if ($method == "POST") {
 			$headers[] = 'Content-type: application/x-www-form-urlencoded';
 		}
-		$headers['x-api-version'] = '3';
-		$headers[] = 'x-api-version: 3';
+		$headers[] = 'x-api-version: 3.8';
 		$headers[] = 'x-app-name: ' . $this->_applicationName;
 		
 		$response = $this->httpRequest($query, $method, $headers, $body);
@@ -209,6 +208,11 @@ class AuthRequest
 		$this->_http_info = array_merge($http_info, curl_getinfo($ci));
 		$code = curl_getinfo($ci, CURLINFO_HTTP_CODE);
 		$message = $response;
+		
+		if ($code == 0)
+		{
+			$message = curl_error($ci);
+		}
 		
 		curl_close ($ci);
 
