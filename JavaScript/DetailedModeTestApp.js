@@ -105,6 +105,7 @@
 				console.log(arguments);
 			}
 		});
+
 		
 		for(var i=0,text; text=initialTexts[i]; i++) {
 			// Creates a sample document which need to be processed on Semantria

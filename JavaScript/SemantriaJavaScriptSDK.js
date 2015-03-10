@@ -218,7 +218,7 @@
 		},
 
 		nibbleToHex: function(nibble) {
-    		return Utils.HEX.charAt(nibble);
+			return Utils.HEX.charAt(nibble);
 		},
 
 		escapeUtf8: function(str) {
@@ -237,36 +237,36 @@
 
 		base64: function(wordArray) {
 			// Shortcuts
-		    var words = wordArray.words;
-		    var sigBytes = wordArray.sigBytes;
-		    var map = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+			var words = wordArray.words;
+			var sigBytes = wordArray.sigBytes;
+			var map = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
 
-		    // Clamp excess bits
-		    wordArray.clamp();
+			// Clamp excess bits
+			wordArray.clamp();
 
-		    // Convert
-		    var base64Chars = [];
-		    for (var i = 0; i < sigBytes; i += 3) {
-		        var byte1 = (words[i >>> 2]       >>> (24 - (i % 4) * 8))       & 0xff;
-		        var byte2 = (words[(i + 1) >>> 2] >>> (24 - ((i + 1) % 4) * 8)) & 0xff;
-		        var byte3 = (words[(i + 2) >>> 2] >>> (24 - ((i + 2) % 4) * 8)) & 0xff;
+			// Convert
+			var base64Chars = [];
+			for (var i = 0; i < sigBytes; i += 3) {
+				var byte1 = (words[i >>> 2]	   >>> (24 - (i % 4) * 8))	   & 0xff;
+				var byte2 = (words[(i + 1) >>> 2] >>> (24 - ((i + 1) % 4) * 8)) & 0xff;
+				var byte3 = (words[(i + 2) >>> 2] >>> (24 - ((i + 2) % 4) * 8)) & 0xff;
 
-		        var triplet = (byte1 << 16) | (byte2 << 8) | byte3;
+				var triplet = (byte1 << 16) | (byte2 << 8) | byte3;
 
-		        for (var j = 0; (j < 4) && (i + j * 0.75 < sigBytes); j++) {
-		            base64Chars.push(map.charAt((triplet >>> (6 * (3 - j))) & 0x3f));
-		        }
-		    }
+				for (var j = 0; (j < 4) && (i + j * 0.75 < sigBytes); j++) {
+					base64Chars.push(map.charAt((triplet >>> (6 * (3 - j))) & 0x3f));
+				}
+			}
 
-		    // Add padding
-		    var paddingChar = map.charAt(64);
-		    if (paddingChar) {
-		        while (base64Chars.length % 4) {
-		            base64Chars.push(paddingChar);
-		        }
-		    }
+			// Add padding
+			var paddingChar = map.charAt(64);
+			if (paddingChar) {
+				while (base64Chars.length % 4) {
+					base64Chars.push(paddingChar);
+				}
+			}
 
-		    return base64Chars.join('');
+			return base64Chars.join('');
 		},
 
 		getHmacSha1: function(key, message) {
@@ -307,7 +307,7 @@
 	var Request = function(consumerKey, consumerSecret, applicationName, acceptEncoding) {
 		this.consumerKey = consumerKey;
 		this.consumerSecret = consumerSecret;
-	    this.applicationName = applicationName;
+		this.applicationName = applicationName;
 		this.acceptEncoding = acceptEncoding;
 	};
 
@@ -413,8 +413,8 @@
 				headers["Content-Type"] = "application/x-www-form-urlencoded";
 			}
 
-    		headers["x-app-name"] = this.applicationName;
-			headers["x-api-version"] = "3";
+			headers["x-app-name"] = this.applicationName;
+			headers["x-api-version"] = "3.8";
 			if (typeof navigator != "undefined" && !/WebKit/.test(navigator.userAgent))
 				headers["Accept-Encoding"] = this.acceptEncoding;
 
@@ -432,7 +432,7 @@
 
 			xmlHttp.open(method, url, false);
 			
-		    for (key in headers) {
+			for (key in headers) {
 				xmlHttp.setRequestHeader(key, headers[key]);
 			}
 			
@@ -467,17 +467,17 @@
 		this.consumerSecret = consumerSecret;
 		this.useCompression = useCompression || true;
 		this.format = format || "json";
-	    this.acceptEncoding = this.useCompression ? 'gzip, deflate' : 'identity';
-	    this.applicationName = applicationName ? (applicationName + "/") : "";
+		this.acceptEncoding = this.useCompression ? 'gzip, deflate' : 'identity';
+		this.applicationName = applicationName ? (applicationName + "/") : "";
 
-	    if(!this.consumerKey || !this.consumerSecret) {
-	    	throw "ConsumerKey and ConsumerSecret should be specified in order to use SDK";
-	    }
+		if(!this.consumerKey || !this.consumerSecret) {
+			throw "ConsumerKey and ConsumerSecret should be specified in order to use SDK";
+		}
 
-	    this.applicationName += this.tpl("JavaScript/{SDK_VERSION}/{format}", {
-	    	SDK_VERSION: this.SDK_VERSION,
-	    	format: this.format
-	    });
+		this.applicationName += this.tpl("JavaScript/{SDK_VERSION}/{format}", {
+			SDK_VERSION: this.SDK_VERSION,
+			format: this.format
+		});
 	};
 
 	Session.prototype = {
@@ -486,7 +486,7 @@
 		 * @var {String} SDK_VERSION
 		 * @constant
 		 */
-		SDK_VERSION: "3.5.77",
+		SDK_VERSION: "3.8.77",
 		
 		/**
 		 * @var {String} HOST
@@ -581,21 +581,29 @@
 		 * 
 		 */
 		getStatus: function() {
-    		return this.runRequest("GET", "/status");
+			return this.runRequest("GET", "/status");
+		},
+		
+		getSupportedFeatures: function(language) {
+			return this.runRequest("GET", "/features", {
+				getParams: {
+					language: language
+				}
+			});
 		},
 
 		/**
 		 * 
 		 */
 		getSubscription: function() {
-    		return this.runRequest("GET", "/subscription");
+			return this.runRequest("GET", "/subscription");
 		},
 
 		/**
 		 * 
 		 */
 		getStatistics: function() {
-    		return this.runRequest("GET", "/statistics");
+			return this.runRequest("GET", "/statistics");
 		},
 
 		/**
@@ -609,14 +617,14 @@
 		 * @param {Object} params
 		 */
 		addConfigurations: function(params) {
-    		return this.updateConfigurations.apply(this, arguments);
+			return this.updateConfigurations.apply(this, arguments);
 		},
 
 		/**
 		 * @param {Object} params
 		 */
 		updateConfigurations: function(params) {
-    		return this.runRequest("POST", "/configurations", {
+			return this.runRequest("POST", "/configurations", {
 				postParams: params
 			});
 		},
@@ -647,12 +655,12 @@
 		 * @param {Number} configId
 		 */
 		addBlacklist: function(params, configId) {
-    		return this.runRequest("POST", "/blacklist", { 
-    			getParams:  { 
-    				config_id: configId 
-    			},
-    			postParams: params
-    		});
+			return this.runRequest("POST", "/blacklist", { 
+				getParams:  { 
+					config_id: configId 
+				},
+				postParams: params
+			});
 		},
 
 		/**
@@ -672,7 +680,7 @@
 		 * @param {Object} params
 		 * @param {Number} configId
 		 */
-    	getCategories: function(configId) {
+		getCategories: function(configId) {
 			return this.runRequest("GET", "/categories", {
 				getParams: { 
 					config_id: configId 
@@ -685,7 +693,7 @@
 		 * @param {Number} configId
 		 */
 		addCategories: function(params, configId) {
-    		return this.updateCategories.apply(this, arguments);
+			return this.updateCategories.apply(this, arguments);
 		},
 
 		/**
@@ -693,12 +701,12 @@
 		 * @param {Number} configId
 		 */
 		updateCategories: function(params, configId) {
-    		return this.runRequest("POST", "/categories", {
-    			getParams: {
-    				config_id: configId
-    			},
-    			postParams: params
-    		});
+			return this.runRequest("POST", "/categories", {
+				getParams: {
+					config_id: configId
+				},
+				postParams: params
+			});
 		},
 
 		/**
@@ -717,28 +725,28 @@
 		/**
 		 * @param {Number} configId
 		 */
-    	getQueries: function(configId) {
-    		return this.runRequest("GET", "/queries", {
+		getQueries: function(configId) {
+			return this.runRequest("GET", "/queries", {
 				getParams: {
 					config_id: configId
 				}
 			});
-    	},
+		},
 
-    	/**
+		/**
 		 * @param {Object} params
 		 * @param {Number} configId
 		 */
 		addQueries: function(params, configId) {
-    		return this.updateQueries.apply(this, arguments);
-    	},
+			return this.updateQueries.apply(this, arguments);
+		},
 
-    	/**
+		/**
 		 * @param {Object} params
 		 * @param {Number} configId
 		 */
 		updateQueries: function(params, configId) {
-    		return this.runRequest("POST", "/queries", {
+			return this.runRequest("POST", "/queries", {
 				getParams: {
 					config_id: configId
 				},
@@ -759,11 +767,11 @@
 			});
 		},
 
-    	/**
+		/**
 		 * @param {Number} configId
 		 */
 		getEntities: function(configId) {
-		    return this.runRequest("GET", "/entities", {
+			return this.runRequest("GET", "/entities", {
 				getParams: {
 					config_id: configId
 				}
@@ -775,7 +783,7 @@
 		 * @param {Number} configId
 		 */
 		addEntities: function(params, configId) {
-		    return this.updateEntities.apply(this, arguments);
+			return this.updateEntities.apply(this, arguments);
 		},
 
 		/**
@@ -783,7 +791,7 @@
 		 * @param {Number} configId
 		 */
 		updateEntities: function(params, configId) {
-    		return this.runRequest("POST", "/entities", {
+			return this.runRequest("POST", "/entities", {
 				getParams: {
 					config_id: configId
 				},
@@ -804,7 +812,7 @@
 			});
 		},
 
-    	
+		
 		/**
 		 * @param {Number} configId
 		 */
@@ -822,7 +830,7 @@
 		 * @param {Number} configId
 		 */
 		addPhrases: function(params, configId) {
-		    return this.updatePhrases.apply(this, arguments);
+			return this.updatePhrases.apply(this, arguments);
 		},
 
 
@@ -831,7 +839,7 @@
 		 * @param {Number} configId
 		 */
 		updatePhrases: function(params, configId) {
-    		return this.runRequest("POST", "/phrases", {
+			return this.runRequest("POST", "/phrases", {
 				getParams: {
 					config_id: configId
 				},
@@ -864,12 +872,12 @@
 				postParams: doc
 			});
 
-		    if (result) {
-		        this.onAfterResponse(result);
-		        return result;
-		    }
-		    
-		    return result;
+			if (result) {
+				this.onAfterResponse(result);
+				return result;
+			}
+			
+			return result;
 		},
 
 		/**
@@ -884,12 +892,12 @@
 				postParams: batch
 			});
 
-		    if (result) {
-		        this.onAfterResponse(result);
-		        return result;
-		    }
-		    
-		    return result;
+			if (result) {
+				this.onAfterResponse(result);
+				return result;
+			}
+			
+			return result;
 		},
 
 		/**
@@ -904,12 +912,12 @@
 				postParams: collection
 			});
 
-		    if (result) {
-		        this.onAfterResponse(result);
-		        return result;
-		    }
-		    
-		    return result;
+			if (result) {
+				this.onAfterResponse(result);
+				return result;
+			}
+			
+			return result;
 		},
 
 		/**
@@ -928,12 +936,12 @@
 				}
 			});
 
-		    if (result) {
-		        this.onAfterResponse(result);
-		        return result;
-		    }
-		    
-		    return result;
+			if (result) {
+				this.onAfterResponse(result);
+				return result;
+			}
+			
+			return result;
 		},
 
 		/**
@@ -941,7 +949,7 @@
 		 * @param {Number} configId
 		 */
 		getCollection: function(id, configId) {
-    		if(!id) {
+			if(!id) {
 				throw "Specified document's ID is empty";
 			}
 
@@ -992,10 +1000,26 @@
 			});
 		},
 
+		getProcessedDocumentsByJobId: function(jobId) {
+			return this.runRequest("GET", "/document/processed", {
+				getParams: {
+					job_id: jobId
+				}
+			});
+		},
+
 		getProcessedCollections: function(configId) {
 			return this.runRequest("GET", "/collection/processed", {
 				getParams: {
 					config_id: configId
+				}
+			});
+		},
+
+		getProcessedCollectionsByJobId: function(jobId) {
+			return this.runRequest("GET", "/collection/processed", {
+				getParams: {
+					job_id: jobId
 				}
 			});
 		},
@@ -1030,8 +1054,8 @@
 
 			var response = request.authWebRequest(method, url, config.postParams);
 			var status = response["status"],
-		    	reason = response["reason"],
-		    	message = response["data"];
+				reason = response["reason"],
+				message = response["data"];
 
 			this.onResponse({
 				status: status,
@@ -1065,17 +1089,17 @@
 			} else {
 				if (status == 200) {
 					return this.deserialize(message);
-	    		}
+				}
 
-	    		if (status == 202) {
-	    			return status;
-	    		}
+				if (status == 202) {
+					return status;
+				}
 
-	    		this.onError({
-	    			status: status, 
-	    			message: message
-	    		});
-		    }
+				this.onError({
+					status: status, 
+					message: message
+				});
+			}
 
 			return response;
 		}

@@ -58,6 +58,20 @@
 			error("getStatus()", "Object", status);
 		}
 	})();
+	
+	/**
+	 * @test getSupportedFeatures
+	 */
+	(function() {
+		var features = session.getSupportedFeatures("English");
+		
+		if(features instanceof Array &&
+			features[0].language == "English") {
+			success("getSupportedFeatures()");
+		} else {
+			error("getSupportedFeatures()", "Object", features);
+		}
+	})();
 
 	/** 
 	 * /////////////
