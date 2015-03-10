@@ -49,6 +49,13 @@ class SemantriaSessionTest < Test::Unit::TestCase
     assert(status != nil)
   end
 
+  def test_supported_features
+    print '*** Get supported features ', "\n"
+    status = @session.getSupportedFeatures("English")
+    print 'RESULT:', status, "\n"
+    assert(status != nil)
+  end
+
   def test_a_get_subscription
     print '*** Get subscription: ', "\n"
     status = @session.getSubscription

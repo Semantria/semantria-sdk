@@ -10,7 +10,7 @@ module Semantria
 
     # Create a new instance
     def initialize(consumer_key, consumer_secret, application_name = nil, use_compression = false, serializer = nil)
-      @host = 'https://api35.semantria.com'
+      @host = 'https://api.semantria.com'
       @wrapper_name = "Ruby/#{Semantria::VERSION}"
       @consumer_key = consumer_key
       @consumer_secret = consumer_secret
@@ -50,6 +50,16 @@ module Semantria
     def getStatus
       url = "#{@host}/status.#{@format}"
       runRequest('GET', url, 'get_status')
+    end
+
+    def getSupportedFeatures(language)
+      if language.nil?
+        url = "#{@host}/features.#{@format}"
+      else
+        url = "#{@host}/features.#{@format}?language=#{language}"
+      end
+	  
+      runRequest('GET', url, 'get_features')
     end
 
     def getSubscription
@@ -347,6 +357,13 @@ module Semantria
       result ||= []
     end
 
+    def getProcessedDocumentsByJobId(job_id)
+      url = "#{@host}/document/processed.#{@format}?job_id=#{job_id}"
+
+      result = runRequest('GET', url, 'get_processed_documents_by_job_id')
+      result ||= []
+    end
+
     def queueCollection(task, config_id = nil)
       if config_id.nil?
         url = "#{@host}/collection.#{@format}"
@@ -397,6 +414,13 @@ module Semantria
       end
 
       result = runRequest('GET', url, 'get_processed_collections')
+      result ||= []
+    end
+
+    def getProcessedCollectionsByJobId(job_id)
+      url = "#{@host}/collection/processed.#{@format}?job_id=#{job_id}"
+
+      result = runRequest('GET', url, 'get_processed_collections_by_job_id')
       result ||= []
     end
 
