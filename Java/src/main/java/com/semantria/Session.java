@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public final class Session 
+public class Session
 {
 	private static final String WRAPPER_NAME = "Java";
 	private String key = "";
@@ -57,7 +57,11 @@ public final class Session
 		}
 	}
 
-	//create new session
+    public void setServiceUrl(String serviceUrl) {
+        this.serviceUrl = serviceUrl;
+    }
+
+    //create new session
 	public static Session createSession(String key, String secret)
 	{
 		return createSession(key, secret, (String)null);
@@ -98,7 +102,7 @@ public final class Session
 		return new Session(key, secret, cserializer, appName, useCompression);
 
 	}
-	
+
 	public void registerSerializer(ISerializer cserializer)
 	{
 		serializer = cserializer;
@@ -106,14 +110,14 @@ public final class Session
 			requestFormat = cserializer.getType();
 		}
 	}
-	
+
 	public void setCallbackHandler(ICallbackHandler handler)
 	{
 		callback = handler;
 	}
 
 	//--------getters
-	
+
 	public ServiceStatus getStatus()
 	{
 		String method = "GET";
@@ -128,7 +132,7 @@ public final class Session
 
 		return serviceStatus;
 	}
-	
+
 	public List<String> getBlacklist()
 	{
 		return getBlacklist(null);
@@ -141,7 +145,7 @@ public final class Session
 
 		List<String> res = new ArrayList<String>();
 		AuthRequest req = new AuthRequest(url, method, key, secret, null, config_id, appName,useCompression);
-		
+
 		Integer status = req.doRequest();
 		Blacklists list = (Blacklists)serializer.deserialize(req.getResponse(), Blacklists.class);
 		if( list != null )
@@ -154,15 +158,15 @@ public final class Session
 
 		return res;
 	}
-	
-	
+
+
 	public List<Category> getCategories(String config_id)
 	{
 		String method = "GET";
 		String url = serviceUrl + "/categories."+ requestFormat;
 		List<Category> res = new ArrayList<Category>();
 		AuthRequest ar = new AuthRequest(url, method, key, secret, null, config_id, appName,useCompression);
-		
+
 		Integer status = ar.doRequest();
 		Categories list = (Categories)serializer.deserialize(ar.getResponse(), Categories.class);
 		if(list != null)
@@ -173,7 +177,7 @@ public final class Session
 		handleResponse(status, ar);
 		return res;
 	}
-	
+
 	public List<Category> getCategories()
 	{
 		return getCategories(null);
@@ -186,7 +190,7 @@ public final class Session
 		String method = "GET";
 		String url = serviceUrl + "/configurations."+ requestFormat;
 		AuthRequest ar = new AuthRequest(url, method, key, secret, null, null, appName, useCompression);
-		
+
 		Integer status = ar.doRequest();
 		Configurations list = (Configurations)serializer.deserialize(ar.getResponse(), Configurations.class);
 		if(list != null)
@@ -198,7 +202,7 @@ public final class Session
 
 		return res;
 	}
-	
+
 	public List<Query> getQueries(String config_id)
 	{
 		String method = "GET";
@@ -215,7 +219,7 @@ public final class Session
 		handleResponse(status, ar);
 		return res;
 	}
-	
+
 	public List<Query> getQueries()
 	{
 		return getQueries(null);
@@ -242,7 +246,7 @@ public final class Session
     {
         return getSentimentPhrases(null);
     }
-	
+
 	public List<UserEntity> getEntities(String config_id)
 	{
 		String method = "GET";
@@ -259,12 +263,12 @@ public final class Session
 		handleResponse(status, ar);
 		return res;
 	}
-	
+
 	public List<UserEntity> getEntities()
 	{
 		return getEntities(null);
 	}
-	
+
 	public List<com.semantria.mapping.output.DocAnalyticData> getProcessedDocuments(String config_id)
 	{
 		String method = "GET";
@@ -306,12 +310,12 @@ public final class Session
         handleResponse(status, ar);
         return adata;
     }
-	
+
 	public List<com.semantria.mapping.output.DocAnalyticData> getProcessedDocuments()
 	{
 		return getProcessedDocuments(null);
 	}
-	
+
 	public List<com.semantria.mapping.output.CollAnalyticData> getProcessedCollections(String config_id)
 	{
 		String method = "GET";
@@ -353,12 +357,12 @@ public final class Session
         handleResponse(status, ar);
         return adata;
     }
-	
+
 	public List<com.semantria.mapping.output.CollAnalyticData> getProcessedCollections()
 	{
 		return getProcessedCollections(null);
 	}
-	
+
 	public com.semantria.mapping.output.DocAnalyticData getDocument(String id, String config_id)
 	{
 		String method = "GET";
@@ -374,7 +378,7 @@ public final class Session
 			return null;
 		}
 	}
-	
+
 	public com.semantria.mapping.output.DocAnalyticData getDocument(String id)
 	{
 		return getDocument(id, null);
@@ -399,7 +403,7 @@ public final class Session
 			return null;
 		}
 	}
-	
+
 	public Subscription getSubscription()
 	{
 		String method = "GET";
@@ -451,7 +455,7 @@ public final class Session
     }
 
 	//--------end of getters
-	
+
 	//--------update methods
 
 	public Integer addCategories(List<Category> categories)
@@ -503,7 +507,7 @@ public final class Session
 	{
 		return updateQueries(queries, null);
 	}
-	
+
 	public Integer removeQueries(List<Query> queries)
 	{
 		return removeQueries(queries, null);
@@ -584,7 +588,7 @@ public final class Session
 	{
 		return update(entities, "entities", config_id, UserEntities.class);
 	}
-	
+
 	public Integer removeEntities(List<UserEntity> entities)
 	{
 		return removeEntities(entities, null);
@@ -672,9 +676,9 @@ public final class Session
 		handleResponse(status, req);
 		return status;
 	}
-	
+
 	//--------end of update
-	
+
 	//--------queue methods
 	public Integer queueDocument(Document task, String config_id)
 	{
@@ -703,12 +707,12 @@ public final class Session
 		handleRequest(method, ar.getRequestUrl(), body);
 		return status;
 	}
-	
+
 	public Integer queueDocument(Document task)
 	{
 		return queueDocument(task, null);
 	}
-	
+
 	public Integer queueBatch(List<Document> tasks, String config_id)
 	{
 		String body = null;
@@ -744,7 +748,7 @@ public final class Session
 		handleRequest(method, ar.getRequestUrl(), body);
 		return status;
 	}
-	
+
 	public Integer queueBatch(List<Document> tasks)
 	{
 		return queueBatch(tasks, null);
@@ -754,7 +758,7 @@ public final class Session
     {
         return queueCollection(collection, null);
     }
-        
+
 	public Integer queueCollection(Collection collection, String config_id)
 	{
 		String body = serializer.serialize(collection);
@@ -781,7 +785,7 @@ public final class Session
 		handleRequest(method, ar.getRequestUrl(), body);
 		return status;
 	}
-	
+
 	public Integer cancelDocument(String id, String config_id)
 	{
 		String body = null;
@@ -809,7 +813,7 @@ public final class Session
 		handleResponse(status, ar);
 		return status;
 	}
-	
+
 	public void handleResponse(Integer status, AuthRequest ar)
 	{
 		if(callback != null)
@@ -824,7 +828,7 @@ public final class Session
 			}
 		}
 	}
-	
+
 	public void handleRequest(String method, String url, String message)
 	{
 		if(callback != null)
@@ -832,7 +836,7 @@ public final class Session
 			callback.onRequest(this, new RequestArgs(method, url, message));
 		}
 	}
-	
+
 	public void cancelDocument(String id)
 	{
 		cancelDocument(id, null);
