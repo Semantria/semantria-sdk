@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public final class Session 
+public class Session
 {
 	private static final String WRAPPER_NAME = "Java";
 	private String key = "";
@@ -56,6 +56,10 @@ public final class Session
 			this.appName = WRAPPER_NAME;
 		}
 	}
+
+    public void setServiceUrl(String serviceUrl) {
+        this.serviceUrl = serviceUrl;
+    }
 
 	//create new session
 	public static Session createSession(String key, String secret)
