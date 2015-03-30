@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+try:
+    from httplib import HTTPException
+except ImportError:
+    from httplib2 import HttpLib2Error as HTTPException
+
 from semantria.authrequest import *
 from semantria.error import SemantriaError
 from semantria.jsonserializer import * 
@@ -536,7 +541,7 @@ class Session(object):
         if status == 400 or status == 401 or status == 402 or status == 403 or status == 406 or status == 500:
             self.Error({"status": status, "message": message})
         else:
-            raise httplib.HTTPException(status, message)
+            raise HTTPException(status, message)
 
 
 class SessionEvent:
