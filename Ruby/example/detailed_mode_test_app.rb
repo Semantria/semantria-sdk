@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+require 'securerandom'
 require 'semantria'
 
 print 'Semantria Detailed mode demo ...', "\r\n"
@@ -6,6 +7,12 @@ print 'Semantria Detailed mode demo ...', "\r\n"
 # the consumer key and secret
 $consumer_key = ''
 $consumer_secret = ''
+
+# Task statuses
+$TASK_STATUS_UNDEFINED = 'UNDEFINED'
+$TASK_STATUS_FAILED = 'FAILED'
+$TASK_STATUS_QUEUED = 'QUEUED'
+$TASK_STATUS_PROCESSED = 'PROCESSED'
 
 $initial_texts = [
     'Lisa - there\'s 2 Skinny cow coupons available $5 skinny cow ice cream coupons on special k boxes
@@ -48,41 +55,49 @@ end
 # Initializes new session with the keys and app name.
 # We also will use compression.
 session = Semantria::Session.new($consumer_key, $consumer_secret, 'TestApp', true)
+
 # Initialize session callback handlers
 callback = SessionCallbackHandler.new()
 session.setCallbackHandler(callback)
+
+documents = []
+tracker = Hash.new
 
 $initial_texts.each do |text|
   # Creates a sample document which need to be processed on Semantria
   # Unique document ID
   # Source text which need to be processed
-  doc = {'id' => rand(10 ** 10).to_s.rjust(10, '0'), 'text' => text}
-  # Queues document for processing on Semantria service
-  status = session.queueDocument(doc)
-  # Check status from Semantria service
-  if status == 202
-    print 'Document ', doc['id'], ' queued successfully.', "\r\n"
-  end
+  doc_id = SecureRandom.uuid
+
+  documents.push({'id' => doc_id, 'text' => text})
+  tracker[doc_id] = $TASK_STATUS_QUEUED
 end
 
-# Count of the sample documents which need to be processed on Semantria
-length = $initial_texts.length
+result = session.queueBatch(documents)
+if result != 200 and result != 202
+  print("Unexpected error!")
+  exit(1)
+end
+
+print("#{documents.size} documents queued successfully.\n")
+print("\n")
+
 results = []
 
-while results.length < length
-  print 'Please wait 10 sec for documents ...', "\r\n"
-  # As Semantria isn't real-time solution you need to wait some time before getting of the processed results
-  # In real application here can be implemented two separate jobs, one for queuing of source data another one for retrieving
-  # Wait ten seconds while Semantria process queued document
-  sleep(1)
-  # Requests processed results from Semantria service
-  status = session.getProcessedDocuments()
-  # Check status from Semantria service
-  status.is_a? Array and status.each do |object|
-    results.push(object)
+while not tracker.keep_if{|k, v| v == $TASK_STATUS_QUEUED}.empty?
+  sleep(0.5)
+  print("Retrieving your processed results...\n")
+
+  response = session.getProcessedDocuments
+  response.each do |item|
+    if tracker.has_key?(item['id'])
+      tracker[item['id']] = item['status']
+      results.push(item)
+    end
   end
-  print status.length, ' documents received successfully.', "\r\n"
 end
+
+print("\n")
 
 results.each do |data|
   # Printing of document sentiment score
@@ -91,13 +106,13 @@ results.each do |data|
   # Printing of document themes
   print 'Document themes:', "\r\n"
   data['themes'].nil? or data['themes'].each do |theme|
-    print '  ', theme['title'], ' (sentiment: ', theme['sentiment_score'], ")", "\r\n"
+    print "\t", theme['title'], ' (sentiment: ', theme['sentiment_score'], ")", "\r\n"
   end
 
   # Printing of document entities
   print 'Entities:', "\r\n"
   data['entities'].nil? or data['entities'].each do |entity|
-    print '  ', entity['title'], ' : ', entity['entity_type'], ' (sentiment: ', entity['sentiment_score'], ')', "\r\n"
+    print "\t", entity['title'], ' : ', entity['entity_type'], ' (sentiment: ', entity['sentiment_score'], ')', "\r\n"
   end
 
   print "\r\n"

@@ -1,11 +1,15 @@
 # -*- coding: utf-8 -*-
 
+try:
+    import http.client as httplib
+
+except ImportError:
+    import httplib
 
 from semantria.authrequest import *
 from semantria.error import SemantriaError
 from semantria.jsonserializer import * 
 from semantria.version import WRAPPER_VERSION
-
 
 class Session(object):
     host = 'https://api.semantria.com'

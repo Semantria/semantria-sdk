@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+try:
+    import http.client as httplib
+except ImportError:
+    import httplib
+
 from semantria.authrequest import *
 from semantria.error import SemantriaError
 from semantria.jsonserializer import * 

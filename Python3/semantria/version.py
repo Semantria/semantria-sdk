@@ -1,4 +1,4 @@
 # -*- coding: utf-8 -*-
 
 
-WRAPPER_VERSION = '3.8.77'
+WRAPPER_VERSION = '3.8.79'

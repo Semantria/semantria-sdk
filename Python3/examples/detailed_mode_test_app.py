@@ -1,10 +1,13 @@
 # -*- coding: utf-8 -*-
-from __future__ import print_function
+from __future__ import print_function, unicode_literals
+
+import sys
 import semantria
 import uuid
 import time
 
-print("Semantria Detailed mode demo ...", "\r\n")
+print("Semantria Detailed mode demo ...")
+print("")
 
 # the consumer key and secret
 consumerKey = ""
@@ -15,6 +18,12 @@ initialTexts = [
     "In Lake Louise - a guided walk for the family with Great Divide Nature Tours  rent a canoe on Lake Louise or Moraine Lake  go for a hike to the Lake Agnes Tea House. In between Lake Louise and Banff - visit Marble Canyon or Johnson Canyon or both for family friendly short walks. In Banff  a picnic at Johnson Lake  rent a boat at Lake Minnewanka  hike up Tunnel Mountain  walk to the Bow Falls and the Fairmont Banff Springs Hotel  visit the Banff Park Museum. The \"must-do\" in Banff is a visit to the Banff Gondola and some time spent on Banff Avenue - think candy shops and ice cream.",
     "On this day in 1786 - In New York City  commercial ice cream was manufactured for the first time."
 ]
+
+# Task statuses
+TASK_STATUS_UNDEFINED = 'UNDEFINED'
+TASK_STATUS_FAILED = 'FAILED'
+TASK_STATUS_QUEUED = 'QUEUED'
+TASK_STATUS_PROCESSED = 'PROCESSED'
 
 
 def onRequest(sender, result):
@@ -42,58 +51,62 @@ serializer = semantria.JsonSerializer()
 session = semantria.Session(consumerKey, consumerSecret, serializer, use_compression=True)
 
 # Initialize session callback handlers
-#session.Request += onRequest
-#session.Response += onResponse
+# session.Request += onRequest
+# session.Response += onResponse
 session.Error += onError
-#session.DocsAutoResponse += onDocsAutoResponse
-#session.CollsAutoResponse += onCollsAutoResponse
+# session.DocsAutoResponse += onDocsAutoResponse
+# session.CollsAutoResponse += onCollsAutoResponse
+
+results = []
+tracker = {}
+documents = []
 
 for text in initialTexts:
     # Creates a sample document which need to be processed on Semantria
     # Unique document ID
     # Source text which need to be processed
-    doc = {"id": str(uuid.uuid1()).replace("-", ""), "text": text }
-    # Queues document for processing on Semantria service
-    status = session.queueDocument(doc)
-    # Check status from Semantria service
-    if status == 202:
-        print("\"",doc["id"],"\" document queued successfully.")
+    doc_id = str(uuid.uuid4())
+    documents.append({'id': doc_id, 'text': text})
+    tracker[doc_id] = TASK_STATUS_QUEUED
 
-# Count of the sample documents which need to be processed on Semantria
-length = len(initialTexts)
-results = []
+res = session.queueBatch(documents)
+if res not in [200, 202]:
+    print("Unexpected error!")
+    sys.exit(1)
 
-while len(results) < length:
-    print("Retrieving your processed results...", "\r\n")
-    # As Semantria isn't real-time solution you need to wait some time before getting of the processed results
-    # In real application here can be implemented two separate jobs, one for queuing of source data
-    # another one for retreiving
-    # Wait ten seconds while Semantria process queued document
-    time.sleep(0.5)	
-    # Requests processed results from Semantria service
-    status = session.getProcessedDocuments()
-    # Check status from Semantria service
-    if isinstance(status, list):
-        for object_ in status:
-            results.append(object_)
+print("{0} documents queued successfully.".format(len(documents)))
+print("")
+
+while len(list(filter(lambda x: x == TASK_STATUS_QUEUED, tracker.values()))):
+    time.sleep(0.5)
+    print("Retrieving your processed results...")
+
+    response = session.getProcessedDocuments()
+    for item in response:
+        if item['id'] in tracker:
+            tracker[item['id']] = item['status']
+            results.append(item)
+
+print("")
 
 for data in results:
     # Printing of document sentiment score
-    print("Document ", data["id"], " Sentiment score: ", data["sentiment_score"], "\r\n")
+    print("Document {0} / Sentiment score: {1}".format(data['id'], data['sentiment_score']))
 
     # Printing of document themes
     if "themes" in data:
-        print("Document themes:", "\r\n")
+        print("Document themes:")
         for theme in data["themes"]:
-            print("	", theme["title"], " (sentiment: ", theme["sentiment_score"], ")", "\r\n")
+            print("\t {0} (sentiment: {1})".format(theme['title'], theme['sentiment_score']))
 
     # Printing of document entities
     if "entities" in data:
-        print("Entities:", "\r\n")
+        print("Entities:")
         for entity in data["entities"]:
-            print("\t",
-                  entity["title"], " : ", entity["entity_type"],
-                  " (sentiment: ", entity["sentiment_score"], ")", "\r\n"
-            )
+            print("\t {0}: {1} (sentiment: {2})".format(
+                entity['title'], entity['entity_type'], entity['sentiment_score']
+            ))
 
-#i = raw_input("Enter to close app ...")
+    print("")
+
+print("Done!")
