@@ -3,8 +3,10 @@ package com.semantria;
 import com.semantria.interfaces.ISerializer;
 import com.semantria.mapping.Document;
 import com.semantria.mapping.output.*;
-import com.semantria.serializer.XmlSerializer;
+import com.semantria.serializer.JsonSerializer;
+import org.apache.commons.lang.StringUtils;
 
+import java.io.*;
 import java.util.*;
 
 public class DetailedModeTestApp
@@ -24,35 +26,75 @@ public class DetailedModeTestApp
 		}
 
         Hashtable<String, TaskStatus> docsTracker = new Hashtable<String, TaskStatus>();
-
-		// Initial texts for processing
 		List<String> initialTexts = new ArrayList<String>();
-		initialTexts.add("Lisa - there's 2 Skinny cow coupons available $5 skinny cow ice cream coupons on special k boxes and Printable FPC from facebook - a teeny tiny cup of ice cream. I printed off 2 (1 from my account and 1 from dh's). I couldn't find them instore and i'm not going to walmart before the 19th. Oh well sounds like i'm not missing much ...lol");
-		initialTexts.add("In Lake Louise - a ₤ guided walk for the family with Great Divide Nature Tours  rent a canoe on Lake Louise or Moraine Lake  go for a hike to the Lake Agnes Tea House. In between Lake Louise and Banff - visit Marble Canyon or Johnson Canyon or both for family friendly short walks. In Banff  a picnic at Johnson Lake  rent a boat at Lake Minnewanka  hike up Tunnel Mountain  walk to the Bow Falls and the Fairmont Banff Springs Hotel  visit the Banff Park Museum. The \"must-do\" in Banff is a visit to the Banff Gondola and some time spent on Banff Avenue - think candy shops and ice cream.");
-		initialTexts.add("On this day in 1786 - In New York City  commercial ice cream was manufactured for the first time.");
-		initialTexts.add("I'm going to go buy the new Flotsam 5000 when it's released on Wednesday.");
 		
 		System.out.println("Semantria service demo.");
+
+        File file = new File( DetailedModeTestApp.class.getProtectionDomain().getCodeSource().getLocation().toString().replace("/target/classes", "/src/main/java/" + DiscoveryModeTestApp.class.getPackage().getName().replace(".","/")).replace("file:/", "")+ "/source.txt");
+
+        if( !file.exists() )
+        {
+            System.out.println("Source file isn't available.");
+            return;
+        }
+
+        //Reads dataset from the source file
+        try
+        {
+            FileInputStream fstream = new FileInputStream(file);
+            DataInputStream in = new DataInputStream(fstream);
+            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            String strLine;
+
+            while ((strLine = br.readLine()) != null)
+            {
+                if (StringUtils.isEmpty(strLine) || strLine.length() < 3)
+                {
+                    continue;
+                }
+
+                initialTexts.add(strLine);
+            }
+            in.close();
+        }
+        catch (Exception e){
+            System.err.println("Error: " + e.getMessage());
+        }
 		
 		// Creates JSON serializer instance
 		//ISerializer jsonSerializer = new JsonSerializer();
 		// Initializes new session with the serializer object and the keys.
-        ISerializer serializer = new XmlSerializer();
+        ISerializer serializer = new JsonSerializer();
 		Session session = Session.createSession(key, secret, serializer, true);
 		session.setCallbackHandler(new CallbackHandler());
 
-        List<Document> outgoingBatch = new ArrayList<Document>(initialTexts.size());
-        for(String text : initialTexts) {
-            // Creates a sample document which need to be processed on Semantria
+        //Obtaining subscription object to get user limits applicable on server side
+        Subscription subscription = session.getSubscription();
+
+        List<Document> outgoingBatch = new ArrayList<Document>(subscription.getBasicSettings().getBatchLimit());
+
+        for(Iterator<String> iterator = initialTexts.iterator(); iterator.hasNext(); ) {
             String uid = UUID.randomUUID().toString();
-            Document doc = new Document(uid, text);
+            Document doc = new Document(uid, iterator.next());
             outgoingBatch.add(doc);
             docsTracker.put(uid, TaskStatus.QUEUED);
+
+            if (outgoingBatch.size() == subscription.getBasicSettings().getBatchLimit()) {
+                if(session.queueBatch(outgoingBatch) == 202) {
+                    System.out.println("\"" + outgoingBatch.size() + "\" documents queued successfully.");
+                    outgoingBatch.clear();
+                }
+            }
         }
 
-		if( session.queueBatch(outgoingBatch) == 202) {
-            System.out.println("\"" + outgoingBatch.size() + "\" documents queued successfully.");
+        if (outgoingBatch.size() > 0)
+        {
+            if( session.queueBatch(outgoingBatch) == 202) {
+                System.out.println("\"" + outgoingBatch.size() + "\" documents queued successfully.");
+                outgoingBatch.clear();
+            }
         }
+
 		System.out.println();
 		try
 		{

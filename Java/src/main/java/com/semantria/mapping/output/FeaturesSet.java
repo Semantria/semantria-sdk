@@ -13,6 +13,7 @@ public class FeaturesSet
     private String id;
     private String language;
     private Boolean html_processing;
+    private Boolean one_sentence_mode;
     private APISettings settings;
     private DetailedModeFeatures detailed_mode;
     private DiscoveryModeFeatures discovery_mode;
@@ -25,6 +26,8 @@ public class FeaturesSet
     public String getLanguage() { return language; }
     @XmlElement(name="html_processing")
     public Boolean getHTMLProcessing() { return html_processing; }
+    @XmlElement(name="one_sentence_mode")
+    public Boolean getOneSentenceMode() { return one_sentence_mode; }
     @XmlElement(name = "settings")
     public APISettings getAPISettings() { return settings; }
     @XmlElement(name = "detailed_mode")

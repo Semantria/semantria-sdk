@@ -8,6 +8,7 @@ import javax.xml.bind.annotation.XmlElement;
 
 public class DocConfiguration
 {
+    private Boolean model_sentiment = null;
 	private Boolean intentions = null;
 	private Integer entity_themes_limit = null;
 	private Integer summary_limit = null;
@@ -31,8 +32,13 @@ public class DocConfiguration
 
 	public DocConfiguration(){};
 
-	public DocConfiguration(Boolean intentions, Integer entity_themes_limit, Integer summary_limit, Integer themes_limit, Integer query_topics_limit, Integer concept_topics_limit, Integer named_entities_limit, Integer user_entities_limit, Integer phrases_limit, Boolean detect_language, Integer possible_phrases_limit, String pos_types, Integer named_relations_limit, Integer user_relations_limit, Integer named_mentions_limit, Integer user_mentions_limit, Integer named_opinions_limit, Integer user_opinions_limit, Integer theme_mentrions_limit, Integer auto_categories_limit)
+	public DocConfiguration(Boolean model_sentiment, Boolean intentions, Integer entity_themes_limit, Integer summary_limit, Integer themes_limit,
+                            Integer query_topics_limit, Integer concept_topics_limit, Integer named_entities_limit, Integer user_entities_limit, Integer phrases_limit,
+                            Boolean detect_language, Integer possible_phrases_limit, String pos_types, Integer named_relations_limit, Integer user_relations_limit,
+                            Integer named_mentions_limit, Integer user_mentions_limit, Integer named_opinions_limit, Integer user_opinions_limit,
+                            Integer theme_mentrions_limit, Integer auto_categories_limit)
 	{
+        this.model_sentiment = model_sentiment;
 		this.intentions = intentions;
 		this.entity_themes_limit = entity_themes_limit;
 		this.summary_limit = summary_limit;
@@ -55,6 +61,8 @@ public class DocConfiguration
         this.auto_categories_limit = auto_categories_limit;
 	}
 
+    @XmlElement(name="model_sentiment")
+    public Boolean getModelSentiment() { return model_sentiment; }
 	@XmlElement(name="intentions")
 	public Boolean getIntentions() { return intentions; }
 	@XmlElement(name="entity_themes_limit")
@@ -96,6 +104,7 @@ public class DocConfiguration
     @XmlElement(name = "auto_categories_limit")
     public Integer getAutoCategoriesLimit() { return auto_categories_limit; }
 
+    public void setModelSentiment(Boolean model_sentiment) { this.model_sentiment = model_sentiment; }
 	public void setIntentions(Boolean intentions) { this.intentions = intentions; }
 	public void setEntityThemesLimit(Integer limit) { entity_themes_limit = limit; }
 	public void setSummaryLimit(Integer limit) { summary_limit = limit; }

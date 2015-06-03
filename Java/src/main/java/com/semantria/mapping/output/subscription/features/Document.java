@@ -7,6 +7,7 @@ import javax.xml.bind.annotation.XmlElement;
  */
 public class Document
 {
+    private Boolean model_sentiment = null;
 	private Boolean intentions = null;
 	private Boolean summary = null;
 	private Boolean themes = null;
@@ -29,6 +30,8 @@ public class Document
 
 	public Document() {}
 
+    @XmlElement(name = "model_sentiment")
+    public Boolean getModelSentiment() { return model_sentiment == null ? false : model_sentiment; }
 	@XmlElement(name = "intentions")
 	public Boolean getIntentions() { return intentions == null ? false : intentions; }
 	@XmlElement(name = "summary")
@@ -64,6 +67,7 @@ public class Document
     @XmlElement(name = "auto_categories")
     public Boolean getAutoCategories() { return auto_categories; }
 
+    public void setModelSentiment(Boolean model_sentiment) { this.model_sentiment = model_sentiment; }
 	public void setIntentions(Boolean intentions) { this.intentions = intentions; }
 	public void setSummary(Boolean summary) { this.summary = summary; }
 	public void setThemes(Boolean themes) { this.themes = themes; }

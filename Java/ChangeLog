@@ -1,5 +1,10 @@
 CHANGELOG
 
+3.8.82 - Added support of model-based sentiment feature.
+	- Reworked DetailedModeTestApp application to use batch mode for documents queuing instead of pushing documents one by one.
+	- Added missed one_sentence mode field to the output object of /features end-point.
+	- Fixed issue with static oauth_nonce. SDK generates random value now.
+
 3.8.81 - Added API 3.8 features support
 	- Added Normalized and Stemmed forms (fields) to the Theme object.
 	- Enhanced Subscription object with the new limits introduced by API 3.8.

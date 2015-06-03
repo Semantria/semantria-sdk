@@ -13,6 +13,7 @@ public final class DocAnalyticData
 	private TaskStatus status = null;
 	private String config_id = null;
     private String job_id = null;
+    private DocModelSentiment model_sentiment = null;
 	private List<DocIntention> intentions = null;
 	private List<DocEntity> entities = null;
 	private List<DocTopic> topics = null;
@@ -40,6 +41,8 @@ public final class DocAnalyticData
     public String getJobId() { return job_id; }
 	@XmlElement
 	public TaskStatus getStatus() { return status; }
+    @XmlElement(name="model_sentiment")
+    public DocModelSentiment getModelSentiment() { return model_sentiment; }
 	@XmlElementWrapper(name="intentions")
 	@XmlElement(name="intention")
 	public List<DocIntention> getIntentions() { return intentions; }
@@ -86,6 +89,8 @@ public final class DocAnalyticData
 	public void setConfigId(String configId) { this.config_id = configId; }
     public void setJobId(String jobId) { this.config_id = jobId; }
 	public void setStatus(TaskStatus status) { this.status = status; }
+    public void setModelSentiment(DocModelSentiment model_sentiment) { this.model_sentiment = model_sentiment; }
+    public void setIntentions(List<DocIntention> intentions) { this.intentions = intentions; }
 	public void setEntities(List<DocEntity> entities) { this.entities = entities; }
 	public void setTopics(List<DocTopic> topic) { topics = topic; }
 	public void setThemes(List<DocTheme> theme) { themes = theme; }

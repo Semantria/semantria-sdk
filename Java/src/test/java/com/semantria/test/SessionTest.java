@@ -82,7 +82,7 @@ public class SessionTest
 		conf.setIsPrimary(false);
 		conf.setName("TEST_CONFIG");
 		conf.setLanguage("English");
-		conf.setDocument(new DocConfiguration(false, 0, 5, 5, 5, 5, 5, 5, 5, true, 0, "", 0, 0, 0, 0, 0, 0, 0, 5));
+		conf.setDocument(new DocConfiguration(false, false, 0, 5, 5, 5, 5, 5, 5, 5, true, 0, "", 0, 0, 0, 0, 0, 0, 0, 5));
 		conf.setCollection(new CollConfiguration(5, 5, 5, 5, 0, 5, 5, 0, 0, 0, 0, 0));
 
 		int status = session.addConfigurations(Arrays.asList(conf));

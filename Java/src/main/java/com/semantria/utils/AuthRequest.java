@@ -12,6 +12,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.zip.GZIPInputStream;
 
 
@@ -26,7 +27,7 @@ public final class AuthRequest
 	private String secret = "";
 	private String response = "";
 	private String rurl = "";
-	private String appName = "Java/3.8.81/";
+	private String appName = "Java/3.8.82/";
 	private boolean useCompression = false;
 	private String errorMsg = null;
     private int CONNECTION_TIMEOUT = 120000;
@@ -158,7 +159,7 @@ public final class AuthRequest
 	
 	private void setOAuthParameters() {
 		if(params == null) { params = new HashMap<String, String>(); }
-		params.put("oauth_nonce", "3931596951957366614");
+		params.put("oauth_nonce", Long.toString(new Random().nextLong()&0xffffffffL));
 		params.put("oauth_consumer_key", key);
 		params.put("oauth_signature_method", "HMAC-SHA1");
 		params.put("oauth_timestamp", Long.toString(System.currentTimeMillis()/1000));

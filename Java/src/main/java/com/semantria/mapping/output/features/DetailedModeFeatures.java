@@ -12,6 +12,7 @@ public class DetailedModeFeatures
     private Boolean language_detection;
     private Boolean sentiment;
     private Boolean sentiment_phrases;
+    private Boolean model_sentiment;
     private Boolean pos_tagging;
     private Boolean summarization;
     private Boolean intentions;
@@ -35,6 +36,8 @@ public class DetailedModeFeatures
     public Boolean getSentiment() { return sentiment; }
     @XmlElement(name="sentiment_phrases")
     public Boolean getSentimentPhrases() { return sentiment_phrases; }
+    @XmlElement(name="model_sentiment")
+    public Boolean getModelSentiment() { return model_sentiment; }
     @XmlElement(name="pos_tagging")
     public Boolean getPOSTagging() { return pos_tagging; }
     @XmlElement(name="summarization")
@@ -67,6 +70,7 @@ public class DetailedModeFeatures
     public void setLanguageDetection(Boolean feature) { this.language_detection = feature; }
     public void setSentiment(Boolean feature) { this.sentiment = feature; }
     public void setSentimentPhrases(Boolean feature) { this.sentiment_phrases = feature; }
+    public void setModelSentiment(Boolean feature) { this.model_sentiment = feature; }
     public void setPOSTagging(Boolean feature) { this.pos_tagging = feature; }
     public void setSumarization(Boolean feature) { this.summarization = feature; }
     public void setIntentions(Boolean feature) { this.intentions = feature; }
@@ -80,5 +84,5 @@ public class DetailedModeFeatures
     public void setEntityThemes(Boolean feature) { this.entity_themes = feature; }
     public void setAutoCategories(Boolean feature) { this.auto_categories = feature; }
     public void setUserCategories(Boolean feature) { this.user_categories = feature; }
-    public void setQueries(Boolean feature) { this.queries = queries; }
+    public void setQueries(Boolean feature) { this.queries = feature; }
 }
