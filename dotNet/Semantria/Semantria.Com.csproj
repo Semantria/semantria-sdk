@@ -87,6 +87,7 @@
     <Compile Include="Mapping\Output\DocCategory.cs" />
     <Compile Include="Mapping\Output\DocIntention.cs" />
     <Compile Include="Mapping\Output\DocMention.cs" />
+    <Compile Include="Mapping\Output\DocModelSentiment.cs" />
     <Compile Include="Mapping\Output\DocOpinion.cs" />
     <Compile Include="Mapping\Output\FeaturesSet.cs" />
     <Compile Include="Mapping\Output\Statistics.cs" />

@@ -22,6 +22,10 @@ namespace Semantria.Com.Mapping.Output
         [XmlElementAttribute("html_processing")]
         public bool HTMLProcessing { get; set; }
 
+        [DataMember(Name = "one_sentence_mode")]
+        [XmlElementAttribute("one_sentence_mode")]
+        public bool OneSentenceMode { get; set; }
+
         [DataMember(Name = "settings")]
         [XmlElementAttribute("settings")]
         public APISettings APISettings { get; set; }
@@ -71,6 +75,10 @@ namespace Semantria.Com.Mapping.Output
         [DataMember(Name = "sentiment_phrases")]
         [XmlElementAttribute("sentiment_phrases")]
         public bool SentimentPhrases { get; set; }
+
+        [DataMember(Name = "model_sentiment")]
+        [XmlElementAttribute("model_sentiment")]
+        public bool ModelSentiment { get; set; }
 
         [DataMember(Name = "pos_tagging")]
         [XmlElementAttribute("pos_tagging")]

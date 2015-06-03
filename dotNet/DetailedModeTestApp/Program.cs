@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 
 using Semantria.Com;
 using Semantria.Com.Serializers;
@@ -21,16 +22,30 @@ namespace DetailedModeTestApp
 
             // A dictionary that keeps IDs of sent documents and their statuses. It's required to make sure that we get correct documents from the API.
             Dictionary<string, TaskStatus> docsTracker = new Dictionary<string, TaskStatus>(4);
-
-            // Initial texts for processing
-            List<string> initialTexts = new List<string>() {
-                @"Lisa - there's 2 Skinny cow coupons available $5 skinny cow ice cream coupons on special k boxes and Printable FPC from facebook - a teeny tiny cup of ice cream. I printed off 2 (1 from my account and 1 from dh's). I couldn't find them instore and i'm not going to walmart before the 19th. Oh well sounds like i'm not missing much ...lol",
-                @"In Lake Louise - a guided walk for the family with Great Divide Nature Tours  rent a canoe on Lake Louise or Moraine Lake  go for a hike to the Lake Agnes Tea House. In between Lake Louise and Banff - visit Marble Canyon or Johnson Canyon or both for family friendly short walks. In Banff  a picnic at Johnson Lake  rent a boat at Lake Minnewanka  hike up Tunnel Mountain  walk to the Bow Falls and the Fairmont Banff Springs Hotel  visit the Banff Park Museum. The ""must-do"" in Banff is a visit to the Banff Gondola and some time spent on Banff Avenue - think candy shops and ice cream.",
-                @"On this day in 1786 - In New York City  commercial ice cream was manufactured for the first time.",
-                @"I’m going to go buy the new Flotsam 5000 when it’s released on Wednesday."
-            };
+            List<string> initialTexts = new List<string>();
 
             Console.WriteLine("Semantria Detailed processing mode demo.");
+
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "source.txt");
+            if (!File.Exists(path))
+            {
+                Console.WriteLine("Source file isn't available.");
+                return;
+            }
+
+            //Reads collection from the source file
+            Console.WriteLine("Reading dataset from file...");
+            using (StreamReader stream = new StreamReader(path))
+            {
+                while (!stream.EndOfStream)
+                {
+                    string line = stream.ReadLine();
+                    if (string.IsNullOrEmpty(line) || line.Length < 3)
+                        continue;
+
+                    initialTexts.Add(line);
+                }
+            }
 
             // Creates JSON serializer instance
 			ISerializer serializer = new JsonSerializer();
@@ -44,25 +59,41 @@ namespace DetailedModeTestApp
                     Console.WriteLine(string.Format("{0}: {1}", (int)ea.Status, ea.Message));
                 });
 
-                List<Document> outgoingBatch = new List<Document>(initialTexts.Count);
-                foreach (string text in initialTexts)
+                //Obtaining subscription object to get user limits applicable on server side
+                Subscription subscription = session.GetSubscription();
+
+                List<Document> outgoingBatch = new List<Document>(subscription.BasicSettings.BatchLimit);
+                IEnumerator<string> iterrator = initialTexts.GetEnumerator();
+                while (iterrator.MoveNext())
                 {
                     string docId = Guid.NewGuid().ToString();
-                    // Creates a sample document which need to be processed on Semantria
                     Document doc = new Document()
                     {
                         Id = docId,
-                        Text = text
+                        Text = iterrator.Current
                     };
 
-                    docsTracker.Add(docId, TaskStatus.QUEUED);
                     outgoingBatch.Add(doc);
+                    docsTracker.Add(docId, TaskStatus.QUEUED);
+
+                    if (outgoingBatch.Count == subscription.BasicSettings.BatchLimit)
+                    {
+                        // Queues batch of documents for processing on Semantria service
+                        if (session.QueueBatchOfDocuments(outgoingBatch) != -1)
+                        {
+                            Console.WriteLine(string.Format("{0} documents queued successfully.", outgoingBatch.Count));
+                            outgoingBatch.Clear();
+                        }
+                    }
                 }
 
-                // Queues document for processing on Semantria service
-                if (session.QueueBatchOfDocuments(outgoingBatch) != -1)
+                if (outgoingBatch.Count > 0)
                 {
-                    Console.WriteLine(string.Format("{0} documents queued successfully.", outgoingBatch.Count));
+                    // Queues batch of documents for processing on Semantria service
+                    if (session.QueueBatchOfDocuments(outgoingBatch) != -1)
+                    {
+                        Console.WriteLine(string.Format("{0} documents queued successfully.", outgoingBatch.Count));
+                    }
                 }
 
                 Console.WriteLine();
@@ -110,7 +141,7 @@ namespace DetailedModeTestApp
                         foreach (DocTheme theme in data.Themes)
                             Console.WriteLine(string.Format("\t{0} (sentiment: {1})", theme.Title, theme.SentimentScore));
                     }
-                    
+
                     // Printing of document entities
                     if (data.Entities != null && data.Entities.Count > 0)
                     {
@@ -118,7 +149,7 @@ namespace DetailedModeTestApp
                         foreach (DocEntity entity in data.Entities)
                             Console.WriteLine(string.Format("\t{0} : {1} (sentiment: {2})", entity.Title, entity.EntityType, entity.SentimentScore));
                     }
-                    
+
                     Console.WriteLine();
                 }
             }

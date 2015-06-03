@@ -196,6 +196,10 @@ namespace Semantria.Com.Mapping.Output
     [XmlRootAttribute("document", Namespace = "")]
     public class DocsFeatureSettings
     {
+        [DataMember(Name = "model_sentiment")]
+        [XmlElementAttribute("model_sentiment")]
+        public bool ModelSentiment { get; set; }
+
         [DataMember(Name = "intentions")]
         [XmlElementAttribute("intentions")]
         public bool Intentions { get; set; }

@@ -60,6 +60,10 @@ namespace Semantria.Com.Mapping.Output
         [XmlElementAttribute("sentiment_polarity")]
         public string SentimentPolarity { get; set; }
 
+        [DataMember(Name = "model_sentiment")]
+        [XmlElementAttribute("model_sentiment")]
+        public DocModelSentiment ModelSentiment { get; set; }
+
         [DataMember(Name = "language")]
         [XmlElementAttribute("language")]
         public string Language { get; set; }
