@@ -1,5 +1,7 @@
 CHANGELOG
 
+3.8.78 - Reworked DetailedModeTestApp application to use batch mode for documents queuing instead of pushing documents one by one.
+
 3.8.77 - Tested on compatibility with Semantria API 3.8
 	- Added Normalized and Stemmed forms (fields) to the Theme object.
 	- Enhanced Subscription object with the new limits introduced by API 3.8.
