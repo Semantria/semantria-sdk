@@ -1,5 +1,7 @@
 CHANGELOG
 
+3.8.81 - Reworked DetailedModeTestApp application to use batch mode for documents queuing instead of pushing documents one by one.
+
 3.8.80 - Added two sample applications:
 	- AutoResponseTestApp - test application of auto-response feature.
 	- JobIdFeatureTestApp - test application of JobID feature introduced in API 3.8

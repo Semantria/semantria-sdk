@@ -15,11 +15,7 @@ define('TASK_STATUS_QUEUED', 'QUEUED');
 define('TASK_STATUS_PROCESSED', 'PROCESSED');
 
 
-$initialTexts = array(
-    "Lisa - there's 2 Skinny cow coupons available $5 skinny cow ice cream coupons on special k boxes and Printable FPC from facebook - a teeny tiny cup of ice cream. I printed off 2 (1 from my account and 1 from dh's). I couldn't find them instore and i'm not going to walmart before the 19th. Oh well sounds like i'm not missing much ...lol",
-    "In Lake Louise - a guided walk for the family with Great Divide Nature Tours  rent a canoe on Lake Louise or Moraine Lake  go for a hike to the Lake Agnes Tea House. In between Lake Louise and Banff - visit Marble Canyon or Johnson Canyon or both for family friendly short walks. In Banff  a picnic at Johnson Lake  rent a boat at Lake Minnewanka  hike up Tunnel Mountain  walk to the Bow Falls and the Fairmont Banff Springs Hotel  visit the Banff Park Museum. The \"must-do\" in Banff is a visit to the Banff Gondola and some time spent on Banff Avenue - think candy shops and ice cream.",
-    "On this day in 1786 - In New York City  commercial ice cream was manufactured for the first time."
-);
+$initialTexts = array();
 
 class SessionCallbackHandler extends \Semantria\CallbackHandler
 {
@@ -65,10 +61,27 @@ $session = new \Semantria\Session(CONSUMER_KEY, CONSUMER_SECRET, NULL, NULL, TRU
 $callback = new SessionCallbackHandler();
 $session->setCallbackHandler($callback);
 
+$subscription = $session->getSubscription();
+
 // A dictionary that keeps IDs of sent documents and their statuses. 
 // It's required to make sure that we get correct documents from the API.
 $tracker = array();
 $documets = array();
+
+print("Reading collection from file...\n");
+$file = fopen("source.txt", "r");
+if (!$file) {
+    print("");
+    exit(1);
+}
+
+while (($line = fgets($file)) !== FALSE) {
+    $initialTexts[] = $line;
+}
+if (!feof($file)) {
+    echo "Error: unexpected fgets() fail\n";
+}
+fclose($file);
 
 foreach ($initialTexts as $text) {
     // Creates a sample document which need to be processed on Semantria
@@ -78,16 +91,26 @@ foreach ($initialTexts as $text) {
 
     $documents[] = array('id' => $doc_id, 'text' => $text);
     $tracker[$doc_id] = TASK_STATUS_QUEUED;
+    
+    if (count($documents) == $subscription['basic_settings']['batch_limit']) {
+        $docsCount = count($documents);
+        $res = $session->queueBatch($documents);
+        if ($res == 200 || $res == 202) {
+            print("${docsCount} documents queued successfully.\n");
+            $documents = array();
+        }
+    }
 }
 
 $docsCount = count($documents);
-
-$res = $session->queueBatch($documents);
-if ($res == 200 || $res == 202) {
-    print("${docsCount} documents queued successfully.\n");
-}
-else {
-    die("Unexpected error.\n");
+if ($docsCount) {
+    $res = $session->queueBatch($documents);
+    if ($res == 200 || $res == 202) {
+        print("${docsCount} documents queued successfully.\n");
+    }
+    else {
+        die("Unexpected error.\n");
+    }
 }
 
 print("\n");
