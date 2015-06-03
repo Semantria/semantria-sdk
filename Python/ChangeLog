@@ -1,5 +1,7 @@
 CHANGELOG
 
+3.8.79 - Reworked detailed_mode_test_app application to use batch mode for documents queuing instead of pushing documents one by one.
+
 3.8.78 - Added test application of JobID feature introduced in API 3.8
 
 3.8.77 - Tested on compatibility with Semantria API 3.8
