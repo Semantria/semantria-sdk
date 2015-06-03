@@ -14,21 +14,7 @@ $TASK_STATUS_FAILED = 'FAILED'
 $TASK_STATUS_QUEUED = 'QUEUED'
 $TASK_STATUS_PROCESSED = 'PROCESSED'
 
-$initial_texts = [
-    'Lisa - there\'s 2 Skinny cow coupons available $5 skinny cow ice cream coupons on special k boxes
-   and Printable FPC from facebook - a teeny tiny cup of ice cream. I printed off 2
-   (1 from my account and 1 from dh\'s). I couldn\'t find them instore and i\'m not going to walmart
-   before the 19th. Oh well sounds like i\'m not missing much ...lol',
-
-    "In Lake Louise - a guided walk for the family with Great Divide Nature Tours  rent a canoe
-   on Lake Louise or Moraine Lake  go for a hike to the Lake Agnes Tea House. In between Lake Louise
-   and Banff - visit Marble Canyon or Johnson Canyon or both for family friendly short walks. In Banff
-   a picnic at Johnson Lake  rent a boat at Lake Minnewanka  hike up Tunnel Mountain  walk to the Bow Falls
-   and the Fairmont Banff Springs Hotel  visit the Banff Park Museum. The \"must-do\" in Banff is a visit
-   to the Banff Gondola and some time spent on Banff Avenue - think candy shops and ice cream.",
-
-    'On this day in 1786 - In New York City  commercial ice cream was manufactured for the first time.'
-]
+$initial_texts = []
 
 class SessionCallbackHandler < Semantria::CallbackHandler
   def onRequest(sender, args)
@@ -60,8 +46,24 @@ session = Semantria::Session.new($consumer_key, $consumer_secret, 'TestApp', tru
 callback = SessionCallbackHandler.new()
 session.setCallbackHandler(callback)
 
+subscription = session.getSubscription()
+
 documents = []
 tracker = Hash.new
+
+print("Reading collection from file...\n")
+f = File.open('source.txt').read
+f.gsub!(/\r\n?/, "\n")
+f.each_line do |line|
+  if not line.empty?
+    $initial_texts.push(line)
+  end
+end
+
+if $initial_texts.size < 1
+  print("Source file isn't available or blank.\n")
+  exit(1)
+end
 
 $initial_texts.each do |text|
   # Creates a sample document which need to be processed on Semantria
@@ -71,15 +73,26 @@ $initial_texts.each do |text|
 
   documents.push({'id' => doc_id, 'text' => text})
   tracker[doc_id] = $TASK_STATUS_QUEUED
+  
+  if documents.size == subscription['basic_settings']['batch_limit']
+    result = session.queueBatch(documents)
+    if result == 200 or result == 202
+      print("#{documents.size} documents queued successfully.\n")
+      documents = []
+    end
+  end
 end
 
-result = session.queueBatch(documents)
-if result != 200 and result != 202
-  print("Unexpected error!")
-  exit(1)
+if documents.size > 0
+  result = session.queueBatch(documents)
+  if result != 200 and result != 202
+    print("Unexpected error!")
+    exit(1)
+  end
+  
+  print("#{documents.size} documents queued successfully.\n")
 end
 
-print("#{documents.size} documents queued successfully.\n")
 print("\n")
 
 results = []
