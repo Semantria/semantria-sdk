@@ -1,5 +1,9 @@
 CHANGELOG
 
+3.9.79 - Added new test applications for following features:
+	- AutoResponseFeatureModeTestApp for demonstration of Auto-response feature.
+	- JobIdFeatureModeTestApp for demonstration of Job ID feature.
+
 3.8.78 - Reworked DetailedModeTestApp application to use batch mode for documents queuing instead of pushing documents one by one.
 
 3.8.77 - Tested on compatibility with Semantria API 3.8

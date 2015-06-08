@@ -486,7 +486,7 @@
 		 * @var {String} SDK_VERSION
 		 * @constant
 		 */
-		SDK_VERSION: "3.8.77",
+		SDK_VERSION: "3.9.79",
 		
 		/**
 		 * @var {String} HOST
