@@ -13,8 +13,8 @@ SDK implements all the available Semantria features and demonstrate best practic
 """
 
 setup(
-    name='semantria_sdk',
-    version='3.8.77',
+    name='semantria-sdk-2x',
+    version='3.8.79',
     packages=['semantria'],
     url='https://semantria.com',
     license='GPL v3',
@@ -24,8 +24,7 @@ setup(
     long_description=LONG_DESCRIPTION,
     keywords='semantria sdk text analytics',
     classifiers=[
-        'Programming Language :: Python',
-        'Programming Language :: Python :: 3'
+        'Programming Language :: Python'
     ],
     use_2to3=True,
 )

@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
-Name: semantria-sdk
-Version: 3.8.77
+Name: semantria-sdk-3x
+Version: 3.8.80
 Summary: Semantria Python SDK
 Home-page: https://semantria.com
 Author: Semantria, LLC
@@ -18,5 +18,4 @@ Description:
         
 Keywords: semantria sdk analytics
 Platform: UNKNOWN
-Classifier: Programming Language :: Python
 Classifier: Programming Language :: Python :: 3
