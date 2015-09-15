@@ -1,0 +1,6 @@
+CHANGELOG
+
+3.9.1 - Initial version of Semantria SDK for Node.js.
+	- Full-featured support of synchronous and asynchronous operations.
+	- Test cases for synchronous and asynchronous methods.
+	- Sample applications for Detailed and Discovery modes, job ID and auto-response features.
