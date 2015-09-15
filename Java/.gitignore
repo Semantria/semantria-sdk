@@ -1,11 +1,15 @@
 # java specific #
 #################
 *.class
-target/
 
-#netbeans ignore personal stuff #
-#################################
-nbproject/private/
+# Intellij #
+.idea/
+*.iml
+*.iws
+
+# Maven #
+log/
+target/
 
 # generic files to ignore #
 ###########################
@@ -39,11 +43,3 @@ nbproject/private/
 ehthumbs.db
 Icon?
 Thumbs.db
-
-# MS Office generated temp files #
-##################################
-~$*.doc
-~*.tmp
-.~*.doc#
-~*.~*
-*.*~

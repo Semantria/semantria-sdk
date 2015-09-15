@@ -1,5 +1,7 @@
 CHANGELOG
 
+3.9.83 - Added missed sample application for Job ID feature.
+
 3.8.82 - Added support of model-based sentiment feature.
 	- Reworked DetailedModeTestApp application to use batch mode for documents queuing instead of pushing documents one by one.
 	- Added missed one_sentence mode field to the output object of /features end-point.
