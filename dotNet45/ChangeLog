@@ -1,0 +1,5 @@
+CHANGELOG
+
+3.9.1 - Initial version of .NET SDK for .Net framework 4.5 with dynamic objects support.
+	- .NET 4.5 SDK is much less than original one because strong-typed classes are not needed any-more.
+	- All kind of output deserializes on the fly to dynamic (run-time) objects.
