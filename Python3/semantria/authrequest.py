@@ -5,7 +5,7 @@ from io import BytesIO
 import gzip
 
 
-import urllib.request, urllib.parse, urllib.error
+import urllib3.request, urllib3.parse, urllib3.error
 import http.client
 import time
 import random
