@@ -64,7 +64,7 @@ namespace Semantria.Com.TestUnitApi
         public void MyTestInitialize() 
         {
             _session = Session.CreateSession(_consumerKey, _consumerSecret);
-            _session.Host = "https://sandbox.semantria.com";
+            _session.Host = "https://api.semantria.com";
 
             _session.Request += new Session.RequestHandler(session_Request);
             _session.Response += new Session.ResponseHandler(session_Response);
