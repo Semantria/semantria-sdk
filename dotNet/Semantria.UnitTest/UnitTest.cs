@@ -30,7 +30,6 @@ namespace Semantria.Com.TestUnitApi
         private string _id = "3E08B37B-0D74-4BF0-9380-E4D7E8C0279E"; 
         private string _message = "Amazon Web Services has announced a new feature called VM₤Ware Import, which allows IT departments to move virtual machine images from their internal data centers to the cloud.";
         
-        private ISerializer _serializer = null;
         private Session _session = null;
 
         private TestContext _testContextInstance;
@@ -67,8 +66,7 @@ namespace Semantria.Com.TestUnitApi
         [TestInitialize()]
         public void MyTestInitialize() 
         {
-            _serializer = new JsonSerializer();
-            _session = Session.CreateSession(_consumerKey, _consumerSecret, _serializer);
+            _session = Session.CreateSession(_consumerKey, _consumerSecret);
 
             _session.Request += new Session.RequestHandler(session_Request);
             _session.Response += new Session.ResponseHandler(session_Response);
@@ -81,7 +79,6 @@ namespace Semantria.Com.TestUnitApi
         [TestCleanup()]
         public void MyTestCleanup() 
         {
-            _serializer = null;
             _session = null;
         }
         
@@ -90,7 +87,6 @@ namespace Semantria.Com.TestUnitApi
         [TestMethod]
         public void CheckSession()
         {
-            Assert.IsNotNull(_serializer);
             Assert.IsNotNull(_session);
         }
 

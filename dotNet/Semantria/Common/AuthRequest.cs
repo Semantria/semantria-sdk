@@ -104,7 +104,7 @@ namespace Semantria.Com
             webRequest.Credentials = CredentialCache.DefaultCredentials;
 
             webRequest.Headers.Add("x-app-name", _appName);
-            webRequest.Headers.Add("x-api-version", "3.8");
+            webRequest.Headers.Add("x-api-version", "3.9");
             webRequest.Headers.Add("Authorization", authheader);
             if (_useCompression == true)
             {

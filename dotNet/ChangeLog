@@ -1,5 +1,7 @@
 CHANGELOG
 
+3.9.87 - Fixed problem with default serializer. In case of usage of CreateSession method without serializer SDK didn't use default serializer and threw NULL pointer exception.
+
 3.8.86 - Added support of model-based sentiment feature.
 	- Reworked DetailedModeTestApp application to use batch mode for documents queuing instead of pushing documents one by one.
 	- Added missed one_sentence mode field to the output object of /features end-point.

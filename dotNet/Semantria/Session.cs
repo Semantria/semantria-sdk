@@ -21,11 +21,9 @@ namespace Semantria.Com
         {
         }
         
-        private Session(string consumerKey, string consumerSecret, string appName)
+        private Session(string consumerKey, string consumerSecret, string appName) :
+            this (consumerKey, consumerSecret, new JsonSerializer(), appName)
         {
-            _consumerKey = consumerKey;
-            _consumerSecret = consumerSecret;
-            _appName = appName;
         }
 
         private Session(string consumerKey, string consumerSecret, ISerializer serializer, string appName)
@@ -154,7 +152,7 @@ namespace Semantria.Com
 
         public static Session CreateSession(string consumerKey, string consumerSecret)
         {
-            return CreateSession(consumerKey, consumerSecret, (string)null);
+            return CreateSession(consumerKey, consumerSecret, new JsonSerializer());
         }
 
         public static Session CreateSession(string consumerKey, string consumerSecret, string appName)
@@ -164,7 +162,12 @@ namespace Semantria.Com
 
         public static Session CreateSession(string consumerKey, string consumerSecret, ISerializer serializer)
         {
-            return CreateSession(consumerKey, consumerSecret, serializer, null);
+            if (serializer == null)
+            {
+                throw new ArgumentNullException("serializer");
+            }
+
+            return CreateSession(consumerKey, consumerSecret, serializer, string.Empty);
         }
 
         public static Session CreateSession(string consumerKey, string consumerSecret, ISerializer serializer, string appName)
