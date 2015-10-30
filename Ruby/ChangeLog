@@ -1,5 +1,10 @@
 CHANGELOG
 
+3.9.81 - Added support of Vertical packs feature.
+	- Supported vertical packs returned as part of supported features (GetSupportedFeatures method).
+	- Verticall packs allowed for the current subscription can be retrieved using GetSubscription method.
+	- Added new CloneConfiguration method for easy clonning of vertical packs.
+
 3.8.80 - Reworked detailed_mode_test_app application to use batch mode for documents queuing instead of pushing documents one by one.
 
 3.8.79 - Added test application of JobID feature introduced in API 3.8

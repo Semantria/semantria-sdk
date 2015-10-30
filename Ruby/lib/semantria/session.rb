@@ -7,6 +7,7 @@
 module Semantria
   class Session
     attr_accessor :host
+    attr_accessor :api_version
 
     # Create a new instance
     def initialize(consumer_key, consumer_secret, application_name = nil, use_compression = false, serializer = nil)
@@ -15,6 +16,7 @@ module Semantria
       @consumer_key = consumer_key
       @consumer_secret = consumer_secret
       @use_compression = use_compression
+      @api_version = '3.9'
 
       if application_name.nil?
         @application_name = @wrapper_name
@@ -78,6 +80,10 @@ module Semantria
     end
 
     def addConfigurations(items)
+      updateConfigurations(items)
+    end
+
+    def cloneConfigurations(items)
       updateConfigurations(items)
     end
 
@@ -427,6 +433,7 @@ module Semantria
     private
     def runRequest(method, url, type = nil, post_data = nil)
       request = AuthRequest.new(@consumer_key, @consumer_secret, @application_name, @use_compression)
+      request.api_version=(@api_version)
       
       onRequest({'method' => method, 'url' => url, 'message' => post_data})
       

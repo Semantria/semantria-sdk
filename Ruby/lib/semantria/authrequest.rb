@@ -19,6 +19,8 @@ module Semantria
   OAUTH_NONCE_KEY = "oauth_nonce"
 
   class AuthRequest
+    attr_accessor :api_version
+    
     # Create a new instance
     def initialize(consumer_key, consumer_secret, application_name, use_compression = false)
       @consumer_key = consumer_key
@@ -35,7 +37,8 @@ module Semantria
       headers = {'Authorization' => auth_header}
 
       headers['Content-type'] = 'application/x-www-form-urlencoded' if method == 'POST'
-      headers['x-api-version'] = '3.8'
+        puts @api_version
+      headers['x-api-version'] = @api_version
       headers['x-app-name'] = @application_name
 
       headers['Accept-Encoding'] = 'gzip' if @use_compression
