@@ -1,5 +1,10 @@
 CHANGELOG
 
+3.9.2 - Added support of Vertical packs feature.
+	- Supported vertical packs returned as part of supported features (GetSupportedFeatures method).
+	- Verticall packs allowed for the current subscription can be retrieved using GetSubscription method.
+	- Added new CloneConfiguration method for easy clonning of vertical packs.
+
 3.9.1 - Initial version of .NET SDK for .Net framework 4.5 with dynamic objects support.
 	- .NET 4.5 SDK is much less than original one because strong-typed classes are not needed any-more.
 	- All kind of output deserializes on the fly to dynamic (run-time) objects.

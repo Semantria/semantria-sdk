@@ -12,8 +12,8 @@ namespace DetailedModeTestApp
         static void Main(string[] args)
         {
             // Use correct Semantria API credentias here
-            string consumerKey = "";
-            string consumerSecret = "";
+            string consumerKey = string.Empty;
+            string consumerSecret = string.Empty;
 
             // A dictionary that keeps IDs of sent documents and their statuses. It's required to make sure that we get correct documents from the API.
             Dictionary<string, dynamic> docsTracker = new Dictionary<string, dynamic>(4);

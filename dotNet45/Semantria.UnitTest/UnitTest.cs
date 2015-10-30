@@ -20,8 +20,8 @@ namespace Semantria.Com.TestUnitApi
             //
         }
 
-        private string _consumerKey = "";
-        private string _consumerSecret = "";
+        private string _consumerKey = string.Empty;
+        private string _consumerSecret = string.Empty;
 
         private string _id = "3E08B37B-0D74-4BF0-9380-E4D7E8C0279E"; 
         private string _message = "Amazon Web Services has announced a new feature called VM₤Ware Import, which allows IT departments to move virtual machine images from their internal data centers to the cloud.";
@@ -151,6 +151,53 @@ namespace Semantria.Com.TestUnitApi
 
             dynamic res = _session.UpdateConfigurations(new [] { primaryConf });
             Assert.IsTrue(res == 202 || res == 200);
+        }
+
+        [TestMethod]
+        public void CloneConfiguration()
+        {
+            dynamic result = _session.GetConfigurations();
+            Assert.IsNotNull(result);
+            if (result == null) return;
+
+            string name = "netCloneTest_name_3_45";
+            string template = string.Empty;
+            dynamic primaryConfig = null;
+            foreach (var item in result)
+            {
+                if (item.is_primary == true)
+                {
+                    template = item.config_id;
+                    primaryConfig = item;
+                    break;
+                }
+            }
+            Assert.AreNotSame(string.Empty, template);
+            var res = _session.CloneConfiguration(name, template);
+            Assert.AreEqual(202, res);
+            dynamic clone = null;
+            result = _session.GetConfigurations();
+            var configsList = ((IEnumerable)result).Cast<dynamic>();
+            if (!configsList.Any(item => item.name.Equals(name)))
+            {
+                Assert.Fail();
+            }
+            else
+            {
+                clone = configsList.First(item => item.name.Equals(name));
+                Assert.AreNotEqual(primaryConfig.config_id, clone.config_id);
+                Assert.AreNotEqual(primaryConfig.name, clone.name);
+            }
+
+            res = _session.RemoveConfigurations(new[]{clone.config_id});
+            Assert.AreEqual(202, res);
+
+            result = _session.GetConfigurations();
+            configsList = ((IEnumerable)result).Cast<dynamic>();
+            if (configsList.Any(item => item.name.Equals(name)))
+            {
+                Assert.Fail();
+            }
         }
 
         [TestMethod]

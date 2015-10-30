@@ -49,13 +49,14 @@ namespace Semantria.Com
 
         #region Private variables
 
-        private string _consumerKey = "";
-        private string _consumerSecret = "";
-        private string _appName = "";
+        private string _consumerKey = string.Empty;
+        private string _consumerSecret = string.Empty;
+        private string _appName = string.Empty;
         private ISerializer _serializer = new JsonSerializer();
         private string _format = "json";
         private string _host = "https://api.semantria.com";
         private bool _useCompression = false;
+        private string _apiVersion = "3.9";
         private const string WRAPPER_NAME = "dotNet";
 
         #endregion
@@ -72,6 +73,12 @@ namespace Semantria.Com
         {
             get { return _useCompression; }
             set { _useCompression = value; }
+        }
+
+        public string APIversion
+        {
+            get { return _apiVersion; }
+            set { _apiVersion = value; }
         }
 
         #endregion
@@ -241,6 +248,14 @@ namespace Semantria.Com
         public int RemoveConfigurations(dynamic items)
         {
             return this.Send(QueryMethod.DELETE, items, "configurations");
+        }
+
+        public int CloneConfiguration(string name, string template)
+        {
+            var items = new List<dynamic>();
+            items.Add(new { name = name, template = template });
+
+            return this.AddConfigurations(items);
         }
 
         #endregion Configuration
@@ -567,7 +582,7 @@ namespace Semantria.Com
         private AuthResponse RunRequest(QueryMethod method, string url, string data)
         {
             string appName = this.GetAppName();
-            AuthRequest authRequest = new AuthRequest(_consumerKey, _consumerSecret, appName, _useCompression);
+            AuthRequest authRequest = new AuthRequest(_consumerKey, _consumerSecret, appName, _useCompression, _apiVersion);
             using (authRequest)
             {
                 OnRequest(this, new RequestEventArgs(method.ToString(), url, data));

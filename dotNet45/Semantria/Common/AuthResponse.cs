@@ -16,7 +16,7 @@ namespace Semantria.Com
 
         private QueryMethod _method = QueryMethod.GET;
         private HttpStatusCode _status = HttpStatusCode.Unauthorized;
-        private string _data = "";
+        private string _data = string.Empty;
 
 
         public QueryMethod Method
