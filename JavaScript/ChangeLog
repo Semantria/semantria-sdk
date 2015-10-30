@@ -1,5 +1,10 @@
 CHANGELOG
 
+3.9.80 - Added support of Vertical packs feature.
+	- Supported vertical packs returned as part of supported features (GetSupportedFeatures method).
+	- Verticall packs allowed for the current subscription can be retrieved using GetSubscription method.
+	- Added new cloneConfiguration method for easy clonning of vertical packs.
+	
 3.9.79 - Added new test applications for following features:
 	- AutoResponseFeatureModeTestApp for demonstration of Auto-response feature.
 	- JobIdFeatureModeTestApp for demonstration of Job ID feature.

@@ -304,11 +304,12 @@
 		}
 	};
 
-	var Request = function(consumerKey, consumerSecret, applicationName, acceptEncoding) {
+	var Request = function(consumerKey, consumerSecret, applicationName, acceptEncoding, apiVersion) {
 		this.consumerKey = consumerKey;
 		this.consumerSecret = consumerSecret;
 		this.applicationName = applicationName;
 		this.acceptEncoding = acceptEncoding;
+		this.apiVersion = apiVersion
 	};
 
 
@@ -414,7 +415,7 @@
 			}
 
 			headers["x-app-name"] = this.applicationName;
-			headers["x-api-version"] = "3.8";
+			headers["x-api-version"] = this.apiVersion;
 			if (typeof navigator != "undefined" && !/WebKit/.test(navigator.userAgent))
 				headers["Accept-Encoding"] = this.acceptEncoding;
 
@@ -486,8 +487,14 @@
 		 * @var {String} SDK_VERSION
 		 * @constant
 		 */
-		SDK_VERSION: "3.9.79",
-		
+		SDK_VERSION: "3.9.80",
+
+		/**
+		 * @var {String} X_API_VERSION
+		 * @constant
+		 */
+		X_API_VERSION: '3.9',
+
 		/**
 		 * @var {String} HOST
 		 * @constant
@@ -578,6 +585,20 @@
 		},
 
 		/**
+		 * @returns {string}
+		 */
+		getAPIversion: function() {
+			return this.X_API_VERSION;
+		},
+
+		/**
+		 * @param {string} version
+		 */
+		setAPIversion: function(version) {
+			this.X_API_VERSION = version;
+		},
+
+		/**
 		 * 
 		 */
 		getStatus: function() {
@@ -618,6 +639,19 @@
 		 */
 		addConfigurations: function(params) {
 			return this.updateConfigurations.apply(this, arguments);
+		},
+
+		/**
+		 * @param {string[]} name - new configuration name
+		 * @param {string[]} template - template configuration id
+		 * @returns {*}
+		 */
+		cloneConfiguration: function(name, template) {
+			var params = {
+				name: name,
+				template: template
+			};
+			return this.addConfigurations([params]);
 		},
 
 		/**
@@ -1038,8 +1072,9 @@
 			var request = new Request(
 				this.consumerKey, 
 				this.consumerSecret, 
-				this.applicationName, 
-				this.acceptEncoding
+				this.applicationName,
+				this.acceptEncoding,
+				this.X_API_VERSION
 			);
 
 			if(config.postParams) {

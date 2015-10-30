@@ -1,7 +1,7 @@
 ;(function (){
 	// the consumer key and secret
-	var consumerKey = "__key_george",
-		consumerSecret = "__secret_george",
+	var consumerKey = "",
+		consumerSecret = "",
 		docsTracker = {};
 
 	function log(message) {

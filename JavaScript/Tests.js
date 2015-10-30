@@ -23,7 +23,7 @@
 	(function() {
 		var statistics = session.getStatistics();
 
-		if(statistics instanceof Object && 
+		if(statistics instanceof Object &&
 			typeof statistics.name != "undefined") {
 			success("getStatistics()");
 		} else {
@@ -37,7 +37,7 @@
 	(function() {
 		var subscription = session.getSubscription();
 
-		if(subscription instanceof Object && 
+		if(subscription instanceof Object &&
 			typeof subscription.name != "undefined") {
 			success("getSubscription()");
 		} else {
@@ -50,21 +50,21 @@
 	 */
 	(function() {
 		var status = session.getStatus();
-		
-		if(status instanceof Object && 
+
+		if(status instanceof Object &&
 			typeof status.api_version != "undefined") {
 			success("getStatus()");
 		} else {
 			error("getStatus()", "Object", status);
 		}
 	})();
-	
+
 	/**
 	 * @test getSupportedFeatures
 	 */
 	(function() {
 		var features = session.getSupportedFeatures("English");
-		
+
 		if(features instanceof Array &&
 			features[0].language == "English") {
 			success("getSupportedFeatures()");
@@ -73,7 +73,7 @@
 		}
 	})();
 
-	/** 
+	/**
 	 * /////////////
 	 * BLACKLIST
 	 * /////////////
@@ -89,9 +89,9 @@
 			// black list is empty
 			return success("getBlacklist()");
 		}
-		
+
 		if(blacklist instanceof Object || blacklist instanceof Array) {
-			success("getBlacklist()");	
+			success("getBlacklist()");
 		} else {
 			error("getBlacklist()", "Object or Array", blacklist);
 		}
@@ -191,7 +191,7 @@
 	})();
 
 	/**
-	 * @test removeConfigurations
+	 * @test cloneConfiguration
 	 */
 	(function() {
 		var configurations = session.getConfigurations();
@@ -209,9 +209,37 @@
 			return ;
 		}
 
-		var result = session.removeConfigurations([
-			requiredConfiguration.config_id
-		]);
+		requiredConfiguration.one_sentence = true;
+
+		var result = session.cloneConfiguration("A test configuration - cloned", requiredConfiguration.config_id);
+
+		if(result == 202) {
+			success("cloneConfiguration()");
+		} else {
+			error("cloneConfiguration()", 202, result);
+		}
+	})();
+
+	/**
+	 * @test removeConfigurations
+	 */
+	(function() {
+		var configurations = session.getConfigurations();
+		var ids = [];
+
+		for(var i=0,item=configurations[0];item=configurations[i];i++) {
+			if(/A test configuration/.test(item.name)) {
+				ids.push(item.config_id);
+			}
+		}
+		console.log(ids);
+
+		if(!ids.length) {
+			// we cannot test this method, as adding configuration has been failed
+			return ;
+		}
+
+		var result = session.removeConfigurations(ids);
 
 		if(result == 202) {
 			success("removeConfigurations()");
@@ -221,7 +249,7 @@
 	})();
 
 
-	/** 
+	/**
 	 * /////////////
 	 * CATEGORIES
 	 * /////////////
@@ -249,7 +277,7 @@
 			weight: 0.75,
 			samples: ["EC2", "AWS"]
 		}]);
-		
+
 		if(result == 202) {
 			return success("addCategories()");
 		} else {
@@ -264,7 +292,7 @@
 		var result = session.removeCategories([{
 			name: "Amazon EC2"
 		}]);
-		
+
 		if(result == 202) {
 			return success("removeCategories()");
 		} else {
@@ -280,7 +308,7 @@
 			name: "Amazon EC2",
 			weight: 0.81
 		}]);
-		
+
 		if(result == 202) {
 			return success("updateCategories()");
 		} else {
@@ -288,7 +316,7 @@
 		}
 	})();
 
-	/** 
+	/**
 	 * /////////////
 	 * QUERIES
 	 * /////////////
@@ -299,7 +327,7 @@
 	 */
 	(function() {
 		var queries = session.getQueries();
-		
+
 		if(queries instanceof Array || queries == 202) {
 			return success("getQueries()");
 		} else {
@@ -315,7 +343,7 @@
 			name: "Amazon EC2",
 			query: "Amazon AND (EC2 OR AWS)"
 		}]);
-		
+
 		if(result == 202) {
 			return success("addQueries()");
 		} else {
@@ -331,7 +359,7 @@
 			name: "Amazon EC2",
 			query: "Amazon AND (EC2 OR ec2 OR AWS OR aws)"
 		}]);
-		
+
 		if(result == 202) {
 			return success("updateQueries()");
 		} else {
@@ -346,7 +374,7 @@
 		var result = session.removeQueries([{
 			name: "Amazon EC2"
 		}]);
-		
+
 		if(result == 202) {
 			return success("removeQueries()");
 		} else {
@@ -354,7 +382,7 @@
 		}
 	})();
 
-	/** 
+	/**
 	 * /////////////
 	 * ENTITIES
 	 * /////////////
@@ -365,7 +393,7 @@
 	 */
 	(function() {
 		var entities = session.getEntities();
-		
+
 		if(entities instanceof Array) {
 			return success("getEntities()");
 		} else {
@@ -381,7 +409,7 @@
 			name: "chair",
 			type: "furniture"
 		}]);
-		
+
 		if(result == 202) {
 			return success("addEntities()");
 		} else {
@@ -397,7 +425,7 @@
 			name: "chair",
 			type: "furniture 2"
 		}]);
-		
+
 		if(result == 202) {
 			return success("updateEntities()");
 		} else {
@@ -410,7 +438,7 @@
 	 */
 	(function() {
 		var result = session.removeEntities(["chair"]);
-		
+
 		if(result == 202) {
 			return success("removeEntities()");
 		} else {
@@ -418,7 +446,7 @@
 		}
 	})();
 
-	/** 
+	/**
 	 * /////////////
 	 * PHRASES
 	 * /////////////
@@ -444,7 +472,7 @@
 			name: "awesome",
 			weight: "0.3"
 		}]);
-		
+
 		if(result == 202) {
 			return success("addPhrases()");
 		} else {
@@ -460,20 +488,20 @@
 			name: "awesome",
 			weight: "0.4"
 		}]);
-		
+
 		if(result == 202) {
 			return success("updatePhrases()");
 		} else {
 			error("updatePhrases()", 202, result);
 		}
 	})();
-	
+
 	/**
 	 * @test removePhrases
 	 */
 	(function() {
 		var result = session.removePhrases(["awesome"]);
-		
+
 		if(result == 202) {
 			return success("removePhrases()");
 		} else {
@@ -481,7 +509,7 @@
 		}
 	})();
 
-	/** 
+	/**
 	 * /////////////
 	 * DOCUMENTS && COLLECTIONS
 	 * /////////////
@@ -492,7 +520,7 @@
 	 */
 	(function() {
 		var items = session.getProcessedDocuments();
-		
+
 		if(items == 202 || items instanceof Array) {
 			return success("getProcessedDocuments()");
 		} else {
@@ -505,7 +533,7 @@
 	 */
 	(function() {
 		var items = session.getProcessedCollections();
-		
+
 		if(items == 202 || items instanceof Array) {
 			return success("getProcessedCollections()");
 		} else {
@@ -523,7 +551,7 @@
 			id: documentId,
 			text: "it works"
 		});
-		
+
 		if(result == 202) {
 			return success("queueDocument()");
 		} else {
@@ -537,7 +565,7 @@
 	(function() {
 		setTimeout(function() {
 			var result = session.getDocument(documentId);
-			
+
 			if(result instanceof Object) {
 				return success("getDocument()");
 			} else {
@@ -556,9 +584,9 @@
 			id: id,
 			text: "it works"
 		});
-		
+
 		var result = session.cancelDocument(id);
-		
+
 		if(result instanceof Object) {
 			return success("cancelDocument()");
 		} else {
@@ -582,7 +610,7 @@
 				"it works"
 			]
 		});
-		
+
 		if(result == 202) {
 			return success("queueCollection()");
 		} else {
@@ -596,7 +624,7 @@
 	(function() {
 		setTimeout(function() {
 			var result = session.getCollection(collectionId);
-			
+
 			if(result instanceof Object) {
 				return success("getCollection()");
 			} else {
@@ -621,9 +649,9 @@
 				"it works"
 			]
 		});
-		
+
 		var result = session.cancelCollection(id);
-		
+
 		if(result instanceof Object) {
 			return success("cancelCollection()");
 		} else {
@@ -641,7 +669,7 @@
 			id: id,
 			text: "Some text goes here"
 		}]);
-		
+
 		if(result == 202) {
 			return success("queueBatchOfDocuments()");
 		} else {
