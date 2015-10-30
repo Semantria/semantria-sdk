@@ -1,18 +1,15 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
-
-from io import BytesIO
-import gzip
 
 try:
-    import http.client as httplib
+    from urllib.parse import urlparse, urlunparse, urlencode, quote
 except ImportError:
-    import httplib
+    from urlparse import urlparse, urlunparse
+    from urllib import urlencode, quote
 
-import urllib
+import requests
+import json
 import time
 import random
-import urlparse
 import hmac
 import binascii
 import hashlib
@@ -29,6 +26,8 @@ OAuthNonceKey = "oauth_nonce"
 
 
 class AuthRequest:
+    apiVersion = "3.8"
+
     def __init__(self, consumerKey, consumerSecret, applicationName, use_compression=False):
         self.consumerKey = consumerKey
         self.consumerSecret = consumerSecret
@@ -44,37 +43,39 @@ class AuthRequest:
         headers = {"Authorization": authheader}
         if method == "POST":
             headers["Content-type"] = "application/x-www-form-urlencoded"
-        headers["x-api-version"] = "3.8"
+        headers["x-api-version"] = self.apiVersion
         headers["x-app-name"] = self.applicationName
         if self.use_compression:
             headers["Accept-encoding"] = "gzip"
         
-        qparts = urlparse.urlparse(query)
+        qparts = urlparse(query)
         qscheme, qnetloc, qpath, qparams, qquery, qfragment = qparts[:6]
 
-        # httplib.HTTPConnection.debuglevel = 1
-        conn = httplib.HTTPSConnection(qnetloc)
-        host = '%s?%s' % (qpath, qquery)
+        host = 'https://%s%s?%s' % (qnetloc, qpath, qquery)
 
-        conn.request(method, host, postData, headers)
-        response = conn.getresponse()
+        params = {
+            'data': postData,
+            'headers': headers
+        }
 
-        encoding = response.getheader('Content-Encoding', None)
-        if encoding is not None and encoding == 'gzip':
-            data = response.read()
-            # print "Compressed data size: ", len(data)
-            buf = BytesIO(data)
-            data = gzip.GzipFile(fileobj=buf).read()
-            # print "Uncompressed data size: ", len(data)
-        else:
-            data = response.read()
+        response = requests.request(method, host, **params)
 
-        result = {"status": response.status, "reason": response.reason, "data": data}
-        conn.close()
+        try:
+            data = json.dumps(response.json())
+        except ValueError:
+            data = ""
+
+        result = {"status": response.status_code, "reason": response.reason, "data": data}
         return result
 
+    def getApiVersion(self):
+        return self.apiVersion
+
+    def setApiVersion(self, apiVersion):
+        self.apiVersion = apiVersion
+
     def generateQuery(self, method, url, timestamp, nonce):
-        parts = urlparse.urlparse(url)
+        parts = urlparse(url)
         scheme, netloc, path, params, query, fragment = parts[:6]
         np = self.getNormalizedParameters(timestamp, nonce)
 
@@ -82,8 +83,8 @@ class AuthRequest:
             query = '%s&oauth_verifier=%s' % (query, np)
         else:
             query = '%s' % np
-        
-        return urlparse.urlunparse((scheme, netloc, path, params, query, fragment))         
+        0
+        return urlunparse((scheme, netloc, path, params, query, fragment))
 
     def generateAuthHeader(self, query, timestamp, nonce):
         md5cs = self.getMD5Hash(self.consumerSecret)
@@ -118,7 +119,7 @@ class AuthRequest:
         ]
         items.sort()
         
-        encoded_str = urllib.urlencode(items)
+        encoded_str = urlencode(items)
         # Encode signature parameters per Oauth Core 1.0 protocol
         # Spaces must be encoded with "%20" instead of "+"
         return encoded_str.replace('+', '%20').replace('%7E', '~')
@@ -148,4 +149,4 @@ class AuthRequest:
         return ''.join([str(random.randint(0, 9)) for i in range(length)])
     
     def escape(self, s):
-        return urllib.quote(s, safe='~')
+        return quote(s, safe='~')

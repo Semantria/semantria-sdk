@@ -86,7 +86,7 @@ if len(documents):
 
 print("")
 
-while len(filter(lambda x: x == TASK_STATUS_QUEUED, tracker.values())):
+while len(list(filter(lambda x: x == TASK_STATUS_QUEUED, tracker.values()))):
     time.sleep(0.5)
     print("Retrieving your processed results...")
 

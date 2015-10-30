@@ -7,8 +7,8 @@ import uuid
 import semantria
 
 # API Key/Secret
-SEMANTRIA_KEY = ''
-SEMANTRIA_SECRET = ''
+consumerKey = ""
+consumerSecret = ""
 
 # List for results
 results = []
@@ -28,7 +28,7 @@ if __name__ == "__main__":
 
     docs = []
     print("Reading documents from file...")
-    with open('source.txt') as f:
+    with open('source.txt', encoding='utf-8') as f:
         for line in f:
             docs.append(line)
 
@@ -37,7 +37,7 @@ if __name__ == "__main__":
         sys.exit(1)
 
     # Initializes Semantria Session
-    session = semantria.Session(SEMANTRIA_KEY, SEMANTRIA_SECRET, use_compression=True)
+    session = semantria.Session(consumerKey, consumerSecret, use_compression=True)
     session.Error += onError
     session.DocsAutoResponse += autoresponse_handler
 
@@ -72,13 +72,12 @@ if __name__ == "__main__":
         time.sleep(0.1)
         print("Documents queued/received rate: {0}/{1}".format(counter, len(results)))
 
-    # The final call to get remained data from server, Just for demo purposes.
-    time.sleep(1)
+    # The final call to get remaining data from server, Just for demo purposes.
+    time.sleep(2)
     while len(results) < len(docs):
         result = session.getProcessedDocuments()
         for data in results:
             results.append(data)
-
         time.sleep(0.5)
 
     print("Documents queued/received rate: {0}/{1}".format(len(docs), len(results)))

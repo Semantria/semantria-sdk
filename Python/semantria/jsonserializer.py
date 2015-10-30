@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 
 import json
 from semantria.error import SemantriaError
@@ -30,5 +30,11 @@ class JsonSerializer:
 
     def deserialize(self, string, handler=None):
         #decoder = json.JSONDecoder()
-        #return json.loads(string.decode('utf-8'))
-        return json.loads(string)
+        if isinstance(string, bytes):
+            return json.loads(string.decode('utf-8'))
+        elif isinstance(string, str):
+            return json.loads(string)
+        else:
+            raise RuntimeError("Can't deserialize a {}".format(type(string)))
+
+

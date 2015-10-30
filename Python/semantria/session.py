@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
 
 try:
     import http.client as httplib
+
 except ImportError:
     import httplib
 
@@ -10,7 +10,6 @@ from semantria.authrequest import *
 from semantria.error import SemantriaError
 from semantria.jsonserializer import * 
 from semantria.version import WRAPPER_VERSION
-
 
 class Session(object):
     host = 'https://api.semantria.com'
@@ -56,6 +55,12 @@ class Session(object):
             self.format = serializer.gettype()
         else:
             raise SemantriaError('Parameter not found: %s' % serializer)
+
+    def getApiVersion(self):
+        return self._request.apiVersion
+
+    def setApiVersion(self, apiVersion):
+        self._request.apiVersion = apiVersion
 
     def getStatus(self):
         url = '{0}/status.{1}'.format(self.host, self.format)
@@ -111,6 +116,12 @@ class Session(object):
         wrapper = self._getTypeWrapper("update_configurations")
         data = self.serializer.serialize(items, wrapper)
         return self._runRequest("POST", url, None, data)
+
+    def cloneConfiguration(self, name, template):
+        if name is None:
+            name = ''
+        items = [name, template]
+        return self.updateConfigurations(items)
 
     def removeConfigurations(self, config_id):
         url = '{0}/configurations.{1}'.format(self.host, self.format)
@@ -518,7 +529,7 @@ class Session(object):
         status = response["status"]
         message = response["reason"]
 
-        if response["data"] != "":
+        if response["data"]:
             message = response["data"]
 
         if method == "DELETE":

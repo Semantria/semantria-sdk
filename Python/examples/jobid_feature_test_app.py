@@ -68,7 +68,8 @@ if __name__ == "__main__":
         for job_id, docs in documents.items():
             full_batch.extend(docs)
 
-        if session.queueBatch(full_batch) is not None:
+        resp = session.queueBatch(full_batch)
+        if resp is not None:
             print("{0} documents queued in single batch".format(len(full_batch)))
 
     print("")

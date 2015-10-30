@@ -7,8 +7,8 @@ import uuid
 import semantria
 
 # API Key/Secret
-SEMANTRIA_KEY = ''
-SEMANTRIA_SECRET = ''
+consumerKey = ""
+consumerSecret = ""
 
 
 def onError(sender, result):
@@ -19,7 +19,7 @@ if __name__ == "__main__":
 
 	docs = []
 	print("Reading collection from file...")
-	with open('source.txt') as f:
+	with open('source.txt', encoding='utf-8') as f:
 		for line in f:
 			docs.append(line)
 
@@ -28,7 +28,7 @@ if __name__ == "__main__":
 		sys.exit(1)
 
 	# Initializes Semantria Session
-	session = semantria.Session(SEMANTRIA_KEY, SEMANTRIA_SECRET, use_compression=True)
+	session = semantria.Session(consumerKey, consumerSecret, use_compression=True)
 	session.Error += onError
 
 	# Queues collection for analysis using default configuration

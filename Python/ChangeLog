@@ -1,8 +1,18 @@
 CHANGELOG
 
-3.8.79 - Reworked detailed_mode_test_app application to use batch mode for documents queuing instead of pushing documents one by one.
+3.9.82 - Merged SDK for 2.x and 3.x versions of Python interpret. Common SDK is work for both versions now.
+	- Replaced native HTTP libraries with more advanced requests library.
 
-3.8.78 - Added test application of JobID feature introduced in API 3.8
+3.9.81 - Added support of Vertical packs feature.
+	- Supported vertical packs returned as part of supported features (GetSupportedFeatures method).
+	- Verticall packs allowed for the current subscription can be retrieved using GetSubscription method.
+	- Added new CloneConfiguration method for easy clonning of vertical packs.
+
+3.8.80 - - Reworked detailed_mode_test_app application to use batch mode for documents queuing instead of pushing documents one by one.
+
+3.8.79 - Added test application of JobID feature introduced in API 3.8
+
+3.8.78 - Updated to Python 3. No change in functionality.
 
 3.8.77 - Tested on compatibility with Semantria API 3.8
 	- Added Normalized and Stemmed forms (fields) to the Theme object.
