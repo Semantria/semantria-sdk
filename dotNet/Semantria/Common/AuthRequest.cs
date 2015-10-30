@@ -13,14 +13,15 @@ namespace Semantria.Com
     { 
         #region Constructor
 
-        public AuthRequest(string consumerKey, string consumerSecret, string appName, bool useCompression = false)
+        public AuthRequest(string consumerKey, string consumerSecret, string appName, bool useCompression = false, string apiVersion = "3.9")
         {
             _consumerKey = consumerKey; 
             _consumerSecret = consumerSecret;
             _appName = appName;
             _useCompression = useCompression;
+            _apiVersion = apiVersion;
 
-			//This option need to beuncommented to prevent verification of SSL certificate.
+            //This option need to beuncommented to prevent verification of SSL certificate.
             //ServicePointManager.ServerCertificateValidationCallback = (a, b, c, d) => true;
         }
 
@@ -36,11 +37,12 @@ namespace Semantria.Com
         
         #region Private
 
-        private string _consumerKey = "";
-        private string _consumerSecret = "";
-        private string _appName = "";
+        private string _consumerKey = string.Empty;
+        private string _consumerSecret = string.Empty;
+        private string _appName = string.Empty;
         private bool _useCompression = false;
-        
+        private string _apiVersion = string.Empty;
+
         #endregion
 
         #region Protected
@@ -67,8 +69,8 @@ namespace Semantria.Com
         /// <returns>The web server response.</returns>
         public AuthResponse AuthWebRequest(QueryMethod method, string url, string postData)
         {
-            string querystring = "";
-            string authheader = "";
+            string querystring = string.Empty;
+            string authheader = string.Empty;
 
             Uri uri = new Uri(url);
 
@@ -104,7 +106,7 @@ namespace Semantria.Com
             webRequest.Credentials = CredentialCache.DefaultCredentials;
 
             webRequest.Headers.Add("x-app-name", _appName);
-            webRequest.Headers.Add("x-api-version", "3.9");
+            webRequest.Headers.Add("x-api-version", _apiVersion);
             webRequest.Headers.Add("Authorization", authheader);
             if (_useCompression == true)
             {

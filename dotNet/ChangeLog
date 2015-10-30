@@ -1,5 +1,10 @@
 CHANGELOG
 
+3.9.88 - Added support of Vertical packs feature.
+	- Supported vertical packs returned as part of supported features (GetSupportedFeatures method).
+	- Verticall packs allowed for the current subscription can be retrieved using GetSubscription method.
+	- Added new CloneConfiguration method for easy clonning of vertical packs.
+
 3.9.87 - Fixed problem with default serializer. In case of usage of CreateSession method without serializer SDK didn't use default serializer and threw NULL pointer exception.
 
 3.8.86 - Added support of model-based sentiment feature.

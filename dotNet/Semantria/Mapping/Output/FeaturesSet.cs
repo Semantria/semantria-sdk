@@ -37,6 +37,11 @@ namespace Semantria.Com.Mapping.Output
         [DataMember(Name = "discovery_mode")]
         [XmlElementAttribute("discovery_mode")]
         public DiscoveryModeFeatures DiscoveryMode { get; set; }
+
+        [DataMember(Name = "templates", EmitDefaultValue = false)]
+        [XmlArrayAttribute("templates")]
+        [XmlArrayItemAttribute("template", typeof(Template))]
+        public List<Template> Templates { get; set; }
     }
 
     [DataContract(Name = "settings")]

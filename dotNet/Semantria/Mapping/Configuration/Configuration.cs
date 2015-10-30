@@ -57,6 +57,18 @@ namespace Semantria.Com.Mapping.Configuration
         [XmlElementAttribute("callback")]
         public string Callback { get; set; }
 
+        [DataMember(Name = "from_template_config_id")]
+        [XmlElementAttribute("from_template_config_id")]
+        public string FromTemplateId { get; set; }
+
+        [DataMember(Name = "version")]
+        [XmlElementAttribute("version")]
+        public string Version { get; set; }
+
+        [DataMember(Name = "modified")]
+        [XmlElementAttribute("modified")]
+        public string Modified { get; set; }
+
         [DataMember(Name = "document")]
         [XmlElementAttribute("document", typeof(DocConfiguration))]
         public DocConfiguration Document { get; set; }

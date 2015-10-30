@@ -17,8 +17,8 @@ namespace JobIdFeatureTestApp
         static void Main(string[] args)
         {
             // Use correct Semantria API credentias here
-            string consumerKey = "";
-            string consumerSecret = "";
+            string consumerKey = string.Empty;
+            string consumerSecret = string.Empty;
 
             // null - send every single document separately
             // false - send uniqueJobIdCount batches

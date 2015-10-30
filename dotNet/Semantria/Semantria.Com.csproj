@@ -105,6 +105,7 @@
     <Compile Include="Mapping\Output\Status.cs" />
     <Compile Include="Mapping\Output\Subscription.cs" />
     <Compile Include="Mapping\Collection.cs" />
+    <Compile Include="Mapping\Output\Template.cs" />
     <Compile Include="Serializers\JsonSerializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Common\QueryParameters.cs" />

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 
@@ -190,6 +191,12 @@ namespace Semantria.Com.Mapping.Output
         [DataMember(Name = "collection")]
         [XmlElementAttribute("collection")]
         public CollsFeatureSettings Collection { get; set; }
+
+
+        [DataMember(Name = "templates", EmitDefaultValue = false)]
+        [XmlArrayAttribute("templates")]
+        [XmlArrayItemAttribute("template", typeof(Template))]
+        public List<Template> Templates { get; set; }
     }
 
     [DataContract(Name = "document")]

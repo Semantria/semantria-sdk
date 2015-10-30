@@ -21,6 +21,14 @@ namespace Semantria.Com.Mapping.Output
         [XmlElementAttribute("strength_score")]
         public float StrengthScore { get; set; }
 
+        [DataMember(Name = "sentiment_score")]
+        [XmlElementAttribute("sentiment_score")]
+        public float SentimentScore { get; set; }
+
+        [DataMember(Name = "sentiment_polarity")]
+        [XmlElementAttribute("sentiment_polarity")]
+        public string SentimentPolarity { get; set; }
+
         [DataMember(Name = "categories")]
         [XmlArrayAttribute("categories")]
         [XmlArrayItemAttribute("category", typeof(DocCategory))]

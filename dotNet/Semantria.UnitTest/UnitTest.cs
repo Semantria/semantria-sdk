@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Diagnostics;
 using System.Text;
+using System.Linq;
 
 using Semantria.Com.Mapping.Configuration;
 using Semantria.Com.Mapping.Output;
@@ -24,8 +25,8 @@ namespace Semantria.Com.TestUnitApi
             //
         }
 
-        private string _consumerKey = "";
-        private string _consumerSecret = "";
+        private string _consumerKey = string.Empty;
+        private string _consumerSecret = string.Empty;
 
         private string _id = "3E08B37B-0D74-4BF0-9380-E4D7E8C0279E"; 
         private string _message = "Amazon Web Services has announced a new feature called VM₤Ware Import, which allows IT departments to move virtual machine images from their internal data centers to the cloud.";
@@ -66,7 +67,9 @@ namespace Semantria.Com.TestUnitApi
         [TestInitialize()]
         public void MyTestInitialize() 
         {
-            _session = Session.CreateSession(_consumerKey, _consumerSecret);
+            ISerializer serializer = new JsonSerializer();
+            _session = Session.CreateSession(_consumerKey, _consumerSecret, serializer);
+            _session.Host = "https://api.semantria.com";
 
             _session.Request += new Session.RequestHandler(session_Request);
             _session.Response += new Session.ResponseHandler(session_Response);
@@ -124,6 +127,54 @@ namespace Semantria.Com.TestUnitApi
             List<Configuration> result = _session.GetConfigurations();
             Assert.IsNotNull(result);
             if (result == null) return;
+        }
+
+        [TestMethod]
+        public void CloneConfiguration()
+        {
+            List<Configuration> result = _session.GetConfigurations();
+            Assert.IsNotNull(result);
+            if (result == null) return;
+
+            string name = "netCloneTest_name_3_3";
+            string template = string.Empty;
+            Configuration primaryConfig = null;
+            foreach (Configuration item in result)
+            {
+                if (item.IsPrimary == true)
+                {
+                    template = item.ConfigId;
+                    primaryConfig = item;
+                    break;
+                }
+            }
+            Assert.AreNotSame(string.Empty, template);
+            var res = _session.CloneConfiguration(name, template);
+            Assert.AreEqual(202, res);
+            Configuration clone = null;
+            result = _session.GetConfigurations();
+            if (!result.Any(item => item.Name.Equals(name)))
+            {
+                Assert.Fail();
+            }
+            else
+            {
+                clone = result.First(item => item.Name.Equals(name));
+                Assert.AreNotEqual(primaryConfig.ConfigId, clone.ConfigId);
+                Assert.AreNotEqual(primaryConfig.Name, clone.Name);
+            }
+
+            List<Configuration> removeList = new List<Configuration>();
+            removeList.Add(clone);
+            res = _session.RemoveConfigurations(removeList);
+            Assert.AreEqual(202, res);
+
+            result = _session.GetConfigurations();
+            if (result.Any(item => item.Name.Equals(name)))
+            {
+                Assert.Fail();
+            }
+
         }
 
         [TestMethod]

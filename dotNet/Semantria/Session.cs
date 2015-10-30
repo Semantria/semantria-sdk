@@ -63,13 +63,14 @@ namespace Semantria.Com
 
         #region Private variables
 
-        private string _consumerKey = "";
-        private string _consumerSecret = "";
-        private string _appName = "";
+        private string _consumerKey = string.Empty;
+        private string _consumerSecret = string.Empty;
+        private string _appName = string.Empty;
         private ISerializer _serializer = null;
         private string _format = "json";
 		private string _host = "https://api.semantria.com";
         private bool _useCompression = false;
+        private string _apiVersion = "3.9";
         private const string WRAPPER_NAME = "dotNet";
 
         #endregion
@@ -86,6 +87,12 @@ namespace Semantria.Com
         {
             get { return _useCompression; }
             set { _useCompression = value; }
+        }
+
+        public string APIversion
+        {
+            get { return _apiVersion; }
+            set { _apiVersion = value; }
         }
 
         #endregion
@@ -310,6 +317,14 @@ namespace Semantria.Com
         public int RemoveConfigurations(List<Configuration> items)
         {
             return this.Update<Configuration>(QueryMethod.DELETE, items);
+        }
+
+        public int CloneConfiguration(string name, string template)
+        {
+            var items = new List<Configuration>();
+            items.Add(new Configuration() { Name = name, Template = template });
+
+            return this.AddConfigurations( items);
         }
 
         #endregion Configuration
@@ -819,7 +834,7 @@ namespace Semantria.Com
 
         private string GetTag<T>()
         {
-            string tag = "";
+            string tag = string.Empty;
             
             if (typeof(T).Equals(typeof(Configuration)))
                 tag = "configurations";
@@ -864,7 +879,7 @@ namespace Semantria.Com
         private AuthResponse RunRequest(QueryMethod method, string url, string data)
         {
             string appName = this.GetAppName();
-            AuthRequest authRequest = new AuthRequest(_consumerKey, _consumerSecret, appName, _useCompression);
+            AuthRequest authRequest = new AuthRequest(_consumerKey, _consumerSecret, appName, _useCompression, _apiVersion);
             using (authRequest)
             {
                 OnRequest(this, new RequestEventArgs(method.ToString(), url, data));
@@ -927,7 +942,7 @@ namespace Semantria.Com
 
         private List<DocAnalyticData> PostQueueBatch(string url, List<Document> tasks)
         {
-            string data = "";
+            string data = string.Empty;
             switch (_format)
             {
                 case "json":
