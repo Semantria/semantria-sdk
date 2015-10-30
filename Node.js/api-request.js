@@ -28,6 +28,7 @@ function runApiRequest(session, options) {
 			nonceKey: "oauth_nonce"
 		},
 		SDK_VERSION: session.SDK_VERSION,
+		X_API_VERSION: session.X_API_VERSION,
 		API_HOST: session.API_HOST,
 		consumerKey: session.consumerKey,
 		consumerSecret: session.consumerSecret,
@@ -156,7 +157,7 @@ function getRequestHeaders(api_request) {
 	}
 
 	headers["x-app-name"] = api_request.applicationName;
-	headers["x-api-version"] = "39";
+	headers["x-api-version"] = api_request.X_API_VERSION;
 
 	return headers;
 

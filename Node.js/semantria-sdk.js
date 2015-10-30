@@ -55,6 +55,12 @@ Session.prototype = {
 	SDK_VERSION: require('./package').version,
 
 	/**
+	 * @var {String} X_API_VERSION
+	 * @constant
+	 */
+	X_API_VERSION: '3.9',
+
+	/**
 	 * @var {String} HOST
 	 * @constant
 	 */
@@ -87,6 +93,20 @@ Session.prototype = {
 	 * @returns {undefiend}
 	 */
 	onAfterResponse: emptyFn,
+
+	/**
+	 * @returns {string}
+	 */
+	getAPIversion: function() {
+		return this.X_API_VERSION;
+	},
+
+	/**
+	 * @param {string} version
+	 */
+	setAPIversion: function(version) {
+		this.X_API_VERSION = version;
+	},
 
 	/**
 	 * @param {(boolean|SemantriaApiCallback)} [false] callback
@@ -177,6 +197,23 @@ Session.prototype = {
 			postParams: params,
 			callback: callback
 		});
+	},
+
+	/**
+	 * @param {string[]} name - new configuration name
+	 * @param {string[]} template - template configuration id
+	 * @param {(boolean|SemantriaApiCallback)} [false] callback
+	 *    false - synchronous call; retutn api response
+	 *    true  - asynchronous call; retutn Promise
+	 *    SemantriaApiCallback - asynchronous call
+	 * @returns {*}
+	 */
+	cloneConfiguration: function(name, template, callback) {
+		var params = {
+			name: name,
+			template: template
+		};
+		return this.addConfigurations([params], callback);
 	},
 
 	/**

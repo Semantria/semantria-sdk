@@ -60,7 +60,10 @@ describe('semantria-sdk [sync]', function() {
 	describe('[get/add/update/remove] Configurations', function () {
 		var configuration = null,
 			configuration_id = false,
-			configuration_name = "Test configuration";
+			configuration_name = "Test configuration",
+			configuration2 = null,
+			configuration2_id = false,
+			configuration2_name = "Test configuration - clone";
 
 		it('getConfigurations()', function () {
 			var configurations = session.getConfigurations();
@@ -108,9 +111,29 @@ describe('semantria-sdk [sync]', function() {
 			assert.strictEqual(find_configuration.name, configuration_name, "test configuration has not correct name");
 		});
 
+		it('cloneConfiguration()', function () {
+			if (!configuration_id) throw 'Test item not was added';
+			var result = session.cloneConfiguration(configuration2_name, configuration_id);
+			assert.equal(result, 202, "cloneConfiguration() response");
+
+			//check: configuration exists
+			var configurations = session.getConfigurations();
+			var find_configuration = false;
+			for (var i=0; i<configurations.length; i++) {
+				if (configurations[i].name == configuration2_name) {
+					find_configuration = configurations[i];
+					configuration2_id = configurations[i].config_id;
+					configuration2 = configurations[i];
+				}
+			}
+			assert.ok( find_configuration instanceof Object, "test configuration not exists" );
+		});
+
 		it('removeConfigurations()', function () {
 			if (!configuration_id) throw 'Test item not was added';
-			var result = session.removeConfigurations([configuration_id]);
+			var ids = [configuration.config_id];
+			if (configuration2_id) ids.push(configuration2_id);
+			var result = session.removeConfigurations(ids);
 			assert.equal(result, 202, "removeConfigurations() response");
 
 			//check: configuration was removed

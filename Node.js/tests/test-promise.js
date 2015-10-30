@@ -85,7 +85,10 @@ describe('semantria-sdk [promise]', function() {
 	describe('[get/add/update/remove] Configurations', function () {
 		var configuration = null,
 			configuration_id = false,
-			configuration_name = "Test configuration";
+			configuration_name = "Test configuration",
+			configuration2 = null,
+			configuration2_id = false,
+			configuration2_name = "Test configuration - clone";
 
 		it('getConfigurations()', function ( done ) {
 			var async_wait = true;
@@ -151,10 +154,36 @@ describe('semantria-sdk [promise]', function() {
 
 		});
 
+		it('cloneConfiguration()', function ( done ) {
+			if (!configuration_id) throw 'Test item not was added';
+			var async_wait = true;
+			session.cloneConfiguration(configuration2_name, configuration_id, true ).then(function(result) {
+				async_wait = false;
+				assert.equal(result, 202, "cloneConfiguration() response");
+
+				//check: configuration exists
+				return session.getConfigurations(true);
+			}).then(function(configurations){
+				var find_configuration = false;
+				for (var i=0; i<configurations.length; i++) {
+					if (configurations[i].name == configuration2_name) {
+						find_configuration = configurations[i];
+						configuration2_id = configurations[i].config_id;
+						configuration2 = configurations[i];
+					}
+				}
+				assert.ok( find_configuration instanceof Object, "test configuration not exists" );
+				done();
+			}).catch(done);
+			assert.ok(async_wait, 'synchronous call for cloneConfiguration()');
+		});
+
 		it('removeConfigurations()', function ( done ) {
 			if (!configuration_id) throw 'Test item not was added';
 			var async_wait = true;
-			session.removeConfigurations([configuration_id], true).then(function (result) {
+			var ids = [configuration.config_id];
+			if (configuration2_id) ids.push(configuration2_id);
+			session.removeConfigurations(ids, true).then(function (result) {
 				async_wait = false;
 				assert.equal(result, 202, "removeConfigurations() response");
 
