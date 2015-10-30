@@ -1,5 +1,10 @@
 CHANGELOG
 
+3.9.84 - Added support of Vertical packs feature.
+	- Supported vertical packs returned as part of supported features (GetSupportedFeatures method).
+	- Verticall packs allowed for the current subscription can be retrieved using GetSubscription method.
+	- Added new CloneConfiguration method for easy clonning of vertical packs.
+
 3.9.83 - Added missed sample application for Job ID feature.
 
 3.8.82 - Added support of model-based sentiment feature.

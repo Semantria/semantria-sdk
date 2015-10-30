@@ -26,11 +26,13 @@ public class SessionTest
 
 	private Configuration m_config = null;
 	private ISerializer serializer = new JsonSerializer();
+    private String version = "3.9";
 
 	@Test
 	public void test01CreateSessionStringStringISerializer()
 	{
 		Session session = Session.createSession(key, secret, serializer);
+        session.setApiVersion(version);
 		assertEquals(Session.class, session.getClass());
 	}
 
@@ -112,11 +114,7 @@ public class SessionTest
 		}
 		assertEquals(new Integer(20), m_config.getCharsThreshold());
 
-		m_config.setTemplate( m_config.getId() );
-		m_config.setName( "CLONED_TEST_CONFIG" );
-
-		session.addConfigurations( Arrays.asList( m_config ) );
-
+        session.cloneConfigurations("CLONED_TEST_CONFIG", m_config.getId());
 		for(Configuration config : session.getConfigurations())
 		{
 			if(config.getName().equals("CLONED_TEST_CONFIG"))
@@ -413,14 +411,14 @@ public class SessionTest
 		for ( int i = 0; i < 5; i++ )
 		{
 			task = session.getDocument("TEST_ID_1", configId);
-			if (task != null)
+			if (task != null && task.getStatus().equals(TaskStatus.PROCESSED))
 			{
 				break;
 			}
 			
 			try
 			{
-				Thread.sleep(1000L);
+				Thread.sleep(5000L);
 			} catch (InterruptedException e)
 			{
 				e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -456,14 +454,14 @@ public class SessionTest
 		for ( int i = 0; i < 5; i++ )
 		{
 			data = session.getProcessedDocuments(configId);
-			if (data != null)
+			if (data != null && !data.isEmpty())
 			{
 				break;
 			}
 			
 			try
 			{
-				Thread.sleep(1000L);
+                Thread.sleep(5000L);
 			} catch (InterruptedException e)
 			{
 				e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
@@ -516,14 +514,14 @@ public class SessionTest
 		for ( int i = 0; i < 5; i++ )
 		{
 			data = session.getProcessedCollections(configId);
-			if (data != null)
+			if (data != null && !data.isEmpty())
 			{
 				break;
 			}
 			
 			try
 			{
-				Thread.sleep(1000L);
+                Thread.sleep(5000L);
 			} catch (InterruptedException e)
 			{
 				e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.

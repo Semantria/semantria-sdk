@@ -1,12 +1,16 @@
 package com.semantria.mapping.configuration;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlTransient;
+import java.sql.Timestamp;
 
 public final class Configuration
 {
 	private String config_id = null;
 	private String template = null;
 	private String name = null;
+    private String from_template_config_id = null;
+    private String version = null;
 	private Boolean auto_response = null;
 	private Boolean is_primary = null;
 	private Boolean one_sentence = null;
@@ -18,6 +22,7 @@ public final class Configuration
 	private CollConfiguration collection = null;
 	private String callback = null;
     private Boolean process_html = null;
+    private transient Timestamp modified = null;
 
 	public Configuration() {}
 
@@ -46,6 +51,10 @@ public final class Configuration
 	public String getLanguage() { return language; }
 	@XmlElement(name="name")
 	public String getName() { return name; }
+    @XmlElement(name="from_template_config_id")
+    public String getFrom_template_config_id() { return from_template_config_id; }
+    @XmlElement(name="version")
+    public String getVersion() { return version; }
 	@XmlElement(name="chars_threshold")
 	public Integer getCharsThreshold() { return chars_threshold; }
 	@XmlElement(name="categories_threshold")
@@ -62,11 +71,15 @@ public final class Configuration
 	public Boolean getOneSentence() { return one_sentence; }
     @XmlElement(name = "process_html")
     public Boolean getProcessHtml() { return  process_html; }
+    @XmlTransient
+    public Timestamp getModified() { return modified; }
 
 	public void setId(String id) { this.config_id = id; }
 	public void setAutoResponse(Boolean auto_response) { this.auto_response = auto_response; }
 	public void setIsPrimary(Boolean is_primary) { this.is_primary = is_primary; }
 	public void setName(String name) { this.name = name; }
+    public void setVersion(String version) { this.version = version; }
+    public void setFrom_template_config_id(String from_template_config_id) { this.from_template_config_id = from_template_config_id; }
 	public void setCollection(CollConfiguration collection) { this.collection = collection; }
 	public void setDocument(DocConfiguration document) { this.document = document;	}
 	public void setLanguage(String lang) { language = lang; }
@@ -77,4 +90,5 @@ public final class Configuration
 	public void setOneSentence(Boolean value) { one_sentence = value; }
 	public void setTemplate(String template) { this.template = template; }
     public void setProcessHtml(Boolean process_html) { this.process_html = process_html; }
+    public void setModified(Timestamp modified) { this.modified = modified; }
 }

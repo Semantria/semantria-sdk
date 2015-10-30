@@ -3,7 +3,9 @@ package com.semantria.mapping.output;
 import com.semantria.mapping.output.features.*;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.List;
 
 /**
  * Created by George on 2/11/2015.
@@ -17,6 +19,7 @@ public class FeaturesSet
     private APISettings settings;
     private DetailedModeFeatures detailed_mode;
     private DiscoveryModeFeatures discovery_mode;
+    private List<Template> templates;
 
     public FeaturesSet() {};
 
@@ -34,6 +37,9 @@ public class FeaturesSet
     public DetailedModeFeatures getDetailedModeFeatures() { return detailed_mode; }
     @XmlElement(name = "discovery_mode")
     public DiscoveryModeFeatures getDiscoveryModeFeatures() { return discovery_mode; }
+    @XmlElementWrapper(name="templates")
+    @XmlElement(name="template")
+    public List<Template> getTemplates() { return templates; }
 
     public void setId(String id) { this.id = id; }
     public void setLanguage(String language) { this.language = language; }
@@ -41,4 +47,5 @@ public class FeaturesSet
     public void setAPISettings(APISettings settings) { this.settings = settings; }
     public void setDetailedModeFeatures(DetailedModeFeatures features) { this.detailed_mode = features; }
     public void setDiscoveryModeFeatures(DiscoveryModeFeatures features) { this.discovery_mode = features; }
+    public void setTemplates(List<Template> templates) { this.templates = templates; }
 }

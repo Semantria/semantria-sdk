@@ -27,81 +27,88 @@ public final class AuthRequest
 	private String secret = "";
 	private String response = "";
 	private String rurl = "";
-	private String appName = "Java/3.8.82/";
+	private String appName = "Java/3.9.86/";
+    private String apiVersion = "";
 	private boolean useCompression = false;
 	private String errorMsg = null;
     private int CONNECTION_TIMEOUT = 120000;
 
-	public AuthRequest(String curl, String cmethod, String ckey, String csecret, boolean useCompression)
-	{	 
-		this(curl, cmethod, ckey, csecret, null, null, useCompression);
-	}
-		
-	public AuthRequest(String curl, String cmethod, String ckey, String csecret, String cbody, String config, boolean useCompression)
-	{	 
-		this(curl, cmethod, ckey, csecret, cbody, config, null, useCompression);
-	}
-
-	public AuthRequest(String curl, String cmethod, String ckey, String csecret, String cbody, final String config, String app_name, boolean useCompression)
-	{
-		this(curl, cmethod, ckey, csecret, cbody, app_name, useCompression, new HashMap<String, String>() {{ put("config_id", config); }});
-	}
-
-    public AuthRequest(String curl, String cmethod, String ckey, String csecret, String cbody, final String config, String app_name, final String interval, boolean useCompression)
-    {
-        this(curl, cmethod, ckey, csecret, cbody, app_name, useCompression, new HashMap<String, String>() {{ put("interval", interval); put("config_id", config); }});
+    public static AuthRequest getInstance(String url, String method) {
+        AuthRequest result = new AuthRequest(url, method);
+        return result;
     }
 
-	public AuthRequest(String curl, String cmethod, String ckey, String csecret, String cbody, String app_name, boolean useCompression, HashMap<String, String> parameters)
-	{
-		try {
-            this.useCompression = useCompression;
-            url = curl;
-            method = cmethod;
-            key = ckey;
-            secret = hashMD5(csecret);
+    private AuthRequest(String url, String method) {
+        this.url = url;
+        this.method = method;
 
-            if (!parameters.isEmpty()) {
-                if (parameters.containsKey("config_id")) {
-                    String config = parameters.get("config_id");
-                    if (config == null) {
-                        parameters.remove("config_id");
-                    }
-                }
+        this.params = new HashMap<String, String>();
+    }
 
-                if (parameters.containsKey("interval")) {
-                    String config = parameters.get("interval");
-                    if (config == null) {
-                        parameters.remove("interval");
-                    }
-                }
+    public AuthRequest key(String key) {
+        this.key = key;
+        return this;
+    }
 
-                if (!parameters.isEmpty()) {
-                    params = parameters;
-                }
-            }
+    public AuthRequest secret(String secret) {
+        this.secret = hashMD5(secret);
+        return this;
+    }
 
-			if(app_name != null)
-			{
-				appName = app_name + "/" + appName + ( curl.contains("json") ? "JSON" : "XML" );
-			}
-			else
-			{
-				appName = appName +  ( curl.contains("json") ? "JSON" : "XML" );
-			}
+    public AuthRequest body(String body) {
+        if (body != null) {
+            this.body = body;
+        }
+        return this;
+    }
 
-			if(cbody != null)
-			{
-				body = cbody;
-			}
-		}
-		catch(Exception e)
-		{
-			System.out.println(e);
-			//end of all being if there's no md5 in java.security.MessageDigest
-		}
-	}
-	
+    public AuthRequest config_id(String config_id) {
+        this.setParam("config_id", config_id);
+        return this;
+    }
+
+    private void setParam(String key, String value) {
+        if (value != null) {
+            this.params.put(key, value);
+        } else if (this.params.containsKey(key)) {
+            this.params.remove(key);
+        }
+    }
+
+    public AuthRequest interval(String interval) {
+        this.setParam("interval", interval);
+        return this;
+    }
+
+    public AuthRequest job_id(String job_id) {
+        this.setParam("job_id", job_id);
+        return this;
+    }
+
+    public AuthRequest language(String language) {
+        this.setParam("language", language);
+        return this;
+    }
+
+    public AuthRequest useCompression(boolean useCompression) {
+        this.useCompression = useCompression;
+        return this;
+    }
+
+    public AuthRequest appName(String appName) {
+        if (appName == null) {
+            appName = "";
+        }
+        String prefix = this.url.contains("json") ? "JSON" : "XML";
+        this.appName = appName + "/" + this.appName + prefix;
+        return this;
+    }
+
+    public AuthRequest apiVersion(String apiVersion) {
+        this.apiVersion = apiVersion;
+        return this;
+    }
+
 	public Integer doRequest()
 	{
 		try
@@ -179,7 +186,7 @@ public final class AuthRequest
 		conn.setRequestProperty("Authorization", "OAuth,oauth_consumer_key=\"" + key + "\",oauth_signature=\""
     					+ URLEncoder.encode(signupRequest(rurl, secret), "UTF-8") + "\"");
 		conn.setRequestProperty("x-app-name", appName);
-		conn.setRequestProperty("x-api-version", "3.8");
+        conn.setRequestProperty("x-api-version", apiVersion);
 	}
 	
 	private void sendRequestBodyIfSetted(HttpURLConnection conn) throws IOException {
