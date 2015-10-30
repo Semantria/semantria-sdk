@@ -1,11 +1,11 @@
 ﻿<?php
 
-require_once 'PHPUnit/Autoload.php';
-require_once 'semantria/session.php';
+require_once '../vendor/autoload.php';
+require_once '../semantria/session.php';
 
 // the consumer key and secret
-define('CONSUMER_KEY', "");
-define('CONSUMER_SECRET', "");
+define('CONSUMER_KEY', "__key_george");
+define('CONSUMER_SECRET', "__secret_george");
 
 $id = uniqid('');
 $message = "Amazon Web Services has announced a new feature called VM£Ware Import, which "

@@ -5,7 +5,7 @@ require_once('authrequest.php');
 require_once('jsonserializer.php');
 //require_once('common.php');
 
-define('WRAPPER_VERSION', "3.8.81");
+define('WRAPPER_VERSION', "3.8.82");
 
 class Session
 {
@@ -81,6 +81,18 @@ class Session
             throw new \Exception('Parameter is null or empty "' . $serializer . '"');
         }
     }
+    
+    public function getApiVersion() {
+    	return $this->request->getApiVersion();
+    }
+    
+    /**
+     * 
+     * @param string $apiVersion
+     */
+    public function setApiVersion($apiVersion) {
+    	$this->request->setApiVersion($apiVersion);
+    }
 
     public function getStatus()
     {
@@ -128,6 +140,15 @@ class Session
         $wrapper = $this->getTypeWrapper("update_configurations");
         $data = $this->serializer->serialize($items, $wrapper);
         return $this->runRequest("POST", $url, NULL, $data);
+    }
+    
+	public function cloneConfiguration($name, $template) {
+        $items = array(array(
+            "name" => $name,
+            "template" => $template,
+        ));
+
+        return $this->updateConfigurations($items);
     }
 
     public function removeConfigurations($items)

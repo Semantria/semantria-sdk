@@ -17,6 +17,7 @@ class AuthRequest
 	protected $_consumerSecret;
 
 	protected $_applicationName;
+	protected $_apiVersion = "3.8";
 	protected $_http_info;
 
     protected $use_compression;
@@ -47,11 +48,23 @@ class AuthRequest
 		if ($method == "POST") {
 			$headers[] = 'Content-type: application/x-www-form-urlencoded';
 		}
-		$headers[] = 'x-api-version: 3.8';
+		$headers[] = 'x-api-version: ' . $this->_apiVersion;
 		$headers[] = 'x-app-name: ' . $this->_applicationName;
-		
+
 		$response = $this->httpRequest($query, $method, $headers, $body);
 		return $response;
+	}
+	
+	public function getApiVersion() {
+		return $this->_apiVersion;
+	}
+	
+	/**
+	 *
+	 * @param string $apiVersion
+	 */
+	public function setApiVersion($apiVersion) {
+		$this->_apiVersion = $apiVersion;
 	}
 
 	protected function generateQuery($method, $url, $timestamp, $nonce)

@@ -1,5 +1,10 @@
 CHANGELOG
 
+3.9.82 - Added support of Vertical packs feature.
+	- Supported vertical packs returned as part of supported features (GetSupportedFeatures method).
+	- Verticall packs allowed for the current subscription can be retrieved using GetSubscription method.
+	- Added new CloneConfiguration method for easy clonning of vertical packs.
+
 3.8.81 - Reworked DetailedModeTestApp application to use batch mode for documents queuing instead of pushing documents one by one.
 
 3.8.80 - Added two sample applications:

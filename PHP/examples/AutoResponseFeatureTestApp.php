@@ -1,6 +1,6 @@
 <?php
 
-require_once('semantria/session.php');
+require_once('../semantria/session.php');
 
 echo "Semantria Auto-response feature demo.", "\r\n";
 

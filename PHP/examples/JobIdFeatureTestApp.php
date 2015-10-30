@@ -1,6 +1,6 @@
 <?php
 
-require_once('semantria/session.php');
+require_once('../semantria/session.php');
 
 // the consumer key and secret
 define('CONSUMER_KEY', "");
