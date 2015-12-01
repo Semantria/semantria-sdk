@@ -22,7 +22,7 @@ import com.semantria.serializer.XmlSerializer;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class Session 
+public final class Session
 {
 	private static final String WRAPPER_NAME = "Java";
 	private String key = "";
@@ -63,6 +63,14 @@ public final class Session
 
     public String getApiVersion() {
         return this.apiVersion;
+    }
+
+    public void setServiceUrl(String serviceUrl) {
+        this.serviceUrl = serviceUrl;
+    }
+
+    public String getServiceUrl() {
+        return this.serviceUrl;
     }
 
 	//create new session
@@ -106,7 +114,7 @@ public final class Session
 		return new Session(key, secret, cserializer, appName, useCompression);
 
 	}
-	
+
 	public void registerSerializer(ISerializer cserializer)
 	{
 		serializer = cserializer;
@@ -114,14 +122,14 @@ public final class Session
 			requestFormat = cserializer.getType();
 		}
 	}
-	
+
 	public void setCallbackHandler(ICallbackHandler handler)
 	{
 		callback = handler;
 	}
 
 	//--------getters
-	
+
 	public ServiceStatus getStatus()
 	{
 		String method = "GET";
@@ -1028,7 +1036,7 @@ public final class Session
 
         return status;
 	}
-	
+
 	public void handleResponse(Integer status, AuthRequest ar)
 	{
 		if (callback != null)
