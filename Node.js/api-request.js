@@ -1,3 +1,4 @@
+var fs = require('fs');
 var crypto = require('crypto');
 var promise = require('promise');
 var request = require('request');
@@ -11,6 +12,7 @@ console.warn = function(){}
 var syncRequest = require('request-sync');
 console.warn = console_warn;
 
+var session_key_url = 'https://semantria.com/auth/session'
 /**
  * @param {Session} string
  * @param {Object} config
@@ -345,3 +347,51 @@ function processResponse(api_request, response) {
 }
 
 exports.runApiRequest = runApiRequest;
+
+/**
+ * @param {Session} string
+ * @param {Object} config
+ */
+function obtainSessionKeys(session) {
+    if (fs.existsSync(session.session_file)) {
+        try {
+            var contents = fs.readFileSync(session.session_file).toString();
+            var info = JSON.parse(contents)
+            if (info.id) {
+                var url = session_key_url + '/' + info.id + '.json?appkey=' + session.appkey
+                var response = syncRequest(url)
+                if (response.statusCode == 200) {
+                    var json_res = JSON.parse(response.body)
+                    session.consumerKey = json_res.custom_params.key
+                    session.consumerSecret = json_res.custom_params.secret
+                    return true
+                }
+            }
+        } catch(e) {}
+        // Do something
+    }
+    var url = session_key_url + '.json?appkey=' + session.appkey;
+    var data = {
+        username: session.username,
+        password: session.password
+    }
+    var response = syncRequest({
+        url: url,
+        method: "POST",
+        body: JSON.stringify(data),
+        encoding: 'utf8'
+    })
+    if (response.statusCode != 200) {
+        return false
+    }
+    var json_res = JSON.parse(response.body)
+    var info = {
+        id: json_res.id
+    }
+    fs.writeFileSync(session.session_file, JSON.stringify(info))
+    session.consumerKey = json_res.custom_params.key
+    session.consumerSecret = json_res.custom_params.secret
+    return true
+}
+
+exports.obtainSessionKeys = obtainSessionKeys;

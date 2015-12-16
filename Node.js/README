@@ -2,8 +2,8 @@ Semantria is a text analytics and sentiment analysis API. It allows you to gain 
 It is based on Lexalytics’ Salience – a text analytics and sentiment analysis engine.
 The same engine as the one being used by Oracle, Cisco, Thomson Reuters, Saleforce.com - Radian6, Visible, Lithium, and 50+ other leaders in the space.
 
-Semantria offers PHP SDK, that is the most convenient way to get started with the Semantria API on PHP.
-SDK implements all the available Semantria features and demonstrate best practices of API usage.
+Semantria offers Python SDK, that is the most convenient way to get started with the Semantria API on Python.
+SDK implements all the available Semantria features and demonstrate best practices of API usage for either Python 2.x or 3.x.
 A Free trial is available at http://www.semantria.com/trial
 
 Functionality includes:

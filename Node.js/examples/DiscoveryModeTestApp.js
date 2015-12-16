@@ -17,25 +17,22 @@ if (config.apiHost) {
 console.log("Semantria Discovery mode demo.");
 
 //get or create test app configuration
-getConfiguration(SemantriaActiveSession, appConfigurationName)
-.then(function(config_id) {
-	if (config_id) {
-		return config_id;
+SemantriaActiveSession.getConfigurations(true)
+.then(function(configurations) {
+	for (var i=0; i<configurations.length; i++) {
+		if (configurations[i].name == appConfigurationName) {
+			return promise.resolve([configurations[i]]);
+		}
 	}
 	return SemantriaActiveSession.addConfigurations([{
 		name: appConfigurationName,
 		is_primary: false,
 		auto_response: false,
 		language: "English"
-	}], true).then(function(){
-		return getConfiguration(SemantriaActiveSession, appConfigurationName);
-	});
+	}], true);
 })
-.then(function(config_id) {
-	if (!config_id) {
-		throw  new Error("Faild create configuration");
-	}
-	appConfigurationId = config_id;
+.then(function(result){
+	appConfigurationId = result[0].id;
 
 	// Creates a sample collection which need to be processed on Semantria
 	collectionId = '' + Math.floor(Math.random() * 10000000);
@@ -94,16 +91,4 @@ getConfiguration(SemantriaActiveSession, appConfigurationName)
 function getCollectionDocuments() {
 	var initialTexts = require('./source.json');
 	return initialTexts;
-}
-
-function getConfiguration(session, name) {
-	return session.getConfigurations(true)
-		.then(function(configurations) {
-			for (var i=0; i<configurations.length; i++) {
-				if (configurations[i].name == name) {
-					return configurations[i].config_id;
-				}
-			}
-			return false;
-		})
 }

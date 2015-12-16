@@ -1,4 +1,5 @@
 var runApiRequest = require('./api-request').runApiRequest;
+var obtainSessionKeys = require('./api-request').obtainSessionKeys;
 
 /**
  * @var {Function} emptyFn
@@ -29,12 +30,30 @@ function tpl(string, config) {
  * @param {Object} config
  * @returns {undefined}
  */
-function Session(consumerKey, consumerSecret, applicationName, format) {
+function Session(config) {
+
+	if(typeof config != "object") {
+		config = {
+			"consumerKey": arguments[0],
+			"consumerSecret": arguments[1],
+			"applicationName": arguments[2],
+			"format": arguments[3],
+		}
+	}
+
 	this.eventHandlers = {};
-	this.consumerKey = consumerKey;
-	this.consumerSecret = consumerSecret;
-	this.format = format || "json";
-	this.applicationName = applicationName ? (applicationName + "/") : "";
+	this.consumerKey = config.consumerKey;
+	this.consumerSecret = config.consumerSecret;
+	this.username = config.username;
+	this.password = config.password;
+	this.appkey = config.appkey || 'cd954253-acaf-4dfa-a417-0a8cfb701f12';
+	this.session_file = config.session_file || '/tmp/session.dat' ;
+	this.format = config.format || "json";
+	this.applicationName = config.applicationName ? (config.applicationName + "/") : "";
+
+	if(!this.consumerKey && !this.consumerSecret) {
+		obtainSessionKeys(this)
+	}
 
 	if(!this.consumerKey || !this.consumerSecret) {
 		throw "ConsumerKey and ConsumerSecret should be specified in order to use SDK";
@@ -58,7 +77,7 @@ Session.prototype = {
 	 * @var {String} X_API_VERSION
 	 * @constant
 	 */
-	X_API_VERSION: '3.9',
+	X_API_VERSION: '4.0',
 
 	/**
 	 * @var {String} HOST
@@ -226,7 +245,7 @@ Session.prototype = {
 	 */
 	updateConfigurations: function(params, callback) {
 		return runApiRequest(this, {
-			method: 'POST',
+			method: 'PUT',
 			path: 'configurations',
 			postParams: params,
 			callback: callback
@@ -278,6 +297,25 @@ Session.prototype = {
 	addBlacklist: function(params, configId, callback) {
 		return runApiRequest(this, {
 			method: 'POST',
+			path: 'blacklist',
+			getParams: { config_id: configId },
+			postParams: params,
+			callback: callback
+		});
+	},
+
+	/**
+	 * @param {Object[]} params
+	 * @param {string|null} [null] configId  - null default configuration
+	 * @param {(boolean|SemantriaApiCallback)} [false] callback
+	 *    false - synchronous call; retutn api response
+	 *    true  - asynchronous call; retutn Promise
+	 *    SemantriaApiCallback - asynchronous call
+	 * @returns {*}
+	 */
+	updateBlacklist: function(params, configId, callback) {
+		return runApiRequest(this, {
+			method: 'PUT',
 			path: 'blacklist',
 			getParams: { config_id: configId },
 			postParams: params,
@@ -350,7 +388,7 @@ Session.prototype = {
 	 */
 	updateCategories: function(params, configId, callback) {
 		return runApiRequest(this, {
-			method: 'POST',
+			method: 'PUT',
 			path: 'categories',
 			getParams: { config_id: configId },
 			postParams: params,
@@ -423,7 +461,7 @@ Session.prototype = {
 	 */
 	updateQueries: function(params, configId, callback) {
 		return runApiRequest(this, {
-			method: 'POST',
+			method: 'PUT',
 			path: 'queries',
 			getParams: { config_id: configId },
 			postParams: params,
@@ -496,7 +534,7 @@ Session.prototype = {
 	 */
 	updateEntities: function(params, configId, callback) {
 		return runApiRequest(this, {
-			method: 'POST',
+			method: 'PUT',
 			path: 'entities',
 			getParams: { config_id: configId },
 			postParams: params,
@@ -569,7 +607,7 @@ Session.prototype = {
 	 */
 	updatePhrases: function(params, configId, callback) {
 		return runApiRequest(this, {
-			method: 'POST',
+			method: 'PUT',
 			path: 'phrases',
 			getParams: { config_id: configId },
 			postParams: params,
@@ -590,6 +628,79 @@ Session.prototype = {
 		return runApiRequest(this, {
 			method: 'DELETE',
 			path: 'phrases',
+			getParams: { config_id: configId },
+			postParams: params,
+			callback: callback
+		});
+	},
+
+	/**
+	 * @param {string|null} [null] configId  - null default configuration
+	 * @param {(boolean|SemantriaApiCallback)} [false] callback
+	 *    false - synchronous call; retutn api response
+	 *    true  - asynchronous call; retutn Promise
+	 *    SemantriaApiCallback - asynchronous call
+	 * @returns {*}
+	 */
+	getTaxonomy: function(configId, callback) {
+		return runApiRequest(this, {
+			path: 'taxonomy',
+			getParams: { config_id: configId },
+			callback: callback
+		});
+	},
+
+	/**
+	 * @param {Object[]} params
+	 * @param {string|null} [null] configId  - null default configuration
+	 * @param {(boolean|SemantriaApiCallback)} [false] callback
+	 *    false - synchronous call; retutn api response
+	 *    true  - asynchronous call; retutn Promise
+	 *    SemantriaApiCallback - asynchronous call
+	 * @returns {*}
+	 */
+	addTaxonomy: function(params, configId, callback) {
+		return runApiRequest(this, {
+			method: 'POST',
+			path: 'taxonomy',
+			getParams: { config_id: configId },
+			postParams: params,
+			callback: callback
+		});
+	},
+
+	/**
+	 * @param {Object[]} params
+	 * @param {string|null} [null] configId  - null default configuration
+	 * @param {(boolean|SemantriaApiCallback)} [false] callback
+	 *    false - synchronous call; retutn api response
+	 *    true  - asynchronous call; retutn Promise
+	 *    SemantriaApiCallback - asynchronous call
+	 * @returns {*}
+	 */
+	updateTaxonomy: function(params, configId, callback) {
+		return runApiRequest(this, {
+			method: 'PUT',
+			path: 'taxonomy',
+			getParams: { config_id: configId },
+			postParams: params,
+			callback: callback
+		});
+	},
+
+	/**
+	 * @param {string[]} params
+	 * @param {string|null} [null] configId  - null default configuration
+	 * @param {(boolean|SemantriaApiCallback)} [false] callback
+	 *    false - synchronous call; retutn api response
+	 *    true  - asynchronous call; retutn Promise
+	 *    SemantriaApiCallback - asynchronous call
+	 * @returns {*}
+	 */
+	removeTaxonomy: function(params, configId, callback) {
+		return runApiRequest(this, {
+			method: 'DELETE',
+			path: 'taxonomy',
 			getParams: { config_id: configId },
 			postParams: params,
 			callback: callback
@@ -809,3 +920,4 @@ Session.prototype = {
 }
 
 exports.Session = Session;
+

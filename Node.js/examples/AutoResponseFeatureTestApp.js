@@ -27,29 +27,26 @@ SemantriaActiveSession.onError = function (err) {
 SemantriaActiveSession.onAfterResponse = processDocuments;
 
 //get or create test app configuration
-getConfiguration(SemantriaActiveSession, appConfigurationName)
-.then(function(config_id) {
-	if (config_id) {
-		return config_id;
+SemantriaActiveSession.getConfigurations(true)
+.then(function(configurations) {
+	for (var i=0; i<configurations.length; i++) {
+		if (configurations[i].name == appConfigurationName) {
+			return promise.resolve([configurations[i]]);
+		}
 	}
 	return SemantriaActiveSession.addConfigurations([{
 		name: appConfigurationName,
 		is_primary: false,
 		auto_response: true,
 		language: "English"
-	}], true).then(function(){
-		return getConfiguration(SemantriaActiveSession, appConfigurationName);
-	});
+	}], true);
 })
-.then(function(config_id) {
-	if (!config_id) {
-		throw  new Error("Faild create configuration");
-	}
-	appConfigurationId = config_id;
+.then(function(result){
+	appConfigurationId = result[0].id;
 
 	// Queues documents for analysis one by one
 	console.log("Queues documents for analysis one by one.\n");
-	return runForEachCrossDealay(outgoingDocs, 200, function(doc) {
+	return runForEachCrossDealay(outgoingDocs, 2000, function(doc) {
 		var res = SemantriaActiveSession.queueDocument(doc, appConfigurationId, true);
 		queuedDocsCount++;
 		console.log("Documents queued/received rate: " + queuedDocsCount + "/" + docResultList.length);
@@ -141,14 +138,3 @@ function processDocuments(result) {
 	}
 }
 
-function getConfiguration(session, name) {
-	return session.getConfigurations(true)
-	.then(function(configurations) {
-		for (var i=0; i<configurations.length; i++) {
-			if (configurations[i].name == name) {
-				return configurations[i].config_id;
-			}
-		}
-		return false;
-	})
-}

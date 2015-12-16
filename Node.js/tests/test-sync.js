@@ -17,18 +17,14 @@ describe('semantria-sdk [sync]', function() {
 	this.slow(10000);
 
 	before(function() {
-		var testConfigName = "NODEJS_TEST_CONFIG_" + (new Date()).getTime();
-		session.addConfigurations([{
-			name: testConfigName,
+		var result = session.addConfigurations([{
+			name: "NODEJS_TEST_CONFIG",
 			is_primary: false,
 			auto_response: false,
 			language: "English"
 		}]);
-		var configurations = session.getConfigurations();
-		for (var i=0; i<configurations.length; i++) {
-			if (configurations[i].name == testConfigName) {
-				config_id = configurations[i].config_id;
-			}
+		if(result instanceof Array && result[0] instanceof Object) {
+			config_id = result[0].id;
 		}
 	});
 
@@ -77,19 +73,24 @@ describe('semantria-sdk [sync]', function() {
 				auto_response: false,
 				language: "English"
 			}]);
-			assert.equal(result, 202, "addConfigurations() response");
+			assert.ok(
+				result instanceof Array && result[0] instanceof Object && typeof result[0].id === 'string',
+				'addConfigurations() response'
+			);
+			configuration = result[0];
+			delete configuration.timestamp;
+			configuration_id = configuration.id
 
 			//check: configuration exists
 			var configurations = session.getConfigurations();
 			var find_configuration = false;
 			for (var i=0; i<configurations.length; i++) {
-				if (configurations[i].name == configuration_name) {
+				if (configurations[i].id == configuration_id) {
 					find_configuration = configurations[i];
-					configuration_id = configurations[i].config_id;
-					configuration = configurations[i];
 				}
 			}
 			assert.ok( find_configuration instanceof Object, "test configuration not exists" );
+			assert.strictEqual(find_configuration.name, configuration_name, "test configuration has not correct name");
 		});
 
 		it('updateConfigurations()', function () {
@@ -97,13 +98,16 @@ describe('semantria-sdk [sync]', function() {
 			configuration_name = "Test configuration - renamed";
 			configuration.name = configuration_name;
 			var result = session.updateConfigurations([configuration]);
-			assert.equal(result, 202, "updateConfigurations() response");
+			assert.ok(
+				result instanceof Array && result[0] instanceof Object,
+				"updateConfigurations() response"
+			);
 
 			//check: configuration was updated
 			var configurations = session.getConfigurations();
 			var find_configuration = false;
 			for (var i=0; i<configurations.length; i++) {
-				if (configurations[i].config_id == configuration_id) {
+				if (configurations[i].id == configuration_id) {
 					find_configuration = configurations[i];
 				}
 			}
@@ -114,24 +118,29 @@ describe('semantria-sdk [sync]', function() {
 		it('cloneConfiguration()', function () {
 			if (!configuration_id) throw 'Test item not was added';
 			var result = session.cloneConfiguration(configuration2_name, configuration_id);
-			assert.equal(result, 202, "cloneConfiguration() response");
+			assert.ok(
+				result instanceof Array && result[0] instanceof Object && typeof result[0].id === 'string',
+				'cloneConfiguration() response'
+			);
+			configuration2 = result[0];
+			delete configuration2.timestamp;
+			configuration2_id = configuration2.id
 
 			//check: configuration exists
 			var configurations = session.getConfigurations();
 			var find_configuration = false;
 			for (var i=0; i<configurations.length; i++) {
-				if (configurations[i].name == configuration2_name) {
+				if (configurations[i].id == configuration2_id) {
 					find_configuration = configurations[i];
-					configuration2_id = configurations[i].config_id;
-					configuration2 = configurations[i];
 				}
 			}
 			assert.ok( find_configuration instanceof Object, "test configuration not exists" );
+			assert.strictEqual(find_configuration.name, configuration2_name, "test configuration has not correct name");
 		});
 
 		it('removeConfigurations()', function () {
 			if (!configuration_id) throw 'Test item not was added';
-			var ids = [configuration.config_id];
+			var ids = [configuration.id];
 			if (configuration2_id) ids.push(configuration2_id);
 			var result = session.removeConfigurations(ids);
 			assert.equal(result, 202, "removeConfigurations() response");
@@ -140,7 +149,7 @@ describe('semantria-sdk [sync]', function() {
 			var configurations = session.getConfigurations();
 			var find_configuration = false;
 			for (var i=0; i<configurations.length; i++) {
-				if (configurations[i].config_id == configuration_id) {
+				if (configurations[i].id == configuration_id) {
 					find_configuration = configurations[i];
 				}
 			}
@@ -149,7 +158,9 @@ describe('semantria-sdk [sync]', function() {
 	});
 
 	describe('[get/add/update/remove] Blacklist', function () {
-		var blacklist = 'test*';
+		var blacklist = null,
+			blacklist_id = false,
+			blacklist_name = "test blacklist";
 
 		it('getBlacklist()', function () {
 			if (!config_id) throw 'Test configuration not exists';
@@ -159,19 +170,45 @@ describe('semantria-sdk [sync]', function() {
 
 		it('addBlacklist()', function () {
 			if (!config_id) throw 'Test configuration not exists';
-			var result = session.addBlacklist([blacklist], config_id);
-			assert.equal(result, 202, "addBlacklist() response");
+			var result = session.addBlacklist([{
+				name: blacklist_name
+			}], config_id);
+			assert.ok(
+				result instanceof Array && result[0] instanceof Object && typeof result[0].id === 'string',
+				"addBlacklist() response"
+			);
+			blacklist = result[0];
+			blacklist_id = blacklist.id
+			delete blacklist.timestamp;
 
 			//check: blacklist exists
 			var blacklists = session.getBlacklist(config_id);
 			assert.ok(blacklists instanceof Array, "getBlacklist() is expected to return an array");
 			assert.strictEqual(blacklists.length, 1, "result array is expected to contain one item");
-			assert.strictEqual(blacklists[0], blacklist, "test item has not value");
+			assert.strictEqual(blacklists[0].id, blacklist_id, "test item has not correct id");
+			assert.strictEqual(blacklists[0].name, blacklist_name, "test item has not correct name");
+		});
+
+		it('updateBlacklist()', function () {
+			if (!config_id) throw 'Test configuration not exists';
+			if (!blacklist_id) throw 'Test item not was added';
+			blacklist_name = "test blacklist - renamed";
+			blacklist.name = blacklist_name;
+			var result = session.updateBlacklist([blacklist], config_id);
+			assert.ok( result instanceof Array && result[0] instanceof Object, "updateBlacklist() response" );
+
+			//check: blacklist was updated
+			var blacklists = session.getBlacklist(config_id);
+			assert.ok(blacklists instanceof Array, "getBlacklist() is expected to return an array");
+			assert.strictEqual(blacklists.length, 1, "expected result is single-item array");
+			assert.strictEqual(blacklists[0].id, blacklist_id, "test item has not correct id");
+			assert.strictEqual(blacklists[0].name, blacklist_name, "test item has not correct name");
 		});
 
 		it('removeBlacklist()', function () {
 			if (!config_id) throw 'Test configuration not exists';
-			var result = session.removeBlacklist([blacklist], config_id);
+			if (!blacklist_id) throw 'Test item not was added';
+			var result = session.removeBlacklist([blacklist.id], config_id);
 			assert.equal(result, 202, "removeBlacklist() response");
 			var blacklists = session.getBlacklist(config_id);
 			assert.equal(blacklists, 202, "getBlacklist() is expected to return empty result");
@@ -180,6 +217,7 @@ describe('semantria-sdk [sync]', function() {
 
 	describe('[get/add/update/remove] Categories', function () {
 		var category = null,
+			category_id = false,
 			category_name = "test category";
 
 		it('getCategories()', function () {
@@ -195,36 +233,42 @@ describe('semantria-sdk [sync]', function() {
 				weight: 0.75,
 				samples: ["EC2", "AWS"]
 			}], config_id);
-			assert.equal(result, 202, "addCategories() response");
+			assert.ok(
+				result instanceof Array && result[0] instanceof Object && typeof result[0].id === 'string',
+				"addCategories() response"
+			);
+			category = result[0];
+			category_id = category.id
+			delete category.timestamp;
 
-			//check: category exists
+			//check: blacklist exists
 			var categories = session.getCategories(config_id);
 			assert.ok(categories instanceof Array, "getCategories() is expected to return an array");
 			assert.strictEqual(categories.length, 1, "result array is expected to contain one item");
-			assert.equal(categories[0].name, category_name, "test item has not correct name");
-			assert.equal(categories[0].weight, 0.75, "test item has not correct weight");
+			assert.strictEqual(categories[0].id, category_id, "test item has not correct id");
+			assert.strictEqual(categories[0].name, category_name, "test item has not correct name");
 		});
 
 		it('updateCategories()', function () {
 			if (!config_id) throw 'Test configuration not exists';
-			var result = session.updateCategories([{
-				name: category_name,
-				weight: 0.85,
-				samples: ["EC2", "AWS"]
-			}], config_id);
-			assert.equal(result, 202, "updateCategories() response");
+			if (!category_id) throw 'Test item not was added';
+			category_name = "test category - renamed";
+			category.name = category_name;
+			result = session.updateCategories([category], config_id);
+			assert.ok( result instanceof Array && result[0] instanceof Object, "updateCategories() response" );
 
-			//check: category was updated
+			//check: blacklist was updated
 			var categories = session.getCategories(config_id);
 			assert.ok(categories instanceof Array, "getCategories() is expected to return an array");
 			assert.strictEqual(categories.length, 1, "result array is expected to contain one item");
-			assert.equal(categories[0].name, category_name, "test item has not correct name");
-			assert.equal(categories[0].weight, 0.85, "test item has not correct weight");
+			assert.strictEqual(categories[0].id, category_id, "test item has not correct id");
+			assert.strictEqual(categories[0].name, category_name, "test item has not correct name");
 		});
 
 		it('removeCategories()', function () {
 			if (!config_id) throw 'Test configuration not exists';
-			var result = session.removeCategories([category_name], config_id);
+			if (!category_id) throw 'Test item not was added';
+			var result = session.removeCategories([category.id], config_id);
 			assert.equal(result, 202, "removeCategories() response");
 			var categories = session.getCategories(config_id);
 			assert.equal(categories, 202, "getCategories() is expected to return empty result");
@@ -232,7 +276,9 @@ describe('semantria-sdk [sync]', function() {
 	});
 
 	describe('[get/add/update/remove] Queries', function () {
-		var query_name = "test query",
+		var query = null,
+			query_id = false,
+			query_name = "test query",
 			query_query = "Amazon AND (EC2 OR AWS)";
 
 		it('getQueries()', function () {
@@ -247,36 +293,44 @@ describe('semantria-sdk [sync]', function() {
 				name: query_name,
 				query: query_query
 			}], config_id);
-			assert.equal(result, 202, "addQueries() response");
+			assert.ok(
+				result instanceof Array && result[0] instanceof Object && typeof result[0].id === 'string',
+				"addQueries() response"
+			);
+			query = result[0];
+			query_id = query.id
+			delete query.timestamp;
 
 			//check: query exists
 			var queries = session.getQueries(config_id);
 			assert.ok(queries instanceof Array, "getQueries() is expected to return an array");
 			assert.strictEqual(queries.length, 1, "result array is expected to contain one item");
+			assert.strictEqual(queries[0].id, query_id, "test item has not correct id");
 			assert.strictEqual(queries[0].name, query_name, "test item has not correct name");
 			assert.strictEqual(queries[0].query, query_query, "test item has not correct query");
 		});
 
 		it('updateQueries()', function () {
 			if (!config_id) throw 'Test configuration not exists';
+			if (!query_id) throw 'Test item not was added';
 			query_query = "Amazon AND (EC2 OR ec2 OR AWS OR aws)";
-			var result = session.updateQueries([{
-				name: query_name,
-				query: query_query
-			}], config_id);
-			assert.equal(result, 202, "updateQueries() response");
+			query.query = query_query;
+			var result = session.updateQueries([query], config_id);
+			assert.ok( result instanceof Array && result[0] instanceof Object, "updateQueries() response" );
 
 			//check: query was updated
 			var queries = session.getQueries(config_id);
 			assert.ok(queries instanceof Array, "getQueries() is expected to return an array");
-			assert.strictEqual(queries.length, 1, "result array is expected to contain one item");
+			assert.strictEqual(queries.length, 1, "expected result is single-item array");
+			assert.strictEqual(queries[0].id, query_id, "test item has not correct id");
 			assert.strictEqual(queries[0].name, query_name, "test item has not correct name");
 			assert.strictEqual(queries[0].query, query_query, "test item has not correct query");
 		});
 
 		it('removeQueries()', function () {
 			if (!config_id) throw 'Test configuration not exists';
-			var result = session.removeQueries([query_name], config_id);
+			if (!query_id) throw 'Test item not was added';
+			var result = session.removeQueries([query.id], config_id);
 			assert.equal(result, 202, "removeQueries() response");
 			var queries = session.getQueries(config_id);
 			assert.equal(queries, 202, "getQueries() is expected to return empty result");
@@ -284,8 +338,9 @@ describe('semantria-sdk [sync]', function() {
 	});
 
 	describe('[get/add/update/remove] Entities', function () {
-		var entity_name = "test entity",
-			entity_type = "testType";
+		var entity = null,
+			entity_id = false,
+			entity_name = "test entity";
 
 		it('getEntities()', function () {
 			if (!config_id) throw 'Test configuration not exists';
@@ -297,38 +352,44 @@ describe('semantria-sdk [sync]', function() {
 			if (!config_id) throw 'Test configuration not exists';
 			var result = session.addEntities([{
 				name: entity_name,
-				type: entity_type
+				type: "furniture"
 			}], config_id);
-			assert.equal(result, 202, "addEntities() response");
+			assert.ok(
+				result instanceof Array && result[0] instanceof Object && typeof result[0].id === 'string',
+				"addEntities() response"
+			);
+			entity = result[0];
+			entity_id = entity.id
+			delete entity.timestamp;
 
 			//check: entity exists
 			var entities = session.getEntities(config_id);
 			assert.ok(entities instanceof Array, "getEntities() is expected to return an array");
 			assert.strictEqual(entities.length, 1, "result array is expected to contain one item");
+			assert.strictEqual(entities[0].id, entity_id, "test item has not correct id");
 			assert.strictEqual(entities[0].name, entity_name, "test item has not correct name");
-			assert.strictEqual(entities[0].type, entity_type, "test item has not correct type");
 		});
 
 		it('updateEntities()', function () {
 			if (!config_id) throw 'Test configuration not exists';
-			entity_type = "TestType2";
-			var result = session.updateEntities([{
-				name: entity_name,
-				type: entity_type
-			}], config_id);
-			assert.equal(result, 202, "updateEntities() response");
+			if (!entity_id) throw 'Test item not was added';
+			entity_name = "test entity - renamed";
+			entity.name = entity_name;
+			var result = session.updateEntities([entity], config_id);
+			assert.ok( result instanceof Array && result[0] instanceof Object, "updateEntities() response" );
 
 			//check: entity was updated
 			var entities = session.getEntities(config_id);
 			assert.ok(entities instanceof Array, "getEntities() is expected to return an array");
-			assert.strictEqual(entities.length, 1, "result array is expected to contain one item");
+			assert.strictEqual(entities.length, 1, "expected result is single-item array");
+			assert.strictEqual(entities[0].id, entity_id, "test item has not correct id");
 			assert.strictEqual(entities[0].name, entity_name, "test item has not correct name");
-			assert.strictEqual(entities[0].type, entity_type, "test item has not correct type");
 		});
 
 		it('removeEntities()', function () {
 			if (!config_id) throw 'Test configuration not exists';
-			var result = session.removeEntities([entity_name], config_id);
+			if (!entity_id) throw 'Test item not was added';
+			var result = session.removeEntities([entity.id], config_id);
 			assert.equal(result, 202, "removeEntities() response");
 			var entities = session.getEntities(config_id);
 			assert.equal(entities, 202, "getEntities() is expected to return empty result");
@@ -336,7 +397,9 @@ describe('semantria-sdk [sync]', function() {
 	});
 
 	describe('[get/add/update/remove] Phrases', function () {
-		var phrase_name = "test phrase";
+		var phrase = null,
+			phrase_id = false,
+			phrase_name = "test phrase";
 
 		it('getPhrases()', function () {
 			if (!config_id) throw 'Test configuration not exists';
@@ -348,40 +411,105 @@ describe('semantria-sdk [sync]', function() {
 			if (!config_id) throw 'Test configuration not exists';
 			var result = session.addPhrases([{
 				name: phrase_name,
-				weight: 0.3
+				weight: "0.3"
 			}], config_id);
-			assert.equal(result, 202, "addPhrases() response");
+			assert.ok(
+				result instanceof Array && result[0] instanceof Object && typeof result[0].id === 'string',
+				"addPhrases() response"
+			);
+			phrase = result[0];
+			phrase_id = phrase.id
+			delete phrase.timestamp;
 
 			//check: phrase exists
 			var phrases = session.getPhrases(config_id);
 			assert.ok(phrases instanceof Array, "getPhrases() is expected to return an array");
 			assert.strictEqual(phrases.length, 1, "result array is expected to contain one item");
+			assert.strictEqual(phrases[0].id, phrase_id, "test item has not correct id");
 			assert.strictEqual(phrases[0].name, phrase_name, "test item has not correct name");
-			assert.equal(phrases[0].weight, 0.3, "test item has not correct weight");
 		});
 
 		it('updatePhrases()', function () {
 			if (!config_id) throw 'Test configuration not exists';
-			var result = session.updatePhrases([{
-				name: phrase_name,
-				weight: 0.5
-			}], config_id);
-			assert.equal(result, 202, "updatePhrases() response");
+			if (!phrase_id) throw 'Test item not was added';
+			phrase_name = "test phrase - renamed";
+			phrase.name = phrase_name;
+			var result = session.updatePhrases([phrase], config_id);
+			assert.ok( result instanceof Array && result[0] instanceof Object, "updatePhrases() response" );
 
 			//check: phrase was updated
 			var phrases = session.getPhrases(config_id);
 			assert.ok(phrases instanceof Array, "getPhrases() is expected to return an array");
-			assert.strictEqual(phrases.length, 1, "result array is expected to contain one item");
+			assert.strictEqual(phrases.length, 1, "expected result is single-item array");
+			assert.strictEqual(phrases[0].id, phrase_id, "test item has not correct id");
 			assert.strictEqual(phrases[0].name, phrase_name, "test item has not correct name");
-			assert.equal(phrases[0].weight, 0.5, "test item has not correct weight");
 		});
 
 		it('removePhrases()', function () {
 			if (!config_id) throw 'Test configuration not exists';
-			var result = session.removePhrases([phrase_name], config_id);
+			if (!phrase_id) throw 'Test item not was added';
+			var result = session.removePhrases([phrase.id], config_id);
 			assert.equal(result, 202, "removePhrases() response");
 			var phrases = session.getPhrases(config_id);
 			assert.equal(phrases, 202, "getPhrases() is expected to return empty result");
+		});
+	});
+
+	describe('[get/add/update/remove] Taxonomy', function () {
+		var taxonomy = null,
+			taxonomy_id = false,
+			taxonomy_name = "test taxonomy";
+
+		it('getTaxonomy()', function () {
+			if (!config_id) throw 'Test configuration not exists';
+			var taxonomies = session.getTaxonomy(config_id);
+			assert.equal(taxonomies, 202, "getTaxonomy() is expected to return empty result");
+		});
+
+		it('addTaxonomy()', function () {
+			if (!config_id) throw 'Test configuration not exists';
+			var result = session.addTaxonomy([{
+				name: taxonomy_name
+			}], config_id);
+			assert.ok(
+				result instanceof Array && result[0] instanceof Object && typeof result[0].id === 'string',
+				"addTaxonomy() response"
+			);
+			taxonomy = result[0];
+			taxonomy_id = taxonomy.id
+			delete taxonomy.timestamp;
+
+			//check: taxonomy exists
+			var taxonomies = session.getTaxonomy(config_id);
+			assert.ok(taxonomies instanceof Array, "getTaxonomy() is expected to return an array");
+			assert.strictEqual(taxonomies.length, 1, "result array is expected to contain one item");
+			assert.strictEqual(taxonomies[0].id, taxonomy_id, "test item has not correct id");
+			assert.strictEqual(taxonomies[0].name, taxonomy_name, "test item has not correct name");
+		});
+
+		it('updateTaxonomy()', function () {
+			if (!config_id) throw 'Test configuration not exists';
+			if (!taxonomy_id) throw 'Test item not was added';
+			taxonomy_name = "test taxonomy - renamed";
+			taxonomy.name = taxonomy_name;
+			var result = session.updateTaxonomy([taxonomy], config_id);
+			assert.ok( result instanceof Array && result[0] instanceof Object, "updateTaxonomy() response" );
+
+			//check: taxonomy was updated
+			var taxonomies = session.getTaxonomy(config_id);
+			assert.ok(taxonomies instanceof Array, "getTaxonomy() is expected to return an array");
+			assert.strictEqual(taxonomies.length, 1, "expected result is single-item array");
+			assert.strictEqual(taxonomies[0].id, taxonomy_id, "test item has not correct id");
+			assert.strictEqual(taxonomies[0].name, taxonomy_name, "test item has not correct name");
+		});
+
+		it('removeTaxonomy()', function () {
+			if (!config_id) throw 'Test configuration not exists';
+			if (!taxonomy_id) throw 'Test item not was added';
+			var result = session.removeTaxonomy([taxonomy.id], config_id);
+			assert.equal(result, 202, "removeTaxonomy() response");
+			var taxonomies = session.getTaxonomy(config_id);
+			assert.equal(taxonomies, 202, "getTaxonomy() is expected to return empty result");
 		});
 	});
 
