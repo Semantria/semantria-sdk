@@ -17,7 +17,7 @@ class AuthRequest
 	protected $_consumerSecret;
 
 	protected $_applicationName;
-	protected $_apiVersion = "3.8";
+	protected $_apiVersion = "4.0";
 	protected $_http_info;
 
     protected $use_compression;
@@ -50,7 +50,7 @@ class AuthRequest
 		}
 		$headers[] = 'x-api-version: ' . $this->_apiVersion;
 		$headers[] = 'x-app-name: ' . $this->_applicationName;
-
+		
 		$response = $this->httpRequest($query, $method, $headers, $body);
 		return $response;
 	}
@@ -203,6 +203,12 @@ class AuthRequest
 		switch ($method) {
 			case 'POST':
 				curl_setopt($ci, CURLOPT_POST, TRUE);
+				if (!empty($postfields)) {
+					curl_setopt($ci, CURLOPT_POSTFIELDS, $postfields);
+				}
+				break;
+			case 'PUT':
+				curl_setopt($ci, CURLOPT_CUSTOMREQUEST, 'PUT'); 
 				if (!empty($postfields)) {
 					curl_setopt($ci, CURLOPT_POSTFIELDS, $postfields);
 				}
