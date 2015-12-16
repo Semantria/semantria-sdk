@@ -3,6 +3,7 @@
 #require_relative 'version'
 #require_relative 'authrequest'
 #require_relative 'jsonserializer'
+#require_relative 'fileutils'
 
 module Semantria
   class Session
@@ -10,19 +11,15 @@ module Semantria
     attr_accessor :api_version
 
     # Create a new instance
-    def initialize(consumer_key, consumer_secret, application_name = nil, use_compression = false, serializer = nil)
+    def initialize(consumer_key = nil, consumer_secret = nil, application_name = nil, use_compression = false, serializer = nil, username = nil, password = nil, session_file = '/tmp/session.dat')
       @host = 'https://api.semantria.com'
+      @key_url = 'https://semantria.com/auth/session'
+      @app_key = 'cd954253-acaf-4dfa-a417-0a8cfb701f12'
       @wrapper_name = "Ruby/#{Semantria::VERSION}"
       @consumer_key = consumer_key
       @consumer_secret = consumer_secret
       @use_compression = use_compression
-      @api_version = '3.9'
-
-      if application_name.nil?
-        @application_name = @wrapper_name
-      else
-        @application_name = '%s/%s' % [application_name, @wrapper_name]
-      end
+      @api_version = '4.0'
 
       if serializer.nil?
         #set default json serializer
@@ -32,6 +29,64 @@ module Semantria
         @serializer = serializer
         @format = @serializer.gettype()
       end
+
+      if consumer_key.nil? && consumer_secret.nil?
+        @consumer_key, @consumer_secret = obtainKeys(username, password, session_file)
+        if @consumer_key.nil? || @consumer_secret.nil?
+          fail "Cannot obtain Semantria keys. Wrong username or password"
+        end
+      end
+
+      if application_name.nil?
+        @application_name = @wrapper_name
+      else
+        @application_name = '%s/%s' % [application_name, @wrapper_name]
+      end
+
+    end
+
+    def obtainKeys(username, password, session_file = '/tmp/sematria-session.dat')
+      if File.exist?(session_file)
+        session_id = File.read(session_file)
+        url = "#{@key_url}/#{session_id}.json?appkey=#{@app_key}"
+        uri = URI.parse url
+        http = Net::HTTP.new(uri.host, uri.port)
+        http.use_ssl = true
+        http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+        request = Net::HTTP::Get.new(uri.request_uri)
+        response = http.request(request)
+        if response.code.to_i == 200
+          body = @serializer.deserialize(response.body)
+          if body[:custom_params][:key].present && body[:custom_params][:secret].present
+            return [body[:custom_params][:key], body[:custom_params][:secret]]
+          end
+        end
+      end
+
+      url = "#{@key_url}.json?appkey=#{@app_key}";
+      post = {
+          username: username,
+          password: password
+      }
+      uri = URI.parse url
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true
+      http.verify_mode = OpenSSL::SSL::VERIFY_NONE
+      request = Net::HTTP::Post.new(uri.request_uri)
+      request.body = post.to_json
+      response = http.request(request)
+
+      if response.code.to_i != 200
+        return [nil, nil]
+      end
+
+      body = @serializer.deserialize(response.body)
+      session_id = body[:id].to_s
+      if !session_file.to_s.empty? && !session_id.empty?
+        File.open(session_file, 'w') { |file| file.write(session_id) }
+      end
+
+      [body[:custom_params][:key], body[:custom_params][:secret]]
     end
 
     def registerSerializer(serializer)
@@ -80,18 +135,22 @@ module Semantria
     end
 
     def addConfigurations(items)
-      updateConfigurations(items)
+      updateConfigurations(items, true)
     end
 
-    def cloneConfigurations(items)
-      updateConfigurations(items)
-    end
-
-    def updateConfigurations(items)
+    def updateConfigurations(items, create = false)
       url = "#{@host}/configurations.#{@format}"
       wrapper = get_type_wrapper('update_configurations')
       data = @serializer.serialize(items, wrapper)
-      runRequest('POST', url, nil, data)
+      runRequest((create ? 'POST' : 'PUT'), url, nil, data)
+    end
+
+    def cloneConfigurations(name, template)
+      items = {
+        'name' => name,
+        'template' => template
+      }
+      updateConfigurations([items])
     end
 
     def deleteConfigurations(items)
@@ -113,10 +172,10 @@ module Semantria
     end
 
     def addBlacklist(items, config_id = nil)
-      updateBlacklist(items, config_id)
+      updateBlacklist(items, config_id, true)
     end
 
-    def updateBlacklist(items, config_id = nil)
+    def updateBlacklist(items, config_id = nil, create = false)
       if config_id.nil?
         url = "#{@host}/blacklist.#{@format}"
       else
@@ -125,7 +184,7 @@ module Semantria
 
       wrapper = get_type_wrapper('update_blacklist')
       data = @serializer.serialize(items, wrapper)
-      runRequest('POST', url, nil, data)
+      runRequest((create ? 'POST' : 'PUT'), url, nil, data)
     end
 
     def removeBlacklist(items, config_id = nil)
@@ -151,10 +210,10 @@ module Semantria
     end
 
     def addCategories(items, config_id = nil)
-      updateCategories(items, config_id)
+      updateCategories(items, config_id, true)
     end
 
-    def updateCategories(items, config_id = nil)
+    def updateCategories(items, config_id = nil, create = false)
       if config_id.nil?
         url = "#{@host}/categories.#{@format}"
       else
@@ -163,7 +222,7 @@ module Semantria
 
       wrapper = get_type_wrapper('update_categories')
       data = @serializer.serialize(items, wrapper)
-      runRequest('POST', url, nil, data)
+      runRequest((create ? 'POST' : 'PUT'), url, nil, data)
     end
 
     def removeCategories(items, config_id = nil)
@@ -189,10 +248,10 @@ module Semantria
     end
 
     def addQueries(items, config_id = nil)
-      updateQueries(items, config_id)
+      updateQueries(items, config_id, true)
     end
 
-    def updateQueries(items, config_id = nil)
+    def updateQueries(items, config_id = nil, create = false)
       if config_id.nil?
         url = "#{@host}/queries.#{@format}"
       else
@@ -201,7 +260,7 @@ module Semantria
 
       wrapper = get_type_wrapper('update_queries')
       data = @serializer.serialize(items, wrapper)
-      runRequest('POST', url, nil, data)
+      runRequest((create ? 'POST' : 'PUT'), url, nil, data)
     end
 
     def removeQueries(items, config_id = nil)
@@ -227,10 +286,10 @@ module Semantria
     end
 
     def addPhrases(items, config_id = nil)
-      updatePhrases(items, config_id)
+      updatePhrases(items, config_id, true)
     end
 
-    def updatePhrases(items, config_id = nil)
+    def updatePhrases(items, config_id = nil, create = false)
       if config_id.nil?
         url = "#{@host}/phrases.#{@format}"
       else
@@ -239,7 +298,7 @@ module Semantria
 
       wrapper = get_type_wrapper('update_sentiment_phrases')
       data = @serializer.serialize(items, wrapper)
-      runRequest('POST', url, nil, data)
+      runRequest((create ? 'POST' : 'PUT'), url, nil, data)
     end
 
     def removePhrases(items, config_id = nil)
@@ -265,10 +324,10 @@ module Semantria
     end
 
     def addEntities(items, config_id = nil)
-      updateEntities(items, config_id)
+      updateEntities(items, config_id, true)
     end
 
-    def updateEntities(items, config_id = nil)
+    def updateEntities(items, config_id = nil, create = false)
       if config_id.nil?
         url = "#{@host}/entities.#{@format}"
       else
@@ -277,7 +336,7 @@ module Semantria
 
       wrapper = get_type_wrapper('update_entities')
       data = @serializer.serialize(items, wrapper)
-      runRequest('POST', url, nil, data)
+      runRequest((create ? 'POST' : 'PUT'), url, nil, data)
     end
 
     def removeEntities(items, config_id = nil)
@@ -288,6 +347,44 @@ module Semantria
       end
 
       wrapper = get_type_wrapper('remove_entities')
+      data = @serializer.serialize(items, wrapper)
+      runRequest('DELETE', url, nil, data)
+    end
+
+    def getTaxonomy(config_id = nil)
+      if config_id.nil?
+        url = "#{@host}/taxonomy.#{@format}"
+      else
+        url = "#{@host}/taxonomy.#{@format}?config_id=#{config_id}"
+      end
+
+      runRequest('GET', url, 'get_taxonomy') || []
+    end
+
+    def addTaxonomy(items, config_id = nil)
+      updateTaxonomy(items, config_id, true)
+    end
+
+    def updateTaxonomy(items, config_id = nil, create = false)
+      if config_id.nil?
+        url = "#{@host}/taxonomy.#{@format}"
+      else
+        url = "#{@host}/taxonomy.#{@format}?config_id=#{config_id}"
+      end
+
+      wrapper = get_type_wrapper('update_taxonomy')
+      data = @serializer.serialize(items, wrapper)
+      runRequest((create ? 'POST' : 'PUT'), url, nil, data)
+    end
+
+    def removeTaxonomy(items, config_id = nil)
+      if config_id.nil?
+        url = "#{@host}/taxonomy.#{@format}"
+      else
+        url = "#{@host}/taxonomy.#{@format}?config_id=#{config_id}"
+      end
+
+      wrapper = get_type_wrapper('remove_taxonomy')
       data = @serializer.serialize(items, wrapper)
       runRequest('DELETE', url, nil, data)
     end

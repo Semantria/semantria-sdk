@@ -37,7 +37,6 @@ module Semantria
       headers = {'Authorization' => auth_header}
 
       headers['Content-type'] = 'application/x-www-form-urlencoded' if method == 'POST'
-        puts @api_version
       headers['x-api-version'] = @api_version
       headers['x-app-name'] = @application_name
 
