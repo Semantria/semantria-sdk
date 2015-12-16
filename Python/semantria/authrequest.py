@@ -26,7 +26,7 @@ OAuthNonceKey = "oauth_nonce"
 
 
 class AuthRequest:
-    apiVersion = "3.8"
+    apiVersion = "4.0"
 
     def __init__(self, consumerKey, consumerSecret, applicationName, use_compression=False):
         self.consumerKey = consumerKey
@@ -47,7 +47,7 @@ class AuthRequest:
         headers["x-app-name"] = self.applicationName
         if self.use_compression:
             headers["Accept-encoding"] = "gzip"
-        
+
         qparts = urlparse(query)
         qscheme, qnetloc, qpath, qparams, qquery, qfragment = qparts[:6]
 
@@ -83,7 +83,7 @@ class AuthRequest:
             query = '%s&oauth_verifier=%s' % (query, np)
         else:
             query = '%s' % np
-        0
+        
         return urlunparse((scheme, netloc, path, params, query, fragment))
 
     def generateAuthHeader(self, query, timestamp, nonce):

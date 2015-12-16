@@ -6,16 +6,26 @@ try:
 except ImportError:
     import httplib
 
+import json
+import os
 from semantria.authrequest import *
 from semantria.error import SemantriaError
-from semantria.jsonserializer import * 
+from semantria.jsonserializer import *
 from semantria.version import WRAPPER_VERSION
+
 
 class Session(object):
     host = 'https://api.semantria.com'
     wrapperName = 'Python/' + WRAPPER_VERSION
 
-    def __init__(self, consumerKey, consumerSecret, serializer=None, applicationName=None, use_compression=False):
+    _key_url = 'https://semantria.com/auth/session'
+    _app_key = '8f46c3c2-ca89-01aa-aad3-f437ea98cf7f'
+
+    def __init__(self, consumerKey, consumerSecret, serializer=None, applicationName=None, use_compression=False, username=None, password=None, session_file ='/tmp/session.dat'):
+        if consumerKey is None and consumerSecret is None:
+            consumerKey, consumerSecret = self.obtainKeys(username, password, session_file)
+            if not consumerKey or not consumerSecret:
+                raise Exception('Cannot obtain Semantria keys. Wrong username or password.')
         self.consumerKey = consumerKey
         self.consumerSecret = consumerSecret
         self.use_compression = use_compression
@@ -29,7 +39,7 @@ class Session(object):
             self.serializer = serializer
             self.format = serializer.gettype()
         else:
-            #set default json serializer
+            # set default json serializer
             self.serializer = JsonSerializer()
             self.format = self.serializer.gettype()
 
@@ -42,12 +52,43 @@ class Session(object):
             self.use_compression
         )
 
-        #Events
-        self.Request = SessionEvent(self) 
-        self.Response = SessionEvent(self) 
-        self.Error = SessionEvent(self) 
-        self.DocsAutoResponse = SessionEvent(self) 
-        self.CollsAutoResponse = SessionEvent(self) 
+        # Events
+        self.Request = SessionEvent(self)
+        self.Response = SessionEvent(self)
+        self.Error = SessionEvent(self)
+        self.DocsAutoResponse = SessionEvent(self)
+        self.CollsAutoResponse = SessionEvent(self)
+
+    def obtainKeys(self, username, password, session_file='/tmp/semantria-session.dat'):
+        import requests
+
+        if os.path.exists(session_file):
+            with open(session_file) as f:
+                f.seek(0)
+                session_id = f.readline()
+
+            url = '{0}/{1}.json?appkey={2}'.format(self._key_url, session_id, self._app_key)
+            res = requests.get(url)
+
+            if res.status_code == 200:
+                json_res = res.json()
+                return json_res['custom_params']['key'], json_res['custom_params']['secret']
+
+        url = '{0}.json?appkey={1}'.format(self._key_url, self._app_key)
+        data = {'username': username, 'password': password}
+
+        res = requests.post(url, data=json.dumps(data))
+        if res.status_code != 200:
+            return False, False
+
+        json_res = res.json()
+        session_id = json_res['id']
+
+        with open(session_file, 'w') as f:
+            f.seek(0)
+            f.write(session_id)
+
+        return json_res['custom_params']['key'], json_res['custom_params']['secret']
 
     def registerSerializer(self, serializer):
         if serializer:
@@ -106,16 +147,16 @@ class Session(object):
         return result
 
     def addConfigurations(self, items):
-        return self.updateConfigurations(items)
+        return self.updateConfigurations(items, create=True)
 
-    def updateConfigurations(self, items):
+    def updateConfigurations(self, items, create=False):
         if not isinstance(items, list):
             items = [items]
 
         url = '{0}/configurations.{1}'.format(self.host, self.format)
         wrapper = self._getTypeWrapper("update_configurations")
         data = self.serializer.serialize(items, wrapper)
-        return self._runRequest("POST", url, None, data)
+        return self._runRequest(("POST" if create else "PUT"), url, None, data)
 
     def cloneConfiguration(self, name, template):
         if name is None:
@@ -146,9 +187,9 @@ class Session(object):
         return result
 
     def addBlacklist(self, items, config_id=None):
-        return self.updateBlacklist(items, config_id)
+        return self.updateBlacklist(items, config_id, create=True)
 
-    def updateBlacklist(self, items, config_id=None):
+    def updateBlacklist(self, items, config_id=None, create=False):
         if not isinstance(items, list):
             items = [items]
 
@@ -159,7 +200,7 @@ class Session(object):
 
         wrapper = self._getTypeWrapper("update_blacklist")
         data = self.serializer.serialize(items, wrapper)
-        return self._runRequest("POST", url=url, postData=data)
+        return self._runRequest(("POST" if create else "PUT"), url=url, postData=data)
 
     def removeBlacklist(self, items, config_id=None):
         if not isinstance(items, list):
@@ -185,9 +226,9 @@ class Session(object):
         return result
 
     def addCategories(self, items, config_id=None):
-        return self.updateCategories(items, config_id)
+        return self.updateCategories(items, config_id, create=True)
 
-    def updateCategories(self, items, config_id=None):
+    def updateCategories(self, items, config_id=None, create=False):
         if not isinstance(items, list):
             items = [items]
 
@@ -198,7 +239,7 @@ class Session(object):
 
         wrapper = self._getTypeWrapper("update_categories")
         data = self.serializer.serialize(items, wrapper)
-        return self._runRequest("POST", url=url, postData=data)
+        return self._runRequest(("POST" if create else "PUT"), url=url, postData=data)
 
     def removeCategories(self, items, config_id=None):
         if not isinstance(items, list):
@@ -224,9 +265,9 @@ class Session(object):
         return result
 
     def addQueries(self, items, config_id=None):
-        return self.updateQueries(items, config_id)
+        return self.updateQueries(items, config_id, create=True)
 
-    def updateQueries(self, items, config_id=None):
+    def updateQueries(self, items, config_id=None, create=False):
         if not isinstance(items, list):
             items = [items]
 
@@ -237,7 +278,7 @@ class Session(object):
 
         wrapper = self._getTypeWrapper("update_queries")
         data = self.serializer.serialize(items, wrapper)
-        return self._runRequest("POST", url=url, postData=data)
+        return self._runRequest(("POST" if create else "PUT"), url=url, postData=data)
 
     def removeQueries(self, items, config_id=None):
         if not isinstance(items, list):
@@ -264,9 +305,9 @@ class Session(object):
         return result
 
     def addPhrases(self, items, config_id=None):
-        return self.updatePhrases(items, config_id)
+        return self.updatePhrases(items, config_id, create=True)
 
-    def updatePhrases(self, items, config_id=None):
+    def updatePhrases(self, items, config_id=None, create=False):
         if not isinstance(items, list):
             items = [items]
 
@@ -277,7 +318,7 @@ class Session(object):
 
         wrapper = self._getTypeWrapper("update_sentiment_phrases")
         data = self.serializer.serialize(items, wrapper)
-        return self._runRequest("POST", url=url, postData=data)
+        return self._runRequest(("POST" if create else "PUT"), url=url, postData=data)
 
     def removePhrases(self, items, config_id=None):
         if not isinstance(items, list):
@@ -304,9 +345,9 @@ class Session(object):
         return result
 
     def addEntities(self, items, config_id=None):
-        return self.updateEntities(items, config_id)
+        return self.updateEntities(items, config_id, create=True)
 
-    def updateEntities(self, items, config_id=None):
+    def updateEntities(self, items, config_id=None, create=False):
         if not isinstance(items, list):
             items = [items]
 
@@ -317,7 +358,7 @@ class Session(object):
 
         wrapper = self._getTypeWrapper("update_entities")
         data = self.serializer.serialize(items, wrapper)
-        return self._runRequest("POST", url, None, data)
+        return self._runRequest(("POST" if create else "PUT"), url, None, data)
 
     def removeEntities(self, items, config_id=None):
         if not isinstance(items, list):
@@ -329,6 +370,46 @@ class Session(object):
             url = '{0}/entities.{1}'.format(self.host, self.format)
 
         wrapper = self._getTypeWrapper("delete_entities")
+        data = self.serializer.serialize(items, wrapper)
+        return self._runRequest("DELETE", url, None, data)
+
+    def getTaxonomy(self, config_id=None):
+        if config_id:
+            url = '{0}/taxonomy.{1}?config_id={2}'.format(self.host, self.format, config_id)
+        else:
+            url = '{0}/taxonomy.{1}'.format(self.host, self.format)
+
+        result = self._runRequest("GET", url, "get_taxonomy")
+        if result is None:
+            result = []
+        return result
+
+    def addTaxonomy(self, items, config_id=None):
+        return self.updateTaxonomy(items, config_id, create=True)
+
+    def updateTaxonomy(self, items, config_id=None, create=False):
+        if not isinstance(items, list):
+            items = [items]
+
+        if config_id:
+            url = '{0}/taxonomy.{1}?config_id={2}'.format(self.host, self.format, config_id)
+        else:
+            url = '{0}/taxonomy.{1}'.format(self.host, self.format)
+
+        wrapper = self._getTypeWrapper("update_taxonomy")
+        data = self.serializer.serialize(items, wrapper)
+        return self._runRequest(("POST" if create else "PUT"), url, None, data)
+
+    def removeTaxonomy(self, items, config_id=None):
+        if not isinstance(items, list):
+            items = [items]
+
+        if config_id:
+            url = '{0}/taxonomy.{1}?config_id={2}'.format(self.host, self.format, config_id)
+        else:
+            url = '{0}/taxonomy.{1}'.format(self.host, self.format)
+
+        wrapper = self._getTypeWrapper("delete_taxonomy")
         data = self.serializer.serialize(items, wrapper)
         return self._runRequest("DELETE", url, None, data)
 

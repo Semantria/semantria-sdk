@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: semantria-sdk
-Version: 3.8.82
+Version: 4.0.83
 Summary: Semantria Python SDK
 Home-page: https://semantria.com
 Author: Semantria, LLC
@@ -16,7 +16,7 @@ Description:
         Semantria offers Python SDK, that is the most convenient way to get started with the Semantria API on Python.
         SDK implements all the available Semantria features and demonstrate best practices of API usage.
         
-Keywords: semantria sdk analytics
+Keywords: semantria sdk text analytics
 Platform: UNKNOWN
 Classifier: Programming Language :: Python
 Classifier: Programming Language :: Python :: 3

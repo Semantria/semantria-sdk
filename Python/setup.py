@@ -13,8 +13,8 @@ SDK implements all the available Semantria features and demonstrate best practic
 """
 
 setup(
-    name='semantria-sdk',
-    version='3.8.82',
+    name='semantria_sdk',
+    version='4.0.83',
     packages=['semantria'],
     url='https://semantria.com',
     license='GPL v3',

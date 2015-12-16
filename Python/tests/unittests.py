@@ -17,11 +17,13 @@ message = "Amazon Web Services has announced a new feature called VMWare Import,
 
 
 def onRequest(sender, result):
-    print("\n", "REQUEST: ", result)
+    # print("\n", "REQUEST: ", result)
+    pass
 
 
 def onResponse(sender, result):
-    print("\n", "RESPONSE: ", result)
+    # print("\n", "RESPONSE: ", result)
+    pass
 
 
 def onError(sender, result):
@@ -29,16 +31,18 @@ def onError(sender, result):
 
 
 def onDocsAutoResponse(sender, result):
-    print("\n", "AUTORESPONSE: ", len(result), result)
+    # print("\n", "AUTORESPONSE: ", len(result), result)
+    pass
 
 
 def onCollsAutoResponse(sender, result):
-    print("\n", "AUTORESPONSE: ", len(result), result)
+    # print("\n", "AUTORESPONSE: ", len(result), result)
+    pass
 
 
 class SemantriaSessionTest(unittest.TestCase):
     def setUp(self):
-        #self.serializer = semantria.XmlSerializer()
+        # self.serializer = semantria.XmlSerializer()
         self.serializer = semantria.JsonSerializer()
         self.session = semantria.Session(consumerKey, consumerSecret, self.serializer, use_compression=True)
 
@@ -48,108 +52,124 @@ class SemantriaSessionTest(unittest.TestCase):
         self.session.DocsAutoResponse += onDocsAutoResponse
         self.session.CollsAutoResponse += onCollsAutoResponse
 
-    def test_AddBlacklist(self):
-        status = self.session.addBlacklist("27123")
-        print("RESULT:", status, "\n")
-        self.failIf(status != 202)
-
-    def test_GetBlacklist(self):
+    def test_CRUDBlacklist(self):
         response = self.session.getBlacklist()
         self.failIf(response is None)
-        print("%(count)d item(s) in blacklist" % {'count': len(response)})
 
-    def test_RemoveBlacklist(self):
-        status = self.session.removeBlacklist(["http*"])
-        print("RESULT:", status, "\n")
+        response = self.session.addBlacklist({"name": "python3*"})
+        self.failIf(len(response) == 0)
+
+        blacklist = None
+        for item in response:
+            if item['name'] == 'python3*':
+                blacklist = item
+                break
+        self.failIf(blacklist is None)
+
+        status = self.session.removeBlacklist([blacklist['id']])
         self.failIf(status != 202)
 
-    def test_GetCategories(self):
-        status = self.session.getCategories()
-        self.failIf(status is None)
-
-    def test_AddCategories(self):
-        status = self.session.addCategories([{
-            'name': "Service",
+    def test_CRUDCategories(self):
+        response = self.session.getCategories()
+        self.failIf(response is None)
+        response = self.session.addCategories([{
+            'name': "TEST_CATEGORY_PYTHON3",
             'samples': ["Amazon", "VMWare"],
             'weight': 0.1,
-        }, {
-            'name': "Web",
-            'samples': ["Google", "Yahoo"],
-            'weight': 0.2
         }])
-        print("RESULT:", status, "\n")
-        self.failIf(status != 202)
+        self.failIf(len(response) == 0)
 
-    def test_RemoveCategories(self):
-        status = self.session.removeCategories(["Web"])
-        print("RESULT:", status, "\n")
-        self.failIf(status != 202)
+        obj = None
+        for item in response:
+            if item['name'] == 'TEST_CATEGORY_PYTHON3':
+                obj = item
+                break
+        self.failIf(obj is None)
 
-    def test_GetQueries(self):
-        status = self.session.getQueries()
-        self.failIf(status is None)
+        response = self.session.removeCategories([obj['id']])
+        self.failIf(response != 202)
 
-    def test_AddQueries(self):
-        status = self.session.addQueries([{"name": "Web", "query": "Amazon"}])
-        print("RESULT:", status, "\n")
-        self.failIf(status != 202)
+    def test_CRUDQueries(self):
+        response = self.session.getQueries()
+        self.failIf(response is None)
 
-    def test_RemoveQueries(self):
-        status = self.session.removeQueries(["any"])
-        print("RESULT:", status, "\n")
-        self.failIf(status != 202)
+        response = self.session.addQueries([{"name": "TEST_QUERY_PYTHON3", "query": "Amazon"}])
+        self.failIf(len(response) == 0)
 
-    def test_GetSentimentPhrases(self):
-        status = self.session.getPhrases()
-        self.failIf(status is None)
+        obj = None
+        for item in response:
+            if item['name'] == 'TEST_QUERY_PYTHON3':
+                obj = item
+                break
+        self.failIf(obj is None)
 
-    def test_AddSentimentPhrases(self):
-        status = self.session.addPhrases([
-            {"name": "Web", "weight": 0.1},
-            {"name": "any", "weight": 0.2}
+        response = self.session.removeQueries([obj['id']])
+        self.failIf(response != 202)
+
+    def test_CRUDPhrases(self):
+        response = self.session.getPhrases()
+        self.failIf(response is None)
+
+        response = self.session.addPhrases([
+            {"name": "TEST_PHRASE_PYTHON3", "weight": 0.1},
         ])
-        print("RESULT:", status, "\n")
-        self.failIf(status != 202)
+        self.failIf(len(response) == 0)
 
-    def test_RemoveSentimentPhrases(self):
-        status = self.session.removePhrases(["any"])
-        print("RESULT:", status, "\n")
-        self.failIf(status != 202)
+        obj = None
+        for item in response:
+            if item['name'] == 'TEST_PHRASE_PYTHON3':
+                obj = item
+                break
+        self.failIf(obj is None)
 
-    def test_GetEntities(self):
-        status = self.session.getEntities()
-        self.failIf(status is None)
+        response = self.session.removePhrases([obj['id']])
+        self.failIf(response != 202)
 
-    def test_AddEntities(self):
-        status = self.session.addEntities([
-            {"name": "Amazon", "type": "Web"},
-            {"name": "any", "type": "any"}
+    def test_CRUDEntities(self):
+        response = self.session.getEntities()
+        self.failIf(response is None)
+
+        response = self.session.addEntities([
+            {"name": "TEST_ENTITY_PYTHON3", "type": "Web"},
         ])
-        print("RESULT:", status, "\n")
-        self.failIf(status != 202)
+        self.failIf(len(response) == 0)
 
-    def test_RemoveEntities(self):
-        status = self.session.removeEntities(["any"])
-        print("RESULT:", status, "\n")
-        self.failIf(status != 202)
+        obj = None
+        for item in response:
+            if item['name'] == 'TEST_ENTITY_PYTHON3':
+                obj = item
+                break
+        self.failIf(obj is None)
+
+        response = self.session.removeEntities([obj['id']])
+        self.failIf(response != 202)
+
+    def test_CRUDTaxonomy(self):
+        response = self.session.getTaxonomy()
+        self.failIf(response is None)
+
+        response = self.session.addTaxonomy([
+            {"name": "TEST_TAXONOMY_PYTHON3"},
+        ])
+        self.failIf(len(response) == 0)
+
+        obj = None
+        for item in response:
+            if item['name'] == 'TEST_TAXONOMY_PYTHON3':
+                obj = item
+                break
+        self.failIf(obj is None)
+
+        response = self.session.removeTaxonomy([obj['id']])
+        self.failIf(response != 202)
 
     def test_CreateDocument(self):
-        print("\n", "*** Create document: ", doc_id, "\n")
         status = self.session.queueDocument({"id": doc_id, "text": message})
-        print("RESULT:", status, "\n")
         self.failIf(status != 200 and status != 202)
 
     def test_GetDocument(self):
-        print("\n", "*** Get document: ", doc_id, "\n")
         status = self.session.getDocument(doc_id)
-        print("RESULT:", status, "\n")
         self.failIf(status is None)
-
-    # def test_CancelDocument(self):
-    #     print "\n", "*** Cancel document: ", doc_id, "\n"
-    #     status = self.session.cancelDocument(doc_id)
-    #     print "RESULT:", status, "\n"
-    #     self.failIf(status != 200 and status != 202)
 
     def test_CreateBatchDocuments(self):
         batch = []
@@ -158,101 +178,96 @@ class SemantriaSessionTest(unittest.TestCase):
             batch.append({"id": str(uuid.uuid1()).replace("-", ""), "text": message})
             var -= 1
         status = self.session.queueBatch(batch)
-        print("RESULT:", status, "\n")
         self.failIf(status != 200 and status != 202)
 
     def test_GetProcessedDocuments(self):
         status = self.session.getProcessedDocuments()
-        print("RESULT:", len(status), status, "\n")
         self.failIf(status is None)
 
     def test_CreateCollection(self):
-        print("\n", "*** Create collection: ", col_id, "\n")
         status = self.session.queueCollection({"id": col_id, "documents": [message, message]})
-        print("RESULT:", status, "\n")
         self.failIf(status != 200 and status != 202)
 
     def test_GetCollection(self):
-        print("\n", "*** Get collection: ", col_id, "\n")
         status = self.session.getCollection(col_id)
-        print("RESULT:", status, "\n")
         self.failIf(status is None)
-
-    # def test_CancelCollection(self):
-    #     print "\n", "*** Cancel collection: ", col_id, "\n"
-    #     status = self.session.cancelCollection(col_id)
-    #     print "RESULT:", status, "\n"
-    #     self.failIf(status != 200 and status != 202)
 
     def test_GetProcessedCollections(self):
         status = self.session.getProcessedCollections()
-        print("RESULT:", len(status), status, "\n")
         self.failIf(status is None)
 
     def test_Status(self):
         status = self.session.getStatus()
-        print("RESULT:", status, "\n")
         self.failIf(status is None)
 
     def test_VerifySubscription(self):
         status = self.session.getSubscription()
-        print("RESULT:", status, "\n")
         self.failIf(status is None)
 
-    def test_GetConfigurations(self):
+    def test_CRUDConfigurations(self):
         status = self.session.getConfigurations()
-        print("RESULT:", status, "\n")
         self.failIf(status is None)
 
-    def test_UpdateConfiguration(self):
-        response = self.session.getConfigurations()
-        print("RESULT:", response)
-        self.failIf(response is None)
+        test_configuration = {
+            'auto_response': False,
+            'is_primary': False,
+            'name': 'TEST_CONFIG_PYTHON3',
+            'language': 'English',
+            'document': {
+                'query_topics_limit': 5,
+                'concept_topics_limit': 5,
+                'named_entities_limit': 5,
+                'user_entities_limit': 5
+            }
+        }
 
-        default = None
+        response = self.session.addConfigurations([test_configuration])
+        self.failIf(len(response) == 0)
+
+        obj = None
         for item in response:
-            if item["name"] == "default":
-                item["auto_response"] = False
-                default = item
+            if item["name"] == "TEST_CONFIG_PYTHON3":
+                obj = item
+                break
+        self.failIf(obj is None)
+        self.failIf(obj['chars_threshold'] != 80)
 
-        self.failIf(default is None)
-        status = self.session.updateConfigurations([default])
-        print("RESULT:", status, "\n")
-        self.failIf(status != 202)
+        obj['chars_threshold'] = 20
+        config_id = obj['id']
+
+        response = self.session.updateConfigurations([obj])
+        self.failIf(len(response) == 0)
+        obj = None
+        for item in response:
+            if item["id"] == config_id:
+                obj = item
+                break
+        self.failIf(obj is None)
+        self.failIf(obj['chars_threshold'] != 20)
+
+        response = self.session.removeConfigurations([obj['id']])
+        self.failIf(response != 202)
 
 if __name__ == '__main__':
-    #unittest.main()
+    # unittest.main()
 
     suite = unittest.TestSuite()
     suite.addTest(SemantriaSessionTest('test_Status'))
     suite.addTest(SemantriaSessionTest('test_VerifySubscription'))
-    suite.addTest(SemantriaSessionTest('test_GetConfigurations'))
-    suite.addTest(SemantriaSessionTest('test_UpdateConfiguration'))
-    suite.addTest(SemantriaSessionTest('test_GetBlacklist'))
-    suite.addTest(SemantriaSessionTest('test_AddBlacklist'))
-    suite.addTest(SemantriaSessionTest('test_RemoveBlacklist'))
-    suite.addTest(SemantriaSessionTest('test_GetCategories'))
-    suite.addTest(SemantriaSessionTest('test_AddCategories'))
-    suite.addTest(SemantriaSessionTest('test_RemoveCategories'))
-    suite.addTest(SemantriaSessionTest('test_GetQueries'))
-    suite.addTest(SemantriaSessionTest('test_AddQueries'))
-    suite.addTest(SemantriaSessionTest('test_RemoveQueries'))
-    suite.addTest(SemantriaSessionTest('test_GetSentimentPhrases'))
-    suite.addTest(SemantriaSessionTest('test_AddSentimentPhrases'))
-    suite.addTest(SemantriaSessionTest('test_RemoveSentimentPhrases'))
-    suite.addTest(SemantriaSessionTest('test_GetEntities'))
-    suite.addTest(SemantriaSessionTest('test_AddEntities'))
-    suite.addTest(SemantriaSessionTest('test_RemoveEntities'))
+    suite.addTest(SemantriaSessionTest('test_CRUDConfigurations'))
+    suite.addTest(SemantriaSessionTest('test_CRUDBlacklist'))
+    suite.addTest(SemantriaSessionTest('test_CRUDCategories'))
+    suite.addTest(SemantriaSessionTest('test_CRUDQueries'))
+    suite.addTest(SemantriaSessionTest('test_CRUDPhrases'))
+    suite.addTest(SemantriaSessionTest('test_CRUDEntities'))
 
     suite.addTest(SemantriaSessionTest('test_CreateDocument'))
     suite.addTest(SemantriaSessionTest('test_GetDocument'))
-    #suite.addTest(SemantriaSessionTest('test_CancelDocument'))
     suite.addTest(SemantriaSessionTest('test_CreateBatchDocuments'))
     suite.addTest(SemantriaSessionTest('test_GetProcessedDocuments'))
 
     suite.addTest(SemantriaSessionTest('test_CreateCollection'))
     suite.addTest(SemantriaSessionTest('test_GetCollection'))
-    #suite.addTest(SemantriaSessionTest('test_CancelCollection'))
     suite.addTest(SemantriaSessionTest('test_GetProcessedCollections'))
 
     unittest.TextTestRunner(verbosity=2).run(suite)
