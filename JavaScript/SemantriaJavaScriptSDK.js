@@ -309,7 +309,7 @@
 		this.consumerSecret = consumerSecret;
 		this.applicationName = applicationName;
 		this.acceptEncoding = acceptEncoding;
-		this.apiVersion = apiVersion
+		this.apiVersion = apiVersion;
 	};
 
 
@@ -456,21 +456,99 @@
 		}
 	};
 
+    var authRequest = function(appkey, id, username, password) {
+        var url = 'https://semantria.com/auth/session';
+        var method = "GET"
+        var postData = ""
+        if (id !== false) {
+            url += '/' + id;
+        } else {
+            method = "POST"
+            postData = JSON.stringify({
+                username: username,
+                password: password
+            })
+        }
+        url += '.json?appkey=' + appkey;
+        response = Request.prototype.runRequest(method, url, [], postData)
+        if (response.status != 200) {
+            return false
+        }
+        var json_res = JSON.parse(response.data)
+        if (!json_res) {
+            return false
+        }
+        return {
+            id: json_res.id,
+            key: json_res.custom_params.key,
+            secret: json_res.custom_params.secret
+        }
+    }
+
+    var getCookie = function (name) {
+        var value = "; " + document.cookie;
+        var parts = value.split("; " + name + "=");
+        if (parts.length == 2) return parts.pop().split(";").shift();
+    }
+    var createCookie = function (name,value,days) {
+        if (days) {
+            var date = new Date();
+            date.setTime(date.getTime()+(days*24*60*60*1000));
+            var expires = "; expires="+date.toGMTString();
+        }
+        else var expires = "";
+        document.cookie = name+"="+value+expires+"; path=/";
+    }
+    var obtainSessionKeys = function(session) {
+        var id = getCookie(session.session_cookie)
+        if (id) {
+            var data = authRequest(session.appkey, id)
+            if (data) {
+                session.consumerKey = data.key
+                session.consumerSecret = data.secret
+                return true
+            }
+        }
+        var data = authRequest(session.appkey, false, session.username, session.password)
+        if (!data) {
+            return false
+        }
+        createCookie(session.session_cookie, data.id, 30)
+        session.consumerKey = data.key
+        session.consumerSecret = data.secret
+        return true
+    }
 	/**
 	 * initializes the API
 	 *
 	 * @param {Object} config
 	 * @returns {undefined}
 	 */
-	var Session = function(consumerKey, consumerSecret, applicationName, format, useCompression) {
+	var Session = function(config) {
+		if(typeof config != "object") {
+			config = {
+				"consumerKey": arguments[0],
+				"consumerSecret": arguments[1],
+				"applicationName": arguments[2],
+				"format": arguments[3],
+				"useCompression": arguments[4],
+			}
+		}
 		this.eventHandlers = {};
-		this.consumerKey = consumerKey;
-		this.consumerSecret = consumerSecret;
-		this.useCompression = useCompression || true;
-		this.format = format || "json";
+		this.consumerKey = config.consumerKey;
+		this.consumerSecret = config.consumerSecret;
+		this.username = config.username;
+		this.password = config.password;
+		this.appkey = config.appkey || 'cd954253-acaf-4dfa-a417-0a8cfb701f12';
+		this.session_cookie = config.session_cookie || 'sematriasession' ;
+		this.useCompression = config.useCompression || true;
+		this.format = config.format || "json";
 		this.acceptEncoding = this.useCompression ? 'gzip, deflate' : 'identity';
-		this.applicationName = applicationName ? (applicationName + "/") : "";
+		this.applicationName = config.applicationName ? (config.applicationName + "/") : "";
 
+		if(!this.consumerKey && !this.consumerSecret) {
+			obtainSessionKeys(this)
+		}
 		if(!this.consumerKey || !this.consumerSecret) {
 			throw "ConsumerKey and ConsumerSecret should be specified in order to use SDK";
 		}
@@ -487,13 +565,13 @@
 		 * @var {String} SDK_VERSION
 		 * @constant
 		 */
-		SDK_VERSION: "3.9.80",
+		SDK_VERSION: "4.0.82",
 
 		/**
 		 * @var {String} X_API_VERSION
 		 * @constant
 		 */
-		X_API_VERSION: '3.9',
+		X_API_VERSION: '4.0',
 
 		/**
 		 * @var {String} HOST
@@ -571,6 +649,9 @@
 		 * @returns {undefiend}
 		 */
 		onAfterResponse: emptyFn,
+		/**
+		 * @returns {string}
+		 */
 
 		/**
 		 * @returns {undefiend}
@@ -584,9 +665,6 @@
 			});
 		},
 
-		/**
-		 * @returns {string}
-		 */
 		getAPIversion: function() {
 			return this.X_API_VERSION;
 		},
@@ -638,27 +716,33 @@
 		 * @param {Object} params
 		 */
 		addConfigurations: function(params) {
-			return this.updateConfigurations.apply(this, arguments);
+            return this.runRequest("POST", "/configurations", {
+                postParams: params
+            });
 		},
 
 		/**
 		 * @param {string[]} name - new configuration name
 		 * @param {string[]} template - template configuration id
+		 * @param {(boolean|SemantriaApiCallback)} [false] callback
+		 *    false - synchronous call; retutn api response
+		 *    true  - asynchronous call; retutn Promise
+		 *    SemantriaApiCallback - asynchronous call
 		 * @returns {*}
 		 */
-		cloneConfiguration: function(name, template) {
+		cloneConfiguration: function(name, template, callback) {
 			var params = {
 				name: name,
 				template: template
 			};
-			return this.addConfigurations([params]);
+			return this.addConfigurations([params], callback);
 		},
 
 		/**
 		 * @param {Object} params
 		 */
 		updateConfigurations: function(params) {
-			return this.runRequest("POST", "/configurations", {
+			return this.runRequest("PUT", "/configurations", {
 				postParams: params
 			});
 		},
@@ -690,8 +774,21 @@
 		 */
 		addBlacklist: function(params, configId) {
 			return this.runRequest("POST", "/blacklist", { 
-				getParams:  { 
-					config_id: configId 
+				getParams:  {
+					config_id: configId
+				},
+				postParams: params
+			});
+		},
+
+		/**
+		 * @param {Object} params
+		 * @param {Number} configId
+		 */
+		updateBlacklist: function(params, configId) {
+			return this.runRequest("PUT", "/blacklist", {
+				getParams:  {
+					config_id: configId
 				},
 				postParams: params
 			});
@@ -727,7 +824,12 @@
 		 * @param {Number} configId
 		 */
 		addCategories: function(params, configId) {
-			return this.updateCategories.apply(this, arguments);
+			return this.runRequest("POST", "/categories", {
+				getParams: {
+					config_id: configId
+				},
+				postParams: params
+			});
 		},
 
 		/**
@@ -735,7 +837,7 @@
 		 * @param {Number} configId
 		 */
 		updateCategories: function(params, configId) {
-			return this.runRequest("POST", "/categories", {
+			return this.runRequest("PUT", "/categories", {
 				getParams: {
 					config_id: configId
 				},
@@ -772,7 +874,12 @@
 		 * @param {Number} configId
 		 */
 		addQueries: function(params, configId) {
-			return this.updateQueries.apply(this, arguments);
+			return this.runRequest("POST", "/queries", {
+				getParams: {
+					config_id: configId
+				},
+				postParams: params
+			});
 		},
 
 		/**
@@ -780,7 +887,7 @@
 		 * @param {Number} configId
 		 */
 		updateQueries: function(params, configId) {
-			return this.runRequest("POST", "/queries", {
+			return this.runRequest("PUT", "/queries", {
 				getParams: {
 					config_id: configId
 				},
@@ -817,7 +924,12 @@
 		 * @param {Number} configId
 		 */
 		addEntities: function(params, configId) {
-			return this.updateEntities.apply(this, arguments);
+			return this.runRequest("POST", "/entities", {
+				getParams: {
+					config_id: configId
+				},
+				postParams: params
+			});
 		},
 
 		/**
@@ -825,7 +937,7 @@
 		 * @param {Number} configId
 		 */
 		updateEntities: function(params, configId) {
-			return this.runRequest("POST", "/entities", {
+			return this.runRequest("PUT", "/entities", {
 				getParams: {
 					config_id: configId
 				},
@@ -864,7 +976,12 @@
 		 * @param {Number} configId
 		 */
 		addPhrases: function(params, configId) {
-			return this.updatePhrases.apply(this, arguments);
+			return this.runRequest("POST", "/phrases", {
+				getParams: {
+					config_id: configId
+				},
+				postParams: params
+			});
 		},
 
 
@@ -873,7 +990,7 @@
 		 * @param {Number} configId
 		 */
 		updatePhrases: function(params, configId) {
-			return this.runRequest("POST", "/phrases", {
+			return this.runRequest("PUT", "/phrases", {
 				getParams: {
 					config_id: configId
 				},
@@ -887,6 +1004,59 @@
 		 */
 		removePhrases: function(params, configId) {
 			return this.runRequest("DELETE", "/phrases", {
+				getParams: {
+					config_id: configId
+				},
+				postParams: params
+			});
+		},
+
+
+		/**
+		 * @param {Number} configId
+		 */
+		getTaxonomy: function(configId) {
+			return this.runRequest("GET", "/taxonomy", {
+				getParams: {
+					config_id: configId
+				}
+			});
+		},
+
+
+		/**
+		 * @param {Object} params
+		 * @param {Number} configId
+		 */
+		addTaxonomy: function(params, configId) {
+			return this.runRequest("POST", "/taxonomy", {
+				getParams: {
+					config_id: configId
+				},
+				postParams: params
+			});
+		},
+
+
+		/**
+		 * @param {Object} params
+		 * @param {Number} configId
+		 */
+		updateTaxonomy: function(params, configId) {
+			return this.runRequest("PUT", "/taxonomy", {
+				getParams: {
+					config_id: configId
+				},
+				postParams: params
+			});
+		},
+
+		/**
+		 * @param {Object} params
+		 * @param {Number} configId
+		 */
+		removeTaxonomy: function(params, configId) {
+			return this.runRequest("DELETE", "/taxonomy", {
 				getParams: {
 					config_id: configId
 				},
@@ -1072,7 +1242,7 @@
 			var request = new Request(
 				this.consumerKey, 
 				this.consumerSecret, 
-				this.applicationName,
+				this.applicationName, 
 				this.acceptEncoding,
 				this.X_API_VERSION
 			);
