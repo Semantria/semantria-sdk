@@ -52,6 +52,9 @@
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System" />
@@ -67,7 +70,7 @@
     <Content Include="AuthoringTests.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Semantria\Semantria.Com.csproj">
+    <ProjectReference Include="..\Semantria.Com\Semantria.Com.csproj">
       <Project>{E942AB83-DA93-4B16-A826-FF3993B47329}</Project>
       <Name>Semantria.Com</Name>
     </ProjectReference>

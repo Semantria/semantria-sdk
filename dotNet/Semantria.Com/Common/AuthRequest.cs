@@ -13,7 +13,7 @@ namespace Semantria.Com
     { 
         #region Constructor
 
-        public AuthRequest(string consumerKey, string consumerSecret, string appName, bool useCompression = false, string apiVersion = "3.9")
+        public AuthRequest(string consumerKey, string consumerSecret, string appName, bool useCompression = false, string apiVersion = "4.0")
         {
             _consumerKey = consumerKey; 
             _consumerSecret = consumerSecret;
@@ -88,7 +88,6 @@ namespace Semantria.Com
                 nonce);
 
             AuthResponse authResponse = WebRequest(method, querystring, postData, authheader);
-
             return authResponse;
         }
 
@@ -108,13 +107,14 @@ namespace Semantria.Com
             webRequest.Headers.Add("x-app-name", _appName);
             webRequest.Headers.Add("x-api-version", _apiVersion);
             webRequest.Headers.Add("Authorization", authheader);
+            
             if (_useCompression == true)
             {
                 webRequest.Headers.Add("Accept-Encoding", "gzip,deflate");
                 webRequest.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
             }
 
-            if (method == QueryMethod.POST || method == QueryMethod.DELETE)
+            if (method == QueryMethod.POST || method == QueryMethod.PUT || method == QueryMethod.DELETE)
             {
                 webRequest.ContentType = "application/x-www-form-urlencoded";
 

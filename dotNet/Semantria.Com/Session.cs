@@ -1,7 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
+using System.IO;
 using System.Net;
+using System.Collections.Generic;
 using System.Reflection;
 using Semantria.Com.Mapping.Configuration;
 using Semantria.Com.Mapping.Configuration.Stub;
@@ -22,14 +22,23 @@ namespace Semantria.Com
         }
         
         private Session(string consumerKey, string consumerSecret, string appName) :
-            this (consumerKey, consumerSecret, new JsonSerializer(), appName)
+            this(consumerKey, consumerSecret, new JsonSerializer(), appName)
         {
         }
 
-        private Session(string consumerKey, string consumerSecret, ISerializer serializer, string appName)
+        private Session(string consumerKey, string consumerSecret, ISerializer serializer, string appName, bool usedAPIkeys = true)
         {
-            _consumerKey = consumerKey;
-            _consumerSecret = consumerSecret;
+            if (usedAPIkeys)
+            {
+                _consumerKey = consumerKey;
+                _consumerSecret = consumerSecret;
+            }
+            else
+            {
+                _username = consumerKey;
+                _password = consumerSecret;
+            }
+
             _serializer = serializer;
             _format = serializer.Type();
             _appName = appName;
@@ -65,12 +74,16 @@ namespace Semantria.Com
 
         private string _consumerKey = string.Empty;
         private string _consumerSecret = string.Empty;
+        private string _username = string.Empty;
+        private string _password = string.Empty;
         private string _appName = string.Empty;
         private ISerializer _serializer = null;
         private string _format = "json";
 		private string _host = "https://api.semantria.com";
+        private string _authHost = "https://semantria.com/auth";
+        private string _authAppKey = "cd954253-acaf-4dfa-a417-0a8cfb701f12";
         private bool _useCompression = false;
-        private string _apiVersion = "3.9";
+        private string _apiVersion = "4.0";
         private const string WRAPPER_NAME = "dotNet";
 
         #endregion
@@ -93,6 +106,12 @@ namespace Semantria.Com
         {
             get { return _apiVersion; }
             set { _apiVersion = value; }
+        }
+
+        internal bool ReUseSession
+        {
+            get;
+            set;
         }
 
         #endregion
@@ -159,7 +178,7 @@ namespace Semantria.Com
 
         public static Session CreateSession(string consumerKey, string consumerSecret)
         {
-            return CreateSession(consumerKey, consumerSecret, new JsonSerializer());
+            return CreateSession(consumerKey, consumerSecret, string.Empty);
         }
 
         public static Session CreateSession(string consumerKey, string consumerSecret, string appName)
@@ -187,10 +206,30 @@ namespace Semantria.Com
             return new Session(consumerKey, consumerSecret, serializer, appName);
         }
 
+        public static Session CreateUserSession(string username, string password, bool reUseSession = true)
+        {
+            return new Session(username, password, new JsonSerializer(), null, false) { ReUseSession = reUseSession };
+        }
+
+        public static Session CreateUserSession(string username, string password, string appName, bool reUseSession = true)
+        {
+            return new Session(username, password, new JsonSerializer(), appName, false) { ReUseSession = reUseSession };
+        }
+
+        public static Session CreateUserSession(string username, string password, ISerializer serializer, bool reUseSession = true)
+        {
+            return new Session(username, password, new JsonSerializer(), null, false) { ReUseSession = reUseSession };
+        }
+
+        public static Session CreateUserSession(string username, string password, string appName, ISerializer serializer, bool reUseSession = true)
+        {
+            return new Session(username, password, new JsonSerializer(), appName, false) { ReUseSession = reUseSession };
+        }
+
         #endregion
 
         #region API Status
- 
+
         public void RegisterSerializer(ISerializer serializer)
         {
             if (serializer == null)
@@ -304,43 +343,43 @@ namespace Semantria.Com
             return obj;
         }
 
-        public int AddConfigurations(List<Configuration> items)
+        public List<Configuration> AddConfigurations(List<Configuration> items)
         {
-            return this.Update<Configuration>(QueryMethod.POST, items);
+            return this.Add<Configuration>(QueryMethod.POST, items);
         }
 
-        public int UpdateConfigurations(List<Configuration> items)
+        public List<Configuration> UpdateConfigurations(List<Configuration> items)
         {
-            return this.Update<Configuration>(QueryMethod.POST, items);
+            return this.Update<Configuration>(QueryMethod.PUT, items);
         }
 
-        public int RemoveConfigurations(List<Configuration> items)
+        public int RemoveConfigurations(List<string> items)
         {
-            return this.Update<Configuration>(QueryMethod.DELETE, items);
+            return this.Delete<Configuration>(QueryMethod.DELETE, items);
         }
 
-        public int CloneConfiguration(string name, string template)
+        public List<Configuration> CloneConfiguration(string name, string template)
         {
             var items = new List<Configuration>();
             items.Add(new Configuration() { Name = name, Template = template });
 
-            return this.AddConfigurations( items);
+            return this.Add<Configuration>(QueryMethod.POST, items);
         }
 
         #endregion Configuration
 
         #region Blacklist
 
-        public List<string> GetBlacklist(string configId = null)
+        public List<Blacklist> GetBlacklist(string configId = null)
         {
-            AuthResponse authResponse = this.Get<string>(configId);
-            List<string> obj = new List<string>();
+            AuthResponse authResponse = this.Get<Blacklist>(configId);
+            List<Blacklist> obj = new List<Blacklist>();
 
             switch (_format)
             {
                 case "json":
                     {
-                        List<string> result = this.ProcessGetResponse<List<string>>(authResponse);
+                        List<Blacklist> result = this.ProcessGetResponse<List<Blacklist>>(authResponse);
                         if (result != null) obj = result;
                     }
                     break;
@@ -357,14 +396,19 @@ namespace Semantria.Com
             return obj;
         }
 
-        public int AddBlacklist(List<string> items, string configId = null)
+        public List<Blacklist> AddBlacklist(List<Blacklist> items, string configId = null)
         {
-            return this.Update<string>(QueryMethod.POST, items, configId);
+            return this.Add<Blacklist>(QueryMethod.POST, items, configId);
+        }
+
+        public List<Blacklist> UpdateBlacklist(List<Blacklist> items, string configId = null)
+        {
+            return this.Update<Blacklist>(QueryMethod.PUT, items, configId);
         }
 
         public int RemoveBlacklist(List<string> items, string configId = null)
         {
-            return this.Update<string>(QueryMethod.DELETE, items, configId);
+            return this.Delete<Blacklist>(QueryMethod.DELETE, items, configId);
         }
 
         #endregion Blacklist
@@ -397,19 +441,19 @@ namespace Semantria.Com
             return obj;
         }
 
-        public int AddCategories(List<Category> items, string configId = null)
+        public List<Category> AddCategories(List<Category> items, string configId = null)
         {
-            return this.Update<Category>(QueryMethod.POST, items, configId);
+            return this.Add<Category>(QueryMethod.POST, items, configId);
         }
 
-        public int UpdateCategories(List<Category> items, string configId = null)
+        public List<Category> UpdateCategories(List<Category> items, string configId = null)
         {
-            return this.Update<Category>(QueryMethod.POST, items, configId);
+            return this.Update<Category>(QueryMethod.PUT, items, configId);
         }
 
-        public int RemoveCategories(List<Category> items, string configId = null)
+        public int RemoveCategories(List<string> items, string configId = null)
         {
-            return this.Update<Category>(QueryMethod.DELETE, items, configId);
+            return this.Delete<Category>(QueryMethod.DELETE, items, configId);
         }
 
         #endregion Category
@@ -442,19 +486,19 @@ namespace Semantria.Com
             return obj;
         }
 
-        public int AddQueries(List<Query> items, string configId = null)
+        public List<Query> AddQueries(List<Query> items, string configId = null)
         {
-            return this.Update<Query>(QueryMethod.POST, items, configId);
+            return this.Add<Query>(QueryMethod.POST, items, configId);
         }
 
-        public int UpdateQueries(List<Query> items, string configId = null)
+        public List<Query> UpdateQueries(List<Query> items, string configId = null)
         {
-            return this.Update<Query>(QueryMethod.POST, items, configId);
+            return this.Update<Query>(QueryMethod.PUT, items, configId);
         }
 
-        public int RemoveQueries(List<Query> items, string configId = null)
+        public int RemoveQueries(List<string> items, string configId = null)
         {
-            return this.Update<Query>(QueryMethod.DELETE, items, configId);
+            return this.Delete<Query>(QueryMethod.DELETE, items, configId);
         }
 
         #endregion Query
@@ -487,19 +531,19 @@ namespace Semantria.Com
             return obj;
         }
 
-        public int AddEntities(List<UserEntity> items, string configId = null)
+        public List<UserEntity> AddEntities(List<UserEntity> items, string configId = null)
         {
-            return this.Update<UserEntity>(QueryMethod.POST, items, configId);
+            return this.Add<UserEntity>(QueryMethod.POST, items, configId);
         }
 
-        public int UpdateEntities(List<UserEntity> items, string configId = null)
+        public List<UserEntity> UpdateEntities(List<UserEntity> items, string configId = null)
         {
-            return this.Update<UserEntity>(QueryMethod.POST, items, configId);
+            return this.Update<UserEntity>(QueryMethod.PUT, items, configId);
         }
 
-        public int RemoveEntities(List<UserEntity> items, string configId = null)
+        public int RemoveEntities(List<string> items, string configId = null)
         {
-            return this.Update<UserEntity>(QueryMethod.DELETE, items, configId);
+            return this.Delete<UserEntity>(QueryMethod.DELETE, items, configId);
         }
 
         #endregion Entity
@@ -532,22 +576,67 @@ namespace Semantria.Com
             return obj;
         }
 
-        public int AddSentimentPhrases(List<SentimentPhrase> items, string configId = null)
+        public List<SentimentPhrase> AddSentimentPhrases(List<SentimentPhrase> items, string configId = null)
         {
-            return this.Update<SentimentPhrase>(QueryMethod.POST, items, configId);
+            return this.Add<SentimentPhrase>(QueryMethod.POST, items, configId);
         }
 
-        public int UpdateSentimentPhrases(List<SentimentPhrase> items, string configId = null)
+        public List<SentimentPhrase> UpdateSentimentPhrases(List<SentimentPhrase> items, string configId = null)
         {
-            return this.Update<SentimentPhrase>(QueryMethod.POST, items, configId);
+            return this.Update<SentimentPhrase>(QueryMethod.PUT, items, configId);
         }
 
-        public int RemoveSentimentPhrases(List<SentimentPhrase> items, string configId = null)
+        public int RemoveSentimentPhrases(List<string> items, string configId = null)
         {
-            return this.Update<SentimentPhrase>(QueryMethod.DELETE, items, configId);
+            return this.Delete<SentimentPhrase>(QueryMethod.DELETE, items, configId);
         }
 
         #endregion SentimentPhrase
+
+        #region Taxonomy
+
+        public List<TaxonomyNode> GetTaxonomy(string configId = null)
+        {
+            AuthResponse authResponse = this.Get<TaxonomyNode>(configId);
+            List<TaxonomyNode> obj = new List<TaxonomyNode>();
+
+            switch (_format)
+            {
+                case "json":
+                    {
+                        List<TaxonomyNode> result = this.ProcessGetResponse<List<TaxonomyNode>>(authResponse);
+                        if (result != null) obj = result;
+                    }
+                    break;
+                case "xml":
+                    {
+                        Taxonomies result = this.ProcessGetResponse<Taxonomies>(authResponse);
+                        if (result != null) obj = result.Data;
+                    }
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            return obj;
+        }
+
+        public List<TaxonomyNode> AddTaxonomy(List<TaxonomyNode> items, string configId = null)
+        {
+            return this.Add<TaxonomyNode>(QueryMethod.POST, items, configId);
+        }
+
+        public List<TaxonomyNode> UpdateTaxonomy(List<TaxonomyNode> items, string configId = null)
+        {
+            return this.Update<TaxonomyNode>(QueryMethod.PUT, items, configId);
+        }
+
+        public int RemoveTaxonomy(List<string> items, string configId = null)
+        {
+            return this.Delete<TaxonomyNode>(QueryMethod.DELETE, items, configId);
+        }
+
+        #endregion Taxonomy
 
         #region Document
 
@@ -793,7 +882,69 @@ namespace Semantria.Com
             return this.RunRequest(QueryMethod.GET, url, null);
         }
 
-        private int Update<T>(QueryMethod method, List<T> items, string configId = null)
+        private List<T> Add<T>(QueryMethod method, List<T> items, string configId = null)
+        {
+            string tag = this.GetTag<T>();
+
+            string url = String.Format("{0}/{1}.{2}", _host, tag, _format);
+            if (!String.IsNullOrEmpty(configId))
+            {
+                url = String.Format("{0}/{1}.{2}?config_id={3}", _host, tag, _format, configId);
+            }
+
+            string data = null;
+
+            object stub = items;
+            if (_format == "xml")
+            {
+                stub = this.GetStub<T>(items);
+            }
+
+            data = _serializer.Serialize(stub);
+
+            AuthResponse authResponse = this.RunRequest(method, url, data);
+            List<T> obj = new List<T>();
+
+            switch (_format)
+            {
+                case "json":
+                    {
+                        List<T> result = this.ProcessGetResponse<List<T>>(authResponse);
+                        if (result != null) obj = result;
+                    }
+                    break;
+                case "xml":
+                    {
+                        IStub<T> result = null;
+                        
+                        if (typeof(T).Equals(typeof(Configuration)))
+                            result = (IStub<T>)this.ProcessGetResponse<Configurations > (authResponse);
+                        else if (typeof(T).Equals(typeof(Category)))
+                            result = (IStub<T>)this.ProcessGetResponse<Categories>(authResponse);
+                        else if (typeof(T).Equals(typeof(Blacklist)))
+                            result = (IStub<T>)this.ProcessGetResponse<Blacklists>(authResponse);
+                        else if (typeof(T).Equals(typeof(Query)))
+                            result = (IStub<T>)this.ProcessGetResponse<Queries>(authResponse);
+                        else if (typeof(T).Equals(typeof(UserEntity)))
+                            result = (IStub<T>)this.ProcessGetResponse<UserEntities>(authResponse);
+                        else if (typeof(T).Equals(typeof(SentimentPhrase)))
+                            result = (IStub<T>)this.ProcessGetResponse<SentimentPhrases>(authResponse);
+                        else if (typeof(T).Equals(typeof(TaxonomyNode)))
+                            result = (IStub<T>)this.ProcessGetResponse<Taxonomies>(authResponse);
+                        else
+                            throw new ArgumentOutOfRangeException();
+                        
+                        if (result != null) obj = result.Data;
+                    }
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            return obj;
+        }
+
+        private List<T> Update<T>(QueryMethod method, List<T> items, string configId = null)
         {
             string tag = this.GetTag<T>();
             
@@ -804,32 +955,112 @@ namespace Semantria.Com
             }
 
             string data = null;
-            if (method == QueryMethod.DELETE)
+
+            object stub = items;
+            if (_format == "xml")
             {
-                IStub<T> xstub = this.GetStub<T>(items) as IStub<T>;
-                xstub.ToKeys();
-                if (_format == "xml")
-                {
-                    data = _serializer.Serialize(xstub);
-                    data = xstub.ConvertTag(data);
-                }
+                stub = this.GetStub<T>(items);
+            }
+
+            data = _serializer.Serialize(stub);
+            
+            AuthResponse authResponse = this.RunRequest(method, url, data);
+            List<T> obj = new List<T>();
+
+            switch (_format)
+            {
+                case "json":
+                    {
+                        List<T> result = this.ProcessGetResponse<List<T>>(authResponse);
+                        if (result != null) obj = result;
+                    }
+                    break;
+                case "xml":
+                    {
+                        IStub<T> result = null;
+
+                        if (typeof(T).Equals(typeof(Configuration)))
+                            result = (IStub<T>)this.ProcessGetResponse<Configurations>(authResponse);
+                        else if (typeof(T).Equals(typeof(Category)))
+                            result = (IStub<T>)this.ProcessGetResponse<Categories>(authResponse);
+                        else if (typeof(T).Equals(typeof(Blacklist)))
+                            result = (IStub<T>)this.ProcessGetResponse<Blacklists>(authResponse);
+                        else if (typeof(T).Equals(typeof(Query)))
+                            result = (IStub<T>)this.ProcessGetResponse<Queries>(authResponse);
+                        else if (typeof(T).Equals(typeof(UserEntity)))
+                            result = (IStub<T>)this.ProcessGetResponse<UserEntities>(authResponse);
+                        else if (typeof(T).Equals(typeof(SentimentPhrase)))
+                            result = (IStub<T>)this.ProcessGetResponse<SentimentPhrases>(authResponse);
+                        else if (typeof(T).Equals(typeof(TaxonomyNode)))
+                            result = (IStub<T>)this.ProcessGetResponse<Taxonomies>(authResponse);
+                        else
+                            throw new ArgumentOutOfRangeException();
+
+                        if (result != null) obj = result.Data;
+                    }
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            return obj;
+        }
+
+        private int Delete<T>(QueryMethod method, List<string> items, string configId = null)
+        {
+            string tag = this.GetTag<T>();
+
+            string url = String.Format("{0}/{1}.{2}", _host, tag, _format);
+            if (!String.IsNullOrEmpty(configId))
+            {
+                url = String.Format("{0}/{1}.{2}?config_id={3}", _host, tag, _format, configId);
+            }
+
+            object stub = items;
+
+            List<T> list = new List<T>();
+            object obj = default(T);
+
+            foreach (string item in items)
+            {
+                if (typeof(T).Equals(typeof(Configuration)))
+                    obj = new Configuration() { ConfigId = item };
+                else if (typeof(T).Equals(typeof(Category)))
+                    obj = new Category() { Id = item };
+                else if (typeof(T).Equals(typeof(Blacklist)))
+                    obj = new Blacklist() { Id = item };
+                else if (typeof(T).Equals(typeof(Query)))
+                    obj = new Query() { Id = item };
+                else if (typeof(T).Equals(typeof(UserEntity)))
+                    obj = new UserEntity() { Id = item };
+                else if (typeof(T).Equals(typeof(SentimentPhrase)))
+                    obj = new SentimentPhrase() { Id = item };
+                else if (typeof(T).Equals(typeof(TaxonomyNode)))
+                    obj = new TaxonomyNode() { Id = item };
                 else
-                {
-                    data = _serializer.Serialize(xstub.Keys);
-                }
+                    throw new ArgumentOutOfRangeException();
+                
+                list.Add((T)obj);
+            }
+
+
+            IStub<T> xstub = this.GetStub<T>(list) as IStub<T>;
+            xstub.ToKeys();
+            
+            string data = string.Empty;
+
+            if (_format == "xml")
+            {
+                data = _serializer.Serialize(xstub);
+                data = xstub.ConvertTag(data);
             }
             else
             {
-                object stub = items;
-                if (_format == "xml")
-                {
-                    stub = this.GetStub<T>(items);
-                }
-                data = _serializer.Serialize(stub);
+                data = _serializer.Serialize(xstub.Keys);
             }
-            
+
             AuthResponse authResponse = this.RunRequest(method, url, data);
-            return this.ProcessPostResponse<T>(authResponse);
+            return this.ProcessPostResponse<string>(authResponse);
         }
 
         private string GetTag<T>()
@@ -840,7 +1071,7 @@ namespace Semantria.Com
                 tag = "configurations";
             else if (typeof(T).Equals(typeof(Category)))
                 tag = "categories";
-            else if (typeof(T).Equals(typeof(String)))
+            else if (typeof(T).Equals(typeof(Blacklist)))
                 tag = "blacklist";
             else if (typeof(T).Equals(typeof(Query)))
                 tag = "queries";
@@ -848,6 +1079,8 @@ namespace Semantria.Com
                 tag = "entities";
             else if (typeof(T).Equals(typeof(SentimentPhrase)))
                 tag = "phrases";
+            else if (typeof(T).Equals(typeof(TaxonomyNode)))
+                tag = "taxonomy";
             else
                 throw new ArgumentOutOfRangeException();
 
@@ -862,21 +1095,176 @@ namespace Semantria.Com
                 data = new Configurations(items as List<Configuration>);
             else if (typeof(T).Equals(typeof(Category)))
                 data = new Categories(items as List<Category>);
-            else if (typeof(T).Equals(typeof(String)))
-                data = new Blacklists(items as List<string>) ;
+            else if (typeof(T).Equals(typeof(Blacklist)))
+                data = new Blacklists(items as List<Blacklist>);
             else if (typeof(T).Equals(typeof(Query)))
                 data = new Queries(items as List<Query>);
             else if (typeof(T).Equals(typeof(UserEntity)))
                 data = new UserEntities(items as List<UserEntity>);
             else if (typeof(T).Equals(typeof(SentimentPhrase)))
                 data = new SentimentPhrases(items as List<SentimentPhrase>);
+            else if (typeof(T).Equals(typeof(TaxonomyNode)))
+                data = new Taxonomies(items as List<TaxonomyNode>);
             else
                 throw new ArgumentOutOfRangeException();
  
             return data;
         }
 
+        private WebResponse RunRegularRequest(QueryMethod method, string url, string data)
+        {
+            WebRequest request = WebRequest.Create(url);
+            request.Proxy = WebRequest.DefaultWebProxy;
+            request.ContentType = "application/json";
+            request.Method = method.ToString();
+
+            if (method == QueryMethod.POST)
+            {
+                using (StreamWriter writter = new StreamWriter(request.GetRequestStream()))
+                {
+                    writter.Write(data);
+                }
+            }
+
+            HttpWebResponse response = null;
+            try
+            {
+                response = (HttpWebResponse)request.GetResponse();
+            }
+            catch (WebException e)
+            {
+                if (e.Status == WebExceptionStatus.ProtocolError)
+                {
+                    using (HttpWebResponse exResponse = (HttpWebResponse)e.Response)
+                    {
+                        OnError(this, new ResponseErrorEventArgs(null, exResponse.StatusCode, exResponse.StatusDescription));
+                    }
+                }
+                else
+                {
+                    OnError(this, new ResponseErrorEventArgs(null, HttpStatusCode.BadRequest, e.Message));
+                }
+            }
+
+            return response as WebResponse;
+        }
+
+        private AuthSession GetAuthServiceResponseData(WebResponse response)
+        {
+            if (response != null)
+            {
+                using (StreamReader reader = new StreamReader(response.GetResponseStream()))
+                {
+                    string data = reader.ReadToEnd();
+                    ISerializer serializer = new JsonSerializer();
+
+                    return serializer.Deserialize<AuthSession>(data);
+                }
+            }
+
+            return null;
+        }
+
+        private bool GetTemporaryKeys()
+        {
+            string requestUrl = string.Format("{0}/session.json?appkey={1}", _authHost, _authAppKey);
+            ISerializer serializer = new JsonSerializer();
+            AuthCredentials credentials = new AuthCredentials()
+            {
+                Username = _username,
+                Password = _password
+            };
+
+            string requestData = serializer.Serialize<AuthCredentials>(credentials);
+            WebResponse resp = RunRegularRequest(QueryMethod.POST, requestUrl, requestData);
+            AuthSession respObj = GetAuthServiceResponseData(resp);
+
+            if (respObj == null)
+            {
+                return false;
+            }
+
+            string sessionId = respObj.Id;
+            WriteSessionFile(sessionId);
+
+            _consumerKey = respObj.Keys.Key;
+            _consumerSecret = respObj.Keys.Secret;
+
+            return true;
+        }
+
+        private bool ValidateSession(string session)
+        {
+            string requestUrl = string.Format("{0}/session/{1}.json?appkey={2}", _authHost, session, _authAppKey);
+            WebResponse resp = RunRegularRequest(QueryMethod.GET, requestUrl, null);
+            AuthSession respObj = GetAuthServiceResponseData(resp);
+
+            if (respObj == null)
+            {
+                return false;
+            }
+
+            string sessionId = respObj.Id;
+            WriteSessionFile(sessionId);
+
+            _consumerKey = respObj.Keys.Key;
+            _consumerSecret = respObj.Keys.Secret;
+
+            return true;
+        }
+
+        private void WriteSessionFile(string sessionId)
+        {
+            string sessionFile = Path.Combine(Path.GetTempPath(), "session.dat");
+            using (StreamWriter writer = new StreamWriter(sessionFile))
+            {
+                writer.Write(sessionId);
+            }
+        }
+
+        private string ReadSessionFile()
+        {
+            string sessionFile = Path.Combine(Path.GetTempPath(), "session.dat");
+            if (File.Exists(sessionFile))
+            {
+                using (StreamReader reader = new StreamReader(sessionFile))
+                {
+                    string sessionId = reader.ReadToEnd();
+                    return sessionId;
+                }
+            }
+
+            return null;
+        }
+
         private AuthResponse RunRequest(QueryMethod method, string url, string data)
+        {
+            if (string.IsNullOrEmpty(_consumerKey) && string.IsNullOrEmpty(_consumerSecret))
+            {
+                string sessionId = ReadSessionFile();
+                if (!string.IsNullOrEmpty(sessionId) && ReUseSession)
+                {
+                    if (!ValidateSession(sessionId))
+                    {
+                        if (!GetTemporaryKeys())
+                        {
+                            return null;
+                        }
+                    }
+                }
+                else
+                {
+                    if (!GetTemporaryKeys())
+                    {
+                        return null;
+                    }
+                }
+            }
+
+            return ExecuteRequest(method, url, data);
+        }
+
+        private AuthResponse ExecuteRequest(QueryMethod method, string url, string data)
         {
             string appName = this.GetAppName();
             AuthRequest authRequest = new AuthRequest(_consumerKey, _consumerSecret, appName, _useCompression, _apiVersion);
@@ -916,7 +1304,6 @@ namespace Semantria.Com
             switch (status)
             {
                 case 200:
-                    return status;
                 case 202:
                     return status;
                 default:
@@ -928,9 +1315,10 @@ namespace Semantria.Com
         private T ConvertResponse<T>(string data)
         {
             T obj = default(T);
-            if (_serializer != null)
+            if (_format == "xml")
             {
-                obj = _serializer.Deserialize<T>(data);
+                ISerializer serializer = new XmlSerializer();
+                obj = serializer.Deserialize<T>(data);
             }
             else if (_format == "json")
             {

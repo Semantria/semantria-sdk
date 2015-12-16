@@ -9,7 +9,7 @@ namespace Semantria.Com.Mapping.Output
     [XmlRootAttribute("document", Namespace = "")]
     public class Template
     {
-
+      
         [DataMember(Name = "id", EmitDefaultValue = false)]
         [XmlElementAttribute("id")]
         public string Id { get; set; }
@@ -41,5 +41,6 @@ namespace Semantria.Com.Mapping.Output
         [DataMember(Name = "description")]
         [XmlElementAttribute("description")]
         public string Description { get; set; }
+
     }
 }

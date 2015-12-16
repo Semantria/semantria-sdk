@@ -8,7 +8,6 @@ using Semantria.Com.Mapping;
 using Semantria.Com.Mapping.Output;
 
 using System.Linq;
-using Semantria.Com.Mapping.Configuration;
 
 namespace DetailedModeTestApp
 {
@@ -17,8 +16,8 @@ namespace DetailedModeTestApp
         static void Main(string[] args)
         {
             // Use correct Semantria API credentias here
-            string consumerKey = string.Empty;
-            string consumerSecret = string.Empty;
+            string consumerKey = "";
+            string consumerSecret = "";
 
             // A dictionary that keeps IDs of sent documents and their statuses. It's required to make sure that we get correct documents from the API.
             Dictionary<string, TaskStatus> docsTracker = new Dictionary<string, TaskStatus>(4);

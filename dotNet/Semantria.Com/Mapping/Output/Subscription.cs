@@ -192,7 +192,6 @@ namespace Semantria.Com.Mapping.Output
         [XmlElementAttribute("collection")]
         public CollsFeatureSettings Collection { get; set; }
 
-
         [DataMember(Name = "templates", EmitDefaultValue = false)]
         [XmlArrayAttribute("templates")]
         [XmlArrayItemAttribute("template", typeof(Template))]

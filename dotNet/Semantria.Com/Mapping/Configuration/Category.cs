@@ -13,6 +13,10 @@ namespace Semantria.Com.Mapping.Configuration
             Samples = new List<string>();
         }
 
+        [DataMember(Name = "id", EmitDefaultValue = false)]
+        [XmlElementAttribute("id")]
+        public string Id { get; set; }
+
         [DataMember(Name = "name")]
         [XmlElementAttribute("name")]
         public string Name { get; set; }
@@ -25,6 +29,10 @@ namespace Semantria.Com.Mapping.Configuration
         [XmlArrayAttribute("samples", IsNullable = true)]
         [XmlArrayItemAttribute("sample", typeof(string), IsNullable = true)]
         public List<string> Samples { get; set; }
+
+        [DataMember(Name = "modified", EmitDefaultValue = false)]
+        [XmlElementAttribute("modified")]
+        public UInt64 Modified { get; set; }
     }
 }
 
@@ -65,12 +73,12 @@ namespace Semantria.Com.Mapping.Configuration.Stub
 
         public string ConvertTag(string data)
         {
-            return data.Replace("<fbe947eeb47>", "<category>").Replace("</fbe947eeb47>", "</category>");
+            return data.Replace("<fbe947eeb47>", "<id>").Replace("</fbe947eeb47>", "</id>");
         }
 
         private string ItemKey(Category item)
         {
-            return item.Name;
+            return item.Id;
         }
     }
 }

@@ -60,14 +60,19 @@ namespace Semantria.Com.Mapping.Output
 
 		[DataMember(Name = "topics")]
 		[XmlArrayAttribute("topics")]
-		[XmlArrayItemAttribute("topic", typeof(CollTopic))]
-		public List<CollTopic> Topics { get; set; }
+		[XmlArrayItemAttribute("topic", typeof(Topic))]
+		public List<Topic> Topics { get; set; }
 
 		[DataMember(Name = "entities")]
 		[XmlArrayAttribute("entities")]
 		[XmlArrayItemAttribute("entity", typeof(CollEntity))]
 		public List<CollEntity> Entities { get; set; }
-	}
+
+        [DataMember(Name = "taxonomy")]
+        [XmlArrayAttribute("taxonomy")]
+        [XmlArrayItemAttribute("topic", typeof(Topic))]
+        public List<Topic> Taxonomy { get; set; }
+    }
 }
 
 namespace Semantria.Com.Mapping.Output.Stub

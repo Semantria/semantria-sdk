@@ -11,6 +11,10 @@ namespace Semantria.Com.Mapping.Configuration
     [XmlRootAttribute("phrase", Namespace = "")]
     public class SentimentPhrase
     {
+        [DataMember(Name = "id", EmitDefaultValue = false)]
+        [XmlElementAttribute("id")]
+        public string Id { get; set; }
+
         [DataMember(Name = "name")]
         [XmlElementAttribute("name")]
         public string Name { get; set; }
@@ -18,6 +22,10 @@ namespace Semantria.Com.Mapping.Configuration
         [DataMember(Name = "weight")]
         [XmlElementAttribute("weight")]
         public float Weight { get; set; }
+
+        [DataMember(Name = "modified", EmitDefaultValue = false)]
+        [XmlElementAttribute("modified")]
+        public UInt64 Modified { get; set; }
     }
 }
 
@@ -58,12 +66,12 @@ namespace Semantria.Com.Mapping.Configuration.Stub
 
         public string ConvertTag(string data)
         {
-            return data.Replace("<fbe947eeb47>", "<phrase>").Replace("</fbe947eeb47>", "</phrase>");
+            return data.Replace("<fbe947eeb47>", "<id>").Replace("</fbe947eeb47>", "</id>");
         }
 
         private string ItemKey(SentimentPhrase item)
         {
-            return item.Name;
+            return item.Id;
         }
     }
 }

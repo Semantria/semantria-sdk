@@ -7,7 +7,7 @@ namespace Semantria.Com.Mapping.Output
 {
     [DataContract(Name = "topic")]
     [XmlRootAttribute("topic", Namespace = "")]
-    public class CollTopic
+    public class Topic
     {
         [DataMember(Name = "title")]
         [XmlElementAttribute("title")]
@@ -32,5 +32,10 @@ namespace Semantria.Com.Mapping.Output
         [DataMember(Name = "sentiment_polarity")]
         [XmlElementAttribute("sentiment_polarity")]
         public string SentimentPolarity { get; set; }
+
+        [DataMember(Name = "topics")]
+        [XmlArrayAttribute("topics")]
+        [XmlArrayItemAttribute("topic", typeof(Topic))]
+        public List<Topic> Topics { get; set; }
     }
 }

@@ -72,6 +72,10 @@
     <Compile Include="Common\Enums.cs" />
     <Compile Include="Common\EventArgs.cs" />
     <Compile Include="Common\Interfaces.cs" />
+    <Compile Include="Mapping\Output\AuthSession.cs" />
+    <Compile Include="Mapping\Output\Template.cs" />
+    <Compile Include="Mapping\Configuration\TaxonomyNode.cs" />
+    <Compile Include="Mapping\Configuration\TaxonomyTopic.cs" />
     <Compile Include="Mapping\Configuration\UserEntity.cs" />
     <Compile Include="Mapping\Document.cs" />
     <Compile Include="Mapping\Output\CollAnalyticData.cs" />
@@ -80,7 +84,7 @@
     <Compile Include="Mapping\Configuration\Blacklist.cs" />
     <Compile Include="Mapping\Configuration\Category.cs" />
     <Compile Include="Mapping\Output\Attribute.cs" />
-    <Compile Include="Mapping\Output\CollTopic.cs" />
+    <Compile Include="Mapping\Output\Topic.cs" />
     <Compile Include="Mapping\Output\CollTheme.cs" />
     <Compile Include="Mapping\Output\CollEntity.cs" />
     <Compile Include="Mapping\Output\CollMention.cs" />
@@ -96,7 +100,6 @@
     <Compile Include="Mapping\Output\DocRelation.cs" />
     <Compile Include="Mapping\Output\Facet.cs" />
     <Compile Include="Mapping\Output\DocPhrase.cs" />
-    <Compile Include="Mapping\Output\DocTopic.cs" />
     <Compile Include="Mapping\Output\DocTheme.cs" />
     <Compile Include="Mapping\Configuration\SentimentPhrase.cs" />
     <Compile Include="Mapping\Configuration\Configuration.cs" />
@@ -105,7 +108,6 @@
     <Compile Include="Mapping\Output\Status.cs" />
     <Compile Include="Mapping\Output\Subscription.cs" />
     <Compile Include="Mapping\Collection.cs" />
-    <Compile Include="Mapping\Output\Template.cs" />
     <Compile Include="Serializers\JsonSerializer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Common\QueryParameters.cs" />

@@ -42,6 +42,7 @@ namespace Semantria.Com.Mapping.Output
         [XmlArrayAttribute("templates")]
         [XmlArrayItemAttribute("template", typeof(Template))]
         public List<Template> Templates { get; set; }
+
     }
 
     [DataContract(Name = "settings")]

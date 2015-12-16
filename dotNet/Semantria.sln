@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Semantria.Com", "Semantria\Semantria.Com.csproj", "{E942AB83-DA93-4B16-A826-FF3993B47329}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Semantria.Com", "Semantria.Com\Semantria.Com.csproj", "{E942AB83-DA93-4B16-A826-FF3993B47329}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Semantria.Com.UnitTest", "Semantria.UnitTest\Semantria.Com.UnitTest.csproj", "{E175AFD1-1DF8-4952-B3AC-BC2E2D4E480C}"
 EndProject

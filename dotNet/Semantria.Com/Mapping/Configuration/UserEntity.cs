@@ -11,6 +11,10 @@ namespace Semantria.Com.Mapping.Configuration
     [XmlRootAttribute("entity", Namespace = "")]
     public class UserEntity
     {
+        [DataMember(Name = "id", EmitDefaultValue = false)]
+        [XmlElementAttribute("id")]
+        public string Id { get; set; }
+
         [DataMember(Name = "name")]
         [XmlElementAttribute("name")]
         public string Name { get; set; }
@@ -25,7 +29,12 @@ namespace Semantria.Com.Mapping.Configuration
 
         [DataMember(Name = "normalized")]
         [XmlElementAttribute("normalized")]
-        public string Normalized { get; set; }    }
+        public string Normalized { get; set; }
+
+        [DataMember(Name = "modified", EmitDefaultValue = false)]
+        [XmlElementAttribute("modified")]
+        public UInt64 Modified { get; set; }
+    }
 }
 
 namespace Semantria.Com.Mapping.Configuration.Stub
@@ -65,12 +74,12 @@ namespace Semantria.Com.Mapping.Configuration.Stub
 
         public string ConvertTag(string data)
         {
-            return data.Replace("<fbe947eeb47>", "<entity>").Replace("</fbe947eeb47>", "</entity>");
+            return data.Replace("<fbe947eeb47>", "<id>").Replace("</fbe947eeb47>", "</id>");
         }
 
         private string ItemKey(UserEntity item)
         {
-            return item.Name;
+            return item.Id;
         }
     }
 }

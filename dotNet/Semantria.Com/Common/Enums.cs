@@ -16,7 +16,8 @@ namespace Semantria.Com
     public enum QueryMethod 
     { 
         GET,
-        POST, 
+        POST,
+        PUT,
         DELETE 
     }
 }

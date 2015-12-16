@@ -13,6 +13,9 @@ namespace Semantria.Com.Mapping.Configuration
         [XmlElementAttribute("config_id")]
         public string ConfigId { get; set; }
 
+        [System.ComponentModel.EditorBrowsable(System.ComponentModel.EditorBrowsableState.Never)]
+        public bool ShouldSerializeTimestamp() { return false; }
+
         [DataMember(Name = "template", EmitDefaultValue = false)]
         [XmlElementAttribute("template")]
         public string Template { get; set; }
@@ -170,6 +173,7 @@ namespace Semantria.Com.Mapping.Configuration
         [DataMember(Name = "auto_categories_limit")]
         [XmlElementAttribute("auto_categories_limit")]
         public int AutoCategoriesLimit { get; set; }
+
     }
 
     [DataContract(Name = "collection")]
@@ -262,7 +266,7 @@ namespace Semantria.Com.Mapping.Configuration.Stub
 
         public string ConvertTag(string data)
         {
-            return data.Replace("<fbe947eeb47>", "<configuration>").Replace("</fbe947eeb47>", "</configuration>");
+            return data.Replace("<fbe947eeb47>", "<id>").Replace("</fbe947eeb47>", "</id>");
         }
 
         private string ItemKey(Configuration item)
