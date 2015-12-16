@@ -78,7 +78,8 @@ public class AutoResponseFeatureTestApp {
         }
         
         
-        Session session = Session.createSession(consumerKey, consumerSecret, new JsonSerializer());
+        Session session = Session.createSession(consumerKey, consumerSecret);
+        session.registerSerializer(new JsonSerializer());
         session.setCallbackHandler(new ICallbackHandler() {
             @Override
             public void onResponse(Object sender, ResponseArgs responseArgs) {

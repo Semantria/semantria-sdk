@@ -1,12 +1,15 @@
 package com.semantria.mapping.configuration;
 
+import com.google.gson.annotations.SerializedName;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import java.sql.Timestamp;
 
 public final class Configuration
 {
-	private String config_id = null;
+	@SerializedName("config_id")
+	private String id = null;
 	private String template = null;
 	private String name = null;
     private String from_template_config_id = null;
@@ -28,13 +31,13 @@ public final class Configuration
 
 	public Configuration(String id, String name)
 	{
-		this.config_id = id;
+		this.id = id;
 		this.name = name;
 	}
 
     public Configuration(String id, String name, String template)
     {
-        this.config_id = id;
+        this.id = id;
         this.name = name;
         this.template = template;
     }
@@ -42,7 +45,7 @@ public final class Configuration
 	@XmlElement(name="template")
 	public String getTemplate() { return template; }
 	@XmlElement(name="config_id")
-	public String getId() { return config_id; }
+	public String getId() { return id; }
 	@XmlElement(name="auto_response")
 	public Boolean getAutoResponse() { return auto_response; }
 	@XmlElement(name="is_primary")
@@ -74,7 +77,7 @@ public final class Configuration
     @XmlTransient
     public Timestamp getModified() { return modified; }
 
-	public void setId(String id) { this.config_id = id; }
+	public void setId(String id) { this.id = id; }
 	public void setAutoResponse(Boolean auto_response) { this.auto_response = auto_response; }
 	public void setIsPrimary(Boolean is_primary) { this.is_primary = is_primary; }
 	public void setName(String name) { this.name = name; }

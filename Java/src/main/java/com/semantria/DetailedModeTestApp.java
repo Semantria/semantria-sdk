@@ -61,11 +61,9 @@ public class DetailedModeTestApp
             System.err.println("Error: " + e.getMessage());
         }
 		
-		// Creates JSON serializer instance
-		//ISerializer jsonSerializer = new JsonSerializer();
 		// Initializes new session with the serializer object and the keys.
-        ISerializer serializer = new JsonSerializer();
-		Session session = Session.createSession(key, secret, serializer, true);
+		Session session = Session.createSession(key, secret);
+        session.registerSerializer(new JsonSerializer());
 		session.setCallbackHandler(new CallbackHandler());
 
         //Obtaining subscription object to get user limits applicable on server side

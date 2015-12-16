@@ -1,6 +1,6 @@
 package com.semantria.serializer;
 
-import com.google.gson.Gson;
+import com.google.gson.*;
 import com.google.gson.reflect.TypeToken;
 import com.semantria.interfaces.ISerializer;
 import com.semantria.mapping.configuration.*;
@@ -11,9 +11,8 @@ import com.semantria.mapping.output.stub.DocsAnalyticData;
 import com.semantria.mapping.output.stub.FeaturesList;
 
 import java.lang.reflect.Type;
+import java.util.Date;
 import java.util.List;
-
-//import com.semantria.mapping.configuration.*;
 
 public final class JsonSerializer implements ISerializer
 {
@@ -27,13 +26,31 @@ public final class JsonSerializer implements ISerializer
 	public Object deserialize(String string, Class<?> type)
 	{
 		Object object = null;
-		Gson gson = new Gson();
+        GsonBuilder builder = new GsonBuilder();
+        // Register an adapter to manage the date types as long values
+        // @NOTE: processing case with timestamp without milliseconds
+        builder.registerTypeAdapter(Date.class, new JsonDeserializer<Date>() {
+            public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+                JsonPrimitive el = json.getAsJsonPrimitive();
+                if (el != null) {
+                    String date = el.getAsString();
+                    if (date.length() == 10) {
+                        date += "000";
+                    }
+                    return new Date(Long.valueOf(date));
+                } else {
+                    return null;
+                }
+            }
+        });
+        Gson gson = builder.create();
+
 		if(string.length() > 0)
 		{
 			if(type.equals(Blacklists.class))
 			{
-				Type listType = new TypeToken<List<String>>() {}.getType();
-				object = new Blacklists( (List<String>)gson.fromJson(string, listType) );
+				Type listType = new TypeToken<List<BlacklistItem>>() {}.getType();
+				object = new Blacklists( (List<BlacklistItem>)gson.fromJson(string, listType) );
 			}
 			else if(type.equals(Categories.class))
 			{
@@ -55,6 +72,11 @@ public final class JsonSerializer implements ISerializer
 				Type listType = new TypeToken<List<SentimentPhrase>>() {}.getType();
 				object = new SentimentPhrases( (List<SentimentPhrase>)gson.fromJson(string, listType));
 			}
+            else if(type.equals(Taxonomies.class))
+            {
+                Type listType = new TypeToken<List<TaxonomyNode>>() {}.getType();
+                object = new Taxonomies( (List<TaxonomyNode>)gson.fromJson(string, listType));
+            }
 			else if(type.equals(DocsAnalyticData.class))
 			{
 				Type listType = new TypeToken<List<DocAnalyticData>>() {}.getType();

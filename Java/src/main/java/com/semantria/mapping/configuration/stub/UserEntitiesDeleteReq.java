@@ -20,12 +20,12 @@ public final class UserEntitiesDeleteReq
 		{
 			for (UserEntity entity : entities)
 			{
-				this.entities.add( entity.getName() );
+				this.entities.add( entity.getId() );
 			}
 		}
 	}
 
-	@XmlElement(name="entity")
+	@XmlElement(name="id")
 	public List<String> getEntities() { return  entities; }
 	
 	public void setEntities(List<String> entities) { this.entities = entities; }

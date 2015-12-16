@@ -17,6 +17,7 @@ public final class DocAnalyticData
 	private List<DocIntention> intentions = null;
 	private List<DocEntity> entities = null;
 	private List<DocTopic> topics = null;
+    private List<DocTopic> taxonomy = null;
 	private List<DocTheme> themes = null;
 	private List<DocPhrase> phrases = null;
 	private Float sentiment_score = null;
@@ -52,6 +53,9 @@ public final class DocAnalyticData
 	@XmlElementWrapper(name="topics")
 	@XmlElement(name="topic")
 	public List<DocTopic> getTopics() { return topics; }
+    @XmlElementWrapper(name="taxonomies")
+    @XmlElement(name="taxonomy")
+    public List<DocTopic> getTaxonomy() { return taxonomy; }
 	@XmlElementWrapper(name="themes")
 	@XmlElement(name="theme")
 	public List<DocTheme> getThemes() { return themes; }
@@ -93,6 +97,7 @@ public final class DocAnalyticData
     public void setIntentions(List<DocIntention> intentions) { this.intentions = intentions; }
 	public void setEntities(List<DocEntity> entities) { this.entities = entities; }
 	public void setTopics(List<DocTopic> topic) { topics = topic; }
+    public void setTaxonomy(List<DocTopic> taxonomy) { this.taxonomy = taxonomy; }
 	public void setThemes(List<DocTheme> theme) { themes = theme; }
 	public void setSentimentScore(Float score) { sentiment_score = score; }
 	public void setPhrases(List<DocPhrase> phrase) { phrases = phrase; }

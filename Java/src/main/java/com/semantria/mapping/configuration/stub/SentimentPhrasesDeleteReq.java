@@ -20,12 +20,12 @@ public final class SentimentPhrasesDeleteReq
 		{
 			for (SentimentPhrase sentimentPhrase : sentimentPhrases)
 			{
-				this.sentimentPhrases.add( sentimentPhrase.getName() );
+				this.sentimentPhrases.add( sentimentPhrase.getId() );
 			}
 		}
 	}
 
-	@XmlElement(name="phrase")
+	@XmlElement(name="id")
     public List<String> getSentimentPhrases() { return sentimentPhrases; }
     public void setSentimentPhrases(List<String> sentimentPhrases) { this.sentimentPhrases = sentimentPhrases; }
 }

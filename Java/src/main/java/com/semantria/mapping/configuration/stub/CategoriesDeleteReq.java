@@ -20,12 +20,12 @@ public final class CategoriesDeleteReq
 		{
 			for (Category category : categories)
 			{
-				this.categories.add( category.getName() );
+				this.categories.add( category.getId() );
 			}
 		}
 	}
 
-	@XmlElement(name="category")
+	@XmlElement(name="id")
 	public List<String> getCategories() { return categories; }
 	
 	public void setCategories(List<String> categories) { this.categories = categories; }

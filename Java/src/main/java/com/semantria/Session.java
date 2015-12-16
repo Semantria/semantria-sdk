@@ -1,14 +1,13 @@
 package com.semantria;
 
 
+import com.semantria.auth.AuthService;
+import com.semantria.auth.CredentialException;
 import com.semantria.mapping.output.*;
 import com.semantria.mapping.output.stub.FeaturesList;
-import com.semantria.utils.AuthRequest;
-import com.semantria.utils.ObjProxy;
+import com.semantria.utils.*;
 import com.semantria.interfaces.ICallbackHandler;
 import com.semantria.interfaces.ISerializer;
-import com.semantria.utils.RequestArgs;
-import com.semantria.utils.ResponseArgs;
 import com.semantria.mapping.Batch;
 import com.semantria.mapping.Collection;
 import com.semantria.mapping.Document;
@@ -22,40 +21,62 @@ import com.semantria.serializer.XmlSerializer;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class Session 
+public final class Session
 {
-	private static final String WRAPPER_NAME = "Java";
-	private String key = "";
-	private String secret = "";
-	private String appName = "";
-    private String apiVersion = "3.9";
-	private ISerializer serializer = null;
-	private String requestFormat = "json";
-	private ICallbackHandler callback = null;
-	private String serviceUrl = "https://api.semantria.com";
-	public  boolean useCompression = false;
+    private static final String WRAPPER_NAME = "Java";
+    private static final String AUTH_SERVICE_URL = "https://semantria.com";
 
+    private String key = "";
+    private String secret = "";
+    private String appName = "";
+    private String apiVersion = "4.0";
+    private ISerializer serializer = null;
+    private String requestFormat = "json";
+    private ICallbackHandler callback = null;
+    private String serviceUrl = "https://api.semantria.com";
+    public  boolean useCompression = false;
 
-	private Session(String ckey, String csecret, ISerializer cserializer, String appName, boolean useCompression)
-	{
-		key = ckey;
-		secret = csecret;
-		if( cserializer == null )
-		{
-			cserializer = new JsonSerializer();
-		}
-		registerSerializer(cserializer);
-		setAppName(appName);
-		this.useCompression = useCompression;
-	}
+    private Session(String key, String secret) {
+        this.key = key;
+        this.secret = secret;
+        registerSerializer(new JsonSerializer());
+    }
 
-	private void setAppName(String appName) {
-		if (null != appName) {
-			this.appName = appName + "." + WRAPPER_NAME;
-		} else {
-			this.appName = WRAPPER_NAME;
-		}
-	}
+    //create new session
+    public static Session createSession(String key, String secret) {
+        return new Session(key, secret);
+    }
+
+    public static Session createUserSession(String username, String password, String appKey) throws CredentialException {
+        return Session.createUserSession(username, password, appKey, true);
+    }
+
+    public static Session createUserSession(String username, String password, String appKey, boolean reuseExisting) throws CredentialException  {
+        AuthService authService = new AuthService(appKey, Session.AUTH_SERVICE_URL);
+        authService.authWithUsernameAndPassword(username, password, reuseExisting);
+
+        return new Session(authService.getKey(), authService.getSecret());
+    }
+
+    public void useCompression(boolean useCompression) {
+        this.useCompression = useCompression;
+    }
+
+    public void registerSerializer(ISerializer cserializer)
+    {
+        serializer = cserializer;
+        if (null != cserializer) {
+            requestFormat = cserializer.getType();
+        }
+    }
+
+    private void setAppName(String appName) {
+        if (null != appName) {
+            this.appName = appName + "." + WRAPPER_NAME;
+        } else {
+            this.appName = WRAPPER_NAME;
+        }
+    }
 
     public void setApiVersion(String apiVersion) {
         this.apiVersion = apiVersion;
@@ -65,66 +86,16 @@ public final class Session
         return this.apiVersion;
     }
 
-	//create new session
-	public static Session createSession(String key, String secret)
-	{
-		return createSession(key, secret, (String)null);
-	}
+    public void setCallbackHandler(ICallbackHandler handler)
+    {
+        callback = handler;
+    }
 
-	public static Session createSession(String key, String secret, boolean useCompression)
-	{
-		return createSession(key, secret, (String)null, useCompression);
-	}
+    //--------getters
 
-	public static Session createSession(String key, String secret, String appName)
-	{
-		return createSession(key, secret, null, appName);
-	}
-
-	public static Session createSession(String key, String secret, String appName, boolean useCompression)
-	{
-		return createSession(key, secret, null, appName, useCompression);
-	}
-
-	public static Session createSession(String key, String secret, ISerializer cserializer)
-	{
-		return createSession(key, secret, cserializer, null);
-	}
-
-	public static Session createSession(String key, String secret, ISerializer cserializer, boolean useCompression)
-	{
-		return createSession(key, secret, cserializer, null, useCompression);
-	}
-
-	public static Session createSession(String key, String secret, ISerializer cserializer, String appName)
-	{
-		return new Session(key, secret, cserializer, appName, false);
-	}
-
-	public static Session createSession(String key, String secret, ISerializer cserializer, String appName, boolean useCompression)
-	{
-		return new Session(key, secret, cserializer, appName, useCompression);
-
-	}
-	
-	public void registerSerializer(ISerializer cserializer)
-	{
-		serializer = cserializer;
-		if (null != cserializer) {
-			requestFormat = cserializer.getType();
-		}
-	}
-	
-	public void setCallbackHandler(ICallbackHandler handler)
-	{
-		callback = handler;
-	}
-
-	//--------getters
-	
-	public ServiceStatus getStatus()
-	{
-		String method = "GET";
+    public ServiceStatus getStatus()
+    {
+        String method = "GET";
         String url = generateRequestUrl("status");
 
         AuthRequest req = AuthRequest.getInstance(url, method)
@@ -135,29 +106,29 @@ public final class Session
                 .useCompression(useCompression);
 
         Integer status = req.doRequest();
-		ServiceStatus serviceStatus = null;
+        ServiceStatus serviceStatus = null;
 
-		if (status <= 202)
+        if (status <= 202)
             serviceStatus = (ServiceStatus)serializer.deserialize(req.getResponse(), ServiceStatus.class);
 
-		handleRequest(method, req.getRequestUrl(), null);
-		handleResponse(status, req);
+        handleRequest(method, req.getRequestUrl(), null);
+        handleResponse(status, req);
 
-		return serviceStatus;
-	}
+        return serviceStatus;
+    }
 
     private String generateRequestUrl(String path) {
         return serviceUrl + "/" + path + "." + requestFormat;
     }
 
-	public List<String> getBlacklist()
-	{
-		return getBlacklist(null);
-	}
+    public List<BlacklistItem> getBlacklist()
+    {
+        return getBlacklist(null);
+    }
 
-	public List<String> getBlacklist(String config_id)
-	{
-		String method = "GET";
+    public List<BlacklistItem> getBlacklist(String config_id)
+    {
+        String method = "GET";
         String url = generateRequestUrl("blacklist");
 
         AuthRequest req = AuthRequest.getInstance(url, method)
@@ -168,28 +139,28 @@ public final class Session
                 .apiVersion(apiVersion)
                 .useCompression(useCompression);
 
-		Integer status = req.doRequest();
-		Blacklists list = (Blacklists)serializer.deserialize(req.getResponse(), Blacklists.class);
+        Integer status = req.doRequest();
+        Blacklists list = (Blacklists)serializer.deserialize(req.getResponse(), Blacklists.class);
 
-        List<String> res = new ArrayList<String>();
+        List<BlacklistItem> res = new ArrayList<BlacklistItem>();
         if (list != null) {
-			res = list.getBlacklist();
-		}
+            res = list.getBlacklist();
+        }
 
-		handleRequest(method, req.getRequestUrl(), null);
-		handleResponse(status, req);
+        handleRequest(method, req.getRequestUrl(), null);
+        handleResponse(status, req);
 
-		return res;
-	}
+        return res;
+    }
 
     public List<Category> getCategories()
     {
         return getCategories(null);
     }
 
-	public List<Category> getCategories(String config_id)
-	{
-		String method = "GET";
+    public List<Category> getCategories(String config_id)
+    {
+        String method = "GET";
         String url = generateRequestUrl("categories");
 
         AuthRequest req = AuthRequest.getInstance(url, method)
@@ -199,23 +170,23 @@ public final class Session
                 .appName(appName)
                 .useCompression(useCompression);
 
-		Integer status = req.doRequest();
-		Categories list = (Categories)serializer.deserialize(req.getResponse(), Categories.class);
+        Integer status = req.doRequest();
+        Categories list = (Categories)serializer.deserialize(req.getResponse(), Categories.class);
 
         List<Category> res = new ArrayList<Category>();
         if (list != null) {
-			res = list.getCategories();
-		}
+            res = list.getCategories();
+        }
 
-		handleRequest(method, req.getRequestUrl(), null);
-		handleResponse(status, req);
+        handleRequest(method, req.getRequestUrl(), null);
+        handleResponse(status, req);
 
         return res;
-	}
+    }
 
-	public List<Configuration> getConfigurations()
-	{
-		String method = "GET";
+    public List<Configuration> getConfigurations()
+    {
+        String method = "GET";
         String url = generateRequestUrl("configurations");
 
         AuthRequest req = AuthRequest.getInstance(url, method)
@@ -225,28 +196,28 @@ public final class Session
                 .apiVersion(apiVersion)
                 .useCompression(useCompression);
 
-		Integer status = req.doRequest();
-		Configurations list = (Configurations)serializer.deserialize(req.getResponse(), Configurations.class);
+        Integer status = req.doRequest();
+        Configurations list = (Configurations)serializer.deserialize(req.getResponse(), Configurations.class);
 
         List<Configuration> res = new ArrayList<Configuration>();
-		if (list != null) {
-			res = list.getConfigurations();
-		}
+        if (list != null) {
+            res = list.getConfigurations();
+        }
 
-		handleRequest(method, req.getRequestUrl(), null);
-		handleResponse(status, req);
+        handleRequest(method, req.getRequestUrl(), null);
+        handleResponse(status, req);
 
-		return res;
-	}
+        return res;
+    }
 
     public List<Query> getQueries()
     {
         return getQueries(null);
     }
 
-	public List<Query> getQueries(String config_id)
-	{
-		String method = "GET";
+    public List<Query> getQueries(String config_id)
+    {
+        String method = "GET";
         String url = generateRequestUrl("queries");
 
         AuthRequest req = AuthRequest.getInstance(url, method)
@@ -257,19 +228,19 @@ public final class Session
                 .apiVersion(apiVersion)
                 .useCompression(useCompression);
 
-		Integer status = req.doRequest();
-		Queries list = (Queries)serializer.deserialize(req.getResponse(), Queries.class);
+        Integer status = req.doRequest();
+        Queries list = (Queries)serializer.deserialize(req.getResponse(), Queries.class);
 
         List<Query> res = new ArrayList<Query>();
         if (list != null) {
-			res = list.getQueries();
-		}
+            res = list.getQueries();
+        }
 
         handleRequest(method, req.getRequestUrl(), null);
-		handleResponse(status, req);
+        handleResponse(status, req);
 
         return res;
-	}
+    }
 
     public List<SentimentPhrase> getSentimentPhrases()
     {
@@ -308,9 +279,9 @@ public final class Session
         return getEntities(null);
     }
 
-	public List<UserEntity> getEntities(String config_id)
-	{
-		String method = "GET";
+    public List<UserEntity> getEntities(String config_id)
+    {
+        String method = "GET";
         String url = generateRequestUrl("entities");
 
         AuthRequest req = AuthRequest.getInstance(url, method)
@@ -321,28 +292,60 @@ public final class Session
                 .apiVersion(apiVersion)
                 .useCompression(useCompression);
 
-		Integer status = req.doRequest();
-		UserEntities list = (UserEntities)serializer.deserialize(req.getResponse(), UserEntities.class);
+        Integer status = req.doRequest();
+        UserEntities list = (UserEntities)serializer.deserialize(req.getResponse(), UserEntities.class);
 
         List<UserEntity> res = new ArrayList<UserEntity>();
         if (list != null) {
-			res = list.getEntities();
-		}
+            res = list.getEntities();
+        }
 
-		handleRequest(method, req.getRequestUrl(), null);
-		handleResponse(status, req);
+        handleRequest(method, req.getRequestUrl(), null);
+        handleResponse(status, req);
 
         return res;
-	}
+    }
+
+    public List<TaxonomyNode> getTaxonomy()
+    {
+        return getTaxonomy(null);
+    }
+
+    public List<TaxonomyNode> getTaxonomy(String config_id)
+    {
+        String method = "GET";
+        String url = generateRequestUrl("taxonomy");
+
+        AuthRequest req = AuthRequest.getInstance(url, method)
+                .key(key)
+                .secret(secret)
+                .config_id(config_id)
+                .appName(appName)
+                .apiVersion(apiVersion)
+                .useCompression(useCompression);
+
+        Integer status = req.doRequest();
+        Taxonomies list = (Taxonomies)serializer.deserialize(req.getResponse(), Taxonomies.class);
+
+        List<TaxonomyNode> res = new ArrayList<TaxonomyNode>();
+        if (list != null) {
+            res = list.getTaxonomies();
+        }
+
+        handleRequest(method, req.getRequestUrl(), null);
+        handleResponse(status, req);
+
+        return res;
+    }
 
     public List<com.semantria.mapping.output.DocAnalyticData> getProcessedDocuments()
     {
         return getProcessedDocuments(null);
     }
 
-	public List<com.semantria.mapping.output.DocAnalyticData> getProcessedDocuments(String config_id)
-	{
-		String method = "GET";
+    public List<com.semantria.mapping.output.DocAnalyticData> getProcessedDocuments(String config_id)
+    {
+        String method = "GET";
         String url = generateRequestUrl("document/processed");
 
         AuthRequest req = AuthRequest.getInstance(url, method)
@@ -355,20 +358,20 @@ public final class Session
 
         DocsAnalyticData taskList = new DocsAnalyticData();
         Integer status = req.doRequest();
-		if (200 == status) {
-			taskList = (DocsAnalyticData)serializer.deserialize(req.getResponse(), DocsAnalyticData.class);
-		}
+        if (200 == status) {
+            taskList = (DocsAnalyticData)serializer.deserialize(req.getResponse(), DocsAnalyticData.class);
+        }
 
         List<com.semantria.mapping.output.DocAnalyticData> result = new ArrayList<com.semantria.mapping.output.DocAnalyticData>();
-		if (taskList != null) {
-			result = taskList.getDocuments();
-		}
+        if (taskList != null) {
+            result = taskList.getDocuments();
+        }
 
-		handleRequest(method, req.getRequestUrl(), null);
-		handleResponse(status, req);
+        handleRequest(method, req.getRequestUrl(), null);
+        handleResponse(status, req);
 
         return result;
-	}
+    }
 
     public List<com.semantria.mapping.output.DocAnalyticData> getProcessedDocumentsByJobId(final String jobId)
     {
@@ -405,9 +408,9 @@ public final class Session
         return getProcessedCollections(null);
     }
 
-	public List<com.semantria.mapping.output.CollAnalyticData> getProcessedCollections(String config_id)
-	{
-		String method = "GET";
+    public List<com.semantria.mapping.output.CollAnalyticData> getProcessedCollections(String config_id)
+    {
+        String method = "GET";
         String url = generateRequestUrl("collection/processed");
 
         AuthRequest req = AuthRequest.getInstance(url, method)
@@ -418,22 +421,22 @@ public final class Session
                 .apiVersion(apiVersion)
                 .useCompression(useCompression);
 
-		Integer status = req.doRequest();
-		CollsAnalyticData taskList = new CollsAnalyticData();
-		if (200 == status) {
-			taskList = (CollsAnalyticData)serializer.deserialize(req.getResponse(), CollsAnalyticData.class);
-		}
+        Integer status = req.doRequest();
+        CollsAnalyticData taskList = new CollsAnalyticData();
+        if (200 == status) {
+            taskList = (CollsAnalyticData)serializer.deserialize(req.getResponse(), CollsAnalyticData.class);
+        }
 
         List<com.semantria.mapping.output.CollAnalyticData> result = new ArrayList<com.semantria.mapping.output.CollAnalyticData>();
-		if (taskList != null) {
-			result = taskList.getDocuments();
-		}
+        if (taskList != null) {
+            result = taskList.getDocuments();
+        }
 
         handleRequest(method, req.getRequestUrl(), null);
-		handleResponse(status, req);
+        handleResponse(status, req);
 
-		return result;
-	}
+        return result;
+    }
 
     public List<com.semantria.mapping.output.CollAnalyticData> getProcessedCollectionsByJobId(final String jobId)
     {
@@ -470,9 +473,9 @@ public final class Session
         return getDocument(id, null);
     }
 
-	public com.semantria.mapping.output.DocAnalyticData getDocument(String id, String config_id)
-	{
-		String method = "GET";
+    public com.semantria.mapping.output.DocAnalyticData getDocument(String id, String config_id)
+    {
+        String method = "GET";
         String url = generateRequestUrl("document/" + id);
 
         AuthRequest req = AuthRequest.getInstance(url, method)
@@ -483,26 +486,26 @@ public final class Session
                 .apiVersion(apiVersion)
                 .useCompression(useCompression);
 
-		Integer status = req.doRequest();
+        Integer status = req.doRequest();
         com.semantria.mapping.output.DocAnalyticData result = null;
         if (200 == status) {
-			result = (com.semantria.mapping.output.DocAnalyticData)serializer.deserialize(req.getResponse(), com.semantria.mapping.output.DocAnalyticData.class);
+            result = (com.semantria.mapping.output.DocAnalyticData)serializer.deserialize(req.getResponse(), com.semantria.mapping.output.DocAnalyticData.class);
 
             handleRequest(method, req.getRequestUrl(), null);
-			handleResponse(status, req);
-		}
+            handleResponse(status, req);
+        }
 
         return result;
-	}
+    }
 
-	public CollAnalyticData getCollection(String id)
-	{
-		return getCollection(id, null);
-	}
+    public CollAnalyticData getCollection(String id)
+    {
+        return getCollection(id, null);
+    }
 
-	public CollAnalyticData getCollection(String id, String config_id)
-	{
-		String method = "GET";
+    public CollAnalyticData getCollection(String id, String config_id)
+    {
+        String method = "GET";
         String url = generateRequestUrl("collection/" + id);
 
         AuthRequest req = AuthRequest.getInstance(url, method)
@@ -513,21 +516,21 @@ public final class Session
                 .apiVersion(apiVersion)
                 .useCompression(useCompression);
 
-		Integer status = req.doRequest();
+        Integer status = req.doRequest();
         com.semantria.mapping.output.CollAnalyticData result = null;
         if (200 == status) {
-			result = (com.semantria.mapping.output.CollAnalyticData)serializer.deserialize(req.getResponse(), com.semantria.mapping.output.CollAnalyticData.class);
+            result = (com.semantria.mapping.output.CollAnalyticData)serializer.deserialize(req.getResponse(), com.semantria.mapping.output.CollAnalyticData.class);
 
-			handleRequest(method, req.getRequestUrl(), null);
-			handleResponse(status, req);
-		}
+            handleRequest(method, req.getRequestUrl(), null);
+            handleResponse(status, req);
+        }
 
         return result;
-	}
+    }
 
-	public Subscription getSubscription()
-	{
-		String method = "GET";
+    public Subscription getSubscription()
+    {
+        String method = "GET";
         String url = generateRequestUrl("subscription");
 
         AuthRequest req = AuthRequest.getInstance(url, method)
@@ -537,23 +540,23 @@ public final class Session
                 .apiVersion(apiVersion)
                 .useCompression(useCompression);
 
-		Integer status = req.doRequest();
-		Subscription subscription = (Subscription)serializer.deserialize(req.getResponse(), Subscription.class);
+        Integer status = req.doRequest();
+        Subscription subscription = (Subscription)serializer.deserialize(req.getResponse(), Subscription.class);
 
         handleRequest(method, req.getRequestUrl(), null);
-		handleResponse(status, req);
+        handleResponse(status, req);
 
         return subscription;
-	}
+    }
 
-	public Statistics getStatistics(String interval)
-	{
-		return getStatistics(interval, null);
-	}
+    public Statistics getStatistics(String interval)
+    {
+        return getStatistics(interval, null);
+    }
 
-	public Statistics getStatistics(String interval, String configId)
-	{
-		String method = "GET";
+    public Statistics getStatistics(String interval, String configId)
+    {
+        String method = "GET";
         String url = generateRequestUrl("statistics");
 
         AuthRequest req = AuthRequest.getInstance(url, method)
@@ -565,14 +568,14 @@ public final class Session
                 .apiVersion(apiVersion)
                 .useCompression(useCompression);
 
-		Integer status = req.doRequest();
-		Statistics statistics = (Statistics)serializer.deserialize(req.getResponse(), Statistics.class);
+        Integer status = req.doRequest();
+        Statistics statistics = (Statistics)serializer.deserialize(req.getResponse(), Statistics.class);
 
         handleRequest(method, req.getRequestUrl(), null);
-		handleResponse(status, req);
+        handleResponse(status, req);
 
         return statistics;
-	}
+    }
 
     public List<FeaturesSet> getSupportedFeatures(final String language)
     {
@@ -596,173 +599,291 @@ public final class Session
         return supportedFeatures.getFeatures();
     }
 
-	//--------end of getters
+    //--------end of getters
 
-	//--------update methods
+    //--------update methods
 
-	public Integer addCategories(List<Category> categories)
-	{
-		return addCategories(categories, null);
-	}
-
-	public Integer addCategories(List<Category> categories, String config_id)
-	{
-		return add(categories, "categories", config_id, Categories.class);
-	}
-
-	public Integer updateCategories(List<Category> categories)
-	{
-		return updateCategories(categories, null);
-	}
-
-	public Integer updateCategories(List<Category> categories, String config_id)
-	{
-		return update(categories, "categories", config_id, Categories.class);
-	}
-
-	public Integer removeCategories(List<Category> categories, String config_id)
-	{
-		return remove(categories, "categories", config_id, Categories.class);
-	}
-
-	public Integer removeCategories(List<Category> categories)
-	{
-		return removeCategories(categories, null);
-	}
-
-	public Integer addQueries(List<Query> queries, String config_id)
-	{
-		return add(queries, "queries", config_id, Queries.class);
-	}
-
-	public Integer addQueries(List<Query> queries)
-	{
-		return addQueries(queries, null);
-	}
-
-	public Integer updateQueries(List<Query> queries, String config_id)
-	{
-		return update(queries, "queries", config_id, Queries.class);
-	}
-
-	public Integer updateQueries(List<Query> queries)
-	{
-		return updateQueries(queries, null);
-	}
-
-	public Integer removeQueries(List<Query> queries)
-	{
-		return removeQueries(queries, null);
-	}
-
-	public Integer removeQueries(List<Query> queries, String config_id)
-	{
-		return remove(queries, "queries", config_id, Queries.class);
-	}
-
-
-	public Integer addSentimentPhrases(List<SentimentPhrase> phrases, String config_id)
-	{
-		return add(phrases, "phrases", config_id, SentimentPhrases.class);
-	}
-
-	public Integer addSentimentPhrases(List<SentimentPhrase> phrases)
-	{
-		return addSentimentPhrases(phrases, null);
-	}
-
-	public Integer updateSentimentPhrases(List<SentimentPhrase> phrases, String config_id)
+    public List<Category> addCategories(List<Category> categories)
     {
-        return update(phrases, "phrases", config_id, SentimentPhrases.class );
+        return addCategories(categories, null);
     }
 
-	public Integer updateSentimentPhrases(List<SentimentPhrase> phrases)
-	{
-		return updateSentimentPhrases(phrases, null);
-	}
+    public List<Category> addCategories(List<Category> categories, String config_id)
+    {
+        AuthRequest req = add(categories, "categories", config_id, Categories.class);
+        Categories list = (Categories)serializer.deserialize(req.getResponse(), Categories.class);
+        if (list != null) {
+            return list.getCategories();
+        } else {
+            return new ArrayList<Category>();
+        }
+    }
 
-	public Integer removeSentimentPhrases(List<SentimentPhrase> phrases, String config_id)
-	{
-		return remove(phrases, "phrases", config_id, SentimentPhrases.class);
-	}
+    public List<Category> updateCategories(List<Category> categories)
+    {
+        return updateCategories(categories, null);
+    }
 
-	public Integer removeSentimentPhrases(List<SentimentPhrase> phrases)
-	{
-		return removeSentimentPhrases(phrases, null);
-	}
+    public List<Category> updateCategories(List<Category> categories, String config_id)
+    {
+        AuthRequest req = update(categories, "categories", config_id, Categories.class, "PUT");
+        Categories list = (Categories)serializer.deserialize(req.getResponse(), Categories.class);
+        if (list != null) {
+            return list.getCategories();
+        } else {
+            return new ArrayList<Category>();
+        }
+    }
 
-	public Integer addBlacklist(List<String> blackList, String config_id)
-	{
-		return add(blackList, "blacklist", config_id, Blacklists.class);
-	}
+    public Integer removeCategories(List<Category> categories, String config_id)
+    {
+        return remove(categories, "categories", config_id, Categories.class);
+    }
 
-	public Integer addBlacklist(List<String> blackList)
-	{
-		return addBlacklist(blackList, null);
-	}
+    public Integer removeCategories(List<Category> categories)
+    {
+        return removeCategories(categories, null);
+    }
 
-	public Integer removeBlacklist(List<String> blackList, String config_id)
-	{
-		return remove(blackList, "blacklist", config_id, Blacklists.class);
-	}
+    public List<Query> addQueries(List<Query> queries, String config_id)
+    {
+        AuthRequest req = add(queries, "queries", config_id, Queries.class);
+        Queries list = (Queries)serializer.deserialize(req.getResponse(), Queries.class);
+        if (list != null) {
+            return list.getQueries();
+        } else {
+            return new ArrayList<Query>();
+        }
+    }
 
-	public Integer removeBlacklist(List<String> blackList)
-	{
-		return removeBlacklist(blackList, null);
-	}
+    public List<Query> addQueries(List<Query> queries)
+    {
+        return addQueries(queries, null);
+    }
 
-	public Integer addEntities(List<UserEntity> entities, String config_id)
-	{
-		return add(entities, "entities", config_id, UserEntities.class);
-	}
+    public List<Query> updateQueries(List<Query> queries, String config_id)
+    {
+        AuthRequest req = update(queries, "queries", config_id, Queries.class, "PUT");
+        Queries list = (Queries)serializer.deserialize(req.getResponse(), Queries.class);
+        if (list != null) {
+            return list.getQueries();
+        } else {
+            return new ArrayList<Query>();
+        }
+    }
 
-	public Integer addEntities(List<UserEntity> entities)
-	{
-		return addEntities(entities, null);
-	}
+    public List<Query> updateQueries(List<Query> queries)
+    {
+        return updateQueries(queries, null);
+    }
 
-	public Integer updateEntities(List<UserEntity> entities)
-	{
-		return updateEntities(entities, null);
-	}
+    public Integer removeQueries(List<Query> queries)
+    {
+        return removeQueries(queries, null);
+    }
 
-	public Integer updateEntities(List<UserEntity> entities, String config_id)
-	{
-		return update(entities, "entities", config_id, UserEntities.class);
-	}
+    public Integer removeQueries(List<Query> queries, String config_id)
+    {
+        return remove(queries, "queries", config_id, Queries.class);
+    }
 
-	public Integer removeEntities(List<UserEntity> entities)
-	{
-		return removeEntities(entities, null);
-	}
 
-	public Integer removeEntities(List<UserEntity> entities, String config_id)
-	{
-		return remove(entities, "entities", config_id, UserEntities.class);
-	}
+    public List<SentimentPhrase> addSentimentPhrases(List<SentimentPhrase> phrases, String config_id)
+    {
+        AuthRequest req = add(phrases, "phrases", config_id, SentimentPhrases.class);
+        SentimentPhrases list = (SentimentPhrases)serializer.deserialize(req.getResponse(), SentimentPhrases.class);
+        if (list != null) {
+            return list.getSentimentPhrases();
+        } else {
+            return new ArrayList<SentimentPhrase>();
+        }
+    }
 
-	public Integer addConfigurations(List<Configuration> configurations)
-	{
-		return addConfigurations(configurations, null);
-	}
+    public List<SentimentPhrase> addSentimentPhrases(List<SentimentPhrase> phrases)
+    {
+        return addSentimentPhrases(phrases, null);
+    }
 
-	private Integer addConfigurations(List<Configuration> configurations, String config_id)
-	{
-		if( configurations != null && !configurations.isEmpty() )
-		{
-			for (Configuration configuration : configurations)
-			{
-				if( configuration.getTemplate() != null )
-				{
-					configuration.setId( null );
-				}
-			}
-		};
+    public List<SentimentPhrase> updateSentimentPhrases(List<SentimentPhrase> phrases, String config_id)
+    {
+        AuthRequest req = update(phrases, "phrases", config_id, SentimentPhrases.class, "PUT");
+        SentimentPhrases list = (SentimentPhrases)serializer.deserialize(req.getResponse(), SentimentPhrases.class);
+        if (list != null) {
+            return list.getSentimentPhrases();
+        } else {
+            return new ArrayList<SentimentPhrase>();
+        }
+    }
 
-		return add(configurations, "configurations", config_id, Configurations.class);
-	}
+    public List<SentimentPhrase> updateSentimentPhrases(List<SentimentPhrase> phrases)
+    {
+        return updateSentimentPhrases(phrases, null);
+    }
 
-    public Integer cloneConfigurations(String name, String template)
+    public Integer removeSentimentPhrases(List<SentimentPhrase> phrases, String config_id)
+    {
+        return remove(phrases, "phrases", config_id, SentimentPhrases.class);
+    }
+
+    public Integer removeSentimentPhrases(List<SentimentPhrase> phrases)
+    {
+        return removeSentimentPhrases(phrases, null);
+    }
+
+    public List<BlacklistItem> addBlacklist(List<BlacklistItem> blacklistItems, String config_id)
+    {
+        AuthRequest req = add(blacklistItems, "blacklist", config_id, Blacklists.class);
+        Blacklists list = (Blacklists)serializer.deserialize(req.getResponse(), Blacklists.class);
+        if (list != null) {
+            return list.getBlacklist();
+        } else {
+            return new ArrayList<BlacklistItem>();
+        }
+    }
+
+    public List<BlacklistItem> addBlacklist(List<BlacklistItem> blackList)
+    {
+        return addBlacklist(blackList, null);
+    }
+
+    public List<BlacklistItem> updateBlacklist(List<BlacklistItem> blackList, String config_id)
+    {
+        AuthRequest req = update(blackList, "blacklist", config_id, Blacklists.class, "PUT");
+        Blacklists list = (Blacklists)serializer.deserialize(req.getResponse(), Blacklists.class);
+        if (list != null) {
+            return list.getBlacklist();
+        } else {
+            return new ArrayList<BlacklistItem>();
+        }
+    }
+
+    public List<BlacklistItem> updateBlacklist(List<BlacklistItem> blackList)
+    {
+        return updateBlacklist(blackList, null);
+    }
+
+    public Integer removeBlacklist(List<BlacklistItem> blacklistItems, String config_id)
+    {
+        return remove(blacklistItems, "blacklist", config_id, Blacklists.class);
+    }
+
+    public Integer removeBlacklist(List<BlacklistItem> blacklistItems)
+    {
+        return removeBlacklist(blacklistItems, null);
+    }
+
+    public List<UserEntity> addEntities(List<UserEntity> entities, String config_id)
+    {
+        AuthRequest req = add(entities, "entities", config_id, UserEntities.class);
+        UserEntities list = (UserEntities)serializer.deserialize(req.getResponse(), UserEntities.class);
+        if (list != null) {
+            return list.getEntities();
+        } else {
+            return new ArrayList<UserEntity>();
+        }
+    }
+
+    public List<UserEntity> addEntities(List<UserEntity> entities)
+    {
+        return addEntities(entities, null);
+    }
+
+    public List<UserEntity> updateEntities(List<UserEntity> entities)
+    {
+        return updateEntities(entities, null);
+    }
+
+    public List<UserEntity> updateEntities(List<UserEntity> entities, String config_id)
+    {
+        AuthRequest req = update(entities, "entities", config_id, UserEntities.class, "PUT");
+        UserEntities list = (UserEntities)serializer.deserialize(req.getResponse(), UserEntities.class);
+        if (list != null) {
+            return list.getEntities();
+        } else {
+            return new ArrayList<UserEntity>();
+        }
+    }
+
+    public Integer removeEntities(List<UserEntity> entities)
+    {
+        return removeEntities(entities, null);
+    }
+
+    public Integer removeEntities(List<UserEntity> entities, String config_id)
+    {
+        return remove(entities, "entities", config_id, UserEntities.class);
+    }
+
+    public List<TaxonomyNode> addTaxonomy(List<TaxonomyNode> taxonomies, String config_id)
+    {
+        AuthRequest req = add(taxonomies, "taxonomy", config_id, Taxonomies.class);
+        Taxonomies list = (Taxonomies)serializer.deserialize(req.getResponse(), Taxonomies.class);
+        if (list != null) {
+            return list.getTaxonomies();
+        } else {
+            return new ArrayList<TaxonomyNode>();
+        }
+    }
+
+    public List<TaxonomyNode> addTaxonomy(List<TaxonomyNode> taxonomies)
+    {
+        return addTaxonomy(taxonomies, null);
+    }
+
+    public List<TaxonomyNode> updateTaxonomy(List<TaxonomyNode> taxonomies)
+    {
+        return updateTaxonomy(taxonomies, null);
+    }
+
+    public List<TaxonomyNode> updateTaxonomy(List<TaxonomyNode> taxonomies, String config_id)
+    {
+        AuthRequest req = update(taxonomies, "taxonomy", config_id, Taxonomies.class , "PUT");
+        Taxonomies list = (Taxonomies)serializer.deserialize(req.getResponse(), Taxonomies.class);
+        if (list != null) {
+            return list.getTaxonomies();
+        } else {
+            return new ArrayList<TaxonomyNode>();
+        }
+    }
+
+    public Integer removeTaxonomy(List<TaxonomyNode> taxonomies)
+    {
+        return removeTaxonomy(taxonomies, null);
+    }
+
+    public Integer removeTaxonomy(List<TaxonomyNode> taxonomies, String config_id)
+    {
+        return remove(taxonomies, "taxonomy", config_id, Taxonomies.class);
+    }
+
+    public List<Configuration> addConfigurations(List<Configuration> configurations)
+    {
+        return addConfigurations(configurations, null);
+    }
+
+    private List<Configuration> addConfigurations(List<Configuration> configurations, String config_id)
+    {
+        if( configurations != null && !configurations.isEmpty() )
+        {
+            for (Configuration configuration : configurations)
+            {
+                if( configuration.getTemplate() != null )
+                {
+                configuration.setId( null );
+            }
+            }
+        };
+
+        AuthRequest req = add(configurations, "configurations", config_id, Configurations.class);
+        Configurations list = (Configurations)serializer.deserialize(req.getResponse(), Configurations.class);
+        if (list != null) {
+            return list.getConfigurations();
+        } else {
+            return new ArrayList<Configuration>();
+        }
+    }
+
+    public Configuration cloneConfigurations(String name, String template)
     {
         Configuration configuration = new Configuration();
         configuration.setName(name);
@@ -771,53 +892,71 @@ public final class Session
         List<Configuration> configurations = new ArrayList<Configuration>();
         configurations.add(configuration);
 
-        return add(configurations, "configurations", null, Configurations.class);
+        AuthRequest req = add(configurations, "configurations", null, Configurations.class);
+        Configurations list = (Configurations)serializer.deserialize(req.getResponse(), Configurations.class);
+        if (list != null) {
+            return list.getConfigurations().get(0);
+        } else {
+            return new Configuration();
+        }
     }
 
-	public Integer updateConfigurations(List<Configuration> configurations)
-	{
-		return updateConfigurations(configurations, null);
-	}
+    public List<Configuration> updateConfigurations(List<Configuration> configurations)
+    {
+        return updateConfigurations(configurations, null);
+    }
 
-	private Integer updateConfigurations(List<Configuration> configurations, String config_id)
-	{
-		return update(configurations, "configurations", config_id, Configurations.class);
-	}
+    private List<Configuration> updateConfigurations(List<Configuration> configurations, String config_id)
+    {
+        AuthRequest req = update(configurations, "configurations", config_id, Configurations.class, "PUT");
+        Configurations list = (Configurations)serializer.deserialize(req.getResponse(), Configurations.class);
+        if (list != null) {
+            return list.getConfigurations();
+        } else {
+            return new ArrayList<Configuration>();
+        }
+    }
 
-	public Integer removeConfigurations(List<Configuration> configurations)
-	{
-		return removeConfigurations(configurations, null);
-	}
-	private Integer removeConfigurations(List<Configuration> configurations, String config_id)
-	{
-		return remove(configurations, "configurations", config_id, Configurations.class);
-	}
+    public Integer removeConfigurations(List<Configuration> configurations)
+    {
+        return removeConfigurations(configurations, null);
+    }
+    private Integer removeConfigurations(List<Configuration> configurations, String config_id)
+    {
+        return remove(configurations, "configurations", config_id, Configurations.class);
+    }
 
-	private <T> Integer update(List<?> items, String action, String config_id, Class<?> type)
-	{
-		return update("POST", items, action, config_id, type);
-	}
+    private <T> AuthRequest update(List<?> items, String action, String config_id, Class<?> type)
+    {
+        return update(items, action, config_id, type, "POST");
+    }
 
-	private <T> Integer add(List<?> items, String action, String config_id, Class<?> type)
-	{
-		return update("POST", items, action, config_id, type);
-	}
+    private <T> AuthRequest update(List<?> items, String action, String config_id, Class<?> type, String requestMethod)
+    {
+        return update(requestMethod, items, action, config_id, type);
+    }
 
-	private <T> Integer remove(List<?> items, String action, String config_id, Class<?> type)
-	{
-		return update("DELETE", items, action, config_id, type);
-	}
+    private <T> AuthRequest add(List<?> items, String action, String config_id, Class<?> type)
+    {
+        return update("POST", items, action, config_id, type);
+    }
 
-	private <T> Integer update(String method, List<?> items, String action, String config_id, Class<?> type)
-	{
-		String url = String.format("%s/%s.%s",  serviceUrl,  action, requestFormat);
-		String body = null;
+    private <T> Integer remove(List<?> items, String action, String config_id, Class<?> type)
+    {
+        AuthRequest req = update("DELETE", items, action, config_id, type);
+        return req.getStatus();
+    }
 
-		if (serializer instanceof JsonSerializer) {
-			body = serializer.serialize(ObjProxy.wrap(items, type, method, "Json"));
-		} else {
-			body = serializer.serialize(ObjProxy.wrap(items, type, method));
-		}
+    private <T> AuthRequest update(String method, List<?> items, String action, String config_id, Class<?> type)
+    {
+        String url = String.format("%s/%s.%s",  serviceUrl,  action, requestFormat);
+        String body = null;
+
+        if (serializer instanceof JsonSerializer) {
+            body = serializer.serialize(ObjProxy.wrap(items, type, method, "Json"));
+        } else {
+            body = serializer.serialize(ObjProxy.wrap(items, type, method));
+        }
 
         AuthRequest req = AuthRequest.getInstance(url, method)
                 .key(key)
@@ -828,27 +967,27 @@ public final class Session
                 .apiVersion(apiVersion)
                 .useCompression(useCompression);
 
-		Integer status = req.doRequest();
+        Integer status = req.doRequest();
 
         handleRequest(method, req.getRequestUrl(), body);
-		handleResponse(status, req);
+        handleResponse(status, req);
 
-		return status;
-	}
+        return req  ;
+    }
 
-	//--------end of update
+    //--------end of update
 
-	//--------queue methods
+    //--------queue methods
     public Integer queueDocument(Document task)
     {
         return queueDocument(task, null);
     }
 
-	public Integer queueDocument(Document task, String config_id)
-	{
-		String method = "POST";
+    public Integer queueDocument(Document task, String config_id)
+    {
+        String method = "POST";
         String url = generateRequestUrl("document");
-		String body = serializer.serialize(task);
+        String body = serializer.serialize(task);
 //        System.out.println("> " + body.getBytes().length);
 
         AuthRequest req = AuthRequest.getInstance(url, method)
@@ -860,37 +999,37 @@ public final class Session
                 .apiVersion(apiVersion)
                 .useCompression(useCompression);
 
-		Integer status = req.doRequest();
-		if (callback != null)
-		{
-			if (status <= 202)
-			{
-				callback.onResponse(this, new ResponseArgs(status, req.getResponse()));
-			}
-			if (status > 202)
-			{
-				callback.onError(this, new ResponseArgs(status, req.getErrorMessage()));
-			}
-			if (!req.getResponse().isEmpty() && status < 202)
-			{
-				DocsAnalyticData taskList = (DocsAnalyticData)serializer.deserialize(req.getResponse(), DocsAnalyticData.class);
-				callback.onDocsAutoResponse(this, taskList.getDocuments());
-			}
-		}
+        Integer status = req.doRequest();
+        if (callback != null)
+        {
+            if (status <= 202)
+            {
+                callback.onResponse(this, new ResponseArgs(status, req.getResponse()));
+            }
+            if (status > 202)
+            {
+                callback.onError(this, new ResponseArgs(status, req.getErrorMessage()));
+            }
+            if (!req.getResponse().isEmpty() && status < 202)
+            {
+                DocsAnalyticData taskList = (DocsAnalyticData)serializer.deserialize(req.getResponse(), DocsAnalyticData.class);
+                callback.onDocsAutoResponse(this, taskList.getDocuments());
+            }
+        }
 
-		handleRequest(method, req.getRequestUrl(), body);
+        handleRequest(method, req.getRequestUrl(), body);
 
         return status;
-	}
+    }
 
     public Integer queueBatch(List<Document> tasks)
     {
         return queueBatch(tasks, null);
     }
 
-	public Integer queueBatch(List<Document> tasks, String config_id)
-	{
-		String method = "POST";
+    public Integer queueBatch(List<Document> tasks, String config_id)
+    {
+        String method = "POST";
         String url = generateRequestUrl("document/batch");
         String body = null;
         if (serializer instanceof JsonSerializer)
@@ -911,37 +1050,37 @@ public final class Session
                 .apiVersion(apiVersion)
                 .useCompression(useCompression);
 
-		Integer status = req.doRequest();
-		if (callback != null)
-		{
-			if (status <= 202)
-			{
-				callback.onResponse(this, new ResponseArgs(status, req.getResponse()));
-			}
-			if (status > 202)
-			{
-				callback.onError(this, new ResponseArgs(status, req.getErrorMessage()));
-			}
-			if (!req.getResponse().isEmpty() && status < 202)
-			{
-				DocsAnalyticData taskList = (DocsAnalyticData)serializer.deserialize(req.getResponse(), DocsAnalyticData.class);
-				callback.onDocsAutoResponse(this, taskList.getDocuments());
-			}
-		}
+        Integer status = req.doRequest();
+        if (callback != null)
+        {
+            if (status <= 202)
+            {
+                callback.onResponse(this, new ResponseArgs(status, req.getResponse()));
+            }
+            if (status > 202)
+            {
+                callback.onError(this, new ResponseArgs(status, req.getErrorMessage()));
+            }
+            if (!req.getResponse().isEmpty() && status < 202)
+            {
+                DocsAnalyticData taskList = (DocsAnalyticData)serializer.deserialize(req.getResponse(), DocsAnalyticData.class);
+                callback.onDocsAutoResponse(this, taskList.getDocuments());
+            }
+        }
 
-		handleRequest(method, req.getRequestUrl(), body);
+        handleRequest(method, req.getRequestUrl(), body);
 
         return status;
-	}
+    }
 
     public Integer queueCollection(Collection collection)
     {
         return queueCollection(collection, null);
     }
 
-	public Integer queueCollection(Collection collection, String config_id)
-	{
-		String method = "POST";
+    public Integer queueCollection(Collection collection, String config_id)
+    {
+        String method = "POST";
         String url = generateRequestUrl("collection");
         String body = serializer.serialize(collection);
 
@@ -954,37 +1093,37 @@ public final class Session
                 .apiVersion(apiVersion)
                 .useCompression(useCompression);
 
-		Integer status = req.doRequest();
-		if (callback != null)
-		{
-			if (status <= 202)
-			{
-				callback.onResponse(this, new ResponseArgs(status, req.getResponse()));
-			}
-			if (status > 202)
-			{
-				callback.onError(this, new ResponseArgs(status, req.getErrorMessage()));
-			}
-			if (!req.getResponse().isEmpty() && status < 202)
-			{
-				CollsAnalyticData taskList = (CollsAnalyticData)serializer.deserialize(req.getResponse(), CollsAnalyticData.class);
-				callback.onCollsAutoResponse(this, taskList.getDocuments());
-			}
-		}
+        Integer status = req.doRequest();
+        if (callback != null)
+        {
+            if (status <= 202)
+            {
+                callback.onResponse(this, new ResponseArgs(status, req.getResponse()));
+            }
+            if (status > 202)
+            {
+                callback.onError(this, new ResponseArgs(status, req.getErrorMessage()));
+            }
+            if (!req.getResponse().isEmpty() && status < 202)
+            {
+                CollsAnalyticData taskList = (CollsAnalyticData)serializer.deserialize(req.getResponse(), CollsAnalyticData.class);
+                callback.onCollsAutoResponse(this, taskList.getDocuments());
+            }
+        }
 
-		handleRequest(method, req.getRequestUrl(), body);
+        handleRequest(method, req.getRequestUrl(), body);
 
-		return status;
-	}
+        return status;
+    }
 
     public void cancelDocument(String id)
     {
         cancelDocument(id, null);
     }
 
-	public Integer cancelDocument(String id, String config_id)
-	{
-		String method = "DELETE";
+    public Integer cancelDocument(String id, String config_id)
+    {
+        String method = "DELETE";
         String url = generateRequestUrl("document/" + id);
 
         AuthRequest req = AuthRequest.getInstance(url, method)
@@ -995,22 +1134,22 @@ public final class Session
                 .apiVersion(apiVersion)
                 .useCompression(useCompression);
 
-		Integer status = req.doRequest();
+        Integer status = req.doRequest();
 
         handleRequest(method, req.getRequestUrl(), null);
-		handleResponse(status, req);
+        handleResponse(status, req);
 
         return status;
-	}
+    }
 
-	public Integer cancelCollection(String id)
-	{
-		return cancelCollection(id, null);
-	}
+    public Integer cancelCollection(String id)
+    {
+        return cancelCollection(id, null);
+    }
 
-	public Integer cancelCollection(String id, String config_id)
-	{
-		String method = "DELETE";
+    public Integer cancelCollection(String id, String config_id)
+    {
+        String method = "DELETE";
         String url = generateRequestUrl("collection/" + id);
 
         AuthRequest req = AuthRequest.getInstance(url, method)
@@ -1021,38 +1160,38 @@ public final class Session
                 .apiVersion(apiVersion)
                 .useCompression(useCompression);
 
-		Integer status = req.doRequest();
+        Integer status = req.doRequest();
 
         handleRequest(method, req.getRequestUrl());
-		handleResponse(status, req);
+        handleResponse(status, req);
 
         return status;
-	}
-	
-	public void handleResponse(Integer status, AuthRequest ar)
-	{
-		if (callback != null)
-		{
-			if (status <= 202)
-			{
-				callback.onResponse(this, new ResponseArgs(status, ar.getResponse()));
-			}
-			if (status > 202)
-			{
-				callback.onError(this, new ResponseArgs(status, ar.getErrorMessage()));
-			}
-		}
-	}
+    }
+
+    public void handleResponse(Integer status, AuthRequest ar)
+    {
+        if (callback != null)
+        {
+            if (status <= 202)
+            {
+                callback.onResponse(this, new ResponseArgs(status, ar.getResponse()));
+            }
+            if (status > 202)
+            {
+                callback.onError(this, new ResponseArgs(status, ar.getErrorMessage()));
+            }
+        }
+    }
 
     public void handleRequest(String method, String url) {
         handleRequest(method, url, null);
     }
 
-	public void handleRequest(String method, String url, String message)
-	{
-		if (callback != null)
-		{
-			callback.onRequest(this, new RequestArgs(method, url, message));
-		}
-	}
+    public void handleRequest(String method, String url, String message)
+    {
+        if (callback != null)
+        {
+            callback.onRequest(this, new RequestArgs(method, url, message));
+        }
+    }
 }

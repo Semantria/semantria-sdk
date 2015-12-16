@@ -27,10 +27,10 @@ public final class AuthRequest
 	private String secret = "";
 	private String response = "";
 	private String rurl = "";
-	private String appName = "Java/3.9.86/";
+	private String appName = "Java/4.0.86/";
     private String apiVersion = "";
-	private boolean useCompression = false;
 	private String errorMsg = null;
+    private boolean useCompression = false;
     private int CONNECTION_TIMEOUT = 120000;
 
     public static AuthRequest getInstance(String url, String method) {
@@ -108,7 +108,7 @@ public final class AuthRequest
         this.apiVersion = apiVersion;
         return this;
     }
-
+	
 	public Integer doRequest()
 	{
 		try
@@ -143,8 +143,8 @@ public final class AuthRequest
 	
 	private HttpURLConnection getOAuthSignedConnection() throws IOException {
 		setOAuthParameters();
-		
-		rurl = this.url + "?" + buildRequest(params);
+
+		rurl = this.url + (!params.isEmpty() ? ("?" + buildRequest(params)) : "");
 		URL url = new URL(rurl);
         HttpURLConnection conn = null;
         if (this.url.startsWith("https")) {
@@ -165,12 +165,14 @@ public final class AuthRequest
 	}
 	
 	private void setOAuthParameters() {
-		if(params == null) { params = new HashMap<String, String>(); }
-		params.put("oauth_nonce", Long.toString(new Random().nextLong()&0xffffffffL));
-		params.put("oauth_consumer_key", key);
-		params.put("oauth_signature_method", "HMAC-SHA1");
-		params.put("oauth_timestamp", Long.toString(System.currentTimeMillis()/1000));
-		params.put("oauth_version", "1.0");	
+        if (!key.isEmpty()) {
+            if(params == null) { params = new HashMap<String, String>(); }
+            params.put("oauth_nonce", Long.toString(new Random().nextLong()&0xffffffffL));
+            params.put("oauth_consumer_key", key);
+            params.put("oauth_signature_method", "HMAC-SHA1");
+            params.put("oauth_timestamp", Long.toString(System.currentTimeMillis()/1000));
+            params.put("oauth_version", "1.0");
+        }
 	}
 	
 	private void setRequestProperties(HttpURLConnection conn) throws IOException {
@@ -183,10 +185,12 @@ public final class AuthRequest
 			conn.setRequestProperty("Accept-Encoding","gzip,deflate");
 		};
 
-		conn.setRequestProperty("Authorization", "OAuth,oauth_consumer_key=\"" + key + "\",oauth_signature=\""
+        if (!key.isEmpty() && !secret.isEmpty()) {
+		    conn.setRequestProperty("Authorization", "OAuth,oauth_consumer_key=\"" + key + "\",oauth_signature=\""
     					+ URLEncoder.encode(signupRequest(rurl, secret), "UTF-8") + "\"");
+        }
 		conn.setRequestProperty("x-app-name", appName);
-        conn.setRequestProperty("x-api-version", apiVersion);
+		conn.setRequestProperty("x-api-version", apiVersion);
 	}
 	
 	private void sendRequestBodyIfSetted(HttpURLConnection conn) throws IOException {
@@ -343,6 +347,10 @@ public final class AuthRequest
 	{
 		return errorMsg;
 	}
+
+    public Integer getStatus() {
+        return status;
+    }
 }
 
 class DefaultTrustManager implements X509TrustManager {

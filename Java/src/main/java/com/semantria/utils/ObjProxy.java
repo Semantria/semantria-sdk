@@ -33,7 +33,14 @@ public class ObjProxy
 			}
 			else if( type.equals(Blacklists.class) )
 			{
-				res = new Blacklists( (List<String>)obj );
+                if( method.equals("DELETE") )
+                {
+                    res = new BlacklistsDeleteReq( (List<BlacklistItem>)obj );
+                }
+                else
+                {
+                    res = new Blacklists( (List<BlacklistItem>)obj );
+                }
 			}
 			else if( type.equals(Categories.class) )
 			{
@@ -79,6 +86,17 @@ public class ObjProxy
 					res = new UserEntities( (List<UserEntity>)obj );
 				}
 			}
+            else if( type.equals(Taxonomies.class) )
+            {
+                if( method.equals("DELETE") )
+                {
+                    res = new TaxonomiesDeleteReq( (List<TaxonomyNode>)obj );
+                }
+                else
+                {
+                    res = new Taxonomies( (List<TaxonomyNode>)obj );
+                }
+            }
 			else if( type.equals(Batch.class) )
 			{
 				res = new Batch( (List<Document>) obj);
@@ -106,7 +124,21 @@ public class ObjProxy
 			}
 			else if( type.equals(Blacklists.class) )
 			{
-				//res = (List<String>)obj;
+                if( method.equals("DELETE") )
+                {
+                    List<BlacklistItem> blacklistItems = (List<BlacklistItem>)obj;
+                    if( obj != null && !obj.isEmpty() )
+                    {
+                        List<String> list = new ArrayList<String>();
+
+                        for (BlacklistItem blacklistItem : blacklistItems)
+                        {
+                            list.add( blacklistItem.getId() );
+                        }
+
+                        res = list;
+                    }
+                }
 			}
 			else if( type.equals(Categories.class) )
 			{
@@ -119,7 +151,7 @@ public class ObjProxy
 
 						for (Category category : categories)
 						{
-							list.add( category.getName() );
+							list.add( category.getId() );
 						}
 
 						res = list;
@@ -139,7 +171,7 @@ public class ObjProxy
 
 							for (Query query : queries)
 							{
-								list.add( query.getName() );
+								list.add( query.getId() );
 							}
 
 							res = list;
@@ -158,7 +190,7 @@ public class ObjProxy
 
 						for (SentimentPhrase phrase : phrases)
 						{
-							list.add( phrase.getName() );
+							list.add( phrase.getId() );
 						}
 
 						res = list;
@@ -177,13 +209,31 @@ public class ObjProxy
 
 						for (UserEntity entity : entities)
 						{
-							list.add( entity.getName() );
+							list.add( entity.getId() );
 						}
 
 						res = list;
 					}
 				}
 			}
+            else if( type.equals(Taxonomies.class) )
+            {
+                if( method.equals("DELETE") )
+                {
+                    List<TaxonomyNode> taxonomies = (List<TaxonomyNode>)obj;
+                    if( obj != null && !obj.isEmpty() )
+                    {
+                        List<String> list = new ArrayList<String>();
+
+                        for (TaxonomyNode taxonomyNode : taxonomies)
+                        {
+                            list.add( taxonomyNode.getId() );
+                        }
+
+                        res = list;
+                    }
+                }
+            }
 			else if( type.equals(Batch.class) )
 			{
 				res = new Batch( (List<Document>) obj);
@@ -221,6 +271,10 @@ public class ObjProxy
 		{
 			res = ((UserEntities)obj).getEntities();
 		}
+        else if( obj instanceof Taxonomies )
+        {
+            res = ((Taxonomies)obj).getTaxonomies();
+        }
 		else if( obj instanceof Batch )
 		{
 			res = ((Batch)obj).getDocuments();

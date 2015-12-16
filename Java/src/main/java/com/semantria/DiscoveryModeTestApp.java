@@ -63,7 +63,8 @@ public class DiscoveryModeTestApp
         CollAnalyticData result = null;
 
         //Initializes Semantria Session
-        Session session = Session.createSession(key, secret, new JsonSerializer());
+        Session session = Session.createSession(key, secret);
+        session.registerSerializer(new JsonSerializer());
         session.setCallbackHandler(new ICallbackHandler() {
             @Override
             public void onResponse(Object sender, ResponseArgs responseArgs) {

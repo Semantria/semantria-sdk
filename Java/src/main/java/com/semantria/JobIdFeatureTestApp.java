@@ -50,7 +50,8 @@ public class JobIdFeatureTestApp {
         }
 
         ISerializer serializer = new JsonSerializer();
-        Session session = Session.createSession(key, secret, serializer, true);
+        Session session = Session.createSession(key, secret);
+        session.registerSerializer(new JsonSerializer());
         session.setCallbackHandler(new CallbackHandler());
 
         // null - send every single document separately

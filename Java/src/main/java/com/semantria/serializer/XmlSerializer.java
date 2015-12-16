@@ -40,7 +40,8 @@ public final class XmlSerializer implements ISerializer
 						ServiceStatus.class,
 						Subscription.class,
                         FeaturesList.class,
-						Statistics.class
+						Statistics.class,
+                        Taxonomies.class
 				);
 				Unmarshaller unmarshaller = jc.createUnmarshaller();
 				obj = unmarshaller.unmarshal(inputStream);
@@ -73,7 +74,10 @@ public final class XmlSerializer implements ISerializer
 					QueriesDeleteReq.class,
 					SentimentPhrasesDeleteReq.class,
 					UserEntitiesDeleteReq.class,
-					ConfigurationsDeleteReq.class
+					ConfigurationsDeleteReq.class,
+                    Taxonomies.class,
+                    BlacklistsDeleteReq.class,
+                    TaxonomiesDeleteReq.class
 			);
 			Marshaller marshaller = jc.createMarshaller();
 

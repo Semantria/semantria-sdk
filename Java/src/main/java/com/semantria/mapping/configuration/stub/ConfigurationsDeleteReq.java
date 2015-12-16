@@ -26,7 +26,7 @@ public final class ConfigurationsDeleteReq
 		};
 	}
 
-	@XmlElement(name="configuration")
+	@XmlElement(name="id")
 	public List<String> getConfigurations() { return configurations; }
 	
 	public void setConfigurations(List<String> configurations) { this.configurations = configurations; }

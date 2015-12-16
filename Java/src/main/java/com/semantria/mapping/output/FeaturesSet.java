@@ -44,6 +44,7 @@ public class FeaturesSet
     public void setId(String id) { this.id = id; }
     public void setLanguage(String language) { this.language = language; }
     public void setHTMLProcessing(Boolean htmlProcessing) { this.html_processing = htmlProcessing; }
+    public void setOneSentenceMode(Boolean one_sentence_mode) { this.one_sentence_mode = one_sentence_mode; }
     public void setAPISettings(APISettings settings) { this.settings = settings; }
     public void setDetailedModeFeatures(DetailedModeFeatures features) { this.detailed_mode = features; }
     public void setDiscoveryModeFeatures(DiscoveryModeFeatures features) { this.discovery_mode = features; }

@@ -20,12 +20,12 @@ public final class QueriesDeleteReq
 		{
 			for (Query query : queries)
 			{
-				this.queries.add( query.getName() );
+				this.queries.add( query.getId() );
 			}
 		}
 	}
 
-	@XmlElement(name="query")
+	@XmlElement(name="id")
 	public List<String> getQueries() { return queries; }
 	
 	public void setQueries(List<String> queries) { this.queries = queries; }

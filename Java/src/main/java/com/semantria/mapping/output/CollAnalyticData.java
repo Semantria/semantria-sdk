@@ -14,6 +14,7 @@ public class CollAnalyticData
 	private TaskStatus status = null;
 	private List<Facet> facets = null;
     private List<CollTopic> topics = null;
+    private List<CollTopic> taxonomies = null;
     private List<CollTheme> themes = null;
     private List<CollEntity> entities = null;
 	private String summary = null;
@@ -36,6 +37,9 @@ public class CollAnalyticData
     @XmlElementWrapper(name="topics")
     @XmlElement(name="topic")
     public List<CollTopic> getTopics() { return topics; }
+    @XmlElementWrapper(name="taxonomies")
+    @XmlElement(name="taxonomy")
+    public List<CollTopic> getTaxonomies() { return taxonomies; }
     @XmlElementWrapper(name="themes")
     @XmlElement(name="theme")
     public List<CollTheme> getThemes() { return themes; }
@@ -51,6 +55,7 @@ public class CollAnalyticData
 	public void setFacets(List<Facet> list) { facets = list; }
     public void setEntities(List<CollEntity> sentities) { entities = sentities; }
     public void setTopics(List<CollTopic> atopics) { topics = atopics; }
+    public void setTaxonomies(List<CollTopic> ataxonomies) {taxonomies = ataxonomies;}
     public void setThemes(List<CollTheme> athemes) { themes = athemes; }
 	public void setSummary(String summary) { this.summary = summary; }
     public void setTag(String tag) { this.tag = tag; }
