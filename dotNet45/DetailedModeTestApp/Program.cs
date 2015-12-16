@@ -51,6 +51,8 @@ namespace DetailedModeTestApp
                     Console.WriteLine(string.Format("{0}: {1}", (int)ea.Status, ea.Message));
                 });
 
+                dynamic configList = session.GetConfigurations();
+
                 //Obtaining subscription object to get user limits applicable on server side
                 dynamic subscription = session.GetSubscription();
 

@@ -68,18 +68,15 @@ namespace DiscoveryModeTestApp
 			//Prints analysis results
 			Console.WriteLine();
             Console.WriteLine("Facets and attributes:");
-            if (result.facets != null)
-            {
-                foreach (dynamic facet in result.facets)
-                {
-                    Console.WriteLine("{0} : {1}", facet.label, facet.count);
-                    if (facet.attributes == null)
-                        continue;
+			foreach (dynamic facet in result.facets)
+			{
+				Console.WriteLine("{0} : {1}", facet.label, facet.count);
+				if (facet.attributes == null)
+					continue;
 
-                    foreach (dynamic attr in facet.attributes)
-                        Console.WriteLine("\t{0} : {1}", attr.label, attr.count);
-                }
-            }
+				foreach (dynamic attr in facet.attributes)
+					Console.WriteLine("\t{0} : {1}", attr.label, attr.count);
+			}
 
 			Console.ReadKey(false);
 		}

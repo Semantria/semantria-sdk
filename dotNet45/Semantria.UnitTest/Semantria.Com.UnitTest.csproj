@@ -74,7 +74,7 @@
     <Content Include="AuthoringTests.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Semantria\Semantria.Com.csproj">
+    <ProjectReference Include="..\Semantria.Com\Semantria.Com.csproj">
       <Project>{E942AB83-DA93-4B16-A826-FF3993B47329}</Project>
       <Name>Semantria.Com</Name>
     </ProjectReference>

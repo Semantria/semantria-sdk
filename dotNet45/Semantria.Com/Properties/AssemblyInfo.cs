@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("DiscoveryModeTestApp")]
-[assembly: AssemblyDescription("Collection processing mode test application")]
+[assembly: AssemblyTitle("Semantria.Com")]
+[assembly: AssemblyDescription("Semantria SDK")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Semantria")]
-[assembly: AssemblyProduct("DiscoveryModeTestApp")]
+[assembly: AssemblyProduct("Semantria SDK")]
 [assembly: AssemblyCopyright("Copyright © Semantria, LLC 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("3e94f0c6-cacc-426e-b7f5-ee682555dae2")]
+[assembly: Guid("2f46dc2d-c940-4a6a-8bbe-fbe947eeb47b")]
 
 // Version information for an assembly consists of the following four values:
 //

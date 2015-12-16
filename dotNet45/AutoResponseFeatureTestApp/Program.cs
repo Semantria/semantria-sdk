@@ -80,7 +80,7 @@ namespace FacetsTest
                 {
                     dynamic config = configsList.First(item => item.name.Equals("AutoResponseTest"));
                     config.is_primary = true;
-                    config.auto_response = true;
+                    config.DeleteMember("timestamp");
                     session.UpdateConfigurations(new [] { config });
                 }
 
@@ -91,7 +91,7 @@ namespace FacetsTest
                         break;
 
                     session.QueueDocument(docsList[i]);
-                    Thread.Sleep(500);
+                    Thread.Sleep(250);
 
                     Console.WriteLine("Documents queued/received rate: {0}/{1}", i + 1, resList.Count);
                 }

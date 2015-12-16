@@ -1,16 +1,15 @@
 ﻿using System.Reflection;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Semantria.Com")]
-[assembly: AssemblyDescription("Semantria SDK")]
+[assembly: AssemblyTitle("Semantria.Com.Workers")]
+[assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Semantria")]
-[assembly: AssemblyProduct("Semantria SDK")]
-[assembly: AssemblyCopyright("Copyright © Semantria, LLC 2015")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("Semantria.Com.Workers")]
+[assembly: AssemblyCopyright("Copyright ©  2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -20,7 +19,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("2f46dc2d-c940-4a6a-8bbe-fbe947eeb47b")]
+[assembly: Guid("1bdb16bd-dbaf-4054-8287-20e282e3ac9f")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -32,5 +31,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("3.9.2")]
-[assembly: AssemblyFileVersion("3.9.2")]
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]

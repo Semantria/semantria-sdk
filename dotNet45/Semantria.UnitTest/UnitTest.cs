@@ -1,8 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Diagnostics;
 using System.Collections;
+using System.Diagnostics;
 using System.Linq;
 
 namespace Semantria.Com.TestUnitApi
@@ -74,16 +73,20 @@ namespace Semantria.Com.TestUnitApi
 
             dynamic temp = _session.GetConfigurations();
             var configsList = ((IEnumerable)temp).Cast<dynamic>();
+            dynamic config = null;
             // Updates or Creates new configuration for the test purposes.
             if (!configsList.Any(item => item.name.Equals("NetTest")))
             {
-                var testConfig = new { name = "NetTest", language = "English", is_primary = false, auto_response = false };
-                _session.AddConfigurations(new[] { testConfig });
-                temp = _session.GetConfigurations();
-                configsList = ((IEnumerable)temp).Cast<dynamic>();
+                config = new { name = "NetTest", language = "English", is_primary = false, auto_response = false };
+                config = _session.AddConfigurations(new[] { config });
+                config = config[0];
             }
-            dynamic config = configsList.First(item => item.name.Equals("NetTest"));
-            _testConfig = config.config_id;
+            else
+            {
+                config = configsList.First(item => item.name.Equals("NetTest"));
+                   
+            }
+            _testConfig = config.id;
         }
         
         // Use TestCleanup to run code after each test has run
@@ -135,7 +138,8 @@ namespace Semantria.Com.TestUnitApi
         {
             dynamic result = _session.GetConfigurations();
             Assert.IsNotNull(result);
-       
+            if (result == null) return;
+
             dynamic primaryConf = null;
             foreach (dynamic item in result)
             {
@@ -147,151 +151,145 @@ namespace Semantria.Com.TestUnitApi
                 }
 
                 primaryConf = item;
+                primaryConf.DeleteMember("timestamp");
             }
 
             dynamic res = _session.UpdateConfigurations(new [] { primaryConf });
-            Assert.IsTrue(res == 202 || res == 200);
+            Assert.IsTrue(res != null);
         }
 
         [TestMethod]
         public void CloneConfiguration()
         {
-            dynamic result = _session.GetConfigurations();
+            var result = _session.CloneConfiguration("TestCloneConfig_NET", _testConfig);
             Assert.IsNotNull(result);
-            if (result == null) return;
 
-            string name = "netCloneTest_name_3_45";
-            string template = string.Empty;
-            dynamic primaryConfig = null;
-            foreach (var item in result)
+            dynamic temp = _session.GetConfigurations();
+            var configsList = ((IEnumerable)temp).Cast<dynamic>();
+            if (!configsList.Any(item => item.name.Equals("TestCloneConfig_NET")))
             {
-                if (item.is_primary == true)
-                {
-                    template = item.config_id;
-                    primaryConfig = item;
-                    break;
-                }
-            }
-            Assert.AreNotSame(string.Empty, template);
-            var res = _session.CloneConfiguration(name, template);
-            Assert.AreEqual(202, res);
-            dynamic clone = null;
-            result = _session.GetConfigurations();
-            var configsList = ((IEnumerable)result).Cast<dynamic>();
-            if (!configsList.Any(item => item.name.Equals(name)))
-            {
-                Assert.Fail();
+                Assert.Fail("New Config not found");
             }
             else
             {
-                clone = configsList.First(item => item.name.Equals(name));
-                Assert.AreNotEqual(primaryConfig.config_id, clone.config_id);
-                Assert.AreNotEqual(primaryConfig.name, clone.name);
+                dynamic config = configsList.First(item => item.name.Equals("NetTest"));
+                var res = _session.RemoveConfigurations(new[]{config.id});
+                Assert.IsTrue(res == 202);
             }
 
-            res = _session.RemoveConfigurations(new[]{clone.config_id});
-            Assert.AreEqual(202, res);
-
-            result = _session.GetConfigurations();
-            configsList = ((IEnumerable)result).Cast<dynamic>();
-            if (configsList.Any(item => item.name.Equals(name)))
-            {
-                Assert.Fail();
-            }
+            
         }
+
+
 
         [TestMethod]
         public void CRUDBlacklist()
         {
-            dynamic result = new List<dynamic>();
-            result.Add( "net*");
+            dynamic result = _session.GetBlacklist(_testConfig);
+
+            result = new List<dynamic>();
+            result.Add(new { name = "net*" });
             var obj = _session.AddBlacklist(result, _testConfig);
-            Assert.IsTrue(obj == 202);
+            Assert.IsTrue(obj != null);
 
             result = _session.GetBlacklist(_testConfig);
             List<dynamic> items = new List<dynamic>();
-            var itemAdded = false;
             foreach (dynamic item in result)
             {
-                if (item == "net*")
+                if (item.name == "net*")
                 {
-                    itemAdded = true;
+                    item.name = "net1*";
+                    item.DeleteMember("timestamp");
+                    items.Add(item);
                 }
             }
 
-            Assert.IsTrue(itemAdded);
+            dynamic res = _session.UpdateBlacklist(items, _testConfig);
+            Assert.IsTrue(res != null);
+            
+            foreach (dynamic item in items)
+            {
+                item.name = "net*";
+            }
+            
+            res = _session.UpdateBlacklist(items, _testConfig);
+            Assert.IsTrue(res != null);
             
             result = _session.GetBlacklist(_testConfig);
             Assert.IsNotNull(result);
             
-            int r = _session.RemoveBlacklist(new[] { "net*" }, _testConfig);
-            Assert.IsTrue(r == 202);
-
-            result = _session.GetBlacklist(_testConfig);
-            if (result != null)
+            List<string> ditems = new List<string>();
+            foreach (dynamic item in result)
             {
-                var itemRemoved = true;
-                foreach (dynamic item in result)
+                if (item.name == "net*")
                 {
-                    if (item == "net*")
-                    {
-                        itemAdded = false;
-                    }
+                    ditems.Add(item.id);
                 }
-                Assert.IsTrue(itemRemoved);
             }
+
+            int r = _session.RemoveBlacklist(ditems, _testConfig);
+            Assert.IsTrue(r == 202, "RESULT: "/* + res */);
         }
 
         [TestMethod]
         public void CRUDCategory()
         {
-            dynamic result = new List<dynamic>();
-            result.Add(new { name = "NET", weight = 0.75 });
+            dynamic result = _session.GetCategories(_testConfig);
+
+            result = new List<dynamic>();
+            result.Add(new { name = "NET" });
             var obj = _session.AddCategories(result, _testConfig);
-            Assert.IsTrue(obj == 202);
+            Assert.IsTrue(obj != null);
 
             result = _session.GetCategories(_testConfig);
-            Assert.IsNotNull(result);
-
             List<dynamic> items = new List<dynamic>();
             foreach (dynamic item in result)
             {
                 if (item.name == "NET")
                 {
-                    item.weight = 0.5;
+                    item.name = "NET1*";
+                    item.DeleteMember("timestamp");
                     items.Add(item);
                     break;
                 }
             }
 
             dynamic res = _session.UpdateCategories(items, _testConfig);
-            Assert.IsTrue(res == 202);
+            Assert.IsTrue(res != null);
+
+            foreach (dynamic item in items)
+            {
+                item.name = "NET";
+            }
+
+            res = _session.UpdateCategories(items, _testConfig);
+            Assert.IsTrue(res != null);
 
             result = _session.GetCategories(_testConfig);
             Assert.IsNotNull(result);
 
+            List<string> ditems = new List<string>(); 
             foreach (dynamic item in result)
             {
                 if (item.name == "NET")
                 {
-                    Assert.AreEqual((decimal)item.weight, (decimal)0.5);
+                    ditems.Add(item.id);
                 }
             }
 
-            result = _session.GetCategories(_testConfig);
-            Assert.IsNotNull(result);
-
-            int r = _session.RemoveCategories(new[] {"NET"}, _testConfig);
+            int r = _session.RemoveCategories(ditems, _testConfig);
             Assert.IsTrue(r == 202, "RESULT: " + res);
         }
 
         [TestMethod]
         public void CRUDQuery()
         {
-            dynamic result = new List<dynamic>();
+            dynamic result = _session.GetQueries(_testConfig);
+
+            result = new List<dynamic>();
             result.Add(new { name = "NET", query = "Data" });
             var obj = _session.AddQueries(result, _testConfig);
-            Assert.IsTrue(obj == 202);
+            Assert.IsTrue(obj != null);
 
             result = _session.GetQueries(_testConfig);
             List<dynamic> items = new List<dynamic>();
@@ -299,7 +297,8 @@ namespace Semantria.Com.TestUnitApi
             {
                 if (item.name == "NET")
                 {
-                    item.query = "data1*";
+                    item.name = "NET1*";
+                    item.DeleteMember("timestamp");
                     items.Add(item);
                 }
             }
@@ -307,93 +306,183 @@ namespace Semantria.Com.TestUnitApi
             dynamic res = _session.UpdateQueries(items, _testConfig);
             Assert.IsTrue(res != null);
 
+            foreach (dynamic item in items)
+            {
+                item.name = "NET";
+            }
+
+            res = _session.UpdateQueries(items, _testConfig);
+            Assert.IsTrue(res != null);
+
             result = _session.GetQueries(_testConfig);
+            Assert.IsNotNull(result);
+
+            List<string> ditems = new List<string>(); 
             foreach (dynamic item in result)
             {
                 if (item.name == "NET")
                 {
-                    Assert.IsTrue(item.query == "data1*");
+                    ditems.Add(item.id);
                 }
             }
 
-            int r = _session.RemoveQueries(new[] {"NET"}, _testConfig);
+            int r = _session.RemoveQueries(ditems, _testConfig);
             Assert.IsTrue(r == 202, "RESULT: " + res);
         }
 
         [TestMethod]
         public void CRUDSentimentPhrase()
         {
-            dynamic result = new List<dynamic>();
+            dynamic result = _session.GetSentimentPhrases(_testConfig);
+
+            result = new List<dynamic>();
             result.Add(new { name = "NET", weight = 0.1f });
             var obj = _session.AddSentimentPhrases(result, _testConfig);
-            Assert.IsTrue(obj == 202);
+            Assert.IsTrue(obj != null);
 
             result = _session.GetSentimentPhrases(_testConfig);
-            Assert.IsNotNull(result);
-
             List<dynamic> items = new List<dynamic>();
             foreach (dynamic item in result)
             {
                 if (item.name == "NET")
                 {
-                    item.weight = 0.5f;
+                    item.name = "NET1*";
+                    item.DeleteMember("timestamp");
                     items.Add(item);
                 }
             }
 
             dynamic res = _session.UpdateSentimentPhrases(items, _testConfig);
-            Assert.IsTrue(res == 202);
+            Assert.IsTrue(res != null);
+
+            foreach (dynamic item in items)
+            {
+                item.name = "NET";
+            }
+
+            res = _session.UpdateSentimentPhrases(items, _testConfig);
+
+            Assert.IsTrue(res != null);
 
             result = _session.GetSentimentPhrases(_testConfig);
-            foreach (var item in result)
+            Assert.IsNotNull(result);
+
+            List<string> ditems = new List<string>();
+            foreach (dynamic item in result)
             {
                 if (item.name == "NET")
                 {
-                    Assert.AreEqual((float)item.weight, 0.5f);
+                    ditems.Add(item.id);
                 }
             }
 
-            int r = _session.RemoveSentimentPhrases(new[] { "NET" }, _testConfig);
+            int r = _session.RemoveSentimentPhrases(ditems, _testConfig);
             Assert.IsTrue(r == 202, "RESULT: " + res);
         }
 
         [TestMethod]
         public void CRUDEntity()
         {
-            dynamic result = new List<dynamic>();
+            dynamic result = _session.GetEntities(_testConfig);
+
+            result = new List<dynamic>();
             result.Add(new { name = "NET", type = "Language" });
             var obj = _session.AddEntities(result, _testConfig);
-            Assert.IsTrue(obj == 202);
+            Assert.IsTrue(obj != null);
 
             result = _session.GetEntities(_testConfig);
-            Assert.IsNotNull(result);
-
             List<dynamic> items = new List<dynamic>();
             foreach (dynamic item in result)
             {
                 if (item.name == "NET")
                 {
-                    item.type = "test";
+                    item.name = "NET1*";
+                    item.DeleteMember("timestamp");
                     items.Add(item);
                 }
             }
 
             dynamic res = _session.UpdateEntities(items, _testConfig);
-            Assert.IsTrue(res == 202);
+            Assert.IsTrue(res != null);
+
+            foreach (dynamic item in items)
+            {
+                item.name = "NET";
+            }
+
+            res = _session.UpdateEntities(items, _testConfig);
+            Assert.IsTrue(res != null);
 
             result = _session.GetEntities(_testConfig);
+            Assert.IsNotNull(result);
+
+            List<string> ditems = new List<string>();
             foreach (dynamic item in result)
             {
                 if (item.name == "NET")
                 {
-                    Assert.AreEqual(item.type, "test");
+                    ditems.Add(item.id);
                 }
             }
 
-            int r = _session.RemoveEntities(new[] { "NET" }, _testConfig);
+            int r = _session.RemoveEntities(ditems, _testConfig);
             Assert.IsTrue(r == 202, "RESULT: " + res);
         }
 
+        [TestMethod]
+        public void CRUDTaxonomy()
+        {
+            dynamic result = _session.GetTaxonomy(_testConfig);
+            
+            result = new List<dynamic>();
+            result.Add(new { name = "NET", nodes = new [] { new { name = "NETWORK_0" }, new  { name = "NETWORK_1" } }});
+            var obj = _session.AddTaxonomy(result, _testConfig);
+            Assert.IsTrue(obj != null);
+
+            result = _session.GetTaxonomy(_testConfig);
+            List<dynamic> items = new List<dynamic>();
+            foreach (dynamic item in result)
+            {
+                if (item.name == "NET")
+                {
+                    item.name = "NET_1*";
+                    item.nodes = null;
+                    item.topics = null;
+                    item.DeleteMember("timestamp");
+
+                    items.Add(item);
+                    break;
+                }
+            }
+
+            dynamic res = _session.UpdateTaxonomy(items, _testConfig);
+            Assert.IsTrue(res != null);
+
+            foreach (dynamic item in items)
+            {
+                item.name = "NET";
+                item.nodes = null;
+                item.topics = null;
+            }
+
+            res = _session.UpdateTaxonomy(items, _testConfig);
+            Assert.IsTrue(res != null);
+
+            result = _session.GetTaxonomy(_testConfig);
+            Assert.IsNotNull(result);
+
+            List<string> ditems = new List<string>();
+            foreach (dynamic item in result)
+            {
+                if (item.name == "NET")
+                {
+                    ditems.Add(item.id);
+                }
+            }
+
+            int r = _session.RemoveTaxonomy(ditems, _testConfig);
+            Assert.IsTrue(r == 202, "RESULT: " + res);
+        }
 
         [TestMethod]
         public void Document()
@@ -465,30 +554,32 @@ namespace Semantria.Com.TestUnitApi
     
         void session_Request(object sender, RequestEventArgs e)
         {
-            Debug.WriteLine(String .Format("REQUEST: {0} {1} - message: {2}", e.Method, e.Url, e.Message));
+            Debug.WriteLine("REQUEST: {0} {1} - message: {2}", e.Method, e.Url, e.Message);
         }
 
         void session_Response(object sender, ResponseEventArgs e)
         {
-            Debug.WriteLine(String.Format("RESPONSE: {0}({1}) - message: {2}", e.Status, (int)e.Status, e.Message));
+            Debug.WriteLine("RESPONSE: {0}({1}) - message: {2}", e.Status, (int)e.Status, e.Message);
             bool res = (e.Status == System.Net.HttpStatusCode.OK || e.Status == System.Net.HttpStatusCode.Accepted || e.Status == System.Net.HttpStatusCode.NotFound);
             Assert.AreEqual(res, true);
         }
 
         void session_Error(object sender, ResponseEventArgs e)
         {
-            Debug.WriteLine(String.Format("ERROR: {0}({1}) - message: {2}", e.Status, (int)e.Status, e.Message));
+            Debug.WriteLine("ERROR: {0}({1}) - message: {2}", e.Status, (int)e.Status, e.Message);
         }
 
         static void session_DocsAutoResponse(object sender, DocsAutoResponseEventArgs e)
         {
-            Debug.WriteLine(String.Format("DOCSAUTORESPONSE: {0}", e.AnalyticData.Count));
+            int count = e.AnalyticData.Count;
+            Debug.WriteLine("DOCSAUTORESPONSE: {0}", count);
             Assert.IsNotNull(e.AnalyticData);
         }
 
         static void session_CollsAutoResponse(object sender, CollsAutoResponseEventArgs e)
         {
-            Debug.WriteLine(String.Format("COLLSAUTORESPONSE: {0}", e.AnalyticData.Count));
+            int count = e.AnalyticData.Count;
+            Debug.WriteLine("COLLSAUTORESPONSE: {0}", count);
             Assert.IsNotNull(e.AnalyticData);
         }
  

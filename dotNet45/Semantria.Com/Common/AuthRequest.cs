@@ -12,7 +12,7 @@ namespace Semantria.Com
     { 
         #region Constructor
 
-        public AuthRequest(string consumerKey, string consumerSecret, string appName, bool useCompression = false, string apiVersion = "3.9")
+        public AuthRequest(string consumerKey, string consumerSecret, string appName, bool useCompression = false, string apiVersion = "4.0")
         {
             _consumerKey = consumerKey; 
             _consumerSecret = consumerSecret;
@@ -20,7 +20,7 @@ namespace Semantria.Com
             _useCompression = useCompression;
             _apiVersion = apiVersion;
 
-			//This option need to beuncommented to prevent verification of SSL certificate.
+            //This option need to beuncommented to prevent verification of SSL certificate.
             //ServicePointManager.ServerCertificateValidationCallback = (a, b, c, d) => true;
         }
 
@@ -41,7 +41,7 @@ namespace Semantria.Com
         private string _appName = string.Empty;
         private bool _useCompression = false;
         private string _apiVersion = string.Empty;
-        
+
         #endregion
 
         #region Protected

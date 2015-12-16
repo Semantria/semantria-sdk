@@ -1,5 +1,23 @@
 CHANGELOG
 
+4.0.5 - Added Semantria.Com.Workers assembly that introduces Semantria worker for multithread applications.
+		It exposes IWorker and IDataProvider interfaces and SemantriaWorker and FileSystemDataProvider implementers respectively.
+		SemantriaWorker can be used as is along with available DataProviders. Implementing IDataProvider interface allows reading data from any source.
+		SampleApp application uses CSVFileDataProvider to read 3.2K tweets from TSV file and run them through Semantria using 2 workers.
+
+4.0.4 - Added support of user driven authentication by using username and password.
+	Use new CreateUserSession factory method to pass user credentials instead of API keys.
+
+4.0.3 - Added API 4.0 support.
+	- Analysis adjustment API has been changed and now POST method is for entities adding only.
+	  PUT method uses for update operation, DELETE method for records removal.
+	  All analysis adjustment methods now returns just added records with server-driven IDs.
+	- Added timestamp of the latest update to configuration object, config_id field of configuration renamed to id.
+	- Introduced new /taxonomy end-point that keeps taxonomy associated with the certain configuration.
+	  Taxonomy holds hierarchical organization of nodes and topics associated with them.
+	  It allows ordering different types of categorization output into hierarchically organized structure.
+		> Added addTaxonomy(), updateTaxonomy() and removeTaxonomy() methods.
+
 3.9.2 - Added support of Vertical packs feature.
 	- Supported vertical packs returned as part of supported features (GetSupportedFeatures method).
 	- Verticall packs allowed for the current subscription can be retrieved using GetSubscription method.

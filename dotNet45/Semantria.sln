@@ -1,9 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Semantria.Com", "Semantria\Semantria.Com.csproj", "{E942AB83-DA93-4B16-A826-FF3993B47329}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Semantria.Com", "Semantria.Com\Semantria.Com.csproj", "{E942AB83-DA93-4B16-A826-FF3993B47329}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Semantria.Com.UnitTest", "Semantria.UnitTest\Semantria.Com.UnitTest.csproj", "{E175AFD1-1DF8-4952-B3AC-BC2E2D4E480C}"
 EndProject
@@ -14,6 +14,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoResponseFeatureTestApp", "AutoResponseFeatureTestApp\AutoResponseFeatureTestApp.csproj", "{526DBCA9-19CD-47A7-A8E5-F4B620E32616}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JobIdFeatureTestApp", "JobIdFeatureTestApp\JobIdFeatureTestApp.csproj", "{F251A655-FFA4-437B-AC2C-3B7A962E0DD6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Semantria.Com.Workers", "Semantria.Com.Workers\Semantria.Com.Workers.csproj", "{1BDB16BD-DBAF-4054-8287-20E282E3AC9F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkersTestApp", "WorkersTestApp\WorkersTestApp.csproj", "{619AACE9-4E1C-49CC-BDEA-2DFCADD12FE5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -85,6 +89,30 @@ Global
 		{F251A655-FFA4-437B-AC2C-3B7A962E0DD6}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{F251A655-FFA4-437B-AC2C-3B7A962E0DD6}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{F251A655-FFA4-437B-AC2C-3B7A962E0DD6}.Release|x86.ActiveCfg = Release|Any CPU
+		{1BDB16BD-DBAF-4054-8287-20E282E3AC9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BDB16BD-DBAF-4054-8287-20E282E3AC9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BDB16BD-DBAF-4054-8287-20E282E3AC9F}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{1BDB16BD-DBAF-4054-8287-20E282E3AC9F}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{1BDB16BD-DBAF-4054-8287-20E282E3AC9F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{1BDB16BD-DBAF-4054-8287-20E282E3AC9F}.Debug|x86.Build.0 = Debug|Any CPU
+		{1BDB16BD-DBAF-4054-8287-20E282E3AC9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BDB16BD-DBAF-4054-8287-20E282E3AC9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BDB16BD-DBAF-4054-8287-20E282E3AC9F}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{1BDB16BD-DBAF-4054-8287-20E282E3AC9F}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{1BDB16BD-DBAF-4054-8287-20E282E3AC9F}.Release|x86.ActiveCfg = Release|Any CPU
+		{1BDB16BD-DBAF-4054-8287-20E282E3AC9F}.Release|x86.Build.0 = Release|Any CPU
+		{619AACE9-4E1C-49CC-BDEA-2DFCADD12FE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{619AACE9-4E1C-49CC-BDEA-2DFCADD12FE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{619AACE9-4E1C-49CC-BDEA-2DFCADD12FE5}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{619AACE9-4E1C-49CC-BDEA-2DFCADD12FE5}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{619AACE9-4E1C-49CC-BDEA-2DFCADD12FE5}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{619AACE9-4E1C-49CC-BDEA-2DFCADD12FE5}.Debug|x86.Build.0 = Debug|Any CPU
+		{619AACE9-4E1C-49CC-BDEA-2DFCADD12FE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{619AACE9-4E1C-49CC-BDEA-2DFCADD12FE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{619AACE9-4E1C-49CC-BDEA-2DFCADD12FE5}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{619AACE9-4E1C-49CC-BDEA-2DFCADD12FE5}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{619AACE9-4E1C-49CC-BDEA-2DFCADD12FE5}.Release|x86.ActiveCfg = Release|Any CPU
+		{619AACE9-4E1C-49CC-BDEA-2DFCADD12FE5}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
