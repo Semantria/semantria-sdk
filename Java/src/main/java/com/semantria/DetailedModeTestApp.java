@@ -16,8 +16,8 @@ public class DetailedModeTestApp
 	public static void main(String args[])
 	{
 		// Use correct Semantria API credentias here
-		String key = "__key_george";
-		String secret = "__secret_george";
+		String key = "";
+		String secret = "";
 
 		if( args != null && args.length == 2 )
 		{
