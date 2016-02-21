@@ -32,8 +32,8 @@ public class AutoResponseFeatureTestApp {
 		
 		System.out.println("Semantria Auto-response feature demo.");
 		System.out.println();
-		
-		File file = new File( System.getProperty("user.dir") + "\\src\\main\\java\\" + DiscoveryModeTestApp.class.getPackage().getName().replace(".","\\") + "\\source.txt");
+
+        File file = new File(AutoResponseFeatureTestApp.class.getClassLoader().getResource("").getPath().replace("/target/classes", "/source.txt"));
         
         if( !file.exists() )
         {

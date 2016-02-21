@@ -1,5 +1,7 @@
 CHANGELOG
 
+4.0.87 - Fixed bug with “modified” field in configuration object. The SDK didn’t serialize it properly.
+
 4.0.86 - Added support of user driven authentication by using username and password.
 	Use new createUserSession factory method to pass user credentials instead of API keys.
 

@@ -25,7 +25,7 @@ public final class Configuration
 	private CollConfiguration collection = null;
 	private String callback = null;
     private Boolean process_html = null;
-    private transient Timestamp modified = null;
+    private Timestamp modified = null;
 
 	public Configuration() {}
 
@@ -74,7 +74,7 @@ public final class Configuration
 	public Boolean getOneSentence() { return one_sentence; }
     @XmlElement(name = "process_html")
     public Boolean getProcessHtml() { return  process_html; }
-    @XmlTransient
+	@XmlElement(name = "modified")
     public Timestamp getModified() { return modified; }
 
 	public void setId(String id) { this.id = id; }

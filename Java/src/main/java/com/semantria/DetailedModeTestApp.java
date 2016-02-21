@@ -16,8 +16,8 @@ public class DetailedModeTestApp
 	public static void main(String args[])
 	{
 		// Use correct Semantria API credentias here
-		String key = "";
-		String secret = "";
+		String key = "__key_george";
+		String secret = "__secret_george";
 
 		if( args != null && args.length == 2 )
 		{
@@ -30,7 +30,7 @@ public class DetailedModeTestApp
 		
 		System.out.println("Semantria service demo.");
 
-        File file = new File( DetailedModeTestApp.class.getProtectionDomain().getCodeSource().getLocation().toString().replace("/target/classes", "/src/main/java/" + DiscoveryModeTestApp.class.getPackage().getName().replace(".","/")).replace("file:/", "")+ "/source.txt");
+		File file = new File(DetailedModeTestApp.class.getClassLoader().getResource("").getPath().replace("/target/classes", "/source.txt"));
 
         if( !file.exists() )
         {

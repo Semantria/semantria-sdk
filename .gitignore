@@ -1,0 +1,53 @@
+# Packages #
+############
+# it's better to unpack these files and commit the raw source
+# git has its own built in compression methods
+*.7z
+*.dmg
+*.gz
+*.iso
+*.rar
+*.tar
+*.zip
+
+# Intellij #
+############
+.idea/
+*.iml
+*.iws
+
+# Mac #
+#######
+.DS_Store
+
+# Maven #
+#########
+log/
+target/
+
+# Logs and databases #
+######################
+*.log
+*.sqlite
+
+# OS generated files #
+######################
+.DS_Store?
+ehthumbs.db
+Icon?
+Thumbs.db
+
+# MS Office generated temp files #
+##################################
+~$*.doc
+~*.tmp
+.~*.doc#
+~*.~*
+*.*~
+
+# Visual Studio generated temp files #
+######################################
+*Log*.htm
+
+# Python compiled files
+*.pyc

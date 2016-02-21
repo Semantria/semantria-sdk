@@ -19,7 +19,7 @@ public class JobIdFeatureTestApp {
 
         System.out.println("Semantria service demo.");
 
-        File file = new File( DetailedModeTestApp.class.getProtectionDomain().getCodeSource().getLocation().toString().replace("/target/classes", "/src/main/java/" + JobIdFeatureTestApp.class.getPackage().getName().replace(".","/")).replace("file:/", "")+ "/source.txt");
+        File file = new File(JobIdFeatureTestApp.class.getClassLoader().getResource("").getPath().replace("/target/classes", "/source.txt"));
 
         if( !file.exists() ) {
             System.out.println("Source file isn't available.");

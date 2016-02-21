@@ -29,7 +29,7 @@ public class DiscoveryModeTestApp
 
         System.out.println("Semantria Collection processing mode demo.");
 
-        File file = new File( DetailedModeTestApp.class.getProtectionDomain().getCodeSource().getLocation().toString().replace("/target/classes", "/src/main/java/" + DiscoveryModeTestApp.class.getPackage().getName().replace(".","/")).replace("file:/", "")+ "/source.txt");
+        File file = new File(DiscoveryModeTestApp.class.getClassLoader().getResource("").getPath().replace("/target/classes", "/source.txt"));
 
         if( !file.exists() )
         {
