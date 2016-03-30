@@ -126,10 +126,18 @@ namespace DetailedModeTestApp
                     Console.WriteLine(string.Format("Document {0}. Sentiment score: {1}", data.Id, data.SentimentScore));
 
                     // Printing of intentions
+                    if (data.Topics != null && data.Topics.Count > 0)
+                    {
+                        Console.WriteLine("Document topics:");
+                        foreach (Topic topic in data.Topics)
+                            Console.WriteLine(string.Format("\t{0} (type: {1}) (strength: {2})", topic.Title, topic.Type, topic.SentimentScore));
+                    }
+
+                    // Printing of intentions
                     if (data.AutoCategories != null && data.AutoCategories.Count > 0)
                     {
                         Console.WriteLine("Document categories:");
-                        foreach (DocCategory category in data.AutoCategories)
+                        foreach (Topic category in data.AutoCategories)
                             Console.WriteLine(string.Format("\t{0} (strength: {1})", category.Title, category.StrengthScore));
                     }
 

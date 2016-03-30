@@ -89,8 +89,8 @@ namespace Semantria.Com.Mapping.Output
 
         [DataMember(Name = "auto_categories")]
         [XmlArrayAttribute("auto_categories")]
-        [XmlArrayItemAttribute("category", typeof(DocCategory))]
-        public List<DocCategory> AutoCategories { get; set; }
+        [XmlArrayItemAttribute("category", typeof(Topic))]
+        public List<Topic> AutoCategories { get; set; }
 
         [DataMember(Name = "themes")]
         [XmlArrayAttribute("themes")]

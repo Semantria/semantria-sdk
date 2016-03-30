@@ -1,11 +1,11 @@
 {
 	"name": "semantria-sdk",
 	"description": "Semantria SDK",
-	"version": "4.0.4",
+	"version": "4.1.5",
 
 	"repository": {
 		"type": "git",
-		"url": "git://github.com/*****.git"
+		"url": "git@github.com:Semantria/semantria-sdk.git"
 	},
 
 	"main": "semantria-sdk.js",

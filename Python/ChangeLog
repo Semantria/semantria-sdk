@@ -1,5 +1,8 @@
 CHANGELOG
 
+4.1.85 - Tested with API 4.1.
+	- Added URLs encoding for those methods which require passing of document/collection Ids as the part of URL.
+
 4.0.84 - Added support of user driven authentication by using username and password.
 	Use overloaded Session constructor to pass user credentials instead of API keys.
 

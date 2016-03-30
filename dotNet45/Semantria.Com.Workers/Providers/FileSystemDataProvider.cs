@@ -23,23 +23,13 @@ namespace Semantria.Com.Workers
         {
             _dirPath = dirPath;
 
-            MaxFileSize = 1000000;
+            CharactersLimit = 8192;
         }
 
         public FileSystemDataProvider(string dirPath, string fileMask) :
             this(dirPath)
         {
             _fileMask = fileMask;
-        }
-
-        #endregion
-
-        #region Properties
-
-        public int MaxFileSize
-        {
-            get;
-            set;
         }
 
         #endregion
@@ -75,6 +65,12 @@ namespace Semantria.Com.Workers
             {
                 return true;
             }
+        }
+
+        public int CharactersLimit
+        {
+            get;
+            set;
         }
 
         public bool Initialize(params object[] args)
@@ -125,7 +121,7 @@ namespace Semantria.Com.Workers
             using (TextReader reader = File.OpenText(_filesEnumerator.Current.FullName))
             {
                 string content = reader.ReadToEnd();
-                if (content.Length > MaxFileSize)
+                if (content.Length > CharactersLimit)
                 {
                     _filesEnumerator.MoveNext();
                     return ReadNext();

@@ -30,7 +30,7 @@ public class DetailedModeTestApp
 		
 		System.out.println("Semantria service demo.");
 
-		File file = new File(DetailedModeTestApp.class.getClassLoader().getResource("").getPath().replace("/target/classes", "/source.txt"));
+        File file = new File(DetailedModeTestApp.class.getClassLoader().getResource("").getPath().replace("/target/classes", "/source.txt"));
 
         if( !file.exists() )
         {

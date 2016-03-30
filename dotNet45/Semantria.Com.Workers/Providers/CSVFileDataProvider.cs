@@ -93,6 +93,12 @@ namespace Semantria.Com.Workers
             }
         }
 
+        public int CharactersLimit
+        {
+            get;
+            set;
+        }
+
         public bool Initialize(params object[] args)
         {
             if (IdColumnIndex == uint.MaxValue || TextColumnIndex == uint.MaxValue)
@@ -150,7 +156,7 @@ namespace Semantria.Com.Workers
                 return null;
             }
 
-            if (row.Count == 0)
+            if (row.Count == 0 || row[(int)TextColumnIndex].Length >= CharactersLimit)
             {
                 return ReadNext();
             }

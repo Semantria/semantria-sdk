@@ -18,6 +18,7 @@ import com.semantria.mapping.output.stub.DocsAnalyticData;
 import com.semantria.serializer.JsonSerializer;
 import com.semantria.serializer.XmlSerializer;
 
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -119,6 +120,16 @@ public final class Session
 
     private String generateRequestUrl(String path) {
         return serviceUrl + "/" + path + "." + requestFormat;
+    }
+
+    private String generateRequestUrl(String path, String id) {
+        try {
+            id = URLEncoder.encode(id, "UTF-8");
+        } catch (Exception ex) {
+            System.err.println("generateRequestUrl exception: " + ex.getMessage());
+        }
+
+        return this.generateRequestUrl(path + id);
     }
 
     public List<BlacklistItem> getBlacklist()
@@ -476,7 +487,7 @@ public final class Session
     public com.semantria.mapping.output.DocAnalyticData getDocument(String id, String config_id)
     {
         String method = "GET";
-        String url = generateRequestUrl("document/" + id);
+        String url = generateRequestUrl("document/", id);
 
         AuthRequest req = AuthRequest.getInstance(url, method)
                 .key(key)
@@ -506,7 +517,7 @@ public final class Session
     public CollAnalyticData getCollection(String id, String config_id)
     {
         String method = "GET";
-        String url = generateRequestUrl("collection/" + id);
+        String url = generateRequestUrl("collection/", id);
 
         AuthRequest req = AuthRequest.getInstance(url, method)
                 .key(key)
@@ -1124,7 +1135,7 @@ public final class Session
     public Integer cancelDocument(String id, String config_id)
     {
         String method = "DELETE";
-        String url = generateRequestUrl("document/" + id);
+        String url = generateRequestUrl("document/", id);
 
         AuthRequest req = AuthRequest.getInstance(url, method)
                 .key(key)
@@ -1150,7 +1161,7 @@ public final class Session
     public Integer cancelCollection(String id, String config_id)
     {
         String method = "DELETE";
-        String url = generateRequestUrl("collection/" + id);
+        String url = generateRequestUrl("collection/", id);
 
         AuthRequest req = AuthRequest.getInstance(url, method)
                 .key(key)

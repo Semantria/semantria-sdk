@@ -102,13 +102,21 @@ namespace Semantria.Com.Mapping.Output
 		[XmlElementAttribute("docs_suggested_interval")]
 		public int DocsSuggestedInterval { get; set; }
 
+        [DataMember(Name = "job_ids_permitted")]
+        [XmlElementAttribute("job_ids_permitted")]
+        public int PermittedJobIds { get; set; }
+
+        [DataMember(Name = "job_ids_allocated")]
+        [XmlElementAttribute("job_ids_permitted")]
+        public int AllocatedJobIds { get; set; }
+
         [DataMember(Name = "app_seats_permitted")]
         [XmlElementAttribute("app_seats_permitted")]
-        public int AppSeatsPermitted { get; set; }
+        public int PermittedAppSeats { get; set; }
 
         [DataMember(Name = "app_seats_allocated")]
         [XmlElementAttribute("app_seats_allocated")]
-        public int AppSeatsAllocated { get; set; }
+        public int AllocatedAppSeats { get; set; }
     }
 
     [DataContract(Name = "basic_settings")]

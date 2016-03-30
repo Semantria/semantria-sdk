@@ -1,7 +1,7 @@
 # encoding: utf-8
 
 module Semantria
-    VERSION = '4.0.83'
+    VERSION = '4.1.84'
 end
 
 require_relative 'semantria/session'

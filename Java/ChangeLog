@@ -1,9 +1,15 @@
 CHANGELOG
 
-4.0.87 - Fixed bug with “modified” field in configuration object. The SDK didn’t serialize it properly.
+4.1.89 - Added two JobID related fields to Subscription object, to Billing settings section. There are:
+	- PermittedJobIds - represents the number of JobIds allowed for the certain subscription. 
+	- AllocatedJobIds - represents the number of already allocated JobIds by the certain customer.
+
+4.1.88 - Fixed bug with “modified” field in configuration object. The SDK didn’t serialize it properly.
+
+4.1.87 - Updated SDK with support of API 4.1 statistics end-point. Many fields in statistics end-point have been changed.
 
 4.0.86 - Added support of user driven authentication by using username and password.
-	Use new createUserSession factory method to pass user credentials instead of API keys.
+	- Use new createUserSession factory method to pass user credentials instead of API keys.
 
 4.0.85 - Added API 4.0 support.
 	- Analysis adjustment API has been changed and now POST method is for entities adding only.

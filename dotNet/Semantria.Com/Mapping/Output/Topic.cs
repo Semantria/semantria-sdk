@@ -21,6 +21,10 @@ namespace Semantria.Com.Mapping.Output
         [XmlElementAttribute("hitcount")]
         public int Hitcount { get; set; }
 
+        [DataMember(Name = "strength_score")]
+        [XmlElementAttribute("strength_score")]
+        public float StrengthScore { get; set; }
+
         [DataMember(Name = "sentiment_score")]
         [XmlElementAttribute("sentiment_score")]
         public float SentimentScore { get; set; }

@@ -565,7 +565,7 @@
 		 * @var {String} SDK_VERSION
 		 * @constant
 		 */
-		SDK_VERSION: "4.0.82",
+		SDK_VERSION: "4.1.83",
 
 		/**
 		 * @var {String} X_API_VERSION
@@ -1133,7 +1133,7 @@
 				throw "Specified document's ID is empty";
 			}
 
-			var url = "/document/" + id;
+			var url = "/document/" + encodeURIComponent(id);
 			var result = this.runRequest("GET", url, {
 				getParams: {
 					config_id: configId
@@ -1157,7 +1157,7 @@
 				throw "Specified document's ID is empty";
 			}
 
-			return this.runRequest("GET", "/collection/" + id, {
+			return this.runRequest("GET", "/collection/" + encodeURIComponent(id), {
 				getParams: {
 					config_id: configId
 				}
@@ -1173,7 +1173,7 @@
 				throw "Specified document's ID is empty";
 			}
 
-			return this.runRequest("DELETE", "/document/" + id, {
+			return this.runRequest("DELETE", "/document/" + encodeURIComponent(id), {
 				getParams: {
 					config_id: configId
 				}
@@ -1189,7 +1189,7 @@
 				throw "Specified document's ID is empty";
 			}
 
-			return this.runRequest("DELETE", "/collection/" + id, {
+			return this.runRequest("DELETE", "/collection/" + encodeURIComponent(id), {
 				getParams: {
 					config_id: configId
 				}

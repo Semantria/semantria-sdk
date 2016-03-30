@@ -782,7 +782,7 @@ Session.prototype = {
 		}
 
 		return runApiRequest(this, {
-			path: 'document/' + id,
+			path: 'document/' + encodeURIComponent(id),
 			getParams: { config_id: configId },
 			callAfterResponseHook: true,
 			callback: callback
@@ -804,7 +804,7 @@ Session.prototype = {
 		}
 
 		return runApiRequest(this, {
-			path: 'collection/' + id,
+			path: 'collection/' + encodeURIComponent(id),
 			getParams: { config_id: configId },
 			callback: callback
 		});
@@ -826,7 +826,7 @@ Session.prototype = {
 
 		return runApiRequest(this, {
 			method: 'DELETE',
-			path: 'document/' + id,
+			path: 'document/' + encodeURIComponent(id),
 			getParams: { config_id: configId },
 			callback: callback
 		});
@@ -848,7 +848,7 @@ Session.prototype = {
 
 		return runApiRequest(this, {
 			method: 'DELETE',
-			path: 'collection/' + id,
+			path: 'collection/' + encodeURIComponent(id),
 			getParams: { config_id: configId },
 			callback: callback
 		});

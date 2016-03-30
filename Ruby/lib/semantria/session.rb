@@ -428,6 +428,8 @@ module Semantria
     def getDocument(doc_id, config_id = nil)
       fail 'Document ID is nil or empty' if doc_id.nil?
 
+      doc_id = URI.encode doc_id
+
       if config_id.nil?
         url = "#{@host}/document/#{doc_id}.#{@format}"
       else
@@ -439,6 +441,8 @@ module Semantria
 
     def cancelDocument(doc_id, config_id = nil)
       fail 'Document ID is nil or empty' if doc_id.nil?
+
+      doc_id = URI.encode doc_id
 
       if config_id.nil?
         url = "#{@host}/document/#{doc_id}.#{@format}"
@@ -488,6 +492,8 @@ module Semantria
     def getCollection(id, config_id = nil)
       fail 'Collection ID is nil or empty' if id.nil?
 
+      id = URI.encode id
+
       if config_id.nil?
         url = "#{@host}/collection/#{id}.#{@format}"
       else
@@ -499,6 +505,8 @@ module Semantria
 
     def cancelCollection(id, config_id = nil)
       fail 'Collection ID is nil or empty' if id.nil?
+
+      id = URI.encode id
 
       if config_id.nil?
         url = "#{@host}/collection/#{id}.#{@format}"

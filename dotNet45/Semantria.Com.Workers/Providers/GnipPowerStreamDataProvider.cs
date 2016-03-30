@@ -69,6 +69,12 @@ namespace Semantria.Com.Workers
             }
         }
 
+        public int CharactersLimit
+        {
+            get;
+            set;
+        }
+
         public bool Initialize(params object[] args)
         {
             Uri dataUri = new Uri(_dataUrl);
@@ -153,7 +159,13 @@ namespace Semantria.Com.Workers
                 _linksEnumerator.MoveNext();
             }
 
-            return ExtractTweetData(tweet);
+            dynamic tweetData = ExtractTweetData(tweet);
+            if (tweetData.text.Length >= CharactersLimit)
+            {
+                return ReadNext();
+            }
+
+            return tweetData;
         }
 
         public bool Reschedule(dynamic record)

@@ -146,6 +146,8 @@ namespace Semantria.Com.Workers
             OnMethodExecuted(new RequestMetrics(SemantriaAPImethod.GetSubscription, watcher.Elapsed));
 
             int batchSize = subscription.basic_settings.batch_limit;
+            int docSize = subscription.basic_settings.characters_limit;
+            DataProvider.CharactersLimit = docSize;
 
             if (DataProvider.SupportBatches)
             {
@@ -164,7 +166,7 @@ namespace Semantria.Com.Workers
                         }
                     }
 
-                    if (rawBatch == null)
+                    if (rawBatch == null || rawBatch.Count > 0)
                     {
                         continue;
                     }

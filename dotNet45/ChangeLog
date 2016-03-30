@@ -1,5 +1,11 @@
 CHANGELOG
 
+4.1.7 - Tested with API 4.1.
+	- Added URLs encoding for those methods which require passing of document/collection Ids as the part of URL.
+
+4.0.6 - Added CharactersLimit property to IDataProvider interface and enhanced all distributed data providers.
+	- Fixed bug in SemantriaWorker class related to the wrong DataProvider behavior, when it doesn't handle data availability properly.
+
 4.0.5 - Added Semantria.Com.Workers assembly that introduces Semantria worker for multithread applications.
 		It exposes IWorker and IDataProvider interfaces and SemantriaWorker and FileSystemDataProvider implementers respectively.
 		SemantriaWorker can be used as is along with available DataProviders. Implementing IDataProvider interface allows reading data from any source.

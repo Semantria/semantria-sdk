@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Web;
 using System.Net;
 using System.Collections.Generic;
 using System.Reflection;
@@ -695,10 +696,11 @@ namespace Semantria.Com
 
         public DocAnalyticData GetDocument(string id, string configId = null)
         {
-            string url = String.Format("{0}/document/{1}.{2}", _host, id, _format);
+            string encodedId = HttpUtility.UrlEncode(id);
+            string url = String.Format("{0}/document/{1}.{2}", _host, encodedId, _format);
             if (!String.IsNullOrEmpty(configId))
             {
-                url = String.Format("{0}/document/{1}.{2}?config_id={3}", _host, id, _format, configId);
+                url = String.Format("{0}/document/{1}.{2}?config_id={3}", _host, encodedId, _format, configId);
             }
             AuthResponse authResponse = this.RunRequest(QueryMethod.GET, url, null);
             return this.ProcessGetResponse<DocAnalyticData>(authResponse);
@@ -706,10 +708,11 @@ namespace Semantria.Com
 
         public int CancelDocument(string id, string configId = null)
         {
-            string url = String.Format("{0}/document/{1}.{2}", _host, id, _format);
+            string encodedId = HttpUtility.UrlEncode(id);
+            string url = String.Format("{0}/document/{1}.{2}", _host, encodedId, _format);
             if (!String.IsNullOrEmpty(configId))
             {
-                url = String.Format("{0}/document/{1}.{2}?config_id={3}", _host, id, _format, configId);
+                url = String.Format("{0}/document/{1}.{2}?config_id={3}", _host, encodedId, _format, configId);
             }
             AuthResponse authResponse = this.RunRequest(QueryMethod.DELETE, url, null);
             return this.ProcessPostResponse<Document>(authResponse);
@@ -796,10 +799,11 @@ namespace Semantria.Com
 
         public CollAnalyticData GetCollection(string id, string configId = null)
         {
-            string url = String.Format("{0}/collection/{1}.{2}", _host, id, _format);
+            string encodedId = HttpUtility.UrlEncode(id);
+            string url = String.Format("{0}/collection/{1}.{2}", _host, encodedId, _format);
             if (!String.IsNullOrEmpty(configId))
             {
-                url = String.Format("{0}/collection/{1}.{2}?config_id={3}", _host, id, _format, configId);
+                url = String.Format("{0}/collection/{1}.{2}?config_id={3}", _host, encodedId, _format, configId);
             }
             AuthResponse authResponse = this.RunRequest(QueryMethod.GET, url, null);
             return this.ProcessGetResponse<CollAnalyticData>(authResponse);
@@ -807,10 +811,11 @@ namespace Semantria.Com
 
         public int CancelCollection(string id, string configId = null)
         {
-            string url = String.Format("{0}/collection/{1}.{2}", _host, id, _format);
+            string encodedId = HttpUtility.UrlEncode(id);
+            string url = String.Format("{0}/collection/{1}.{2}", _host, encodedId, _format);
             if (!String.IsNullOrEmpty(configId))
             {
-                url = String.Format("{0}/collection/{1}.{2}?config_id={3}", _host, id, _format, configId);
+                url = String.Format("{0}/collection/{1}.{2}?config_id={3}", _host, encodedId, _format, configId);
             }
             AuthResponse authResponse = this.RunRequest(QueryMethod.DELETE, url, null);
             return this.ProcessPostResponse<Collection>(authResponse);

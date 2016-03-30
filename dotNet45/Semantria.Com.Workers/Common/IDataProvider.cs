@@ -32,6 +32,15 @@ namespace Semantria.Com.Workers
         }
 
         /// <summary>
+        /// Defines characters limit per document supported by the Worker.
+        /// </summary>
+        int CharactersLimit
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// Initializes the data provider.
         /// </summary>
         /// <param name="args">Optional parameters required for worker initialization.</param>

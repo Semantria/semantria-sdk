@@ -27,6 +27,8 @@ public class BillingSettings
     private Integer docs_suggested_interval = null;
     private Integer app_seats_permitted = null;
     private Integer app_seats_allocated = null;
+    private Integer job_ids_permitted = null;
+    private Integer job_ids_allocated = null;
 
 	public BillingSettings(){ }
 
@@ -68,6 +70,10 @@ public class BillingSettings
     public Integer getPermittedSeats() { return app_seats_permitted; }
     @XmlElement(name="app_seats_allocated")
     public Integer getAllocatedSeats() { return app_seats_allocated; }
+    @XmlElement(name="job_ids_permitted")
+    public Integer getPermittedJobIds() { return job_ids_permitted; }
+    @XmlElement(name="job_ids_allocated")
+    public Integer getAllocatedJobIds() { return job_ids_allocated; }
 
     public void setPriority(String priority) { this.priority = priority; }
 	public void setExpirationDate(Long expirationDate) { this.expiration_date = expirationDate; }
@@ -88,4 +94,6 @@ public class BillingSettings
     public void setDocsSuggestedInterval(Integer docs_suggested_interval) { this.docs_suggested_interval = docs_suggested_interval; }
     public void setPermittedSeats(Integer seats_permitted) { this.app_seats_permitted = seats_permitted; }
     public void setAllocatedSeats(Integer seats_allocated) { this.app_seats_allocated = seats_allocated; }
+    public void setPermittedJobIds(Integer job_ids_permitted) { this.job_ids_permitted = job_ids_permitted; }
+    public void setAllocatedJobIds(Integer job_ids_allocated) { this.job_ids_allocated = job_ids_allocated; }
 }

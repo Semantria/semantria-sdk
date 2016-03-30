@@ -2,9 +2,13 @@
 
 try:
     import http.client as httplib
-
 except ImportError:
     import httplib
+
+try:
+    from urllib.parse import quote as url_quote
+except ImportError:
+    from urllib import quote as url_quote
 
 import json
 import os
@@ -446,7 +450,9 @@ class Session(object):
 
     def getDocument(self, doc_id, config_id=None):
         if not doc_id:
-            raise SemantriaError('Parameter not found: %s' % doc_id)
+            raise SemantriaError('Parameter not found: %s' % doc_id).
+
+        doc_id = url_quote(doc_id, safe='')
 
         if config_id:
             url = '{0}/document/{1}.{2}?config_id={3}'.format(self.host, doc_id, self.format, config_id)
@@ -458,6 +464,8 @@ class Session(object):
     def cancelDocument(self, doc_id, config_id=None):
         if not doc_id:
             raise SemantriaError('Parameter not found: %s' % doc_id)
+
+        doc_id = url_quote(doc_id, safe='')
 
         if config_id:
             url = '{0}/document/{1}.{2}?config_id={3}'.format(self.host, doc_id, self.format, config_id)
@@ -504,6 +512,8 @@ class Session(object):
         if not coll_id:
             raise SemantriaError('Parameter not found: %s' % coll_id)
 
+        coll_id = url_quote(coll_id, safe='')
+
         if config_id:
             url = '{0}/collection/{1}.{2}?config_id={3}'.format(self.host, coll_id, self.format, config_id)
         else:
@@ -514,6 +524,9 @@ class Session(object):
     def cancelCollection(self, coll_id, config_id=None):
         if not coll_id:
             raise SemantriaError('Parameter not found: %s' % coll_id)
+
+        coll_id = url_quote(coll_id, safe='')
+
         if config_id:
             url = '{0}/collection/{1}.{2}?config_id={3}'.format(self.host, coll_id, self.format, config_id)
         else:

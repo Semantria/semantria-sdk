@@ -80,7 +80,7 @@ public class SessionTest
         session.registerSerializer(serializer);
 		session.setCallbackHandler(new CallbackHandler());
 		Statistics statistics = session.getStatistics("day");
-		assertEquals("active", statistics.getStatus());
+		assertNotNull(statistics.getName());
 	}
 
 	@Test

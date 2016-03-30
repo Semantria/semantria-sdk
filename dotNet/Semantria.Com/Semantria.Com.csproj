@@ -88,7 +88,6 @@
     <Compile Include="Mapping\Output\CollTheme.cs" />
     <Compile Include="Mapping\Output\CollEntity.cs" />
     <Compile Include="Mapping\Output\CollMention.cs" />
-    <Compile Include="Mapping\Output\DocCategory.cs" />
     <Compile Include="Mapping\Output\DocIntention.cs" />
     <Compile Include="Mapping\Output\DocMention.cs" />
     <Compile Include="Mapping\Output\DocModelSentiment.cs" />

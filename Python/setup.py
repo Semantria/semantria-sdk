@@ -14,7 +14,7 @@ SDK implements all the available Semantria features and demonstrate best practic
 
 setup(
     name='semantria_sdk',
-    version='4.0.83',
+    version='4.1.85',
     packages=['semantria'],
     url='https://semantria.com',
     license='GPL v3',

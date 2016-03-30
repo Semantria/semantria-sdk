@@ -5,7 +5,7 @@ require_once('authrequest.php');
 require_once('jsonserializer.php');
 //require_once('common.php');
 
-define('WRAPPER_VERSION', "4.0.84");
+define('WRAPPER_VERSION', "4.1.85");
 
 class Session
 {
@@ -576,6 +576,8 @@ class Session
     {
         if (!isset($id)) throw new \Exception('Document ID is null or empty');
 
+        $id = rawurlencode($id);
+
         if (isset($configId)) {
             $url = "{$this->host}/document/{$id}.{$this->format}?config_id={$configId}";
         } else {
@@ -588,6 +590,8 @@ class Session
     public function cancelDocument($id, $configId = NULL)
     {
         if (!isset($id)) throw new \Exception('Document ID is null or empty');
+
+        $id = rawurlencode($id);
 
         if (isset($configId)) {
             $url = "{$this->host}/document/{$id}.{$this->format}?config_id={$configId}";
@@ -647,6 +651,8 @@ class Session
     {
         if (!isset($id)) throw new \Exception('Collection ID is null or empty');
 
+        $id = rawurlencode($id);
+
         if (isset($configId)) {
             $url = "{$this->host}/collection/{$id}.{$this->format}?config_id={$configId}";
         } else {
@@ -659,6 +665,8 @@ class Session
     public function cancelCollection($id, $configId = NULL)
     {
         if (!isset($id)) throw new \Exception('Collection ID is null or empty');
+
+        $id = rawurlencode($id);
 
         if (isset($configId)) {
             $url = "{$this->host}/collection/{$id}.{$this->format}?config_id={$configId}";

@@ -1,4 +1,17 @@
 CHANGELOG
+
+4.1.94 - Tested with API 4.1.
+	- Added URLs encoding for those methods which require passing of document/collection Ids as the part of URL.
+
+4.1.93 - Added two JobID related fields to Subscription object, to Billing settings section. There are:
+	- PermittedJobIds - represents the number of JobIds allowed for the certain subscription. 
+	- AllocatedJobIds - represents the number of already allocated JobIds by the certain customer.
+
+4.1.92 - Updated SDK with support of API 4.1 statistics end-point. Many fields in statistics end-point have been changed.
+
+4.0.91 - Replaced AutoCategory type with the Topic one so auto_categories and topics will return similar data type.
+	- Added strength_score field to the Topic object.
+
 4.0.90 - Added support of user driven authentication by using username and password.
 	Use new CreateUserSession factory method to pass user credentials instead of API keys.
 
