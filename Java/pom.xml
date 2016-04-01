@@ -6,7 +6,7 @@
 
     <groupId>com.semantria</groupId>
     <artifactId>SemantriaJavaSDK</artifactId>
-    <version>4.1.89</version>
+    <version>4.1.90</version>
 
     <dependencies>
         <dependency>

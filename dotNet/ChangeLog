@@ -1,5 +1,7 @@
 CHANGELOG
 
+4.1.95 - Added is_intensified and intensifying_phrase fields support to DocPhrase object.
+
 4.1.94 - Tested with API 4.1.
 	- Added URLs encoding for those methods which require passing of document/collection Ids as the part of URL.
 

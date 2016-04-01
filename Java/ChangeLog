@@ -1,5 +1,7 @@
 CHANGELOG
 
+4.1.90 - Added is_intensified and intensifying_phrase fields support to DocPhrase object.
+
 4.1.89 - Added two JobID related fields to Subscription object, to Billing settings section. There are:
 	- PermittedJobIds - represents the number of JobIds allowed for the certain subscription. 
 	- AllocatedJobIds - represents the number of already allocated JobIds by the certain customer.
