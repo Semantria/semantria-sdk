@@ -450,7 +450,7 @@ class Session(object):
 
     def getDocument(self, doc_id, config_id=None):
         if not doc_id:
-            raise SemantriaError('Parameter not found: %s' % doc_id).
+            raise SemantriaError('Parameter not found: %s' % doc_id)
 
         doc_id = url_quote(doc_id, safe='')
 
