@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Runtime.Serialization;
+﻿using System.Runtime.Serialization;
 using System.Xml.Serialization;
 
 namespace Semantria.Com.Mapping.Output
@@ -40,5 +38,13 @@ namespace Semantria.Com.Mapping.Output
         [DataMember(Name = "sentiment_polarity")]
         [XmlElementAttribute("sentiment_polarity")]
         public string SentimentPolarity { get; set; }
+
+        [DataMember(Name = "offset")]
+        [XmlElementAttribute("offset")]
+        public string Offset { get; set; }
+
+        [DataMember(Name = "length")]
+        [XmlElementAttribute("length")]
+        public string Length { get; set; }
     }
 }

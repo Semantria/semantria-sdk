@@ -12,6 +12,8 @@ public class DocPhrase
     private String intensifying_phrase = null;
 	private String sentiment_polarity = null;
 	private String type = null;
+    private Integer offset = null;
+    private Integer length = null;
 
     @XmlElement(name="title")
     public String getTitle() { return title; }
@@ -29,6 +31,10 @@ public class DocPhrase
 	public String getSentimentPolarity() { return sentiment_polarity; }
 	@XmlElement(name = "type")
 	public String getType() { return type; }
+    @XmlElement(name = "length")
+    public Integer getLength() { return length; }
+    @XmlElement(name = "offset")
+    public Integer getOffset() { return offset; }
 
     public void setTitle(String title) {this.title = title;}
     public void setSentimentScore(Float sentiment_score) {this.sentiment_score = sentiment_score;}
@@ -38,4 +44,6 @@ public class DocPhrase
     public void setIntensifyingPhrase(String intensifying_phrase) {this.intensifying_phrase = negating_phrase;}
 	public void setSentimentPolarity(String sentiment_polarity) { this.sentiment_polarity = sentiment_polarity; }
 	public void setType(String type) { this.type = type; }
+    public void setOffset(Integer offset) { this.offset = offset; }
+    public void setLength(Integer length) { this.length = length; }
 }

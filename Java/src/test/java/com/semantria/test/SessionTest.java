@@ -22,17 +22,16 @@ import static org.junit.Assert.*;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class SessionTest
 {
-    private String key = "";
-    private String secret = "";
+	private String key = "";
+	private String secret = "";
 
 	private Configuration m_config = null;
 	private ISerializer serializer = new JsonSerializer();
-    private String version = "4.0";
+    private String version = "4.2";
 
     //@NOTE: for authentication with credentials only
-    private String username = null;
-    private String password = null;
-    private String appKey = null;
+    private String username = "";
+    private String password = "";
 
 	@Test
 	public void test01CreateSessionStringStringISerializer()
@@ -92,12 +91,11 @@ public class SessionTest
 		session.setCallbackHandler(new CallbackHandler());
 
 		Configuration conf = new Configuration();
-		conf.setAutoResponse(false);
 		conf.setIsPrimary(false);
 		conf.setName("TEST_CONFIG");
 		conf.setLanguage("English");
-		conf.setDocument(new DocConfiguration(false, false, 0, 5, 5, 5, 5, 5, 5, 5, true, 0, "", 0, 0, 0, 0, 0, 0, 0, 5));
-		conf.setCollection(new CollConfiguration(5, 5, 5, 5, 0, 5, 5, 0, 0, 0, 0, 0));
+		conf.setDocument(new DocumentConfiguration(5, false, "", false, false, false, false, false, false, false, false, false, false, false, false));
+		conf.setCollection(new CollectionConfiguration(false, false, false, false, false, false, false, false));
 
 		List<Configuration> configurations1 = session.addConfigurations(Arrays.asList(conf));
 		assertNotEquals(0, configurations1.size());
@@ -123,9 +121,9 @@ public class SessionTest
 		}
 		assertNotNull(m_config.getId());
 		assertEquals(m_config.getLanguage(), new String("English"));
-		assertEquals(new Integer(80), m_config.getCharsThreshold());
+		assertEquals(new Integer(5), m_config.getDocument().getSummarySize());
 
-		m_config.setCharsThreshold(20);
+		m_config.getDocument().setSummarySize(20);
         List<Configuration> configurations2 = session.updateConfigurations( Arrays.asList( m_config ) );
         m_config = null;
         for(Configuration config : configurations2)
@@ -137,7 +135,7 @@ public class SessionTest
             }
         }
         assertNotNull(m_config);
-        assertEquals(new Integer(20), m_config.getCharsThreshold());
+        assertEquals(new Integer(20), m_config.getDocument().getSummarySize());
         m_config = null;
 
 		for(Configuration config : session.getConfigurations())
@@ -148,11 +146,11 @@ public class SessionTest
 				break;
 			}
 		}
-		assertEquals(new Integer(20), m_config.getCharsThreshold());
+        assertEquals(new Integer(20), m_config.getDocument().getSummarySize());
 
-        Configuration config1 = session.cloneConfigurations("CLONED_TEST_CONFIG", m_config.getId());
+        Configuration config1 = session.cloneConfiguration("CLONED_TEST_CONFIG", m_config.getId());
         assertEquals("CLONED_TEST_CONFIG", config1.getName());
-        assertEquals(new Integer(20), config1.getCharsThreshold());
+        assertEquals(new Integer(20), config1.getDocument().getSummarySize());
 
 		for(Configuration config : session.getConfigurations())
 		{
@@ -164,7 +162,7 @@ public class SessionTest
 		}
 
 		assertEquals("CLONED_TEST_CONFIG", m_config.getName());
-		assertEquals(new Integer(20), m_config.getCharsThreshold());
+        assertEquals(new Integer(20), m_config.getDocument().getSummarySize());
 	}
 
 	@Test
@@ -664,7 +662,7 @@ public class SessionTest
 		tasks.add(new Document("BATCH_1", "DUMMY_TEXT"));
 		tasks.add(new Document("BATCH_2", "DUMMY_TEXT"));
 
-		session.queueBatch(tasks, configId);
+		session.QueueBatchOfDocuments(tasks, configId);
 
 		List<DocAnalyticData> data = null;
 		for ( int i = 0; i < 5; i++ )
@@ -791,11 +789,10 @@ public class SessionTest
     public void test17AuthWithCredentials() {
         org.junit.Assume.assumeNotNull(username);
         org.junit.Assume.assumeNotNull(password);
-        org.junit.Assume.assumeNotNull(appKey);
         //
         Session session = null;
         try {
-            session = Session.createUserSession(username, password, appKey);
+            session = Session.createUserSession(username, password);
         } catch (CredentialException e) {
             assertFalse(e.getMessage(), true);
         }

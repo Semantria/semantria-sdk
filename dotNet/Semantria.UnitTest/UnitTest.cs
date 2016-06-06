@@ -2,12 +2,10 @@
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Diagnostics;
-using System.Text;
 using System.Linq;
 
 using Semantria.Com.Mapping.Configuration;
 using Semantria.Com.Mapping.Output;
-using Semantria.Com.Serializers;
 using Semantria.Com.Mapping;
 
 namespace Semantria.Com.TestUnitApi
@@ -25,10 +23,11 @@ namespace Semantria.Com.TestUnitApi
             //
         }
 
-        private string _consumerKey = string.Empty;
-        private string _consumerSecret = string.Empty;
+        private string _consumerKey = "";
+        private string _consumerSecret = "";
 
-        private string _id = "3E08B37B-0D74-4BF0-9380-E4D7E8C0279E"; 
+        private static string _configId = null;
+        private string _docId = "3E08B37B-0D74-4BF0-9380-E4D7E8C0279E"; 
         private string _message = "Amazon Web Services has announced a new feature called VM₤Ware Import, which allows IT departments to move virtual machine images from their internal data centers to the cloud.";
 
         private Session _session = null;
@@ -121,54 +120,35 @@ namespace Semantria.Com.TestUnitApi
         }
 
         [TestMethod]
-        public void CRUDConfiguration()
+        public void CloneAndUpdateConfiguration()
         {
             List<Configuration> result = _session.GetConfigurations();
             Assert.IsNotNull(result);
             if (result == null) return;
 
-            Configuration primaryConf = null;
-            foreach (Configuration item in result)
-            {
-                if (item.IsPrimary == true)
-                {
-                    item.AutoResponse = false;
-                    item.CharsThreshold = 50;
-                    item.OneSentence = true;
-                }
-
-                primaryConf = item;
-            }
-
-            List<Configuration> res = _session.UpdateConfigurations(new List<Configuration>() { primaryConf });
-            Assert.IsTrue(res != null);
-        }
-
-        [TestMethod]
-        public void CloneConfiguration()
-        {
-            List<Configuration> result = _session.GetConfigurations();
-            Assert.IsNotNull(result);
-            if (result == null) return;
-
-            string name = "netCloneTest_name";
+            string name = "dotNetSDK_CloneTest";
             string template = string.Empty;
             Configuration primaryConfig = null;
             foreach (Configuration item in result)
             {
                 if (item.IsPrimary == true)
                 {
-                    template = item.ConfigId;
+                    template = item.Id;
                     primaryConfig = item;
                     break;
                 }
             }
             Assert.AreNotSame(string.Empty, template);
-            result = _session.CloneConfiguration(name, template);
-            Assert.IsNotNull(result);
-            Configuration clone = result[0];
-            Assert.AreNotEqual(primaryConfig.ConfigId, clone.ConfigId);
+            Configuration clone = _session.CloneConfiguration(name, template);
+            Assert.IsNotNull(clone);
+            Assert.AreNotEqual(primaryConfig.Id, clone.Id);
             Assert.AreNotEqual(primaryConfig.Name, clone.Name);
+
+            _configId = clone.Id;
+            result[0].AlphanumericThreshold = 0;
+            result[0].Modified = UInt64.MinValue;
+            result = _session.UpdateConfigurations(result);
+            Assert.IsNotNull(result);
 
             result = _session.GetConfigurations();
             if (!result.Any(item => item.Name.Equals(name)))
@@ -176,8 +156,13 @@ namespace Semantria.Com.TestUnitApi
                 Assert.Fail();
             }
 
+            if (result.Where(item => item.Name.Equals(name)).First().AlphanumericThreshold != 0)
+            {
+                Assert.Fail();
+            }
+
             List<string> removeList = new List<string>();
-            removeList.Add(clone.ConfigId);
+            removeList.Add(_configId);
             var res = _session.RemoveConfigurations(removeList);
             Assert.AreEqual(202, res);
 
@@ -186,48 +171,67 @@ namespace Semantria.Com.TestUnitApi
             {
                 Assert.Fail();
             }
-
         }
 
+        [TestMethod]
+        public void CreateConfiguration()
+        {
+            string name = "dotNetSDK_TestConfiguration";
+            List<Configuration> result = _session.AddConfigurations(new List<Configuration>()
+            {
+                new Configuration()
+                {
+                    Name = name,
+                    Language = "English"
+                }
+            });
+
+            Assert.IsNotNull(result);
+            Configuration added = result[0];
+            Assert.AreEqual(added.Name, name);
+
+            _configId = added.Id;
+        }
 
         [TestMethod]
         public void CRUDBlacklist()
         {
-            List<Blacklist> result = _session.GetBlacklist();
+            List<BlacklistedItem> result = _session.GetBlacklist(_configId);
             Assert.IsNotNull(result);
 
-            result = new List<Blacklist>();
-            result.Add(new Blacklist { Name = "net*" });
-            var obj = _session.AddBlacklist(result);
+            result = new List<BlacklistedItem>();
+            result.Add(new BlacklistedItem { Name = "net*" });
+            var obj = _session.AddBlacklist(result, _configId);
             Assert.IsTrue(obj != null);
 
-            result = _session.GetBlacklist();
-            List<Blacklist> items = new List<Blacklist>();
-            foreach (Blacklist item in result)
+            result = _session.GetBlacklist(_configId);
+            List<BlacklistedItem> items = new List<BlacklistedItem>();
+            foreach (BlacklistedItem item in result)
             {
                 if (item.Name == "net*")
                 {
                     item.Name = "net1*";
+                    item.Modified = UInt64.MinValue;
                     items.Add(item);
                 }
             }
 
-            List<Blacklist> res = _session.UpdateBlacklist(items);
+            List<BlacklistedItem> res = _session.UpdateBlacklist(items, _configId);
             Assert.IsTrue(res != null);
 
-            foreach (Blacklist item in items)
+            foreach (BlacklistedItem item in items)
             {
                 item.Name = "net*";
             }
 
-            res = _session.UpdateBlacklist(items);
+            res = _session.UpdateBlacklist(items, _configId);
             Assert.IsTrue(res != null);
 
-            result = _session.GetBlacklist();
+            result = _session.GetBlacklist(_configId);
             Assert.IsNotNull(result);
 
             List<string> ditems = new List<string>();
-            foreach (Blacklist item in result)
+            foreach (BlacklistedItem item in result)
             {
                 if (item.Name == "net*")
                 {
@@ -235,34 +239,35 @@ namespace Semantria.Com.TestUnitApi
                 }
             }
 
-            int r = _session.RemoveBlacklist(ditems);
+            int r = _session.RemoveBlacklist(ditems, _configId);
             Assert.IsTrue(r == 202, "RESULT: " + res);
         }
 
         [TestMethod]
         public void CRUDCategory()
         {
-            List<Category> result = _session.GetCategories();
+            List<Category> result = _session.GetCategories(_configId);
             Assert.IsNotNull(result);
 
             result = new List<Category>();
             result.Add(new Category { Name = "NET" });
-            var obj = _session.AddCategories(result);
+            var obj = _session.AddCategories(result, _configId);
             Assert.IsTrue(obj != null);
 
-            result = _session.GetCategories();
+            result = _session.GetCategories(_configId);
             List<Category> items = new List<Category>();
             foreach (Category item in result)
             {
                 if (item.Name == "NET")
                 {
                     item.Name = "NET1*";
+                    item.Modified = UInt64.MinValue;
                     items.Add(item);
                     break;
                 }
             }
 
-            List<Category> res = _session.UpdateCategories(items);
+            List<Category> res = _session.UpdateCategories(items, _configId);
             Assert.IsTrue(res != null);
 
             foreach (Category item in items)
@@ -270,10 +275,10 @@ namespace Semantria.Com.TestUnitApi
                 item.Name = "NET";
             }
 
-            res = _session.UpdateCategories(items);
+            res = _session.UpdateCategories(items, _configId);
             Assert.IsTrue(res != null);
 
-            result = _session.GetCategories();
+            result = _session.GetCategories(_configId);
             Assert.IsNotNull(result);
 
             List<string> ditems = new List<string>(); 
@@ -285,33 +290,34 @@ namespace Semantria.Com.TestUnitApi
                 }
             }
 
-            int r = _session.RemoveCategories(ditems);
+            int r = _session.RemoveCategories(ditems, _configId);
             Assert.IsTrue(r == 202, "RESULT: " + res);
         }
 
         [TestMethod]
         public void CRUDQuery()
         {
-            List<Query> result = _session.GetQueries();
+            List<Query> result = _session.GetQueries(_configId);
             Assert.IsNotNull(result);
 
             result = new List<Query>(); 
             result.Add(new Query { Name = "NET", Content = "Data" });
-            var obj = _session.AddQueries(result);
+            var obj = _session.AddQueries(result, _configId);
             Assert.IsTrue(obj != null);
 
-            result = _session.GetQueries();
+            result = _session.GetQueries(_configId);
             List<Query> items = new List<Query>();
             foreach (Query item in result)
             {
                 if (item.Name == "NET")
                 {
                     item.Name = "NET1*";
+                    item.Modified = UInt64.MinValue;
                     items.Add(item);
                 }
             }
 
-            List<Query> res = _session.UpdateQueries(items);
+            List<Query> res = _session.UpdateQueries(items, _configId);
             Assert.IsTrue(res != null);
 
             foreach (Query item in items)
@@ -319,10 +325,10 @@ namespace Semantria.Com.TestUnitApi
                 item.Name = "NET";
             }
 
-            res = _session.UpdateQueries(items);
+            res = _session.UpdateQueries(items, _configId);
             Assert.IsTrue(res != null);
 
-            result = _session.GetQueries();
+            result = _session.GetQueries(_configId);
             Assert.IsNotNull(result);
 
             List<string> ditems = new List<string>(); 
@@ -334,33 +340,34 @@ namespace Semantria.Com.TestUnitApi
                 }
             }
 
-            int r = _session.RemoveQueries(ditems);
+            int r = _session.RemoveQueries(ditems, _configId);
             Assert.IsTrue(r == 202, "RESULT: " + res);
         }
 
         [TestMethod]
         public void CRUDSentimentPhrase()
         {
-            List<SentimentPhrase> result = _session.GetSentimentPhrases();
+            List<SentimentPhrase> result = _session.GetSentimentPhrases(_configId);
             Assert.IsNotNull(result);
 
             result = new List<SentimentPhrase>();
             result.Add(new SentimentPhrase { Name = "NET", Weight = 0.1f });
-            var obj = _session.AddSentimentPhrases(result);
+            var obj = _session.AddSentimentPhrases(result, _configId);
             Assert.IsTrue(obj != null);
 
-            result = _session.GetSentimentPhrases();
+            result = _session.GetSentimentPhrases(_configId);
             List<SentimentPhrase> items = new List<SentimentPhrase>();
             foreach (SentimentPhrase item in result)
             {
                 if (item.Name == "NET")
                 {
                     item.Name = "NET1*";
+                    item.Modified = UInt64.MinValue;
                     items.Add(item);
                 }
             }
 
-            List<SentimentPhrase> res = _session.UpdateSentimentPhrases(items);
+            List<SentimentPhrase> res = _session.UpdateSentimentPhrases(items, _configId);
             Assert.IsTrue(res != null);
 
             foreach (SentimentPhrase item in items)
@@ -368,11 +375,11 @@ namespace Semantria.Com.TestUnitApi
                 item.Name = "NET";
             }
 
-            res = _session.UpdateSentimentPhrases(items);
+            res = _session.UpdateSentimentPhrases(items, _configId);
 
             Assert.IsTrue(res != null);
 
-            result = _session.GetSentimentPhrases();
+            result = _session.GetSentimentPhrases(_configId);
             Assert.IsNotNull(result);
 
             List<string> ditems = new List<string>();
@@ -384,33 +391,34 @@ namespace Semantria.Com.TestUnitApi
                 }
             }
 
-            int r = _session.RemoveSentimentPhrases(ditems);
+            int r = _session.RemoveSentimentPhrases(ditems, _configId);
             Assert.IsTrue(r == 202, "RESULT: " + res);
         }
 
         [TestMethod]
         public void CRUDEntity()
         {
-            List<UserEntity> result = _session.GetEntities();
+            List<UserEntity> result = _session.GetEntities(_configId);
             Assert.IsNotNull(result);
 
             result = new List<UserEntity>();
             result.Add(new UserEntity { Name = "NET", Type = "Language" });
-            var obj = _session.AddEntities(result);
+            var obj = _session.AddEntities(result, _configId);
             Assert.IsTrue(obj != null);
 
-            result = _session.GetEntities();
+            result = _session.GetEntities(_configId);
             List<UserEntity> items = new List<UserEntity>();
             foreach (UserEntity item in result)
             {
                 if (item.Name == "NET")
                 {
                     item.Name = "NET1*";
+                    item.Modified = UInt64.MinValue;
                     items.Add(item);
                 }
             }
 
-            List<UserEntity> res = _session.UpdateEntities(items);
+            List<UserEntity> res = _session.UpdateEntities(items, _configId);
             Assert.IsTrue(res != null);
 
             foreach (UserEntity item in items)
@@ -418,10 +426,10 @@ namespace Semantria.Com.TestUnitApi
                 item.Name = "NET";
             }
 
-            res = _session.UpdateEntities(items);
+            res = _session.UpdateEntities(items, _configId);
             Assert.IsTrue(res != null);
 
-            result = _session.GetEntities();
+            result = _session.GetEntities(_configId);
             Assert.IsNotNull(result);
 
             List<string> ditems = new List<string>();
@@ -433,28 +441,29 @@ namespace Semantria.Com.TestUnitApi
                 }
             }
 
-            int r = _session.RemoveEntities(ditems);
+            int r = _session.RemoveEntities(ditems, _configId);
             Assert.IsTrue(r == 202, "RESULT: " + res);
         }
 
         [TestMethod]
         public void CRUDTaxonomy()
         {
-            List<TaxonomyNode> result = _session.GetTaxonomy();
+            List<TaxonomyNode> result = _session.GetTaxonomy(_configId);
             Assert.IsNotNull(result);
 
             result = new List<TaxonomyNode>();
             result.Add(new TaxonomyNode { Name = "NET", Nodes = new List<TaxonomyNode>(new TaxonomyNode[] { new TaxonomyNode() { Name = "NETWORK_0" }, new TaxonomyNode() { Name = "NETWORK_1" } })});
-            var obj = _session.AddTaxonomy(result);
+            var obj = _session.AddTaxonomy(result, _configId);
             Assert.IsTrue(obj != null);
 
-            result = _session.GetTaxonomy();
+            result = _session.GetTaxonomy(_configId);
             List<TaxonomyNode> items = new List<TaxonomyNode>();
             foreach (TaxonomyNode item in result)
             {
                 if (item.Name == "NET")
                 {
                     item.Name = "NET1*";
+                    item.Modified = UInt64.MinValue;
                     item.Nodes = null;
                     item.Data = null;
 
@@ -462,20 +471,21 @@ namespace Semantria.Com.TestUnitApi
                 }
             }
 
-            List<TaxonomyNode> res = _session.UpdateTaxonomy(items);
+            List<TaxonomyNode> res = _session.UpdateTaxonomy(items, _configId);
             Assert.IsTrue(res != null);
 
             foreach (TaxonomyNode item in items)
             {
                 item.Name = "NET";
+                item.Modified = UInt64.MinValue;
                 item.Nodes = null;
                 item.Data = null;
             }
 
-            res = _session.UpdateTaxonomy(items);
+            res = _session.UpdateTaxonomy(items, _configId);
             Assert.IsTrue(res != null);
 
-            result = _session.GetTaxonomy();
+            result = _session.GetTaxonomy(_configId);
             Assert.IsNotNull(result);
 
             List<string> ditems = new List<string>();
@@ -487,7 +497,7 @@ namespace Semantria.Com.TestUnitApi
                 }
             }
 
-            int r = _session.RemoveTaxonomy(ditems);
+            int r = _session.RemoveTaxonomy(ditems, _configId);
             Assert.IsTrue(r == 202, "RESULT: " + res);
         }
 
@@ -495,16 +505,16 @@ namespace Semantria.Com.TestUnitApi
         public void Document()
         {
             Document task = new Document();
-            task.Id = _id;
+            task.Id = _docId;
             task.Text = _message;
 
-            int res = _session.QueueDocument(task);
+            int res = _session.QueueDocument(task, _configId);
             Assert.IsTrue((res == 200 || res == 202), "RESULT: " + res);
 
-            DocAnalyticData data = _session.GetDocument(_id);
+            DocAnalyticData data = _session.GetDocument(_docId, _configId);
             Assert.IsNotNull(data);
 
-            int r = _session.CancelDocument(_id);
+            int r = _session.CancelDocument(_docId, _configId);
             Assert.IsTrue((r == 200 || r == 202 || r == 404), "RESULT: " + res);
         }
 
@@ -520,12 +530,12 @@ namespace Semantria.Com.TestUnitApi
                 list.Add(task);
             }
 
-            int res = _session.QueueBatchOfDocuments(list);
+            int res = _session.QueueBatchOfDocuments(list, _configId);
             Assert.IsTrue((res == 200 || res == 202), "RESULT: " + res);
 
             System.Threading.Thread.Sleep(5000);
             
-            IList<DocAnalyticData> data = _session.GetProcessedDocuments();
+            IList<DocAnalyticData> data = _session.GetProcessedDocuments(_configId);
             Assert.IsNotNull(data);
         }
 
@@ -533,28 +543,44 @@ namespace Semantria.Com.TestUnitApi
         public void Collection()
         {
             Collection task = new Collection();
-            task.Id = _id;
+            task.Id = _docId;
             task.Documents = new List<string>() { _message + "1", _message + "2" };
 
-            int res = _session.QueueCollection(task);
+            int res = _session.QueueCollection(task, _configId);
             Assert.IsTrue((res == 200 || res == 202), "RESULT: " + res);
 
             task = new Collection();
             task.Id = System.Guid.NewGuid().ToString();
             task.Documents = new List<string>() { _message + "1", _message + "2" };
-            res = _session.QueueCollection(task);
+            res = _session.QueueCollection(task, _configId);
             Assert.IsTrue((res == 200 || res == 202), "RESULT: " + res);
 
-            CollAnalyticData data = _session.GetCollection(_id);
+            CollAnalyticData data = _session.GetCollection(_docId, _configId);
             Assert.IsNotNull(data);
 
-            int r = _session.CancelCollection(_id);
+            int r = _session.CancelCollection(_docId, _configId);
             Assert.IsTrue((r == 200 || r == 202 || r == 404), "RESULT: " + res);
 
-            IList<CollAnalyticData> ad = _session.GetProcessedCollections();
+            IList<CollAnalyticData> ad = _session.GetProcessedCollections(_configId);
             Assert.IsNotNull(ad);
         }
-    
+
+        [TestMethod]
+        public void RemoveConfiguration()
+        {
+            string name = "dotNetSDK_TestConfiguration";
+            List<string> removeList = new List<string>();
+            removeList.Add(_configId);
+            var res = _session.RemoveConfigurations(removeList);
+            Assert.AreEqual(202, res);
+
+            List<Configuration> result = _session.GetConfigurations();
+            if (result.Any(item => item.Name.Equals(name)))
+            {
+                Assert.Fail();
+            }
+        }
+
         void session_Request(object sender, RequestEventArgs e)
         {
             Debug.WriteLine(String .Format("REQUEST: {0} {1} - message: {2}", e.Method, e.Url, e.Message));

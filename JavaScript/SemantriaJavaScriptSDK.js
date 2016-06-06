@@ -571,7 +571,7 @@
 		 * @var {String} X_API_VERSION
 		 * @constant
 		 */
-		X_API_VERSION: '4.0',
+		X_API_VERSION: '4.2',
 
 		/**
 		 * @var {String} HOST

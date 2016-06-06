@@ -72,7 +72,7 @@ namespace Semantria.Com
         private string _authAppKey = "cd954253-acaf-4dfa-a417-0a8cfb701f12";
         private string _host = "https://api.semantria.com";
         private bool _useCompression = false;
-        private string _apiVersion = "4.0";
+        private string _apiVersion = "4.2";
         private const string WRAPPER_NAME = "dotNet";
 
         #endregion

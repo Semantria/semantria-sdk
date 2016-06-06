@@ -16,6 +16,10 @@ namespace Semantria.Com
         }
 
         private string _method;
+        
+        /// <summary>
+        /// HTTP method (GET, PUT, POST, DELETE) 
+        /// </summary>
         public string Method
         {
             get
@@ -25,6 +29,10 @@ namespace Semantria.Com
         }
 
         private string _url;
+
+        /// <summary>
+        /// API end-point (URL).
+        /// </summary>
         public string Url
         {
             get
@@ -34,6 +42,10 @@ namespace Semantria.Com
         }
 
         private string _message;
+
+        /// <summary>
+        /// Text message returned by the API when request executed.
+        /// </summary>
         public string Message
         {
             get

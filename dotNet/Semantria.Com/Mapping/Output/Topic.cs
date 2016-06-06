@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 
@@ -41,5 +40,10 @@ namespace Semantria.Com.Mapping.Output
         [XmlArrayAttribute("topics")]
         [XmlArrayItemAttribute("topic", typeof(Topic))]
         public List<Topic> Topics { get; set; }
+
+        [DataMember(Name = "mentions")]
+        [XmlArrayAttribute("mentions")]
+        [XmlArrayItemAttribute("mention", typeof(DocMention))]
+        public List<DocMention> Mentions { get; set; }
     }
 }

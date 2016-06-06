@@ -12,16 +12,15 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class AuthService {
-    private String appKey;
+    private static final String authHost = "https://semantria.com";
+    private static final String appKey = "cd954253-acaf-4dfa-a417-0a8cfb701f12";
+
     private String cookieDir;
     private String key;
     private String secret;
-    private String authHost;
     private String cookieFileName = "session.dat";
 
-    public AuthService(String appKey, String authHost) {
-        this.appKey = appKey;
-        this.authHost = authHost;
+    public AuthService() {
         this.cookieDir = System.getProperty("user.home");
     }
 

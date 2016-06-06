@@ -84,25 +84,34 @@ namespace Semantria.Com
         private string _authHost = "https://semantria.com/auth";
         private string _authAppKey = "cd954253-acaf-4dfa-a417-0a8cfb701f12";
         private bool _useCompression = false;
-        private string _apiVersion = "4.0";
+        private string _apiVersion = "4.2";
         private const string WRAPPER_NAME = "dotNet";
 
         #endregion
 
         #region Properties
 
+        /// <summary>
+        /// API host URL (https://api.semantria.com used by default).
+        /// </summary>
         public string Host
         {
             get { return _host; }
             set { _host = value; } 
         }
 
+        /// <summary>
+        /// Indicates whether to use HTTP compression or not.
+        /// </summary>
         public bool UseCompression  
         {
             get { return _useCompression; }
             set { _useCompression = value; }
         }
 
+        /// <summary>
+        /// Forces Session to use specific API version (4.2 used by default).
+        /// </summary>
         public string APIversion
         {
             get { return _apiVersion; }
@@ -119,57 +128,72 @@ namespace Semantria.Com
 
         #region Events
 
-        public delegate void RequestHandler(object sender, RequestEventArgs e);
+        public delegate void RequestHandler(object sender, RequestEventArgs ea);
+        /// <summary>
+        /// Occurs when request executed.
+        /// </summary>
         public event RequestHandler Request;
-        internal void OnRequest(object sender, RequestEventArgs e)
+        internal void OnRequest(object sender, RequestEventArgs ea)
         {
             if (Request != null)
             {
-                Request(sender, e);
+                Request(sender, ea);
             }
         }
 
-        public delegate void ResponseHandler(object sender, ResponseEventArgs e);  
+        public delegate void ResponseHandler(object sender, ResponseEventArgs ea);  
+        /// <summary>
+        /// Occurs when response received.
+        /// </summary>
         public event ResponseHandler Response;  
-        internal void OnResponse(object sender, ResponseEventArgs e)  
+        internal void OnResponse(object sender, ResponseEventArgs ea)  
         {  
             if (Response != null)  
             {
-                Response(sender, e);  
+                Response(sender, ea);  
             }  
         }
 
-        public delegate void ErrorHandler(object sender, ResponseErrorEventArgs e);
+        public delegate void ErrorHandler(object sender, ResponseErrorEventArgs ea);
+        /// <summary>
+        /// Occurs when server-side error reported.
+        /// </summary>
         public event ErrorHandler Error;
-        internal void OnError(object sender, ResponseErrorEventArgs e)
+        internal void OnError(object sender, ResponseErrorEventArgs ea)
         {
             if (Error != null)
             {
-                Error(sender, e);
+                Error(sender, ea);
             }
             else
             {
-                throw new System.Web.HttpException((int)e.Status, e.Message);
+                throw new System.Web.HttpException((int)ea.Status, ea.Message);
             }
         }
 
-        public delegate void DocsAutoResponseHandler(object sender, DocsAutoResponseEventArgs e);
+        public delegate void DocsAutoResponseHandler(object sender, DocsAutoResponseEventArgs ea);
+        /// <summary>
+        /// Occurs when the server return documents analysis data in the response of data queuing requests (auto-response feature).
+        /// </summary>
         public event DocsAutoResponseHandler DocsAutoResponse;
-        internal void OnDocsAutoResponse(object sender, DocsAutoResponseEventArgs e)
+        internal void OnDocsAutoResponse(object sender, DocsAutoResponseEventArgs ea)
         {
             if (DocsAutoResponse != null)
             {
-                DocsAutoResponse(sender, e);
+                DocsAutoResponse(sender, ea);
             }
         }
 
-        public delegate void CollsAutoResponseHandler(object sender, CollsAutoResponseEventArgs e);
+        public delegate void CollsAutoResponseHandler(object sender, CollsAutoResponseEventArgs ea);
+        /// <summary>
+        /// Occurs when the server return collections analysis data in the response of data queuing requests (auto-response feature).
+        /// </summary>
         public event CollsAutoResponseHandler CollsAutoResponse;
-        internal void OnCollsAutoResponse(object sender, CollsAutoResponseEventArgs e)
+        internal void OnCollsAutoResponse(object sender, CollsAutoResponseEventArgs ea)
         {
             if (CollsAutoResponse != null)
             {
-                CollsAutoResponse(sender, e);
+                CollsAutoResponse(sender, ea);
             }
         } 
 
@@ -177,16 +201,36 @@ namespace Semantria.Com
 
         #region Public Static
 
+        /// <summary>
+        /// Creates new Semantria session using API keys.
+        /// </summary>
+        /// <param name="consumerKey">API key</param>
+        /// <param name="consumerSecret">API secret</param>
+        /// <returns>An instance of Session object.</returns>
         public static Session CreateSession(string consumerKey, string consumerSecret)
         {
             return CreateSession(consumerKey, consumerSecret, string.Empty);
         }
 
+        /// <summary>
+        /// Creates new Semantria session using API keys.
+        /// </summary>
+        /// <param name="consumerKey">API key</param>
+        /// <param name="consumerSecret">API secret</param>
+        /// <param name="appName">Name of the current application to be reported to the server.</param>
+        /// <returns>An instance of Session object.</returns>
         public static Session CreateSession(string consumerKey, string consumerSecret, string appName)
         {
             return new Session(consumerKey, consumerSecret, appName);
         }
 
+        /// <summary>
+        /// Creates new Semantria session using API keys.
+        /// </summary>
+        /// <param name="consumerKey">API key</param>
+        /// <param name="consumerSecret">API secret</param>
+        /// <param name="serializer">Either XML or JSON serializer to use the specific data format while access the API.</param>
+        /// <returns>An instance of Session object.</returns>
         public static Session CreateSession(string consumerKey, string consumerSecret, ISerializer serializer)
         {
             if (serializer == null)
@@ -197,6 +241,14 @@ namespace Semantria.Com
             return CreateSession(consumerKey, consumerSecret, serializer, string.Empty);
         }
 
+        /// <summary>
+        /// Creates new Semantria session using API keys
+        /// </summary>
+        /// <param name="consumerKey">API key</param>
+        /// <param name="consumerSecret">API secret</param>
+        /// <param name="serializer">Either XML or JSON serializer to use the specific data format while access the API.</param>
+        /// <param name="appName">Name of the current application to be reported to the server.</param>
+        /// <returns>An instance of Session object.</returns>
         public static Session CreateSession(string consumerKey, string consumerSecret, ISerializer serializer, string appName)
         {
             if (serializer == null)
@@ -207,21 +259,53 @@ namespace Semantria.Com
             return new Session(consumerKey, consumerSecret, serializer, appName);
         }
 
+        /// <summary>
+        /// Creates Semantria session using user's credentials.
+        /// </summary>
+        /// <param name="username">Username</param>
+        /// <param name="password">Password</param>
+        /// <param name="reUseSession">Indicates whether to re-use previously created session or create a new one.</param>
+        /// <returns>An instance of Session object.</returns>
         public static Session CreateUserSession(string username, string password, bool reUseSession = true)
         {
             return new Session(username, password, new JsonSerializer(), null, false) { ReUseSession = reUseSession };
         }
 
+        /// <summary>
+        /// Creates Semantria session using user's credentials.
+        /// </summary>
+        /// <param name="username">Username</param>
+        /// <param name="password">Password</param>
+        /// <param name="appName">Name of the current application to be reported to the server.</param>
+        /// <param name="reUseSession">Indicates whether to re-use previously created session or create a new one.</param>
+        /// <returns>An instance of Session object.</returns>
         public static Session CreateUserSession(string username, string password, string appName, bool reUseSession = true)
         {
             return new Session(username, password, new JsonSerializer(), appName, false) { ReUseSession = reUseSession };
         }
 
+        /// <summary>
+        /// Creates Semantria session using user's credentials.
+        /// </summary>
+        /// <param name="username">Username</param>
+        /// <param name="password">Password</param>
+        /// <param name="serializer">Either XML or JSON serializer to use the specific data format while access the API.</param>
+        /// <param name="reUseSession">Indicates whether to re-use previously created session or create a new one.</param>
+        /// <returns>An instance of Session object.</returns>
         public static Session CreateUserSession(string username, string password, ISerializer serializer, bool reUseSession = true)
         {
             return new Session(username, password, new JsonSerializer(), null, false) { ReUseSession = reUseSession };
         }
 
+        /// <summary>
+        /// Creates Semantria session using user's credentials.
+        /// </summary>
+        /// <param name="username">Username</param>
+        /// <param name="password">Password</param>
+        /// <param name="appName">Name of the current application to be reported to the server.</param>
+        /// <param name="serializer">Either XML or JSON serializer to use the specific data format while access the API.</param>
+        /// <param name="reUseSession">Indicates whether to re-use previously created session or create a new one.</param>
+        /// <returns>An instance of Session object.</returns>
         public static Session CreateUserSession(string username, string password, string appName, ISerializer serializer, bool reUseSession = true)
         {
             return new Session(username, password, new JsonSerializer(), appName, false) { ReUseSession = reUseSession };
@@ -231,6 +315,10 @@ namespace Semantria.Com
 
         #region API Status
 
+        /// <summary>
+        /// Registers serializer for already instantiated session to use another data format if necessary.
+        /// </summary>
+        /// <param name="serializer">Either XML or JSON serializer to use the specific data format while access the API.</param>
         public void RegisterSerializer(ISerializer serializer)
         {
             if (serializer == null)
@@ -242,6 +330,10 @@ namespace Semantria.Com
             _format = serializer.Type();
         }
 
+        /// <summary>
+        /// Retrieves Semantria API status.
+        /// </summary>
+        /// <returns>Status object with a bunch of fields related to the API status.</returns>
         public Status GetStatus()
         {
             //GET https://api.semantria.com/status.json
@@ -250,6 +342,10 @@ namespace Semantria.Com
             return this.ProcessGetResponse<Status>(authResponse);
         }
 
+        /// <summary>
+        /// Retrieves Semantria Subscription.
+        /// </summary>
+        /// <returns>Subscription object with a bunch of subscription related fields.</returns>
         public Subscription GetSubscription()
         {
             //GET https://api.semantria.com/subscription.json
@@ -258,6 +354,12 @@ namespace Semantria.Com
             return this.ProcessGetResponse<Subscription>(authResponse);
         }
 
+        /// <summary>
+        /// Retrieves usage statistics for the current subscription.
+        /// </summary>
+        /// <param name="configId">Configuration ID to get usage statistics for.</param>
+        /// <param name="interval">Time interval to filter usage statistics.</param>
+        /// <returns>Statistics object with a bunch of fields related to the API usage.</returns>
         public Statistics GetStatistics(string configId = null, string interval = null)
         {
             //GET https://api.semantria.com/statistics.json
@@ -280,6 +382,11 @@ namespace Semantria.Com
             return this.ProcessGetResponse<Statistics>(authResponse);
         }
 
+        /// <summary>
+        /// Retrieves the list of supported features grouped by languages.
+        /// </summary>
+        /// <param name="language">Language name to get supported features for the certain language.</param>
+        /// <returns>The list of supported features for each language offered by Semantria.</returns>
         public IList<FeaturesSet> GetSupportedFeatures(string language = null)
         {
             //GET https://api.semantria.com/features.json
@@ -313,11 +420,15 @@ namespace Semantria.Com
 
             return obj;
         }
-       
+
         #endregion
 
         #region Configuration
 
+        /// <summary>
+        /// Retrieves the list of configurations from the server.
+        /// </summary>
+        /// <returns>The list of configurations.</returns>
         public List<Configuration> GetConfigurations()
         {
             AuthResponse authResponse = this.Get<Configuration>();
@@ -344,43 +455,73 @@ namespace Semantria.Com
             return obj;
         }
 
-        public List<Configuration> AddConfigurations(List<Configuration> items)
+        /// <summary>
+        /// Adds configurations to the server.
+        /// </summary>
+        /// <param name="configs">The list of configurations to be added to the server.</param>
+        /// <returns>The list of just added configurations (with auto-generated IDs, modified timestamps, etc.)</returns>
+        public List<Configuration> AddConfigurations(List<Configuration> configs)
         {
-            return this.Add<Configuration>(QueryMethod.POST, items);
+            return this.Add<Configuration>(QueryMethod.POST, configs);
         }
 
-        public List<Configuration> UpdateConfigurations(List<Configuration> items)
+        /// <summary>
+        /// Updates configurations on the server side.
+        /// </summary>
+        /// <param name="configs">The list of configurations to be updated on the server.</param>
+        /// <returns>The list of just updated configurations.</returns>
+        public List<Configuration> UpdateConfigurations(List<Configuration> configs)
         {
-            return this.Update<Configuration>(QueryMethod.PUT, items);
+            return this.Update<Configuration>(QueryMethod.PUT, configs);
         }
 
-        public int RemoveConfigurations(List<string> items)
+        /// <summary>
+        /// Removes configurations from the server.
+        /// </summary>
+        /// <param name="configs">The list of configuration IDs to be removed.</param>
+        /// <returns>Operation execution result, actually HTTP status code.</returns>
+        public int RemoveConfigurations(List<string> configs)
         {
-            return this.Delete<Configuration>(QueryMethod.DELETE, items);
+            return this.Delete<Configuration>(QueryMethod.DELETE, configs);
         }
 
-        public List<Configuration> CloneConfiguration(string name, string template)
+        /// <summary>
+        /// Clons configuration from the given template and entitles to the given name.
+        /// </summary>
+        /// <param name="name">New configuration name.</param>
+        /// <param name="template">Configuration ID to be cloned and used as template.</param>
+        /// <returns>New configuration just created using the given template.</returns>
+        public Configuration CloneConfiguration(string name, string template)
         {
             var items = new List<Configuration>();
             items.Add(new Configuration() { Name = name, Template = template });
 
-            return this.Add<Configuration>(QueryMethod.POST, items);
+            List<Configuration> configs = this.Add<Configuration>(QueryMethod.POST, items);
+            if (configs != null && configs.Count > 0)
+                return configs[0];
+
+            return null;
         }
 
         #endregion Configuration
 
         #region Blacklist
 
-        public List<Blacklist> GetBlacklist(string configId = null)
+        /// <summary>
+        /// Retrieves the list of blacklisted items from the server.
+        /// </summary>
+        /// <param name="configId">Optional configuration ID the blacklist is associated with. If not provided, primary configuration will be used.</param>
+        /// <returns>The list of Blacklisted items.</returns>
+        public List<BlacklistedItem> GetBlacklist(string configId = null)
         {
-            AuthResponse authResponse = this.Get<Blacklist>(configId);
-            List<Blacklist> obj = new List<Blacklist>();
+            AuthResponse authResponse = this.Get<BlacklistedItem>(configId);
+            List<BlacklistedItem> obj = new List<BlacklistedItem>();
 
             switch (_format)
             {
                 case "json":
                     {
-                        List<Blacklist> result = this.ProcessGetResponse<List<Blacklist>>(authResponse);
+                        List<BlacklistedItem> result = this.ProcessGetResponse<List<BlacklistedItem>>(authResponse);
                         if (result != null) obj = result;
                     }
                     break;
@@ -397,25 +538,48 @@ namespace Semantria.Com
             return obj;
         }
 
-        public List<Blacklist> AddBlacklist(List<Blacklist> items, string configId = null)
+        /// <summary>
+        /// Adds blacklisted items to the server.
+        /// </summary>
+        /// <param name="blacklist">The list of blacklisted items to be added to the server.</param>
+        /// <param name="configId">Optional configuration ID the blacklist is associated with. If not provided, primary configuration will be used.</param>
+        /// <returns>The list of just added blacklisted items (with auto-generated IDs, modified timestamps, etc.)</returns>
+        public List<BlacklistedItem> AddBlacklist(List<BlacklistedItem> blacklist, string configId = null)
         {
-            return this.Add<Blacklist>(QueryMethod.POST, items, configId);
+            return this.Add<BlacklistedItem>(QueryMethod.POST, blacklist, configId);
         }
 
-        public List<Blacklist> UpdateBlacklist(List<Blacklist> items, string configId = null)
+        /// <summary>
+        /// Updates blacklisted items on the server.
+        /// </summary>
+        /// <param name="blacklist">The list of blacklisted items to be updated on the server.</param>
+        /// <param name="configId">Optional configuration ID the blacklist is associated with. If not provided, primary configuration will be used.</param>
+        /// <returns>The list of just updated blacklisted items.</returns>
+        public List<BlacklistedItem> UpdateBlacklist(List<BlacklistedItem> blacklist, string configId = null)
         {
-            return this.Update<Blacklist>(QueryMethod.PUT, items, configId);
+            return this.Update<BlacklistedItem>(QueryMethod.PUT, blacklist, configId);
         }
 
-        public int RemoveBlacklist(List<string> items, string configId = null)
+        /// <summary>
+        /// Removes blacklisted items from the server.
+        /// </summary>
+        /// <param name="blacklist">The list of blacklisted items to be removed from the server.</param>
+        /// <param name="configId">Optional configuration ID the blacklist is associated with. If not provided, primary configuration will be used.</param>
+        /// <returns>Operation execution result, actually HTTP status code.</returns>
+        public int RemoveBlacklist(List<string> blacklist, string configId = null)
         {
-            return this.Delete<Blacklist>(QueryMethod.DELETE, items, configId);
+            return this.Delete<BlacklistedItem>(QueryMethod.DELETE, blacklist, configId);
         }
 
         #endregion Blacklist
 
         #region Category
 
+        /// <summary>
+        /// Retrieves categories from the server.
+        /// </summary>
+        /// <param name="configId">Optional configuration ID the categories are associated with. If not provided, primary configuration will be used.</param>
+        /// <returns>The list of categories.</returns>
         public List<Category> GetCategories(string configId = null)
         {
             AuthResponse authResponse = this.Get<Category>(configId);
@@ -442,25 +606,48 @@ namespace Semantria.Com
             return obj;
         }
 
-        public List<Category> AddCategories(List<Category> items, string configId = null)
+        /// <summary>
+        /// Adds categories to the server.
+        /// </summary>
+        /// <param name="categories">The list of categories to be added to the server.</param>
+        /// <param name="configId">Optional configuration ID the categories are associated with. If not provided, primary configuration will be used.</param>
+        /// <returns>The list of just added categories (with auto-generated IDs, modified timestamps, etc.)</returns>
+        public List<Category> AddCategories(List<Category> categories, string configId = null)
         {
-            return this.Add<Category>(QueryMethod.POST, items, configId);
+            return this.Add<Category>(QueryMethod.POST, categories, configId);
         }
 
-        public List<Category> UpdateCategories(List<Category> items, string configId = null)
+        /// <summary>
+        /// Updates categories on the server.
+        /// </summary>
+        /// <param name="categories">The list of categories to be updated on the server.</param>
+        /// <param name="configId">Optional configuration ID the categories are associated with. If not provided, primary configuration will be used.</param>
+        /// <returns>The list of just updated categories.</returns>
+        public List<Category> UpdateCategories(List<Category> categories, string configId = null)
         {
-            return this.Update<Category>(QueryMethod.PUT, items, configId);
+            return this.Update<Category>(QueryMethod.PUT, categories, configId);
         }
 
-        public int RemoveCategories(List<string> items, string configId = null)
+        /// <summary>
+        /// Removes categories from the server.
+        /// </summary>
+        /// <param name="categories">The list of categories to be removed from the server.</param>
+        /// <param name="configId">Optional configuration ID the categories are associated with. If not provided, primary configuration will be used.</param>
+        /// <returns>Operation execution result, actually HTTP status code.</returns>
+        public int RemoveCategories(List<string> categories, string configId = null)
         {
-            return this.Delete<Category>(QueryMethod.DELETE, items, configId);
+            return this.Delete<Category>(QueryMethod.DELETE, categories, configId);
         }
 
         #endregion Category
 
         #region Query
 
+        /// <summary>
+        /// Retrieves queries from the server.
+        /// </summary>
+        /// <param name="configId">Optional configuration ID the queries are associated with. If not provided, primary configuration will be used.</param>
+        /// <returns>The list of queries.</returns>
         public List<Query> GetQueries(string configId = null)
         {
             AuthResponse authResponse = this.Get<Query>(configId);
@@ -487,25 +674,48 @@ namespace Semantria.Com
             return obj;
         }
 
-        public List<Query> AddQueries(List<Query> items, string configId = null)
+        /// <summary>
+        /// Add queries to the server.
+        /// </summary>
+        /// <param name="queries">The list of queries to be added to the server.</param>
+        /// <param name="configId">Optional configuration ID the queries are associated with. If not provided, primary configuration will be used.</param>
+        /// <returns>The list of just added queries (with auto-generated IDs, modified timestamps, etc.)</returns>
+        public List<Query> AddQueries(List<Query> queries, string configId = null)
         {
-            return this.Add<Query>(QueryMethod.POST, items, configId);
+            return this.Add<Query>(QueryMethod.POST, queries, configId);
         }
 
-        public List<Query> UpdateQueries(List<Query> items, string configId = null)
+        /// <summary>
+        /// Updates queries on the server.
+        /// </summary>
+        /// <param name="queries">The list of queries to be updated on the server.</param>
+        /// <param name="configId">Optional configuration ID the queries are associated with. If not provided, primary configuration will be used.</param>
+        /// <returns>The list of just updated queries.</returns>
+        public List<Query> UpdateQueries(List<Query> queries, string configId = null)
         {
-            return this.Update<Query>(QueryMethod.PUT, items, configId);
+            return this.Update<Query>(QueryMethod.PUT, queries, configId);
         }
 
-        public int RemoveQueries(List<string> items, string configId = null)
+        /// <summary>
+        /// Removes queries from the server.
+        /// </summary>
+        /// <param name="queries">The list of queries to be removed from the server.</param>
+        /// <param name="configId">Optional configuration ID the queries are associated with. If not provided, primary configuration will be used.</param>
+        /// <returns>Operation execution result, actually HTTP status code.</returns>
+        public int RemoveQueries(List<string> queries, string configId = null)
         {
-            return this.Delete<Query>(QueryMethod.DELETE, items, configId);
+            return this.Delete<Query>(QueryMethod.DELETE, queries, configId);
         }
 
         #endregion Query
 
         #region Entity
 
+        /// <summary>
+        /// Retrieves entities from the server.
+        /// </summary>
+        /// <param name="configId">Optional configuration ID the entities are associated with. If not provided, primary configuration will be used.</param>
+        /// <returns>The list of entities.</returns>
         public List<UserEntity> GetEntities(string configId = null)
         {
             AuthResponse authResponse = this.Get<UserEntity>(configId);
@@ -532,25 +742,48 @@ namespace Semantria.Com
             return obj;
         }
 
-        public List<UserEntity> AddEntities(List<UserEntity> items, string configId = null)
+        /// <summary>
+        /// Adds entities to the server.
+        /// </summary>
+        /// <param name="entities">The list of entities to be added to the server.</param>
+        /// <param name="configId">Optional configuration ID the entities are associated with. If not provided, primary configuration will be used.</param>
+        /// <returns>The list of just added entities (with auto-generated IDs, modified timestamps, etc.)</returns>
+        public List<UserEntity> AddEntities(List<UserEntity> entities, string configId = null)
         {
-            return this.Add<UserEntity>(QueryMethod.POST, items, configId);
+            return this.Add<UserEntity>(QueryMethod.POST, entities, configId);
         }
 
-        public List<UserEntity> UpdateEntities(List<UserEntity> items, string configId = null)
+        /// <summary>
+        /// Updates entities on the server.
+        /// </summary>
+        /// <param name="entities">The list of entities to be updated on the server.</param>
+        /// <param name="configId">Optional configuration ID the entities are associated with. If not provided, primary configuration will be used.</param>
+        /// <returns>The list of just updated entities.</returns>
+        public List<UserEntity> UpdateEntities(List<UserEntity> entities, string configId = null)
         {
-            return this.Update<UserEntity>(QueryMethod.PUT, items, configId);
+            return this.Update<UserEntity>(QueryMethod.PUT, entities, configId);
         }
 
-        public int RemoveEntities(List<string> items, string configId = null)
+        /// <summary>
+        /// Removes entities from the server.
+        /// </summary>
+        /// <param name="entities">The list of entities to be removed from the server.</param>
+        /// <param name="configId">Optional configuration ID the entities are associated with. If not provided, primary configuration will be used.</param>
+        /// <returns>Operation execution result, actually HTTP status code.</returns>
+        public int RemoveEntities(List<string> entities, string configId = null)
         {
-            return this.Delete<UserEntity>(QueryMethod.DELETE, items, configId);
+            return this.Delete<UserEntity>(QueryMethod.DELETE, entities, configId);
         }
 
         #endregion Entity
 
         #region SentimentPhrase
 
+        /// <summary>
+        /// Retrieves sentiment-bearing phrases from the server.
+        /// </summary>
+        /// <param name="configId">Optional configuration ID the phrases are associated with. If not provided, primary configuration will be used.</param>
+        /// <returns>The list of sentiment-bearing phrases.</returns>
         public List<SentimentPhrase> GetSentimentPhrases(string configId = null)
         {
             AuthResponse authResponse = this.Get<SentimentPhrase>(configId);
@@ -577,25 +810,48 @@ namespace Semantria.Com
             return obj;
         }
 
-        public List<SentimentPhrase> AddSentimentPhrases(List<SentimentPhrase> items, string configId = null)
+        /// <summary>
+        /// Adds sentiment-bearing phrases to the server.
+        /// </summary>
+        /// <param name="phrases">The list of sentiment-bearing phrases to be added to the server.</param>
+        /// <param name="configId">Optional configuration ID the sentiment-bearing phrases are associated with. If not provided, primary configuration will be used.</param>
+        /// <returns>The list of just added sentiment-bearing phrases (with auto-generated IDs, modified timestamps, etc.)</returns>
+        public List<SentimentPhrase> AddSentimentPhrases(List<SentimentPhrase> phrases, string configId = null)
         {
-            return this.Add<SentimentPhrase>(QueryMethod.POST, items, configId);
+            return this.Add<SentimentPhrase>(QueryMethod.POST, phrases, configId);
         }
 
-        public List<SentimentPhrase> UpdateSentimentPhrases(List<SentimentPhrase> items, string configId = null)
+        /// <summary>
+        /// Updates sentiment-bearing phrases on the server.
+        /// </summary>
+        /// <param name="phrases">The list of sentiment-bearing phrases to be updated on the server.</param>
+        /// <param name="configId">Optional configuration ID the sentiment-bearing phrases are associated with. If not provided, primary configuration will be used.</param>
+        /// <returns>The list of just updated sentiment-bearing phrases.</returns>
+        public List<SentimentPhrase> UpdateSentimentPhrases(List<SentimentPhrase> phrases, string configId = null)
         {
-            return this.Update<SentimentPhrase>(QueryMethod.PUT, items, configId);
+            return this.Update<SentimentPhrase>(QueryMethod.PUT, phrases, configId);
         }
 
-        public int RemoveSentimentPhrases(List<string> items, string configId = null)
+        /// <summary>
+        /// Removes sentiment-bearing phrases from the server.
+        /// </summary>
+        /// <param name="phrases">The list of sentiment-bearing phrases to be removed from the server.</param>
+        /// <param name="configId">Optional configuration ID the sentiment-bearing phrases are associated with. If not provided, primary configuration will be used.</param>
+        /// <returns>Operation execution result, actually HTTP status code.</returns>
+        public int RemoveSentimentPhrases(List<string> phrases, string configId = null)
         {
-            return this.Delete<SentimentPhrase>(QueryMethod.DELETE, items, configId);
+            return this.Delete<SentimentPhrase>(QueryMethod.DELETE, phrases, configId);
         }
 
         #endregion SentimentPhrase
 
         #region Taxonomy
 
+        /// <summary>
+        /// Retrieves taxonomy from the server.
+        /// </summary>
+        /// <param name="configId">Optional configuration ID the taxonomy is associated with. If not provided, primary configuration will be used.</param>
+        /// <returns>The list of taxonomy nodes.</returns>
         public List<TaxonomyNode> GetTaxonomy(string configId = null)
         {
             AuthResponse authResponse = this.Get<TaxonomyNode>(configId);
@@ -622,33 +878,57 @@ namespace Semantria.Com
             return obj;
         }
 
-        public List<TaxonomyNode> AddTaxonomy(List<TaxonomyNode> items, string configId = null)
+        /// <summary>
+        /// Adds taxonomy nodes to the server.
+        /// </summary>
+        /// <param name="nodes">The list of taxonomy nodes to be added to the server.</param>
+        /// <param name="configId">Optional configuration ID the taxonomy is associated with. If not provided, primary configuration will be used.</param>
+        /// <returns>The list of just added taxonomy nodes (with auto-generated IDs, modified timestamps, etc.)</returns>
+        public List<TaxonomyNode> AddTaxonomy(List<TaxonomyNode> nodes, string configId = null)
         {
-            return this.Add<TaxonomyNode>(QueryMethod.POST, items, configId);
+            return this.Add<TaxonomyNode>(QueryMethod.POST, nodes, configId);
         }
 
-        public List<TaxonomyNode> UpdateTaxonomy(List<TaxonomyNode> items, string configId = null)
+        /// <summary>
+        /// Updates taxonomy nodes on the server.
+        /// </summary>
+        /// <param name="nodes">The list of taxonomy nodes to be updated on the server.</param>
+        /// <param name="configId">Optional configuration ID the taxonomy is associated with. If not provided, primary configuration will be used.</param>
+        /// <returns>The list of just updated taxonomy nodes.</returns>
+        public List<TaxonomyNode> UpdateTaxonomy(List<TaxonomyNode> nodes, string configId = null)
         {
-            return this.Update<TaxonomyNode>(QueryMethod.PUT, items, configId);
+            return this.Update<TaxonomyNode>(QueryMethod.PUT, nodes, configId);
         }
 
-        public int RemoveTaxonomy(List<string> items, string configId = null)
+        /// <summary>
+        /// Removes taxonomy nodes from the server.
+        /// </summary>
+        /// <param name="nodes">The list of taxonomy nodes to be removed from the server.</param>
+        /// <param name="configId">Optional configuration ID the taxonomy is associated with. If not provided, primary configuration will be used.</param>
+        /// <returns>Operation execution result, actually HTTP status code.</returns>
+        public int RemoveTaxonomy(List<string> nodes, string configId = null)
         {
-            return this.Delete<TaxonomyNode>(QueryMethod.DELETE, items, configId);
+            return this.Delete<TaxonomyNode>(QueryMethod.DELETE, nodes, configId);
         }
 
         #endregion Taxonomy
 
         #region Document
 
-        public int QueueDocument(Document task, string configId = null)
+        /// <summary>
+        /// Queues the document for analysis using given configuration.
+        /// </summary>
+        /// <param name="document">Document to be analyzed.</param>
+        /// <param name="configId">Optional configuration ID. If not provided, primary configuration will be used for analysis.</param>
+        /// <returns>Operation execution result, actually HTTP status code.</returns>
+        public int QueueDocument(Document document, string configId = null)
         {
             string url = String.Format("{0}/document.{1}", _host, _format);
             if (!String.IsNullOrEmpty(configId))
             {
                 url = String.Format("{0}/document.{1}?config_id={2}", _host, _format, configId);
             }
-            string data = _serializer.Serialize(task);
+            string data = _serializer.Serialize(document);
             IList<DocAnalyticData> result = this.PostAnalyticData<DocAnalyticData>(url, data);
 
             if (result != null)
@@ -666,7 +946,13 @@ namespace Semantria.Com
             return -1;
         }
 
-        public int QueueBatchOfDocuments(IList<Document> tasks, string configId = null)
+        /// <summary>
+        /// Queues a batch of documents for analysis using given given configuration.
+        /// </summary>
+        /// <param name="batch">Batch of documents to be analyzed.</param>
+        /// <param name="configId">Optional configuration ID. If not provided, primary configuration will be used for analysis.</param>
+        /// <returns>Operation execution result, actually HTTP status code.</returns>
+        public int QueueBatchOfDocuments(IList<Document> batch, string configId = null)
         {
             string url = String.Format("{0}/document/batch.{1}", _host, _format);
             if (!String.IsNullOrEmpty(configId))
@@ -675,7 +961,7 @@ namespace Semantria.Com
             }
 
             List<Document> list = new List<Document>();
-            list.AddRange(tasks);
+            list.AddRange(batch);
 
             IList<DocAnalyticData> result = this.PostQueueBatch(url, list);
 
@@ -694,6 +980,12 @@ namespace Semantria.Com
             return -1;
         }
 
+        /// <summary>
+        /// Retrieves docuemnt analysis results by the certain document/configuration ID from the server.
+        /// </summary>
+        /// <param name="id">Document ID to retrieve the anlaysis results.</param>
+        /// <param name="configId">Optional configuration ID. If not provided, primary configuration will be used.</param>
+        /// <returns>Docuemnt analysis results object with a bunch of result fields.</returns>
         public DocAnalyticData GetDocument(string id, string configId = null)
         {
             string encodedId = HttpUtility.UrlEncode(id);
@@ -706,6 +998,12 @@ namespace Semantria.Com
             return this.ProcessGetResponse<DocAnalyticData>(authResponse);
         }
 
+        /// <summary>
+        /// Cancels specific document on the server side.
+        /// </summary>
+        /// <param name="id">Document ID to be canceld.</param>
+        /// <param name="configId">Optional configuration ID. If not provided, primary configuration will be used.</param>
+        /// <returns>Operation execution result, actually HTTP status code.</returns>
         public int CancelDocument(string id, string configId = null)
         {
             string encodedId = HttpUtility.UrlEncode(id);
@@ -718,6 +1016,11 @@ namespace Semantria.Com
             return this.ProcessPostResponse<Document>(authResponse);
         }
 
+        /// <summary>
+        /// Retrieves document analysis results from the server by the given configuration.
+        /// </summary>
+        /// <param name="configId">Optional configuration ID. If not provided, primary configuration will be used.</param>
+        /// <returns>The list of document analysis results retrieved from the server for recently queued documents.</returns>
         public IList<DocAnalyticData> GetProcessedDocuments(string configId = null)
         {
             string url = String.Format("{0}/document/processed.{1}", _host, _format);
@@ -729,6 +1032,11 @@ namespace Semantria.Com
             return result;
         }
 
+        /// <summary>
+        /// Retrieves document analysis results by the given Job identifier.
+        /// </summary>
+        /// <param name="jobId">Unique Job identifier used while documents queuing.</param>
+        /// <returns>The list of document analysis results retrieved from the server for the given Job ID.</returns>
         public IList<DocAnalyticData> GetProcessedDocumentsByJobId(string jobId)
         {
             if (String.IsNullOrEmpty(jobId))
@@ -771,7 +1079,13 @@ namespace Semantria.Com
 
         #region Collection
 
-        public int QueueCollection(Collection task, string configId = null)
+        /// <summary>
+        /// Queues the collection for analysis using given configuration.
+        /// </summary>
+        /// <param name="collection">Collection to be analyzed.</param>
+        /// <param name="configId">Optional configuration ID. If not provided, primary configuration will be used for analysis.</param>
+        /// <returns>Operation execution result, actually HTTP status code.</returns>
+        public int QueueCollection(Collection collection, string configId = null)
         {
             string url = String.Format("{0}/collection.{1}", _host, _format);
             if (!String.IsNullOrEmpty(configId))
@@ -779,7 +1093,7 @@ namespace Semantria.Com
                 url = String.Format("{0}/collection.{1}?config_id={2}", _host, _format, configId);
             }
 
-            string data = _serializer.Serialize(task);
+            string data = _serializer.Serialize(collection);
             IList<CollAnalyticData> result = this.PostAnalyticData<CollAnalyticData>(url, data);
 
             if (result != null)
@@ -797,6 +1111,12 @@ namespace Semantria.Com
             return -1;
         }
 
+        /// <summary>
+        /// Retrieves collection analysis results by the certain collection/configuration ID from the server.
+        /// </summary>
+        /// <param name="id">Document ID to retrieve the anlaysis results.</param>
+        /// <param name="configId">Optional configuration ID. If not provided, primary configuration will be used for analysis.</param>
+        /// <returns>Collection analysis results object with a bunch of result fields.</returns>
         public CollAnalyticData GetCollection(string id, string configId = null)
         {
             string encodedId = HttpUtility.UrlEncode(id);
@@ -809,6 +1129,12 @@ namespace Semantria.Com
             return this.ProcessGetResponse<CollAnalyticData>(authResponse);
         }
 
+        /// <summary>
+        /// Cancels specific collection on the server side.
+        /// </summary>
+        /// <param name="id">Collection ID to be canceled.</param>
+        /// <param name="configId">Optional configuration ID. If not provided, primary configuration will be used for analysis.</param>
+        /// <returns>Operation execution result, actually HTTP status code.</returns>
         public int CancelCollection(string id, string configId = null)
         {
             string encodedId = HttpUtility.UrlEncode(id);
@@ -821,6 +1147,11 @@ namespace Semantria.Com
             return this.ProcessPostResponse<Collection>(authResponse);
         }
 
+        /// <summary>
+        /// Retrieves collection analysis results from the server by the given configuration.
+        /// </summary>
+        /// <param name="configId">Optional configuration ID. If not provided, primary configuration will be used.</param>
+        /// <returns>The list of collection analysis results retrieved from the server for recently queued collections.</returns>
         public IList<CollAnalyticData> GetProcessedCollections(string configId = null)
         {
             string url = String.Format("{0}/collection/processed.{1}", _host, _format);
@@ -832,6 +1163,11 @@ namespace Semantria.Com
             return result;
         }
 
+        /// <summary>
+        /// Retrieves collection analysis results by the given Job identifier.
+        /// </summary>
+        /// <param name="jobId">Unique Job identifier used while collections queuing.</param>
+        /// <returns>The list of collection analysis results retrieved from the server for the given Job ID.</returns>
         public IList<CollAnalyticData> GetProcessedCollectionsByJobId(string jobId)
         {
             if (String.IsNullOrEmpty(jobId))
@@ -926,7 +1262,7 @@ namespace Semantria.Com
                             result = (IStub<T>)this.ProcessGetResponse<Configurations > (authResponse);
                         else if (typeof(T).Equals(typeof(Category)))
                             result = (IStub<T>)this.ProcessGetResponse<Categories>(authResponse);
-                        else if (typeof(T).Equals(typeof(Blacklist)))
+                        else if (typeof(T).Equals(typeof(BlacklistedItem)))
                             result = (IStub<T>)this.ProcessGetResponse<Blacklists>(authResponse);
                         else if (typeof(T).Equals(typeof(Query)))
                             result = (IStub<T>)this.ProcessGetResponse<Queries>(authResponse);
@@ -988,7 +1324,7 @@ namespace Semantria.Com
                             result = (IStub<T>)this.ProcessGetResponse<Configurations>(authResponse);
                         else if (typeof(T).Equals(typeof(Category)))
                             result = (IStub<T>)this.ProcessGetResponse<Categories>(authResponse);
-                        else if (typeof(T).Equals(typeof(Blacklist)))
+                        else if (typeof(T).Equals(typeof(BlacklistedItem)))
                             result = (IStub<T>)this.ProcessGetResponse<Blacklists>(authResponse);
                         else if (typeof(T).Equals(typeof(Query)))
                             result = (IStub<T>)this.ProcessGetResponse<Queries>(authResponse);
@@ -1029,11 +1365,11 @@ namespace Semantria.Com
             foreach (string item in items)
             {
                 if (typeof(T).Equals(typeof(Configuration)))
-                    obj = new Configuration() { ConfigId = item };
+                    obj = new Configuration() { Id = item };
                 else if (typeof(T).Equals(typeof(Category)))
                     obj = new Category() { Id = item };
-                else if (typeof(T).Equals(typeof(Blacklist)))
-                    obj = new Blacklist() { Id = item };
+                else if (typeof(T).Equals(typeof(BlacklistedItem)))
+                    obj = new BlacklistedItem() { Id = item };
                 else if (typeof(T).Equals(typeof(Query)))
                     obj = new Query() { Id = item };
                 else if (typeof(T).Equals(typeof(UserEntity)))
@@ -1076,7 +1412,7 @@ namespace Semantria.Com
                 tag = "configurations";
             else if (typeof(T).Equals(typeof(Category)))
                 tag = "categories";
-            else if (typeof(T).Equals(typeof(Blacklist)))
+            else if (typeof(T).Equals(typeof(BlacklistedItem)))
                 tag = "blacklist";
             else if (typeof(T).Equals(typeof(Query)))
                 tag = "queries";
@@ -1100,8 +1436,8 @@ namespace Semantria.Com
                 data = new Configurations(items as List<Configuration>);
             else if (typeof(T).Equals(typeof(Category)))
                 data = new Categories(items as List<Category>);
-            else if (typeof(T).Equals(typeof(Blacklist)))
-                data = new Blacklists(items as List<Blacklist>);
+            else if (typeof(T).Equals(typeof(BlacklistedItem)))
+                data = new Blacklists(items as List<BlacklistedItem>);
             else if (typeof(T).Equals(typeof(Query)))
                 data = new Queries(items as List<Query>);
             else if (typeof(T).Equals(typeof(UserEntity)))

@@ -98,14 +98,14 @@ public class JobIdFeatureTestApp {
                 List<Document> docsForJob = entry.getValue();
                 for (Document doc : docsForJob) {
                     // Queues document for processing on Semantria service
-                    session.queueDocument(doc);
+                    session.queueDocument(doc, null);
                 }
                 System.out.println(docsForJob.size() + " documents queued for " + entry.getKey() + " job ID");
             }
         } else if (!dataSendingMode) {
             for (Map.Entry<Integer, List<Document>> entry : documents.entrySet())  {
                 // Queues document for processing on Semantria service
-                session.queueBatch(entry.getValue());
+                session.QueueBatchOfDocuments(entry.getValue(), null);
                 System.out.println(entry.getValue().size() + " documents queued for " + entry.getKey() + " job ID");
             }
         } else {
@@ -114,7 +114,7 @@ public class JobIdFeatureTestApp {
             for (Map.Entry<Integer, List<Document>> entry : documents.entrySet())  {
                 batch.addAll(entry.getValue());
             }
-            session.queueBatch(batch);
+            session.QueueBatchOfDocuments(batch, null);
             System.out.println(batch.size() + " documents queued in single batch");
         }
 

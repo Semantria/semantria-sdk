@@ -26,7 +26,7 @@ OAuthNonceKey = "oauth_nonce"
 
 
 class AuthRequest:
-    apiVersion = "4.0"
+    apiVersion = "4.2"
 
     def __init__(self, consumerKey, consumerSecret, applicationName, use_compression=False):
         self.consumerKey = consumerKey

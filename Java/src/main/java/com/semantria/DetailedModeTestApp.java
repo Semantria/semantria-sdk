@@ -1,6 +1,5 @@
 package com.semantria;
 
-import com.semantria.interfaces.ISerializer;
 import com.semantria.mapping.Document;
 import com.semantria.mapping.output.*;
 import com.semantria.serializer.JsonSerializer;
@@ -69,7 +68,7 @@ public class DetailedModeTestApp
         //Obtaining subscription object to get user limits applicable on server side
         Subscription subscription = session.getSubscription();
 
-        List<Document> outgoingBatch = new ArrayList<Document>(subscription.getBasicSettings().getBatchLimit());
+        List<Document> outgoingBatch = new ArrayList<Document>(subscription.getBasicSettings().getIncomingBatchLimit());
 
         for(Iterator<String> iterator = initialTexts.iterator(); iterator.hasNext(); ) {
             String uid = UUID.randomUUID().toString();
@@ -77,8 +76,8 @@ public class DetailedModeTestApp
             outgoingBatch.add(doc);
             docsTracker.put(uid, TaskStatus.QUEUED);
 
-            if (outgoingBatch.size() == subscription.getBasicSettings().getBatchLimit()) {
-                if(session.queueBatch(outgoingBatch) == 202) {
+            if (outgoingBatch.size() == subscription.getBasicSettings().getIncomingBatchLimit()) {
+                if(session.QueueBatchOfDocuments(outgoingBatch, null) == 202) {
                     System.out.println("\"" + outgoingBatch.size() + "\" documents queued successfully.");
                     outgoingBatch.clear();
                 }
@@ -87,7 +86,7 @@ public class DetailedModeTestApp
 
         if (outgoingBatch.size() > 0)
         {
-            if( session.queueBatch(outgoingBatch) == 202) {
+            if( session.QueueBatchOfDocuments(outgoingBatch, null) == 202) {
                 System.out.println("\"" + outgoingBatch.size() + "\" documents queued successfully.");
                 outgoingBatch.clear();
             }
@@ -106,7 +105,7 @@ public class DetailedModeTestApp
                 Thread.currentThread().sleep(TIMEOUT_BEFORE_GETTING_RESPONSE);
 
 				// Requests processed results from Semantria service
-				List<DocAnalyticData> temp = session.getProcessedDocuments();
+				List<DocAnalyticData> temp = session.getProcessedDocuments(null);
                 for(Iterator<DocAnalyticData> i = temp.iterator(); i.hasNext(); ) {
                     DocAnalyticData item = i.next();
 

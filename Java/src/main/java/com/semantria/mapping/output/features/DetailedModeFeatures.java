@@ -17,16 +17,15 @@ public class DetailedModeFeatures
     private Boolean summarization;
     private Boolean intentions;
     private Boolean themes;
-    private Boolean theme_mentions;
+    private Boolean mentions;
     private Boolean named_entities;
     private Boolean user_entities;
-    private Boolean entity_relations;
-    private Boolean entity_opinions;
-    private Boolean entity_mentions;
-    private Boolean entity_themes;
+    private Boolean relations;
+    private Boolean opinions;
     private Boolean auto_categories;
-    private Boolean user_categories;
-    private Boolean queries;
+    private Boolean concept_topics;
+    private Boolean query_topics;
+    private Boolean taxonomy;
 
     public DetailedModeFeatures() {};
 
@@ -46,26 +45,24 @@ public class DetailedModeFeatures
     public Boolean getIntentions() { return intentions; }
     @XmlElement(name="themes")
     public Boolean getThemes() { return themes; }
-    @XmlElement(name="theme_mentions")
-    public Boolean getThemeMentions() { return theme_mentions; }
     @XmlElement(name="named_entities")
     public Boolean getNamedEntities() { return named_entities; }
     @XmlElement(name="user_entities")
     public Boolean getUserEntities() { return user_entities; }
-    @XmlElement(name="entity_relations")
-    public Boolean getNamedRelations() { return entity_relations; }
-    @XmlElement(name="entity_opinions")
-    public Boolean getEntityOpinions() { return entity_opinions; }
-    @XmlElement(name="entity_mentions")
-    public Boolean getEntityMentions() { return entity_mentions; }
-    @XmlElement(name="entity_themes")
-    public Boolean getEntityThemes() { return entity_themes; }
+    @XmlElement(name="relations")
+    public Boolean getRelations() { return relations; }
+    @XmlElement(name="opinions")
+    public Boolean getOpinions() { return opinions; }
+    @XmlElement(name="mentions")
+    public Boolean getMentions() { return mentions; }
     @XmlElement(name="auto_categories")
     public Boolean getAutoCategories() { return auto_categories; }
-    @XmlElement(name="user_categories")
-    public Boolean getUserCategories() { return user_categories; }
-    @XmlElement(name = "queries")
-    public Boolean getQueries() { return queries; }
+    @XmlElement(name="concept_topics")
+    public Boolean getConceptTopics() { return concept_topics; }
+    @XmlElement(name = "query_topics")
+    public Boolean getQueryTopics() { return query_topics; }
+    @XmlElement(name = "taxonomy")
+    public Boolean getTaxonomy() { return taxonomy; }
 
     public void setLanguageDetection(Boolean feature) { this.language_detection = feature; }
     public void setSentiment(Boolean feature) { this.sentiment = feature; }
@@ -75,14 +72,13 @@ public class DetailedModeFeatures
     public void setSumarization(Boolean feature) { this.summarization = feature; }
     public void setIntentions(Boolean feature) { this.intentions = feature; }
     public void setThemes(Boolean feature) { this.themes = feature; }
-    public void setThemeMentions(Boolean feature) { this.theme_mentions = feature; }
     public void setNamedEntities(Boolean feature) { this.named_entities = feature; }
     public void setUserEntities(Boolean feature) { this.user_entities = feature; }
-    public void setEntityRelations(Boolean feature) { this.entity_relations = feature; }
-    public void setEntityOpinions(Boolean feature) { this.entity_opinions = feature; }
-    public void setEntityMentions(Boolean feature) { this.entity_mentions = feature; }
-    public void setEntityThemes(Boolean feature) { this.entity_themes = feature; }
+    public void setRelations(Boolean feature) { this.relations = feature; }
+    public void setOpinions(Boolean feature) { this.opinions = feature; }
+    public void setMentions(Boolean feature) { this.mentions = feature; }
     public void setAutoCategories(Boolean feature) { this.auto_categories = feature; }
-    public void setUserCategories(Boolean feature) { this.user_categories = feature; }
-    public void setQueries(Boolean feature) { this.queries = feature; }
+    public void setConceptTopics(Boolean feature) { this.concept_topics = feature; }
+    public void setQueryTopics(Boolean feature) { this.query_topics = feature; }
+    public void setTaxonomy(Boolean feature) { this.taxonomy = feature; }
 }

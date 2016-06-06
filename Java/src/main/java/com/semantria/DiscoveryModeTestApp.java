@@ -89,7 +89,7 @@ public class DiscoveryModeTestApp
         });
 
         //Queues collection for analysis using default configuration
-        int status = session.queueCollection(collection);
+        int status = session.queueCollection(collection, null);
         if ( status == 200 || status == 2002 )
         {
             System.out.println(String.format("\"%s\" collection queued successfully.", collection.getId()));
@@ -106,7 +106,7 @@ public class DiscoveryModeTestApp
 
             System.out.println("Retrieving your processed results...");
             //Retreives analysis results for queued collection
-            result = session.getCollection(collectionId);
+            result = session.getCollection(collectionId, null);
         } while (result.getStatus() == TaskStatus.QUEUED);
 
         System.out.println();

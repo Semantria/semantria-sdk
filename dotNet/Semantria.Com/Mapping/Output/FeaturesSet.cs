@@ -57,23 +57,31 @@ namespace Semantria.Com.Mapping.Output
         [XmlElementAttribute("user_entities")]
         public bool UserEntities { get; set; }
 
-        [DataMember(Name = "user_categories")]
-        [XmlElementAttribute("user_categories")]
-        public bool UserCategories { get; set; }
+        [DataMember(Name = "concept_topics")]
+        [XmlElementAttribute("concept_topics")]
+        public bool ConceptTopics { get; set; }
 
-        [DataMember(Name = "queries")]
-        [XmlElementAttribute("queries")]
-        public bool Queries { get; set; }
+        [DataMember(Name = "query_topics")]
+        [XmlElementAttribute("query_topics")]
+        public bool QueryTopics { get; set; }
 
         [DataMember(Name = "blacklist")]
         [XmlElementAttribute("blacklist")]
         public bool Blacklist { get; set; }
+
+        [DataMember(Name = "taxonomy")]
+        [XmlElementAttribute("taxonomy")]
+        public bool Taxonomy { get; set; }
     }
 
     [DataContract(Name = "detailed_mode")]
     [XmlRootAttribute("detailed_mode", Namespace = "")]
     public class DetailedModeFeatures
     {
+        [DataMember(Name = "language_detection")]
+        [XmlElementAttribute("language_detection")]
+        public bool LanguageDetection { get; set; }
+
         [DataMember(Name = "sentiment")]
         [XmlElementAttribute("sentiment")]
         public bool SentimentDetection { get; set; }
@@ -94,13 +102,17 @@ namespace Semantria.Com.Mapping.Output
         [XmlElementAttribute("summarization")]
         public bool Summarization { get; set; }
 
+        [DataMember(Name = "intentions")]
+        [XmlElementAttribute("intentions")]
+        public bool Intentions { get; set; }
+
         [DataMember(Name = "themes")]
         [XmlElementAttribute("themes")]
         public bool Themes { get; set; }
 
-        [DataMember(Name = "theme_mentions")]
-        [XmlElementAttribute("theme_mentions")]
-        public bool ThemeMentions { get; set; }
+        [DataMember(Name = "mentions")]
+        [XmlElementAttribute("mentions")]
+        public bool Mentions { get; set; }
 
         [DataMember(Name = "named_entities")]
         [XmlElementAttribute("named_entities")]
@@ -110,37 +122,29 @@ namespace Semantria.Com.Mapping.Output
         [XmlElementAttribute("user_entities")]
         public bool UserEntities { get; set; }
 
-        [DataMember(Name = "entity_relations")]
-        [XmlElementAttribute("entity_relations")]
-        public bool EntityRelations { get; set; }
+        [DataMember(Name = "relations")]
+        [XmlElementAttribute("relations")]
+        public bool Relations { get; set; }
 
-        [DataMember(Name = "entity_opinions")]
-        [XmlElementAttribute("entity_opinions")]
-        public bool EntityOpinions { get; set; }
-
-        [DataMember(Name = "entity_mentions")]
-        [XmlElementAttribute("entity_mentions")]
-        public bool EntityMentions { get; set; }
-
-        [DataMember(Name = "entity_themes")]
-        [XmlElementAttribute("entity_themes")]
-        public bool EntityThemes { get; set; }
+        [DataMember(Name = "Opinions")]
+        [XmlElementAttribute("Opinions")]
+        public bool Opinions { get; set; }
 
         [DataMember(Name = "auto_categories")]
         [XmlElementAttribute("auto_categories")]
         public bool AutoCategories { get; set; }
 
-        [DataMember(Name = "user_categories")]
-        [XmlElementAttribute("user_categories")]
-        public bool UserCategories { get; set; }
+        [DataMember(Name = "concept_topics")]
+        [XmlElementAttribute("concept_topics")]
+        public bool ConceptTopics { get; set; }
 
-        [DataMember(Name = "queries")]
-        [XmlElementAttribute("queries")]
-        public bool Queries { get; set; }
+        [DataMember(Name = "query_topics")]
+        [XmlElementAttribute("query_topics")]
+        public bool QueryTopics { get; set; }
 
-        [DataMember(Name = "intentions")]
-        [XmlElementAttribute("intentions")]
-        public bool Intentions { get; set; }
+        [DataMember(Name = "taxonomy")]
+        [XmlElementAttribute("taxonomy")]
+        public bool Taxonomy { get; set; }
     }
 
     [DataContract(Name = "discovery_mode")]
@@ -151,21 +155,17 @@ namespace Semantria.Com.Mapping.Output
         [XmlElementAttribute("facets")]
         public bool Facets { get; set; }
 
-        [DataMember(Name = "facet_attributes")]
-        [XmlElementAttribute("facet_attributes")]
-        public bool FacetAttributes { get; set; }
+        [DataMember(Name = "attributes")]
+        [XmlElementAttribute("attributes")]
+        public bool Attributes { get; set; }
 
-        [DataMember(Name = "facet_mentioins")]
-        [XmlElementAttribute("facet_mentioins")]
-        public bool FacetMentions { get; set; }
+        [DataMember(Name = "mentioins")]
+        [XmlElementAttribute("mentioins")]
+        public bool Mentions { get; set; }
 
         [DataMember(Name = "themes")]
         [XmlElementAttribute("themes")]
         public bool Themes { get; set; }
-
-        [DataMember(Name = "theme_mentions")]
-        [XmlElementAttribute("theme_mentions")]
-        public bool ThemeMentions { get; set; }
 
         [DataMember(Name = "named_entities")]
         [XmlElementAttribute("named_entities")]
@@ -175,17 +175,17 @@ namespace Semantria.Com.Mapping.Output
         [XmlElementAttribute("user_entities")]
         public bool UserEntities { get; set; }
 
-        [DataMember(Name = "entity_mentions")]
-        [XmlElementAttribute("entity_mentions")]
-        public bool EntityMentions { get; set; }
+        [DataMember(Name = "concept_topics")]
+        [XmlElementAttribute("concept_topics")]
+        public bool ConceptTopics { get; set; }
 
-        [DataMember(Name = "user_categories")]
-        [XmlElementAttribute("user_categories")]
-        public bool UserCategories { get; set; }
-
-        [DataMember(Name = "queries")]
-        [XmlElementAttribute("queries")]
+        [DataMember(Name = "query_topics")]
+        [XmlElementAttribute("query_topics")]
         public bool Queries { get; set; }
+
+        [DataMember(Name = "taxonomy")]
+        [XmlElementAttribute("taxonomy")]
+        public bool Taxonomy { get; set; }
     }
 }
 

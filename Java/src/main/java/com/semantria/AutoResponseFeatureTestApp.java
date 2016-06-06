@@ -151,7 +151,7 @@ public class AutoResponseFeatureTestApp {
         for (int i = 0; i < docList.size(); i++)
         {
 
-            session.queueDocument(docList.get(i));
+            session.queueDocument(docList.get(i), null);
             Thread.sleep(100);
 
            System.out.println("Documents queued/received rate: " + (i + 1) + "/" + resList.size());
@@ -162,7 +162,7 @@ public class AutoResponseFeatureTestApp {
         Thread.sleep(1000);
         while (docList.size() != resList.size())
         {
-            List<DocAnalyticData> lastResults = session.getProcessedDocuments();
+            List<DocAnalyticData> lastResults = session.getProcessedDocuments(null);
             for(DocAnalyticData data : lastResults)
             {
                 resList.add(data);

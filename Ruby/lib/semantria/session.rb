@@ -19,7 +19,7 @@ module Semantria
       @consumer_key = consumer_key
       @consumer_secret = consumer_secret
       @use_compression = use_compression
-      @api_version = '4.0'
+      @api_version = '4.2'
 
       if serializer.nil?
         #set default json serializer

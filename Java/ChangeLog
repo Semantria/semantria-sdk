@@ -1,5 +1,17 @@
 CHANGELOG
 
+4.2.92 - Added API 4.2 support.
+	- Reworked /features end-point, renamed a bunch of fields to make them consistent with Lexalytics Salience core output.
+	- Reworked /subscription end-point, renamed a bunch of fields to make them consistent with Lexalytics Salience core output.
+	- Reworked /configurations end-point. 
+		* Numeric limits replaced with Boolean switchers.
+		* Removed unnecessary limits, e.g. now we have common Mentions switcher that controls mentions availability for all output types.
+	- Added "length" and "offset" fields for sentiment-bearing phrases output.
+
+4.1.91 - Added mentions and topics fields to DocTopic object.
+	- Topics represent the list of subtopics associated with the current topic (missed somehow).
+	- Mentions is a new feature. Mentions contains exact places in the text where the certain query hits.
+
 4.1.90 - Added is_intensified and intensifying_phrase fields support to DocPhrase object.
 
 4.1.89 - Added two JobID related fields to Subscription object, to Billing settings section. There are:

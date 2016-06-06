@@ -17,7 +17,7 @@ class AuthRequest
 	protected $_consumerSecret;
 
 	protected $_applicationName;
-	protected $_apiVersion = "4.0";
+	protected $_apiVersion = "4.2";
 	protected $_http_info;
 
     protected $use_compression;

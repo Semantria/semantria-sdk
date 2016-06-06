@@ -1,5 +1,19 @@
 CHANGELOG
 
+4.2.97 - Added API 4.2 support.
+	- Reworked /features end-point, renamed a bunch of fields to make them consistent with Lexalytics Salience core output.
+	- Reworked /subscription end-point, renamed a bunch of fields to make them consistent with Lexalytics Salience core output.
+	- Reworked /configurations end-point. 
+		* Numeric limits replaced with Boolean switchers.
+		* Removed unnecessary limits, e.g. now we have common Mentions switcher that controls mentions availability for all output types.
+	- Added "length" and "offset" fields for sentiment-bearing phrases output.
+
+	- All fields in Configuration objects marked as optional for JSON deserialization.
+	- Reworked UnitTests project, now it creates/removes test configuration and uses it for all tests.
+
+4.1.96 - Added mentions field to Topics object.
+	- Mentions contains exact places in the text where the certain query hits.
+
 4.1.95 - Added is_intensified and intensifying_phrase fields support to DocPhrase object.
 
 4.1.94 - Tested with API 4.1.

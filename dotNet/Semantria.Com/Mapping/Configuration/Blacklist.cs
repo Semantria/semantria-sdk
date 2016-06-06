@@ -7,9 +7,9 @@ namespace Semantria.Com.Mapping.Configuration
 {
     [DataContract(Name = "blacklist")]
     [XmlRootAttribute("blacklist", Namespace = "")]
-    public class Blacklist
+    public class BlacklistedItem
     {
-        public Blacklist()
+        public BlacklistedItem()
         {
         }
 
@@ -31,19 +31,19 @@ namespace Semantria.Com.Mapping.Configuration.Stub
 {
     [DataContract(Name = "blacklist")]
     [XmlRootAttribute("blacklist", Namespace = "")]
-    public class Blacklists : IStub<Blacklist>
+    public class Blacklists : IStub<BlacklistedItem>
     {
         public Blacklists()
         {
         }
 
-        public Blacklists(List<Blacklist> items)
+        public Blacklists(List<BlacklistedItem> items)
         {
             this.Data = items;
         }
 
         [XmlElementAttribute("item")]
-        public List<Blacklist> Data { get; set; }
+        public List<BlacklistedItem> Data { get; set; }
 
         private List<string> _keys = null;
         [DataMember(Name = "fbe947eeb47")]
@@ -58,7 +58,7 @@ namespace Semantria.Com.Mapping.Configuration.Stub
 
         public void ToKeys()
         {
-            _keys = this.Data.ConvertAll<string>(new Converter<Blacklist, string>(ItemKey));
+            _keys = this.Data.ConvertAll<string>(new Converter<BlacklistedItem, string>(ItemKey));
             this.Data = null;
         }
 
@@ -67,7 +67,7 @@ namespace Semantria.Com.Mapping.Configuration.Stub
             return data.Replace("<fbe947eeb47>", "<id>").Replace("</fbe947eeb47>", "</id>");
         }
 
-        private string ItemKey(Blacklist item)
+        private string ItemKey(BlacklistedItem item)
         {
             return item.Id;
         }

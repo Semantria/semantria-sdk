@@ -48,7 +48,11 @@ namespace Semantria.Com.Mapping.Output
         [XmlElementAttribute("summary")]
         public string Summary { get; set; }
 
-		[DataMember(Name = "facets")]
+        [DataMember(Name = "docs_count")]
+        [XmlElementAttribute("docs_count")]
+        public int DocumentsCount { get; set; }
+
+        [DataMember(Name = "facets")]
 		[XmlArrayAttribute("facets")]
 		[XmlArrayItemAttribute("facet", typeof(Facet))]
 		public List<Facet> Facets { get; set; }

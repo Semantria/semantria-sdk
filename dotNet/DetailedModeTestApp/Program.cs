@@ -61,7 +61,7 @@ namespace DetailedModeTestApp
                 //Obtaining subscription object to get user limits applicable on server side
                 Subscription subscription = session.GetSubscription();
 
-                List<Document> outgoingBatch = new List<Document>(subscription.BasicSettings.BatchLimit);
+                List<Document> outgoingBatch = new List<Document>(subscription.BasicSettings.IncomingBatchLimit);
                 IEnumerator<string> iterrator = initialTexts.GetEnumerator();
                 while (iterrator.MoveNext())
                 {
@@ -75,7 +75,7 @@ namespace DetailedModeTestApp
                     outgoingBatch.Add(doc);
                     docsTracker.Add(docId, TaskStatus.QUEUED);
 
-                    if (outgoingBatch.Count == subscription.BasicSettings.BatchLimit)
+                    if (outgoingBatch.Count == subscription.BasicSettings.IncomingBatchLimit)
                     {
                         // Queues batch of documents for processing on Semantria service
                         if (session.QueueBatchOfDocuments(outgoingBatch) != -1)
