@@ -56,7 +56,7 @@ namespace DetailedModeTestApp
                 //Obtaining subscription object to get user limits applicable on server side
                 dynamic subscription = session.GetSubscription();
 
-                List<dynamic> outgoingBatch = new List<dynamic>(subscription.basic_settings.batch_limit);
+                List<dynamic> outgoingBatch = new List<dynamic>(subscription.basic_settings.incoming_batch_limit);
                 IEnumerator<string> iterrator = initialTexts.GetEnumerator();
                 while (iterrator.MoveNext())
                 {
@@ -70,7 +70,7 @@ namespace DetailedModeTestApp
                     outgoingBatch.Add(doc);
                     docsTracker.Add(docId, "QUEUED");
 
-                    if (outgoingBatch.Count == subscription.basic_settings.batch_limit)
+                    if (outgoingBatch.Count == subscription.basic_settings.incoming_batch_limit)
                     {
                         // Queues batch of documents for processing on Semantria service
                         if (session.QueueBatchOfDocuments(outgoingBatch) != -1)

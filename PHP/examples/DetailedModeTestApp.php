@@ -92,7 +92,7 @@ foreach ($initialTexts as $text) {
     $documents[] = array('id' => $doc_id, 'text' => $text);
     $tracker[$doc_id] = TASK_STATUS_QUEUED;
     
-    if (count($documents) == $subscription['basic_settings']['batch_limit']) {
+    if (count($documents) == $subscription['basic_settings']['incoming_batch_limit']) {
         $docsCount = count($documents);
         $res = $session->queueBatch($documents);
         if ($res == 200 || $res == 202) {

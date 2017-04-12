@@ -225,7 +225,7 @@
 			});
 			docsTracker[id] = false;
 			
-			if (outgoingBatch.length == subscription.basic_settings.batch_limit) {
+			if (outgoingBatch.length == subscription.basic_settings.incoming_batch_limit) {
 				// Queues document for processing on Semantria service
 				// Check status from Semantria service
 				if (SemantriaActiveSession.queueBatchOfDocuments(outgoingBatch) == 202) {

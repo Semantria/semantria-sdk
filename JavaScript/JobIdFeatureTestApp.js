@@ -187,7 +187,7 @@
 	
 		//Generates N unique jobId values
 		for (var index = 0; index < uniqueJobIdCount; index++) {
-			var id = Math.floor(Math.random() * 10000000);
+			var id = Math.floor(Math.random() * 10000000).toString();
 
 			jobIds[id] = 0;
 			documents[id] = [];
@@ -195,7 +195,7 @@
 			
 		for (var i=0, item; item=initialTexts[i]; i++) {
 			// Creates a sample document which need to be processed on Semantria
-			var id = Math.floor(Math.random() * 10000000),
+			var id = Math.floor(Math.random() * 10000000).toString(),
 				jobId = randomProperty(jobIds);
 			
 			jobIds[jobId]++;

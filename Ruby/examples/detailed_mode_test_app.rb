@@ -74,7 +74,7 @@ $initial_texts.each do |text|
   documents.push({'id' => doc_id, 'text' => text})
   tracker[doc_id] = $TASK_STATUS_QUEUED
   
-  if documents.size == subscription['basic_settings']['batch_limit']
+  if documents.size == subscription['basic_settings']['incoming_batch_limit']
     result = session.queueBatch(documents)
     if result == 200 or result == 202
       print("#{documents.size} documents queued successfully.\n")

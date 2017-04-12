@@ -848,7 +848,7 @@ namespace Semantria.Com.TestUnitApi
                         "<entities_limit>1000</entities_limit>" +
                         "<sentiment_limit>1000</sentiment_limit>" +
                         "<characters_limit>8192</characters_limit>" +
-                        "<batch_limit>1</batch_limit>" +
+                        "<incoming_batch_limit>1</incoming_batch_limit>" +
                         "<collection_limit>10</collection_limit>" +
                         "<auto_response_limit>2</auto_response_limit>" +
                         "<processed_batch_limit>100</processed_batch_limit>" +
@@ -905,7 +905,7 @@ namespace Semantria.Com.TestUnitApi
                         "\"entities_limit\" : 1000," +
                         "\"sentiment_limit\" : 1000," +
                         "\"characters_limit\" : 8192," +
-                        "\"batch_limit\" : 10," +
+                        "\"incoming_batch_limit\" : 10," +
                         "\"collection_limit\" : 10," +
                         "\"auto_response_limit\" : 2," +
                         "\"processed_batch_limit\" : 100," +

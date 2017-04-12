@@ -36,7 +36,7 @@ SemantriaActiveSession.getConfigurations(true)
 	return SemantriaActiveSession.getSubscription(true);
 })
 .then(function(subscription){
-	var outgoingBatches = getOutgoingBatches(subscription.basic_settings.batch_limit);
+	var outgoingBatches = getOutgoingBatches(subscription.basic_settings.incoming_batch_limit);
 	var requests = [];
 	for (var i=0; i<outgoingBatches.length; i++) {
 		(function(outgoingBatch){

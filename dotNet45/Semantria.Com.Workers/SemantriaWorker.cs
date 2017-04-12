@@ -145,7 +145,7 @@ namespace Semantria.Com.Workers
 
             OnMethodExecuted(new RequestMetrics(SemantriaAPImethod.GetSubscription, watcher.Elapsed));
 
-            int batchSize = subscription.basic_settings.batch_limit;
+            int batchSize = subscription.basic_settings.incoming_batch_limit;
             int docSize = subscription.basic_settings.characters_limit;
             DataProvider.CharactersLimit = docSize;
 
