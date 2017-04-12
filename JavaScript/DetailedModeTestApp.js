@@ -218,7 +218,7 @@
 		var outgoingBatch = [];
 		for(var i=0, item; item=initialTexts[i]; i++) {
 			// Creates a sample document which need to be processed on Semantria
-			var id = Math.floor(Math.random() * 10000000);
+			var id = Math.floor(Math.random() * 10000000).toString();
 			outgoingBatch.push({
 				id: id,
 				text: item
