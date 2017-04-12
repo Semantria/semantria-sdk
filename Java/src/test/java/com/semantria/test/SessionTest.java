@@ -78,7 +78,7 @@ public class SessionTest
         Session session = Session.createSession(key, secret);
         session.registerSerializer(serializer);
 		session.setCallbackHandler(new CallbackHandler());
-		Statistics statistics = session.getStatistics("day");
+		Statistics statistics = session.getStatistics("day", null);
 		assertNotNull(statistics.getName());
 	}
 
