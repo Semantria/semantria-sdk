@@ -7,7 +7,6 @@ import java.sql.Timestamp;
 
 public final class Configuration
 {
-	@SerializedName("config_id")
 	private String id = null;
     private String name = null;
     private String language = null;

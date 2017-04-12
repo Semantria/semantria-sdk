@@ -2,40 +2,68 @@ package com.semantria;
 
 import com.semantria.auth.AuthService;
 import com.semantria.auth.CredentialException;
-import com.semantria.mapping.output.*;
-import com.semantria.mapping.output.stub.FeaturesList;
-import com.semantria.utils.*;
 import com.semantria.interfaces.ICallbackHandler;
 import com.semantria.interfaces.ISerializer;
 import com.semantria.mapping.Batch;
 import com.semantria.mapping.Collection;
 import com.semantria.mapping.Document;
-import com.semantria.mapping.configuration.*;
-import com.semantria.mapping.configuration.stub.*;
+import com.semantria.mapping.configuration.BlacklistItem;
+import com.semantria.mapping.configuration.Category;
+import com.semantria.mapping.configuration.Configuration;
+import com.semantria.mapping.configuration.Query;
+import com.semantria.mapping.configuration.SentimentPhrase;
+import com.semantria.mapping.configuration.TaxonomyNode;
+import com.semantria.mapping.configuration.UserEntity;
+import com.semantria.mapping.configuration.stub.Blacklists;
+import com.semantria.mapping.configuration.stub.Categories;
+import com.semantria.mapping.configuration.stub.Configurations;
+import com.semantria.mapping.configuration.stub.Queries;
+import com.semantria.mapping.configuration.stub.SentimentPhrases;
+import com.semantria.mapping.configuration.stub.Taxonomies;
+import com.semantria.mapping.configuration.stub.UserEntities;
+import com.semantria.mapping.output.CollAnalyticData;
+import com.semantria.mapping.output.DocAnalyticData;
+import com.semantria.mapping.output.FeaturesSet;
+import com.semantria.mapping.output.ServiceStatus;
+import com.semantria.mapping.output.Subscription;
+import com.semantria.mapping.output.statistics.StatisticsGrouped;
+import com.semantria.mapping.output.statistics.StatisticsOverall;
+import com.semantria.mapping.output.statistics.StatsInterval;
 import com.semantria.mapping.output.stub.CollsAnalyticData;
 import com.semantria.mapping.output.stub.DocsAnalyticData;
+import com.semantria.mapping.output.stub.FeaturesList;
+import com.semantria.mapping.output.stub.StatisticsGroupedList;
+import com.semantria.mapping.output.stub.StatisticsOverallList;
 import com.semantria.serializer.JsonSerializer;
 import com.semantria.serializer.XmlSerializer;
+import com.semantria.utils.AuthRequest;
+import com.semantria.utils.ObjProxy;
+import com.semantria.utils.RequestArgs;
+import com.semantria.utils.ResponseArgs;
+import org.apache.commons.lang.StringUtils;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 public final class Session
 {
     //<editor-fold desc="Private fields">
 
-    private static final String WRAPPER_NAME = "Java";
-
     private String key = "";
     private String secret = "";
-    private String appName = "";
     private String apiVersion = "4.2";
     private ISerializer serializer = null;
     private String requestFormat = "json";
     private ICallbackHandler callback = null;
-    private String serviceUrl = "https://api.semantria.com";
-    public  boolean useCompression = false;
+    private String serviceUrl = "https://api.semantria.com/";
+    private boolean useCompression = false;
+    private Integer lastRequestStatus = 0;
+    private String lastRequestErrorMessage = null;
 
     //</editor-fold>
 
@@ -93,13 +121,13 @@ public final class Session
 
     /**
      * Registers serializer for already instantiated session to use another data format if necessary.
-     * @param cserializer Either XML or JSON serializer to use the specific data format while access the API.
+     * @param serializer Either XML or JSON serializer to use the specific data format while access the API.
      */
-    public void registerSerializer(ISerializer cserializer)
+    public void registerSerializer(ISerializer serializer)
     {
-        serializer = cserializer;
-        if (null != cserializer) {
-            requestFormat = cserializer.getType();
+        this.serializer = serializer;
+        if (null != serializer) {
+            requestFormat = serializer.getType();
         }
     }
 
@@ -112,15 +140,17 @@ public final class Session
     }
 
     /**
-     * Sets the name of the application.
-     * @param appName Name of the current application to be reported to the server.
+     * Sets host to use for Semantria API service.
+     * @param new_url
      */
-    private void setAppName(String appName) {
-        if (null != appName) {
-            this.appName = appName + "." + WRAPPER_NAME;
-        } else {
-            this.appName = WRAPPER_NAME;
+    public void setServiceUrl(String new_url) {
+        if (! new_url.toLowerCase().startsWith("http")) {
+            new_url = "https://" + new_url;
         }
+        if (! new_url.endsWith("/")) {
+            new_url = new_url + "/";
+        }
+        serviceUrl = new_url;
     }
 
     /**
@@ -133,12 +163,26 @@ public final class Session
 
 
     /**
-     * Registers ICallbackHandler implementer that will be executed in case of corresponding events.
+     * Registers a callback instance to be called in case of corresponding events.
      * @param handler ICallbackHandler implementer.
      */
     public void setCallbackHandler(ICallbackHandler handler)
     {
         callback = handler;
+    }
+
+    /**
+     * Returns the error message, if any, from the last request; return null if there was no error.
+     */
+    public String getLastRequestErrorMessage() {
+        return lastRequestErrorMessage;
+    }
+
+    /**
+     * Returns HTTP status of last request.
+     */
+    public Integer getLastRequestStatus() {
+        return lastRequestStatus;
     }
 
     //</editor-fold>
@@ -151,26 +195,13 @@ public final class Session
      */
     public ServiceStatus getStatus()
     {
-        String method = "GET";
-        String url = generateRequestUrl("status");
-
-        AuthRequest req = AuthRequest.getInstance(url, method)
-                .key(key)
-                .secret(secret)
-                .appName(appName)
-                .apiVersion(apiVersion)
-                .useCompression(useCompression);
-
-        Integer status = req.doRequest();
-        ServiceStatus serviceStatus = null;
-
-        if (status <= 202)
-            serviceStatus = (ServiceStatus)serializer.deserialize(req.getResponse(), ServiceStatus.class);
-
-        handleRequest(method, req.getRequestUrl(), null);
-        handleResponse(status, req);
-
-        return serviceStatus;
+        AuthRequest req = makeAuthRequest("status", "GET");
+        Integer status = doRequest(req);
+        if (status <= 202) {
+            return (ServiceStatus) serializer.deserialize(req.getResponse(), ServiceStatus.class);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -179,52 +210,105 @@ public final class Session
      */
     public Subscription getSubscription()
     {
-        String method = "GET";
-        String url = generateRequestUrl("subscription");
-
-        AuthRequest req = AuthRequest.getInstance(url, method)
-                .key(key)
-                .secret(secret)
-                .appName(appName)
-                .apiVersion(apiVersion)
-                .useCompression(useCompression);
-
-        Integer status = req.doRequest();
-        Subscription subscription = (Subscription)serializer.deserialize(req.getResponse(), Subscription.class);
-
-        handleRequest(method, req.getRequestUrl(), null);
-        handleResponse(status, req);
-
-        return subscription;
+        AuthRequest req = makeAuthRequest("subscription", "GET");
+        Integer status = doRequest(req);
+        return (Subscription)serializer.deserialize(req.getResponse(), Subscription.class);
     }
 
     /**
-     * Retrieves usage statistics for the current subscription and given configuration.
-     * @param interval Time interval to filter usage statistics.
-     * @param configId Configuration ID to get usage statistics for.
-     * @return Statistics object with a bunch of fields related to the API usage.
+     * Retrieves usage statistics for the given interval.
+     * @param interval - Time interval.
+     * @return Statistics object with a bunch of fields.
      */
-    public Statistics getStatistics(String interval, String configId)
+    public StatisticsOverall getStatistics(StatsInterval interval)
     {
-        String method = "GET";
-        String url = generateRequestUrl("statistics");
+        return getStatisticsOverall(interval, null, null);
+    }
 
-        AuthRequest req = AuthRequest.getInstance(url, method)
-                .key(key)
-                .secret(secret)
-                .config_id(configId)
+    /**
+     * Retrieves usage statistics for the given interval.
+     * @param from - Start DateTime point to get usage statistics for.
+     * @param to - End DateTime point to get usage statistics for.
+     * @return Statistics object with a bunch of fields.
+     */
+    public StatisticsOverall getStatistics(Date from, Date to)
+    {
+        return getStatisticsOverall(null, from, to);
+    }
+
+    /**
+     * Retrieves usage statistics for the given time interval grouped by the given criteria.
+     * @param interval - Time interval.
+     * @param groupBy - config_id, config_name, user_id, user_email, language, app and time values or their combinations supported.
+     * If several parameters use, they should be separated by, like "language,user_name".
+     * Time value can't be less than one minute - 1m. Supported following time units: m - minutes, h - hours, d - days, w - weeks.
+     * Combining time values and grouping parameters allowed: "language,user_name,10m"
+     * @return Statistics object with a bunch of fields.
+     */
+    public List<StatisticsGrouped> getStatistics(StatsInterval interval, String groupBy)
+    {
+        return getStatisticsGrouped(interval, null, null, groupBy);
+    }
+
+    /**
+     * Retrieves usage statistics for the given time interval grouped by the given criteria.
+     * @param from - Start DateTime point to get usage statistics for.
+     * @param to - End DateTime point to get usage statistics for.
+     * @param groupBy - config_id, config_name, user_id, user_email, language, app and time values or their combinations supported.
+     * If several parameters use, they should be separated by, like "language,user_name".
+     * Time value can't be less than one minute - 1m. Supported following time units: m - minutes, h - hours, d - days, w - weeks.
+     * Combining time values and grouping parameters allowed: "language,user_name,10m"
+     * @return Statistics object with a bunch of fields.
+     */
+    public List<StatisticsGrouped> getStatistics(Date from, Date to, String groupBy)
+    {
+        return getStatisticsGrouped(null, from, to, groupBy);
+    }
+
+    private StatisticsOverall getStatisticsOverall(StatsInterval interval, Date from, Date to)
+    {
+        AuthRequest req = getStatisticsRequest(interval, from, to, null);
+
+        Integer status = doRequest(req);
+        StatisticsOverallList statisticsList = (StatisticsOverallList)serializer.deserialize(req.getResponse(), StatisticsOverallList.class);
+
+        List<StatisticsOverall> result = statisticsList.getStatistics();
+
+        if (!result.isEmpty()) {
+            return result.get(0);
+        } else {
+            return null;
+        }
+    }
+
+    private List<StatisticsGrouped> getStatisticsGrouped(StatsInterval interval, Date from, Date to, String groupBy)
+    {
+        AuthRequest req = getStatisticsRequest(interval, from, to, groupBy);
+        Integer status = doRequest(req);
+        StatisticsGroupedList statisticsList = (StatisticsGroupedList)serializer.deserialize(req.getResponse(), StatisticsGroupedList.class);
+
+        return statisticsList.getStatistics();
+    }
+
+    private AuthRequest getStatisticsRequest(StatsInterval interval, Date from, Date to, String groupBy)
+    {
+        String fromStr = null;
+        String toStr = null;
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
+        if (from != null) {
+            fromStr = format.format(from);
+        }
+
+        if (to != null) {
+            toStr = format.format(to);
+        }
+
+		return makeAuthRequest("statistics", "GET")
                 .interval(interval)
-                .appName(appName)
-                .apiVersion(apiVersion)
-                .useCompression(useCompression);
-
-        Integer status = req.doRequest();
-        Statistics statistics = (Statistics)serializer.deserialize(req.getResponse(), Statistics.class);
-
-        handleRequest(method, req.getRequestUrl(), null);
-        handleResponse(status, req);
-
-        return statistics;
+                .from(fromStr)
+                .to(toStr)
+                .groupBy(groupBy);
     }
 
     /**
@@ -234,22 +318,10 @@ public final class Session
      */
     public List<FeaturesSet> getSupportedFeatures(final String language)
     {
-        String method = "GET";
-        String url = generateRequestUrl("features");
-
-        AuthRequest req = AuthRequest.getInstance(url, method)
-                .key(key)
-                .secret(secret)
-                .language(language)
-                .appName(appName)
-                .apiVersion(apiVersion)
-                .useCompression(useCompression);
-
-        Integer status = req.doRequest();
+        AuthRequest req = makeAuthRequest("features", "GET")
+                .language(language);
+        Integer status = doRequest(req);
         FeaturesList supportedFeatures = (FeaturesList)serializer.deserialize(req.getResponse(), FeaturesList.class);
-
-        handleRequest(method, req.getRequestUrl(), null);
-        handleResponse(status, req);
 
         return supportedFeatures.getFeatures();
     }
@@ -265,28 +337,15 @@ public final class Session
      */
     public List<Category> getCategories(String config_id)
     {
-        String method = "GET";
-        String url = generateRequestUrl("categories");
-
-        AuthRequest req = AuthRequest.getInstance(url, method)
-                .key(key)
-                .secret(secret)
-                .config_id(config_id)
-                .appName(appName)
-                .useCompression(useCompression);
-
-        Integer status = req.doRequest();
+        AuthRequest req = makeAuthRequest("categories", "GET", config_id);
+        Integer status = doRequest(req);
         Categories list = (Categories)serializer.deserialize(req.getResponse(), Categories.class);
 
-        List<Category> res = new ArrayList<Category>();
         if (list != null) {
-            res = list.getCategories();
+            return list.getCategories();
         }
 
-        handleRequest(method, req.getRequestUrl(), null);
-        handleResponse(status, req);
-
-        return res;
+        return Collections.emptyList();
     }
 
     /**
@@ -302,7 +361,7 @@ public final class Session
         if (list != null) {
             return list.getCategories();
         } else {
-            return new ArrayList<Category>();
+            return Collections.emptyList();
         }
     }
 
@@ -319,7 +378,7 @@ public final class Session
         if (list != null) {
             return list.getCategories();
         } else {
-            return new ArrayList<Category>();
+            return Collections.emptyList();
         }
     }
 
@@ -345,29 +404,15 @@ public final class Session
      */
     public List<Query> getQueries(String config_id)
     {
-        String method = "GET";
-        String url = generateRequestUrl("queries");
-
-        AuthRequest req = AuthRequest.getInstance(url, method)
-                .key(key)
-                .secret(secret)
-                .config_id(config_id)
-                .appName(appName)
-                .apiVersion(apiVersion)
-                .useCompression(useCompression);
-
-        Integer status = req.doRequest();
+        AuthRequest req = makeAuthRequest("queries", "GET", config_id);
+        Integer status = doRequest(req);
         Queries list = (Queries)serializer.deserialize(req.getResponse(), Queries.class);
 
-        List<Query> res = new ArrayList<Query>();
         if (list != null) {
-            res = list.getQueries();
+            return list.getQueries();
         }
 
-        handleRequest(method, req.getRequestUrl(), null);
-        handleResponse(status, req);
-
-        return res;
+        return Collections.emptyList();
     }
 
     /**
@@ -382,9 +427,8 @@ public final class Session
         Queries list = (Queries)serializer.deserialize(req.getResponse(), Queries.class);
         if (list != null) {
             return list.getQueries();
-        } else {
-            return new ArrayList<Query>();
         }
+        return Collections.emptyList();
     }
 
     /**
@@ -399,9 +443,8 @@ public final class Session
         Queries list = (Queries)serializer.deserialize(req.getResponse(), Queries.class);
         if (list != null) {
             return list.getQueries();
-        } else {
-            return new ArrayList<Query>();
         }
+        return Collections.emptyList();
     }
 
     /**
@@ -426,29 +469,15 @@ public final class Session
      */
     public List<SentimentPhrase> getSentimentPhrases(String config_id)
     {
-        String method = "GET";
-        String url = generateRequestUrl("phrases");
-
-        AuthRequest req = AuthRequest.getInstance(url, method)
-                .key(key)
-                .secret(secret)
-                .config_id(config_id)
-                .appName(appName)
-                .apiVersion(apiVersion)
-                .useCompression(useCompression);
-
-        Integer status = req.doRequest();
+        AuthRequest req = makeAuthRequest("phrases", "GET", config_id);
+        Integer status = doRequest(req);
         SentimentPhrases list = (SentimentPhrases)serializer.deserialize(req.getResponse(), SentimentPhrases.class);
 
-        List<SentimentPhrase> res = new ArrayList<SentimentPhrase>();
         if (list != null) {
-            res = list.getSentimentPhrases();
+            return list.getSentimentPhrases();
         }
 
-        handleRequest(method, req.getRequestUrl(), null);
-        handleResponse(status, req);
-
-        return res;
+        return Collections.emptyList();
     }
 
     /**
@@ -463,9 +492,8 @@ public final class Session
         SentimentPhrases list = (SentimentPhrases)serializer.deserialize(req.getResponse(), SentimentPhrases.class);
         if (list != null) {
             return list.getSentimentPhrases();
-        } else {
-            return new ArrayList<SentimentPhrase>();
         }
+        return Collections.emptyList();
     }
 
     /**
@@ -480,9 +508,8 @@ public final class Session
         SentimentPhrases list = (SentimentPhrases)serializer.deserialize(req.getResponse(), SentimentPhrases.class);
         if (list != null) {
             return list.getSentimentPhrases();
-        } else {
-            return new ArrayList<SentimentPhrase>();
         }
+        return Collections.emptyList();
     }
 
     /**
@@ -507,29 +534,14 @@ public final class Session
      */
     public List<BlacklistItem> getBlacklist(String config_id)
     {
-        String method = "GET";
-        String url = generateRequestUrl("blacklist");
-
-        AuthRequest req = AuthRequest.getInstance(url, method)
-                .key(key)
-                .secret(secret)
-                .config_id(config_id)
-                .appName(appName)
-                .apiVersion(apiVersion)
-                .useCompression(useCompression);
-
-        Integer status = req.doRequest();
+        AuthRequest req = makeAuthRequest("blacklist", "GET", config_id);
+        Integer status = doRequest(req);
         Blacklists list = (Blacklists)serializer.deserialize(req.getResponse(), Blacklists.class);
 
-        List<BlacklistItem> res = new ArrayList<BlacklistItem>();
         if (list != null) {
-            res = list.getBlacklist();
+            return list.getBlacklist();
         }
-
-        handleRequest(method, req.getRequestUrl(), null);
-        handleResponse(status, req);
-
-        return res;
+        return Collections.emptyList();
     }
 
     /**
@@ -544,9 +556,8 @@ public final class Session
         Blacklists list = (Blacklists)serializer.deserialize(req.getResponse(), Blacklists.class);
         if (list != null) {
             return list.getBlacklist();
-        } else {
-            return new ArrayList<BlacklistItem>();
         }
+        return Collections.emptyList();
     }
 
     /**
@@ -561,9 +572,8 @@ public final class Session
         Blacklists list = (Blacklists)serializer.deserialize(req.getResponse(), Blacklists.class);
         if (list != null) {
             return list.getBlacklist();
-        } else {
-            return new ArrayList<BlacklistItem>();
         }
+        return Collections.emptyList();
     }
 
     /**
@@ -588,29 +598,14 @@ public final class Session
      */
     public List<UserEntity> getEntities(String config_id)
     {
-        String method = "GET";
-        String url = generateRequestUrl("entities");
-
-        AuthRequest req = AuthRequest.getInstance(url, method)
-                .key(key)
-                .secret(secret)
-                .config_id(config_id)
-                .appName(appName)
-                .apiVersion(apiVersion)
-                .useCompression(useCompression);
-
-        Integer status = req.doRequest();
+        AuthRequest req = makeAuthRequest("entities", "GET", config_id);
+        Integer status = doRequest(req);
         UserEntities list = (UserEntities)serializer.deserialize(req.getResponse(), UserEntities.class);
 
-        List<UserEntity> res = new ArrayList<UserEntity>();
         if (list != null) {
-            res = list.getEntities();
+            return list.getEntities();
         }
-
-        handleRequest(method, req.getRequestUrl(), null);
-        handleResponse(status, req);
-
-        return res;
+        return Collections.emptyList();
     }
 
     /**
@@ -625,9 +620,8 @@ public final class Session
         UserEntities list = (UserEntities)serializer.deserialize(req.getResponse(), UserEntities.class);
         if (list != null) {
             return list.getEntities();
-        } else {
-            return new ArrayList<UserEntity>();
         }
+        return Collections.emptyList();
     }
 
     /**
@@ -642,9 +636,8 @@ public final class Session
         UserEntities list = (UserEntities)serializer.deserialize(req.getResponse(), UserEntities.class);
         if (list != null) {
             return list.getEntities();
-        } else {
-            return new ArrayList<UserEntity>();
         }
+        return Collections.emptyList();
     }
 
     /**
@@ -669,29 +662,14 @@ public final class Session
      */
     public List<TaxonomyNode> getTaxonomy(String config_id)
     {
-        String method = "GET";
-        String url = generateRequestUrl("taxonomy");
-
-        AuthRequest req = AuthRequest.getInstance(url, method)
-                .key(key)
-                .secret(secret)
-                .config_id(config_id)
-                .appName(appName)
-                .apiVersion(apiVersion)
-                .useCompression(useCompression);
-
-        Integer status = req.doRequest();
+        AuthRequest req = makeAuthRequest("taxonomy", "GET", config_id);
+        Integer status = doRequest(req);
         Taxonomies list = (Taxonomies)serializer.deserialize(req.getResponse(), Taxonomies.class);
 
-        List<TaxonomyNode> res = new ArrayList<TaxonomyNode>();
         if (list != null) {
-            res = list.getTaxonomies();
+            return list.getTaxonomies();
         }
-
-        handleRequest(method, req.getRequestUrl(), null);
-        handleResponse(status, req);
-
-        return res;
+        return Collections.emptyList();
     }
 
     /**
@@ -706,9 +684,8 @@ public final class Session
         Taxonomies list = (Taxonomies)serializer.deserialize(req.getResponse(), Taxonomies.class);
         if (list != null) {
             return list.getTaxonomies();
-        } else {
-            return new ArrayList<TaxonomyNode>();
         }
+        return Collections.emptyList();
     }
 
     /**
@@ -723,9 +700,8 @@ public final class Session
         Taxonomies list = (Taxonomies)serializer.deserialize(req.getResponse(), Taxonomies.class);
         if (list != null) {
             return list.getTaxonomies();
-        } else {
-            return new ArrayList<TaxonomyNode>();
         }
+        return Collections.emptyList();
     }
 
     /**
@@ -749,28 +725,14 @@ public final class Session
      */
     public List<Configuration> getConfigurations()
     {
-        String method = "GET";
-        String url = generateRequestUrl("configurations");
-
-        AuthRequest req = AuthRequest.getInstance(url, method)
-                .key(key)
-                .secret(secret)
-                .appName(appName)
-                .apiVersion(apiVersion)
-                .useCompression(useCompression);
-
-        Integer status = req.doRequest();
+        AuthRequest req = makeAuthRequest("configurations", "GET");
+        Integer status = doRequest(req);
         Configurations list = (Configurations)serializer.deserialize(req.getResponse(), Configurations.class);
 
-        List<Configuration> res = new ArrayList<Configuration>();
         if (list != null) {
-            res = list.getConfigurations();
+            return list.getConfigurations();
         }
-
-        handleRequest(method, req.getRequestUrl(), null);
-        handleResponse(status, req);
-
-        return res;
+        return Collections.emptyList();
     }
 
     /**
@@ -780,24 +742,20 @@ public final class Session
      */
     public List<Configuration> addConfigurations(List<Configuration> configurations)
     {
-        if( configurations != null && !configurations.isEmpty() )
-        {
-            for (Configuration configuration : configurations)
-            {
-                if( configuration.getTemplate() != null )
-                {
-                configuration.setId( null );
+        if( configurations != null && !configurations.isEmpty() ) {
+            for (Configuration configuration : configurations) {
+                if( configuration.getTemplate() != null ) {
+					configuration.setId( null );
+				}
             }
-            }
-        };
+        }
 
         AuthRequest req = add(configurations, "configurations", null, Configurations.class);
         Configurations list = (Configurations)serializer.deserialize(req.getResponse(), Configurations.class);
         if (list != null) {
             return list.getConfigurations();
-        } else {
-            return new ArrayList<Configuration>();
         }
+        return Collections.emptyList();
     }
 
     /**
@@ -835,9 +793,8 @@ public final class Session
         Configurations list = (Configurations)serializer.deserialize(req.getResponse(), Configurations.class);
         if (list != null) {
             return list.getConfigurations();
-        } else {
-            return new ArrayList<Configuration>();
         }
+        return Collections.emptyList();
     }
 
     /**
@@ -862,24 +819,10 @@ public final class Session
      */
     public Integer queueDocument(Document task, String config_id)
     {
-        String method = "POST";
-        String url = generateRequestUrl("document");
         String body = serializer.serialize(task);
-
-        AuthRequest req = AuthRequest.getInstance(url, method)
-                .key(key)
-                .secret(secret)
-                .body(body)
-                .config_id(config_id)
-                .appName(appName)
-                .apiVersion(apiVersion)
-                .useCompression(useCompression);
-
-        Integer status = req.doRequest();
-        onAutoResponse(status, req.getResponse(), false);
-
-        handleRequest(method, req.getRequestUrl(), body);
-
+        AuthRequest req = makeAuthRequest("document", "POST", config_id)
+                .body(body);
+        Integer status = doRequest(req, body, true, false);
         return status;
     }
 
@@ -889,26 +832,15 @@ public final class Session
      * @param config_id Optional configuration ID. If not provided, primary configuration will be used.
      * @return Docuemnt analysis results object with a bunch of result fields.
      */
-    public com.semantria.mapping.output.DocAnalyticData getDocument(String id, String config_id)
+    public DocAnalyticData getDocument(String id, String config_id)
     {
-        String method = "GET";
-        String url = generateRequestUrl("document/", id);
+        String path = generateRequestPathWithId("document", id);
+        AuthRequest req = makeAuthRequest(path, "GET", config_id);
+        Integer status = doRequest(req);
 
-        AuthRequest req = AuthRequest.getInstance(url, method)
-                .key(key)
-                .secret(secret)
-                .config_id(config_id)
-                .appName(appName)
-                .apiVersion(apiVersion)
-                .useCompression(useCompression);
-
-        Integer status = req.doRequest();
-        com.semantria.mapping.output.DocAnalyticData result = null;
+        DocAnalyticData result = null;
         if (200 == status) {
-            result = (com.semantria.mapping.output.DocAnalyticData)serializer.deserialize(req.getResponse(), com.semantria.mapping.output.DocAnalyticData.class);
-
-            handleRequest(method, req.getRequestUrl(), null);
-            handleResponse(status, req);
+            result = (DocAnalyticData)serializer.deserialize(req.getResponse(), DocAnalyticData.class);
         }
 
         return result;
@@ -922,21 +854,9 @@ public final class Session
      */
     public Integer cancelDocument(String id, String config_id)
     {
-        String method = "DELETE";
-        String url = generateRequestUrl("document/", id);
-
-        AuthRequest req = AuthRequest.getInstance(url, method)
-                .key(key)
-                .secret(secret)
-                .config_id(config_id)
-                .appName(appName)
-                .apiVersion(apiVersion)
-                .useCompression(useCompression);
-
-        Integer status = req.doRequest();
-
-        handleRequest(method, req.getRequestUrl(), null);
-        handleResponse(status, req);
+        String path = generateRequestPathWithId("document", id);
+        AuthRequest req = makeAuthRequest(path, "DELETE", config_id);
+        Integer status = doRequest(req);
 
         return status;
     }
@@ -949,32 +869,16 @@ public final class Session
      */
     public Integer QueueBatchOfDocuments(List<Document> tasks, String config_id)
     {
-        String method = "POST";
-        String url = generateRequestUrl("document/batch");
         String body = null;
-        if (serializer instanceof JsonSerializer)
-        {
+        if (serializer instanceof JsonSerializer) {
             body = serializer.serialize(tasks);
-        }
-        else if (serializer instanceof XmlSerializer)
-        {
+        } else if (serializer instanceof XmlSerializer) {
             body = serializer.serialize(ObjProxy.wrap(tasks, Batch.class, "POST"));
         }
 
-        AuthRequest req = AuthRequest.getInstance(url, method)
-                .key(key)
-                .secret(secret)
-                .body(body)
-                .config_id(config_id)
-                .appName(appName)
-                .apiVersion(apiVersion)
-                .useCompression(useCompression);
-
-        Integer status = req.doRequest();
-        onAutoResponse(status, req.getResponse(), false);
-
-        handleRequest(method, req.getRequestUrl(), body);
-
+        AuthRequest req = makeAuthRequest("document/batch", "POST", config_id)
+                .body(body);
+        Integer status = doRequest(req, body, true, false);
         return status;
     }
 
@@ -983,34 +887,18 @@ public final class Session
      * @param config_id Optional configuration ID. If not provided, primary configuration will be used.
      * @return The list of document analysis results retrieved from the server for recently queued documents.
      */
-    public List<com.semantria.mapping.output.DocAnalyticData> getProcessedDocuments(String config_id)
+    public List<DocAnalyticData> getProcessedDocuments(String config_id)
     {
-        String method = "GET";
-        String url = generateRequestUrl("document/processed");
+        AuthRequest req = makeAuthRequest("document/processed", "GET", config_id);
+        Integer status = doRequest(req);
 
-        AuthRequest req = AuthRequest.getInstance(url, method)
-                .key(key)
-                .secret(secret)
-                .config_id(config_id)
-                .appName(appName)
-                .apiVersion(apiVersion)
-                .useCompression(useCompression);
-
-        DocsAnalyticData taskList = new DocsAnalyticData();
-        Integer status = req.doRequest();
         if (200 == status) {
-            taskList = (DocsAnalyticData)serializer.deserialize(req.getResponse(), DocsAnalyticData.class);
-        }
-
-        List<com.semantria.mapping.output.DocAnalyticData> result = new ArrayList<com.semantria.mapping.output.DocAnalyticData>();
-        if (taskList != null) {
-            result = taskList.getDocuments();
-        }
-
-        handleRequest(method, req.getRequestUrl(), null);
-        handleResponse(status, req);
-
-        return result;
+			DocsAnalyticData taskList = (DocsAnalyticData)serializer.deserialize(req.getResponse(), DocsAnalyticData.class);
+			if (taskList != null) {
+				return taskList.getDocuments();
+			}
+		}
+        return Collections.emptyList();
     }
 
     /**
@@ -1018,34 +906,19 @@ public final class Session
      * @param jobId Unique Job identifier used while documents queuing.
      * @return The list of document analysis results retrieved from the server for the given Job ID.
      */
-    public List<com.semantria.mapping.output.DocAnalyticData> getProcessedDocumentsByJobId(final String jobId)
+    public List<DocAnalyticData> getProcessedDocumentsByJobId(final String jobId)
     {
-        String method = "GET";
-        String url = generateRequestUrl("document/processed");
+        AuthRequest req = makeAuthRequest("document/processed", "GET")
+                .job_id(jobId);
+        Integer status = doRequest(req);
 
-        AuthRequest req = AuthRequest.getInstance(url, method)
-                .key(key)
-                .secret(secret)
-                .job_id(jobId)
-                .appName(appName)
-                .apiVersion(apiVersion)
-                .useCompression(useCompression);
-
-        Integer status = req.doRequest();
-        DocsAnalyticData taskList = new DocsAnalyticData();
         if (200 == status) {
-            taskList = (DocsAnalyticData)serializer.deserialize(req.getResponse(), DocsAnalyticData.class);
-        }
-
-        List<com.semantria.mapping.output.DocAnalyticData> result = new ArrayList<com.semantria.mapping.output.DocAnalyticData>();
-        if (taskList != null) {
-            result = taskList.getDocuments();
-        }
-
-        handleRequest(method, req.getRequestUrl(), null);
-        handleResponse(status, req);
-
-        return result;
+			DocsAnalyticData taskList = (DocsAnalyticData)serializer.deserialize(req.getResponse(), DocsAnalyticData.class);
+			if (taskList != null) {
+				return taskList.getDocuments();
+			}
+		}
+        return Collections.emptyList();
     }
 
     //</editor-fold>
@@ -1059,24 +932,10 @@ public final class Session
      */
     public Integer queueCollection(Collection collection, String config_id)
     {
-        String method = "POST";
-        String url = generateRequestUrl("collection");
         String body = serializer.serialize(collection);
-
-        AuthRequest req = AuthRequest.getInstance(url, method)
-                .key(key)
-                .secret(secret)
-                .body(body)
-                .config_id(config_id)
-                .appName(appName)
-                .apiVersion(apiVersion)
-                .useCompression(useCompression);
-
-        Integer status = req.doRequest();
-        onAutoResponse(status, req.getResponse(), true);
-
-        handleRequest(method, req.getRequestUrl(), body);
-
+        AuthRequest req = makeAuthRequest("collection", "POST", config_id)
+                .body(body);
+        Integer status = doRequest(req, body, true, true);
         return status;
     }
 
@@ -1088,24 +947,14 @@ public final class Session
      */
     public CollAnalyticData getCollection(String id, String config_id)
     {
-        String method = "GET";
-        String url = generateRequestUrl("collection/", id);
+        String path = generateRequestPathWithId("collection", id);
+        AuthRequest req = makeAuthRequest(path, "GET", config_id);
+		Integer status = doRequest(req);
 
-        AuthRequest req = AuthRequest.getInstance(url, method)
-                .key(key)
-                .secret(secret)
-                .config_id(config_id)
-                .appName(appName)
-                .apiVersion(apiVersion)
-                .useCompression(useCompression);
-
-        Integer status = req.doRequest();
-        com.semantria.mapping.output.CollAnalyticData result = null;
+        CollAnalyticData result = null;
         if (200 == status) {
-            result = (com.semantria.mapping.output.CollAnalyticData)serializer.deserialize(req.getResponse(), com.semantria.mapping.output.CollAnalyticData.class);
+            result = (CollAnalyticData)serializer.deserialize(req.getResponse(), CollAnalyticData.class);
 
-            handleRequest(method, req.getRequestUrl(), null);
-            handleResponse(status, req);
         }
 
         return result;
@@ -1119,21 +968,9 @@ public final class Session
      */
     public Integer cancelCollection(String id, String config_id)
     {
-        String method = "DELETE";
-        String url = generateRequestUrl("collection/", id);
-
-        AuthRequest req = AuthRequest.getInstance(url, method)
-                .key(key)
-                .secret(secret)
-                .config_id(config_id)
-                .appName(appName)
-                .apiVersion(apiVersion)
-                .useCompression(useCompression);
-
-        Integer status = req.doRequest();
-
-        handleRequest(method, req.getRequestUrl());
-        handleResponse(status, req);
+        String path = generateRequestPathWithId("collection", id);
+        AuthRequest req = makeAuthRequest(path, "DELETE", config_id);
+        Integer status = doRequest(req);
 
         return status;
     }
@@ -1143,34 +980,19 @@ public final class Session
      * @param config_id Optional configuration ID. If not provided, primary configuration will be used.
      * @return The list of collection analysis results retrieved from the server for recently queued collections.
      */
-    public List<com.semantria.mapping.output.CollAnalyticData> getProcessedCollections(String config_id)
+    public List<CollAnalyticData> getProcessedCollections(String config_id)
     {
-        String method = "GET";
-        String url = generateRequestUrl("collection/processed");
+        AuthRequest req = makeAuthRequest("collection/processed", "GET", config_id);
+        Integer status = doRequest(req);
 
-        AuthRequest req = AuthRequest.getInstance(url, method)
-                .key(key)
-                .secret(secret)
-                .config_id(config_id)
-                .appName(appName)
-                .apiVersion(apiVersion)
-                .useCompression(useCompression);
-
-        Integer status = req.doRequest();
-        CollsAnalyticData taskList = new CollsAnalyticData();
         if (200 == status) {
-            taskList = (CollsAnalyticData)serializer.deserialize(req.getResponse(), CollsAnalyticData.class);
+            CollsAnalyticData taskList = (CollsAnalyticData)serializer.deserialize(req.getResponse(), CollsAnalyticData.class);
+            if (taskList != null) {
+                return taskList.getDocuments();
+            }
         }
 
-        List<com.semantria.mapping.output.CollAnalyticData> result = new ArrayList<com.semantria.mapping.output.CollAnalyticData>();
-        if (taskList != null) {
-            result = taskList.getDocuments();
-        }
-
-        handleRequest(method, req.getRequestUrl(), null);
-        handleResponse(status, req);
-
-        return result;
+        return Collections.emptyList();
     }
 
     /**
@@ -1178,147 +1000,156 @@ public final class Session
      * @param jobId Unique Job identifier used while collections queuing.
      * @return The list of collection analysis results retrieved from the server for the given Job ID.
      */
-    public List<com.semantria.mapping.output.CollAnalyticData> getProcessedCollectionsByJobId(final String jobId)
+    public List<CollAnalyticData> getProcessedCollectionsByJobId(final String jobId)
     {
-        String method = "GET";
-        String url = generateRequestUrl("collection/processed");
+        AuthRequest req = makeAuthRequest("collection/processed", "GET")
+                .job_id(jobId);
+        Integer status = doRequest(req);
 
-        AuthRequest req = AuthRequest.getInstance(url, method)
-                .key(key)
-                .secret(secret)
-                .job_id(jobId)
-                .appName(appName)
-                .apiVersion(apiVersion)
-                .useCompression(useCompression);
-
-        Integer status = req.doRequest();
-        CollsAnalyticData taskList = new CollsAnalyticData();
         if (200 == status) {
-            taskList = (CollsAnalyticData)serializer.deserialize(req.getResponse(), CollsAnalyticData.class);
-        }
+			CollsAnalyticData taskList = (CollsAnalyticData)serializer.deserialize(req.getResponse(), CollsAnalyticData.class);
+			if (taskList != null) {
+				return taskList.getDocuments();
+			}
+		}
 
-        List<com.semantria.mapping.output.CollAnalyticData> adata = new ArrayList<com.semantria.mapping.output.CollAnalyticData>();
-        if (taskList != null) {
-            adata = taskList.getDocuments();
-        }
-
-        handleRequest(method, req.getRequestUrl(), null);
-        handleResponse(status, req);
-
-        return adata;
+        return Collections.emptyList();
     }
 
     //</editor-fold>
 
     //<editor-fold desc="Private methods">
 
-    private <T> AuthRequest update(List<?> items, String action, String config_id, Class<?> type)
-    {
+	private Integer doRequest(AuthRequest req) {
+		return doRequest(req, null);
+	}
+
+	private Integer doRequest(AuthRequest req, String message) {
+        return doRequest(req, message, false, false);
+    }
+
+    private Integer doRequest(AuthRequest req, String message, boolean do_autoresponse, boolean is_collection) {
+        handleRequest(req, message);
+        Integer status = req.doRequest();
+        lastRequestStatus = status;
+        if (do_autoresponse) {
+            onAutoResponse(status, req, is_collection);
+        } else {
+            handleResponse(status, req);
+        }
+        lastRequestErrorMessage = (status < 300) ? null : req.getErrorMessage();
+		return status;
+	}
+
+
+	private AuthRequest makeAuthRequest(String path, String method) {
+        String url = generateRequestUrl(path);
+		return AuthRequest.getInstance(url, method)
+			.key(key)
+			.secret(secret)
+			.apiVersion(apiVersion)
+			.useCompression(useCompression);
+	}
+
+	private AuthRequest makeAuthRequest(String path, String method, String config_id) {
+		return makeAuthRequest(path, method)
+			.config_id(config_id);
+	}
+
+    private <T> AuthRequest update(List<?> items, String action, String config_id, Class<?> type) {
         return update(items, action, config_id, type, "POST");
     }
 
-    private <T> AuthRequest update(List<?> items, String action, String config_id, Class<?> type, String requestMethod)
-    {
+    private <T> AuthRequest update(List<?> items, String action, String config_id, Class<?> type, String requestMethod) {
         return update(requestMethod, items, action, config_id, type);
     }
 
-    private <T> AuthRequest add(List<?> items, String action, String config_id, Class<?> type)
-    {
+    private <T> AuthRequest add(List<?> items, String action, String config_id, Class<?> type) {
         return update("POST", items, action, config_id, type);
     }
 
-    private <T> Integer remove(List<?> items, String action, String config_id, Class<?> type)
-    {
+    private <T> Integer remove(List<?> items, String action, String config_id, Class<?> type) {
         AuthRequest req = update("DELETE", items, action, config_id, type);
         return req.getStatus();
     }
 
-    private <T> AuthRequest update(String method, List<?> items, String action, String config_id, Class<?> type)
-    {
-        String url = String.format("%s/%s.%s",  serviceUrl,  action, requestFormat);
+    private <T> AuthRequest update(String method, List<?> items, String action, String config_id, Class<?> type) {
         String body = null;
-
         if (serializer instanceof JsonSerializer) {
             body = serializer.serialize(ObjProxy.wrap(items, type, method, "Json"));
         } else {
             body = serializer.serialize(ObjProxy.wrap(items, type, method));
         }
 
-        AuthRequest req = AuthRequest.getInstance(url, method)
-                .key(key)
-                .secret(secret)
-                .body(body)
-                .config_id(config_id)
-                .appName(appName)
-                .apiVersion(apiVersion)
-                .useCompression(useCompression);
+        AuthRequest req = makeAuthRequest(action, method)
+			.body(body)
+			.config_id(config_id);
 
+        handleRequest(req, body);
         Integer status = req.doRequest();
-
-        handleRequest(method, req.getRequestUrl(), body);
         handleResponse(status, req);
 
-        return req  ;
+        return req;
     }
 
-    private void onAutoResponse(Integer status, String message, Boolean isCollection) {
-        if (callback != null) {
-            if (status <= 202) {
-                callback.onResponse(this, new ResponseArgs(status, message));
+    private void onAutoResponse(Integer status, AuthRequest req, Boolean isCollection) {
+        String message = req.getResponse();
+        if (callback == null) {
+            return;
+        }
+        if (status <= 202) {
+            callback.onResponse(this, new ResponseArgs(status, message));
+        } else {
+            String error_message = req.getErrorMessage();
+            if (StringUtils.isEmpty(error_message)) {
+                error_message = message;
             }
-            if (status > 202) {
-                callback.onError(this, new ResponseArgs(status, message));
-            }
-            if (!message.isEmpty() && status < 202) {
-                if (!isCollection) {
-                    DocsAnalyticData taskList = (DocsAnalyticData) serializer.deserialize(message, DocsAnalyticData.class);
-                    callback.onDocsAutoResponse(this, taskList.getDocuments());
-                } else {
-                    CollsAnalyticData taskList = (CollsAnalyticData) serializer.deserialize(message, CollsAnalyticData.class);
-                    callback.onCollsAutoResponse(this, taskList.getDocuments());
-                }
+            callback.onError(this, new ResponseArgs(status, error_message));
+        }
+        if (!message.isEmpty() && status < 202) {
+            if (isCollection) {
+                CollsAnalyticData taskList = (CollsAnalyticData) serializer.deserialize(message, CollsAnalyticData.class);
+                callback.onCollsAutoResponse(this, taskList.getDocuments());
+            } else {
+                DocsAnalyticData taskList = (DocsAnalyticData) serializer.deserialize(message, DocsAnalyticData.class);
+                callback.onDocsAutoResponse(this, taskList.getDocuments());
             }
         }
+
     }
 
     private String generateRequestUrl(String path) {
-        return serviceUrl + "/" + path + "." + requestFormat;
+        return serviceUrl + path + "." + requestFormat;
     }
 
-    private String generateRequestUrl(String path, String id) {
+    private String generateRequestPathWithId(String path, String id) {
         try {
-            id = URLEncoder.encode(id, "UTF-8");
-        } catch (Exception ex) {
-            System.err.println("generateRequestUrl exception: " + ex.getMessage());
+            return path + "/" + URLEncoder.encode(id, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            System.err.format("Error generating URL for %s: %s. Attempting to continue.", path, e.toString());
+            return path + "/" + id;
         }
-
-        return this.generateRequestUrl(path + id);
     }
 
-    private void handleResponse(Integer status, AuthRequest ar)
-    {
-        if (callback != null)
-        {
-            if (status <= 202)
-            {
-                callback.onResponse(this, new ResponseArgs(status, ar.getResponse()));
+    private void handleResponse(Integer status, AuthRequest req) {
+        if (callback != null) {
+            if (status <= 202) {
+                callback.onResponse(this, new ResponseArgs(status, req.getResponse()));
             }
-            if (status > 202)
-            {
-                callback.onError(this, new ResponseArgs(status, ar.getErrorMessage()));
+            if (status > 202) {
+                callback.onError(this, new ResponseArgs(status, req.getErrorMessage()));
             }
         }
     }
 
-    private void handleRequest(String method, String url) {
-        handleRequest(method, url, null);
+    private void handleRequest(AuthRequest req) {
+        handleRequest(req, null);
     }
 
-    private void handleRequest(String method, String url, String message)
-    {
-        if (callback != null)
-        {
-            callback.onRequest(this, new RequestArgs(method, url, message));
+    private void handleRequest(AuthRequest req, String message) {
+        if (callback != null) {
+            callback.onRequest(this, new RequestArgs(
+				 req.getMethod(), req.getRequestUrl(), message));
         }
     }
 

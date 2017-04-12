@@ -10,17 +10,17 @@ import java.util.List;
 @XmlRootElement(name="documents")
 public final class DocsAnalyticData
 {
-	private List<DocAnalyticData> docAnalyics = new ArrayList<DocAnalyticData>();
+	private List<DocAnalyticData> docAnalytics = new ArrayList<DocAnalyticData>();
 
 	public DocsAnalyticData() {}
 
-	public DocsAnalyticData(List<DocAnalyticData> docAnalyics)
+	public DocsAnalyticData(List<DocAnalyticData> docAnalytics)
 	{
-		this.docAnalyics = docAnalyics;
+		this.docAnalytics = docAnalytics;
 	}
 
 	@XmlElement(name="document")
-	public List<DocAnalyticData> getDocuments() { return docAnalyics; }
+	public List<DocAnalyticData> getDocuments() { return docAnalytics; }
 	
-	public void setDocuments(List<DocAnalyticData> docAnalyics) { this.docAnalyics = docAnalyics; }
+	public void setDocuments(List<DocAnalyticData> value) { this.docAnalytics = value; }
 }

@@ -1,6 +1,9 @@
 
 package com.semantria.mapping.output;
 
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -12,6 +15,8 @@ public final class DocAnalyticData
 	private String id = null;
 	private TaskStatus status = null;
 	private String config_id = null;
+	private String tag = null;
+	private JsonElement metadata = null;
     private String job_id = null;
     private DocModelSentiment model_sentiment = null;
 	private List<DocIntention> intentions = null;
@@ -29,7 +34,6 @@ public final class DocAnalyticData
 	private String source_text = null;
 	private String sentiment_polarity = null;
 	private List<Opinion> opinions = null;
-    private String tag = null;
     private List<DocCategory> auto_categories = null;
 
 	public DocAnalyticData() { };
@@ -38,6 +42,10 @@ public final class DocAnalyticData
 	public String getId() { return id; }
 	@XmlElement(name="config_id")
 	public String getConfigId() { return config_id; }
+	@XmlElement(name = "tag")
+	public String getTag() { return tag; }
+	// No XmlElement -- metadata is json only
+	public JsonElement getMetadata() { return metadata; }
     @XmlElement(name="job_id")
     public String getJobId() { return job_id; }
 	@XmlElement
@@ -83,14 +91,24 @@ public final class DocAnalyticData
 	@XmlElementWrapper(name = "opinions")
 	@XmlElement(name = "opinion")
 	public List<Opinion> getOpinions() { return opinions; }
-    @XmlElement(name = "tag")
-    public String getTag() { return tag; }
     @XmlElementWrapper(name = "auto_categories")
     @XmlElement(name = "category")
     public List<DocCategory> getAutoCategories() { return auto_categories; }
 
 	public void setId(String id) { this.id = id; }
 	public void setConfigId(String configId) { this.config_id = configId; }
+	public void setTag(String tag) { this.tag = tag; }
+
+	public void setMetadata(JsonElement value) {
+		metadata = value;
+	}
+	public void setMetadata(String value) {
+		GsonBuilder builder = new GsonBuilder();
+		metadata = builder.create().fromJson(value, JsonElement.class);
+		System.out.println(metadata.toString());
+	}
+
+
     public void setJobId(String jobId) { this.config_id = jobId; }
 	public void setStatus(TaskStatus status) { this.status = status; }
     public void setModelSentiment(DocModelSentiment model_sentiment) { this.model_sentiment = model_sentiment; }
@@ -109,7 +127,6 @@ public final class DocAnalyticData
 	public void setSourceText(String source_text) { this.source_text = source_text; }
 	public void setSentimentPolarity(String sentiment_polarity) { this.sentiment_polarity = sentiment_polarity; }
 	public void setOpinions(List<Opinion> opinions) { this.opinions = opinions; }
-    public void setTag(String tag) { this.tag = tag; }
     public void setAutoCategories(List<DocCategory> auto_categories) { this.auto_categories = auto_categories; }
 }
 

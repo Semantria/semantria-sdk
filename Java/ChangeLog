@@ -1,22 +1,38 @@
 CHANGELOG
 
+4.2.97 - Refactored examples.
+
+4.2.96 - Added sentiment phrases to DocTopic.
+
+4.2.95 - Better error handling for username/password authentication.
+
+4.2.94 - Added metadata field to Document and DocAnalyticData.
+	- Metadata is a JSON object that is passed in with the document and simply returned with the analytic result. It is represented as JsonElement, which allows any JSON at all.
+	- Changed artifact id to conform to typical naming conventions.
+
+4.2.93 - Updated SDK with the new statistics API.
+	- The new version exposes 4 methods for statistics retrieval instead of only one as it was in the past.
+	- There are methods to get statistics by either predefined time intervals or specific intrvals using from and to arguments.
+	- Statistics can be grouped in a variety of ways (e.g., by config, language, etc.).
+	- Comments for all new methods with some usage samples are available.
+
 4.2.92 - Added API 4.2 support.
 	- Reworked /features end-point, renamed a bunch of fields to make them consistent with Lexalytics Salience core output.
 	- Reworked /subscription end-point, renamed a bunch of fields to make them consistent with Lexalytics Salience core output.
-	- Reworked /configurations end-point. 
-		* Numeric limits replaced with Boolean switchers.
-		* Removed unnecessary limits, e.g. now we have common Mentions switcher that controls mentions availability for all output types.
+	- Reworked /configurations end-point.
+		* Numeric limits replaced with Boolean switches.
+		* Removed unnecessary limits, e.g. now we have common Mentions switch that controls mentions availability for all output types.
 	- Added "length" and "offset" fields for sentiment-bearing phrases output.
 
 4.1.91 - Added mentions and topics fields to DocTopic object.
 	- Topics represent the list of subtopics associated with the current topic (missed somehow).
-	- Mentions is a new feature. Mentions contains exact places in the text where the certain query hits.
+	- Mentions is a new feature. Mentions contains exact places in the text where the query hit.
 
 4.1.90 - Added is_intensified and intensifying_phrase fields support to DocPhrase object.
 
 4.1.89 - Added two JobID related fields to Subscription object, to Billing settings section. There are:
-	- PermittedJobIds - represents the number of JobIds allowed for the certain subscription. 
-	- AllocatedJobIds - represents the number of already allocated JobIds by the certain customer.
+	- PermittedJobIds - represents the number of JobIds allowed for the subscription.
+	- AllocatedJobIds - represents the number of already allocated JobIds.
 
 4.1.88 - Fixed bug with “modified” field in configuration object. The SDK didn’t serialize it properly.
 
@@ -30,7 +46,7 @@ CHANGELOG
 	  PUT method uses for update operation, DELETE method for records removal.
 	  All analysis adjustment methods now returns just added records with server-driven IDs.
 	- Added timestamp of the latest update to configuration object, config_id field of configuration renamed to id.
-	- Introduced new /taxonomy end-point that keeps taxonomy associated with the certain configuration.
+	- Introduced new /taxonomy end-point that keeps taxonomy associated with the configuration.
 	  Taxonomy holds hierarchical organization of nodes and topics associated with them.
 	  It allows ordering different types of categorization output into hierarchically organized structure.
 		> Added addTaxonomy(), updateTaxonomy() and removeTaxonomy() methods.
@@ -50,16 +66,16 @@ CHANGELOG
 3.8.81 - Added API 3.8 features support
 	- Added Normalized and Stemmed forms (fields) to the Theme object.
 	- Enhanced Subscription object with the new limits introduced by API 3.8.
-		* Data calls limit / interval / balance represent limit for data API calls the user can send to the API in certain interval. 
-		* Polling calls limit / interval / balance represent limit for polling API calls the user can make to get analysis results from API. 
-		* Settings calls limit / interval / balance represent limit for settings API calls the user can make to adjust analysis results. 
+		* Data calls limit / interval / balance represent limit for data API calls that the user can send to the API in a given interval.
+		* Polling calls limit / interval / balance represent limit for polling API calls the user can make to get analysis results from API.
+		* Settings calls limit / interval / balance represent limit for settings API calls the user can make to adjust analysis results.
 	- Enhanced Statistics object with the new fields which reflect Settings and Polling calls statistics.
 	- Added new GetSupportedFeatures method that returns supported features from new API end-point.
 	- Reworked test application for Detailed analysis mode. Application tracks document IDs to get data for sent documents.
 	- Added new Entities threshold option to configuration that control entities reporting threshold.
 	- Added User Entities feature support on SDK level.
 		* new User entities limit and User mentions limit in Configuration (collection mode).
-		* new User entities marker in Subscription object that represents whether feature enabled for certain subscription.
+		* new User entities marker in Subscription object that represents whether a feature is enabled for a subscription.
 
 3.7.79 - Added "categories_threshold" option to Configuration object. New option defines minimum strength score for user categories to be reported.
 

@@ -6,9 +6,9 @@ import com.semantria.interfaces.ISerializer;
 import com.semantria.mapping.configuration.*;
 import com.semantria.mapping.configuration.stub.*;
 import com.semantria.mapping.output.*;
-import com.semantria.mapping.output.stub.CollsAnalyticData;
-import com.semantria.mapping.output.stub.DocsAnalyticData;
-import com.semantria.mapping.output.stub.FeaturesList;
+import com.semantria.mapping.output.statistics.StatisticsGrouped;
+import com.semantria.mapping.output.statistics.StatisticsOverall;
+import com.semantria.mapping.output.stub.*;
 
 import java.lang.reflect.Type;
 import java.util.Date;
@@ -87,7 +87,7 @@ public final class JsonSerializer implements ISerializer
 				Type listType = new TypeToken<List<CollAnalyticData>>() {}.getType();
 				object = new CollsAnalyticData( (List<CollAnalyticData>)gson.fromJson(string, listType));
 			}
-			else if(type.equals(com.semantria.mapping.output.DocAnalyticData.class))
+			else if(type.equals(DocAnalyticData.class))
 			{
 				object = gson.fromJson(string, DocAnalyticData.class);
 			}
@@ -108,10 +108,16 @@ public final class JsonSerializer implements ISerializer
 			{
 				object = gson.fromJson(string, CollAnalyticData.class);
 			}
-			else if(type.equals(Statistics.class))
-			{
-				object = gson.fromJson(string, Statistics.class);
-			}
+            else if(type.equals(StatisticsOverallList.class))
+            {
+                Type listType = new TypeToken< List<StatisticsOverall>>() {}.getType();
+                object = new StatisticsOverallList( (List<StatisticsOverall>)gson.fromJson(string, listType));
+            }
+            else if(type.equals(StatisticsGroupedList.class))
+            {
+                Type listType = new TypeToken< List<StatisticsGrouped>>() {}.getType();
+                object = new StatisticsGroupedList( (List<StatisticsGrouped>)gson.fromJson(string, listType));
+            }
             else if(type.equals(FeaturesList.class))
             {
                 Type listType = new TypeToken< List<FeaturesSet>>() {}.getType();

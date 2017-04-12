@@ -1,5 +1,7 @@
 package com.semantria.mapping.output;
 
+import com.semantria.mapping.configuration.SentimentPhrase;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import java.util.List;
@@ -12,6 +14,7 @@ public final class DocTopic
 	private Float sentiment_score = null;
 	private Float strength_score = null;
 	private String sentiment_polarity = null;
+	private List<SentimentMentionPhrase> sentiment_phrases = null;
 
 	private List<DocTopic> topics = null;
 	private List<Mention> mentions = null;
@@ -29,6 +32,8 @@ public final class DocTopic
 	public Float getStrengthScore() { return strength_score; }
 	@XmlElement(name = "sentiment_polarity")
 	public String getSentimentPolarity() { return sentiment_polarity; }
+	@XmlElement(name = "sentiment_phrases")
+	public List<SentimentMentionPhrase> getSentimentPhrases() { return sentiment_phrases; }
 
 	@XmlElementWrapper(name = "topics")
 	@XmlElement(name = "topic")
@@ -38,12 +43,13 @@ public final class DocTopic
 	public List<Mention> getMentions() { return mentions; }
 
 
-	public void setTitle(String ttitle) { title = ttitle; }
-	public void setType(String ttype) { type = ttype; }
-	public void setHitCount(Integer thitCount) { hitcount = thitCount; }
-	public void setSentimentScore(Float tscore) { sentiment_score = tscore; }
-	public void setStrengthScore(Float tscore) { strength_score = tscore; }
-	public void setSentimentPolarity(String sentiment_polarity) { this.sentiment_polarity = sentiment_polarity; }
-	public void setTopics(List<DocTopic> topics) { this.topics = topics; }
-	public void setMentions(List<Mention> mentions) { this.mentions = mentions; }
+	public void setTitle(String value) { title = value; }
+	public void setType(String value) { type = value; }
+	public void setHitCount(Integer value) { hitcount = value; }
+	public void setSentimentScore(Float value) { sentiment_score = value; }
+	public void setStrengthScore(Float value) { strength_score = value; }
+	public void setSentimentPolarity(String value) { sentiment_polarity = value; }
+	public void setSentimentPhrases(List<SentimentMentionPhrase> value) { sentiment_phrases = value; }
+	public void setTopics(List<DocTopic> value) { topics = value; }
+	public void setMentions(List<Mention> value) { mentions = value; }
 }

@@ -6,9 +6,7 @@ import com.semantria.mapping.Collection;
 import com.semantria.mapping.Document;
 import com.semantria.mapping.configuration.stub.*;
 import com.semantria.mapping.output.*;
-import com.semantria.mapping.output.stub.CollsAnalyticData;
-import com.semantria.mapping.output.stub.DocsAnalyticData;
-import com.semantria.mapping.output.stub.FeaturesList;
+import com.semantria.mapping.output.stub.*;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
@@ -40,7 +38,8 @@ public final class XmlSerializer implements ISerializer
 						ServiceStatus.class,
 						Subscription.class,
                         FeaturesList.class,
-						Statistics.class,
+                        StatisticsOverallList.class,
+                        StatisticsGroupedList.class,
                         Taxonomies.class
 				);
 				Unmarshaller unmarshaller = jc.createUnmarshaller();
