@@ -45,5 +45,24 @@ namespace Semantria.Com.Mapping.Output
         [XmlArrayAttribute("mentions")]
         [XmlArrayItemAttribute("mention", typeof(DocMention))]
         public List<DocMention> Mentions { get; set; }
+
+        [DataMember(Name = "sentiment_phrases")]
+        [XmlArrayAttribute("sentiment_phrases")]
+        [XmlArrayItemAttribute("sentiment_phrase", typeof(SentimentMentionPhrase))]
+        public List<SentimentMentionPhrase> SentimentPhrases
+        {
+           get
+            {
+                if (sentiment_phrases == null) {
+                    sentiment_phrases = new List<SentimentMentionPhrase>();
+                }
+                return sentiment_phrases;
+            }
+            set
+            {
+                sentiment_phrases = (value != null) ? value : new List<SentimentMentionPhrase>();
+            }
+        }
+        private List<SentimentMentionPhrase> sentiment_phrases = new List<SentimentMentionPhrase>();
     }
 }

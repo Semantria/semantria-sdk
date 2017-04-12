@@ -16,8 +16,8 @@ namespace FacetsTest
     {
         static void Main(string[] args)
         {
-            const string consumerKey = "";
-            const string consumerSecret = "";
+            string consumerKey = System.Environment.GetEnvironmentVariable("SEMANTRIA_KEY");
+            string consumerSecret = System.Environment.GetEnvironmentVariable("SEMANTRIA_SECRET");
 
             bool errorFlag = false;
 
@@ -94,7 +94,7 @@ namespace FacetsTest
                         break;
 
                     session.QueueDocument(docsList[i]);
-                    Thread.Sleep(100);
+                    Thread.Sleep(200);
 
                     Console.WriteLine("Documents queued/received rate: {0}/{1}", i + 1, resList.Count);
                 }

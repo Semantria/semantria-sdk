@@ -23,8 +23,8 @@ namespace Semantria.Com.TestUnitApi
             //
         }
 
-        private string _consumerKey = "";
-        private string _consumerSecret = "";
+        private string _consumerKey = "devkey";
+        private string _consumerSecret = "devsecret";
 
         private static string _configId = null;
         private string _docId = "3E08B37B-0D74-4BF0-9380-E4D7E8C0279E"; 
@@ -67,7 +67,7 @@ namespace Semantria.Com.TestUnitApi
         public void MyTestInitialize() 
         {
             _session = Session.CreateSession(_consumerKey, _consumerSecret);
-            _session.Host = "https://api.semantria.com";
+            _session.Host = "https://dev2.semantria.com";
 
             _session.Request += new Session.RequestHandler(session_Request);
             _session.Response += new Session.ResponseHandler(session_Response);
@@ -108,8 +108,22 @@ namespace Semantria.Com.TestUnitApi
         [TestMethod]
         public void GetStatistics()
         {
-            Statistics stat = _session.GetStatistics();
-            Assert.IsNotNull(stat);
+            StatisticsOverall stats = _session.GetStatistics(StatsInterval.day);
+            Assert.IsNotNull(stats);
+        }
+
+        [TestMethod]
+        public void GetStatisticsFromTo()
+        {
+            StatisticsOverall stats = _session.GetStatistics(DateTime.Now.AddDays(-2), DateTime.Now);
+            Assert.IsNotNull(stats);
+        }
+
+        [TestMethod]
+        public void GetStatisticsGroupBy()
+        {
+            List<StatisticsGrouped> stats = _session.GetStatistics(StatsInterval.day, "app");
+            Assert.IsNotNull(stats);
         }
 
         [TestMethod]

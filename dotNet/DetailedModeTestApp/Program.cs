@@ -16,8 +16,8 @@ namespace DetailedModeTestApp
         static void Main(string[] args)
         {
             // Use correct Semantria API credentias here
-            string consumerKey = "";
-            string consumerSecret = "";
+            string consumerKey = System.Environment.GetEnvironmentVariable("SEMANTRIA_KEY");
+            string consumerSecret = System.Environment.GetEnvironmentVariable("SEMANTRIA_SECRET");
 
             // A dictionary that keeps IDs of sent documents and their statuses. It's required to make sure that we get correct documents from the API.
             Dictionary<string, TaskStatus> docsTracker = new Dictionary<string, TaskStatus>(4);
@@ -46,11 +46,8 @@ namespace DetailedModeTestApp
                 }
             }
 
-            // Creates JSON serializer instance
-			ISerializer serializer = new JsonSerializer();
-
             // Initializes new session with the serializer object and the keys.
-            using (Session session = Session.CreateSession(consumerKey, consumerSecret, serializer))
+            using (Session session = Session.CreateSession(consumerKey, consumerSecret))
             {
                 // Error callback handler. This event will occur in case of server-side error
                 session.Error += new Session.ErrorHandler(delegate(object sender, ResponseErrorEventArgs ea)
@@ -103,7 +100,7 @@ namespace DetailedModeTestApp
                 List<DocAnalyticData> results = new List<DocAnalyticData>();
                 while (docsTracker.Any(item => item.Value == TaskStatus.QUEUED))
                 {
-                    System.Threading.Thread.Sleep(500);
+                    System.Threading.Thread.Sleep(1000);
 
                     // Requests processed results from Semantria service
                     Console.WriteLine("Retrieving your processed results...");
@@ -129,8 +126,18 @@ namespace DetailedModeTestApp
                     if (data.Topics != null && data.Topics.Count > 0)
                     {
                         Console.WriteLine("Document topics:");
-                        foreach (Topic topic in data.Topics)
-                            Console.WriteLine(string.Format("\t{0} (type: {1}) (strength: {2})", topic.Title, topic.Type, topic.SentimentScore));
+                        foreach (Topic topic in data.Topics) {
+                            Console.WriteLine(string.Format("  {0} (type: {1}) (strength: {2})", topic.Title, topic.Type, topic.SentimentScore));
+                            foreach (SentimentMentionPhrase sentiment_phrase in topic.SentimentPhrases) {
+                                Console.WriteLine(string.Format("    sentiment phrase: {0} (type: {1}) (score: {2}) (negated: {3}) (negator: {4})",
+                                    sentiment_phrase.Phrase.Title, sentiment_phrase.Type, sentiment_phrase.SentimentScore,
+                                    sentiment_phrase.Phrase.IsNegated, sentiment_phrase.Phrase.Negator));
+                                foreach (MentionPhrase supporting_phrase in sentiment_phrase.SupportingPhrases) {
+                                    Console.WriteLine(string.Format("      supporting phrase: {0} (type: {1}) (word: {2}) (length: {3})",
+                                        supporting_phrase.Title, supporting_phrase.Type, supporting_phrase.Word, supporting_phrase.Length));
+                                }
+                            }
+                        }
                     }
 
                     // Printing of intentions
@@ -138,7 +145,7 @@ namespace DetailedModeTestApp
                     {
                         Console.WriteLine("Document categories:");
                         foreach (Topic category in data.AutoCategories)
-                            Console.WriteLine(string.Format("\t{0} (strength: {1})", category.Title, category.StrengthScore));
+                            Console.WriteLine(string.Format("  {0} (strength: {1})", category.Title, category.StrengthScore));
                     }
 
                     // Printing of document themes
@@ -146,7 +153,7 @@ namespace DetailedModeTestApp
                     {
                         Console.WriteLine("Document themes:");
                         foreach (DocTheme theme in data.Themes)
-                            Console.WriteLine(string.Format("\t{0} (sentiment: {1})", theme.Title, theme.SentimentScore));
+                            Console.WriteLine(string.Format("  {0} (sentiment: {1})", theme.Title, theme.SentimentScore));
                     }
 
                     // Printing of document entities
@@ -154,7 +161,7 @@ namespace DetailedModeTestApp
                     {
                         Console.WriteLine("Entities:");
                         foreach (DocEntity entity in data.Entities)
-                            Console.WriteLine(string.Format("\t{0} : {1} (sentiment: {2})", entity.Title, entity.EntityType, entity.SentimentScore));
+                            Console.WriteLine(string.Format("  {0} : {1} (sentiment: {2})", entity.Title, entity.EntityType, entity.SentimentScore));
                     }
 
                     Console.WriteLine();

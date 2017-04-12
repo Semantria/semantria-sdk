@@ -73,6 +73,7 @@
     <Compile Include="Common\EventArgs.cs" />
     <Compile Include="Common\Interfaces.cs" />
     <Compile Include="Mapping\Output\AuthSession.cs" />
+    <Compile Include="Mapping\Output\SentimentMentionPhrase.cs" />
     <Compile Include="Mapping\Output\Template.cs" />
     <Compile Include="Mapping\Configuration\TaxonomyNode.cs" />
     <Compile Include="Mapping\Configuration\TaxonomyTopic.cs" />

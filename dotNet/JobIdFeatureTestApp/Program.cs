@@ -17,8 +17,8 @@ namespace JobIdFeatureTestApp
         static void Main(string[] args)
         {
             // Use correct Semantria API credentias here
-            string consumerKey = string.Empty;
-            string consumerSecret = string.Empty;
+            string consumerKey = System.Environment.GetEnvironmentVariable("SEMANTRIA_KEY");
+            string consumerSecret = System.Environment.GetEnvironmentVariable("SEMANTRIA_SECRET");
 
             // null - send every single document separately
             // false - send uniqueJobIdCount batches
@@ -140,7 +140,7 @@ namespace JobIdFeatureTestApp
                     while (jobIds[pair.Key] > 0)
                     {
                         // Waits half of second while Semantria process queued document
-                        System.Threading.Thread.Sleep(500);
+                        System.Threading.Thread.Sleep(1000);
 
                         // Requests processed results from Semantria service
                         List<DocAnalyticData> results = new List<DocAnalyticData>(pair.Value);                        

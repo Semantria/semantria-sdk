@@ -14,8 +14,8 @@ namespace DiscoveryModeTestApp
 	{
 		static void Main(string[] args)
 		{
-			const string consumerKey = "";
-			const string consumerSecret = "";
+            string consumerKey = System.Environment.GetEnvironmentVariable("SEMANTRIA_KEY");
+            string consumerSecret = System.Environment.GetEnvironmentVariable("SEMANTRIA_SECRET");
 
 			Collection collection = new Collection() { Id = Guid.NewGuid().ToString(), Documents = new List<string>() };
 

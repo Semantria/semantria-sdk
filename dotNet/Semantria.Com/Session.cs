@@ -294,7 +294,7 @@ namespace Semantria.Com
         /// <returns>An instance of Session object.</returns>
         public static Session CreateUserSession(string username, string password, ISerializer serializer, bool reUseSession = true)
         {
-            return new Session(username, password, new JsonSerializer(), null, false) { ReUseSession = reUseSession };
+            return new Session(username, password, serializer, null, false) { ReUseSession = reUseSession };
         }
 
         /// <summary>
@@ -355,31 +355,149 @@ namespace Semantria.Com
         }
 
         /// <summary>
-        /// Retrieves usage statistics for the current subscription.
+        /// Retrieves usage statistics for the given interval.
         /// </summary>
-        /// <param name="configId">Configuration ID to get usage statistics for.</param>
-        /// <param name="interval">Time interval to filter usage statistics.</param>
-        /// <returns>Statistics object with a bunch of fields related to the API usage.</returns>
-        public Statistics GetStatistics(string configId = null, string interval = null)
+        /// <param name="interval">Time interval.</param>
+        /// <returns>Statistics object with a bunch of fields.</returns>
+        public StatisticsOverall GetStatistics(StatsInterval interval)
         {
             //GET https://api.semantria.com/statistics.json
             string url = String.Format("{0}/statistics.{1}", _host, _format);
-            
-            if (!String.IsNullOrEmpty(configId) && !String.IsNullOrEmpty(interval))
+
+            List<string> query_params = new List<string>();
+            if (interval != StatsInterval.undefined)
             {
-                url = String.Format("{0}/statistics.{1}?config_id={2}&interval={3}", _host, _format, configId, interval);
+                query_params.Add(String.Format("interval={0}", interval.ToString()));
             }
-            else if (!String.IsNullOrEmpty(configId))
+
+            if (query_params.Count != 0)
             {
-                url = String.Format("{0}/statistics.{1}?config_id={2}", _host, _format, configId);
-            }
-            else if (!String.IsNullOrEmpty(interval))
-            {
-                url = String.Format("{0}/statistics.{1}?interval={2}", _host, _format, interval);
+                url += "?" + String.Join("&", query_params.ToArray());
             }
             
             AuthResponse authResponse = this.RunRequest(QueryMethod.GET, url, null);
-            return this.ProcessGetResponse<Statistics>(authResponse);
+            List<StatisticsOverall> stats = this.ProcessGetResponse<List<StatisticsOverall>>(authResponse);
+            if (stats != null && stats.Count > 0)
+            {
+                return stats[0];
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Retrieves usage statistics for the given time interval.
+        /// </summary>
+        /// <param name="from">Start DateTime point to get usage statistics for.</param>
+        /// <param name="to">End DateTime point to get usage statistics for.</param>
+        /// <returns>Statistics object with a bunch of fields.</returns>
+        public StatisticsOverall GetStatistics(DateTime from, DateTime to)
+        {
+            //GET https://api.semantria.com/statistics.json
+            string url = String.Format("{0}/statistics.{1}", _host, _format);
+
+            if ((from - to).TotalSeconds != 0)
+            {
+                string s_from = from.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'", System.Globalization.DateTimeFormatInfo.InvariantInfo);
+                string s_to = to.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'", System.Globalization.DateTimeFormatInfo.InvariantInfo);
+                url = String.Format("{0}/statistics.{1}?from={2}&to={3}", _host, _format, s_from, s_to);
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException("Interval between from an to is null.");
+            }
+
+            AuthResponse authResponse = this.RunRequest(QueryMethod.GET, url, null);
+            List<StatisticsOverall> stats = this.ProcessGetResponse<List<StatisticsOverall>>(authResponse);
+            if (stats != null && stats.Count > 0)
+            {
+                return stats[0];
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Retrieves usage statistics for the given time interval grouped by the given criteria.
+        /// </summary>
+        /// <param name="interval">Time interval.</param>
+        /// <param name="groupBy">config_id, config_name, user_id, user_email, language, app and time values or their combinations supported.
+        /// If several parameters use, they should be separated by, like "language,user_name".
+        /// Time value can't be less than one minute - 1m. Supported following time units: m - minutes, h - hours, d - days, w - weeks.
+        /// Combining time values and grouping parameters allowed: "language,user_name,10m"</param>
+        /// <returns>List of statistics objects with a bunch of fields.</returns>
+        public List<StatisticsGrouped> GetStatistics(StatsInterval interval, string groupBy = "app")
+        {
+            if (String.IsNullOrEmpty(groupBy))
+            {
+                throw new ArgumentNullException("groupBy");
+            }
+
+            //GET https://api.semantria.com/statistics.json
+            string url = String.Format("{0}/statistics.{1}", _host, _format);
+
+            List<string> query_params = new List<string>();
+
+            if (interval != StatsInterval.undefined)
+            {
+                query_params.Add(String.Format("interval={0}", interval.ToString()));
+            }
+            
+            if (!String.IsNullOrEmpty(groupBy))
+            {
+                query_params.Add(String.Format("group={0}", groupBy));
+            }
+
+            if (query_params.Count != 0)
+            {
+                url += "?" + String.Join("&", query_params.ToArray());
+            }
+
+            AuthResponse authResponse = this.RunRequest(QueryMethod.GET, url, null);
+            return this.ProcessGetResponse<List<StatisticsGrouped>>(authResponse);
+        }
+
+        /// <summary>
+        /// Retrieves usage statistics for the given time interval grouped by the given criteria.
+        /// </summary>
+        /// <param name="from">Start DateTime point to get usage statistics for.</param>
+        /// <param name="to">End DateTime point to get usage statistics for.</param>
+        /// <param name="groupBy">config_id, config_name, user_id, user_email, language, app and time values or their combinations supported.
+        /// If several parameters use, they should be separated by, like "language,user_name".
+        /// Time value can't be less than one minute - 1m. Supported following time units: m - minutes, h - hours, d - days, w - weeks.
+        /// Combining time values and grouping parameters allowed: "language,user_name,10m"</param>
+        /// <returns>List of statistics objects with a bunch of fields.</returns>
+        public List<StatisticsGrouped> GetStatistics(DateTime from, DateTime to, string groupBy = "app")
+        {
+            //GET https://api.semantria.com/statistics.json
+            string url = String.Format("{0}/statistics.{1}", _host, _format);
+
+            List<string> query_params = new List<string>();
+
+            if ((from - to).TotalSeconds != 0)
+            {
+                string s_from = from.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'", System.Globalization.DateTimeFormatInfo.InvariantInfo);
+                string s_to = to.ToString("yyyy-MM-dd'T'HH:mm:ss'Z'", System.Globalization.DateTimeFormatInfo.InvariantInfo);
+                query_params.Add(String.Format("from={0}", s_from));
+                query_params.Add(String.Format("to={0}", s_to));
+            }
+            else
+            {
+                throw new ArgumentOutOfRangeException("Interval between from an to is null.");
+            }
+
+            if (!String.IsNullOrEmpty(groupBy))
+            {
+                query_params.Add(String.Format("group={0}", groupBy));
+            }
+
+            if (query_params.Count != 0)
+            {
+                url += "?" + String.Join("&", query_params.ToArray());
+            }
+
+            AuthResponse authResponse = this.RunRequest(QueryMethod.GET, url, null);
+            return this.ProcessGetResponse<List<StatisticsGrouped>>(authResponse);
         }
 
         /// <summary>

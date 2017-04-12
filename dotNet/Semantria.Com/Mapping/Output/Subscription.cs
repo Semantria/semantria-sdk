@@ -76,7 +76,7 @@ namespace Semantria.Com.Mapping.Output
 
         [DataMember(Name = "docs_balance")]
         [XmlElementAttribute("docs_balance")]
-        public int DocsBalance { get; set; }
+        public long DocsBalance { get; set; }
 
         [DataMember(Name = "job_ids_permitted")]
         [XmlElementAttribute("job_ids_permitted")]
