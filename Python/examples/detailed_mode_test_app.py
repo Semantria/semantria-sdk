@@ -71,7 +71,7 @@ for text in initialTexts:
     documents.append({'id': doc_id, 'text': text})
     tracker[doc_id] = TASK_STATUS_QUEUED
     
-    if len(documents) == subscription['basic_settings']['batch_limit']:
+    if len(documents) == subscription['basic_settings']['incoming_batch_limit']:
         res = session.queueBatch(documents)
         if res in [200, 202]:
             print("{0} documents queued successfully.".format(len(documents)))

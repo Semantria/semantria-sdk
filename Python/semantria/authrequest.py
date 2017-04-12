@@ -59,11 +59,14 @@ class AuthRequest:
         }
 
         response = requests.request(method, host, **params)
+        data = response.content
 
         try:
+            # Deserialize to json, then serialize again. 
+            # Protects against possible char encoding problems.
             data = json.dumps(response.json())
         except ValueError:
-            data = ""
+            pass
 
         result = {"status": response.status_code, "reason": response.reason, "data": data}
         return result

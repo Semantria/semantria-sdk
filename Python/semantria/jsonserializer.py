@@ -8,7 +8,7 @@ class JsonSerializer:
     def gettype(self):
         return "json"
 
-    def serialize(self, obj, wrapper=None):
+    def serialize(self, obj):
         if isinstance(obj, dict) and "cloned" in obj:
             if isinstance(obj["cloned"], dict):
                 item = obj["cloned"]
@@ -28,7 +28,7 @@ class JsonSerializer:
         #encoder = json.JSONEncoder()
         return json.dumps(obj)
 
-    def deserialize(self, string, handler=None):
+    def deserialize(self, string):
         #decoder = json.JSONDecoder()
         if isinstance(string, bytes):
             return json.loads(string.decode('utf-8'))

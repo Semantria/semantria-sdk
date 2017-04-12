@@ -1,10 +1,14 @@
 CHANGELOG
 
+4.1.87 - Improved error reporting.
+
+4.1.86 - Updated getStatistics() to provide addtional parameters interval, start, end, group, etc.
+
 4.1.85 - Tested with API 4.1.
-	- Added URLs encoding for those methods which require passing of document/collection Ids as the part of URL.
+	- Added URL encoding for document/collection ids.
 
 4.0.84 - Added support of user driven authentication by using username and password.
-	Use overloaded Session constructor to pass user credentials instead of API keys.
+	To use, pass named parameters username and password to Session constructor instead of API keys.
 
 4.0.83 - Added API 4.0 support.
 	- Analysis adjustment API has been changed and now POST method is for entities adding only.
@@ -33,16 +37,16 @@ CHANGELOG
 3.8.77 - Tested on compatibility with Semantria API 3.8
 	- Added Normalized and Stemmed forms (fields) to the Theme object.
 	- Enhanced Subscription object with the new limits introduced by API 3.8.
-		* Data calls limit / interval / balance represent limit for data API calls the user can send to the API in certain interval. 
-		* Polling calls limit / interval / balance represent limit for polling API calls the user can make to get analysis results from API. 
-		* Settings calls limit / interval / balance represent limit for settings API calls the user can make to adjust analysis results. 
+		* Data calls limit / interval / balance represent limit for data API calls the user can send to the API in certain interval.
+		* Polling calls limit / interval / balance represent limit for polling API calls the user can make to get analysis results from API.
+		* Settings calls limit / interval / balance represent limit for settings API calls the user can make to adjust analysis results.
 	- Enhanced Statistics object with the new fields which reflect Settings and Polling calls statistics.
 	- Added new getSupportedFeatures method that returns supported features from new API end-point.
 	- Reworked test application for Detailed analysis mode. Application tracks document IDs to get data for sent documents.
 	- Added new Entities threshold option to configuration that control entities reporting threshold.
 	- Added User Entities feature support on SDK level.
 		* new User entities limit and User mentions limit in Configuration (collection mode).
-		* new User entities marker in Subscription object that represents whether feature enabled for certain subscription. 
+		* new User entities marker in Subscription object that represents whether feature enabled for certain subscription.
 
 3.5.75 - Added new autoresponse_test_app application for demo purposes of auto-response feature.
 
