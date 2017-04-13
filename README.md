@@ -1,33 +1,29 @@
-##Semantria Multilingual SDK##
+**Semantria SDK**
 
-[Semantria](https://semantria.com) is a **text analytics and sentiment analysis API**. It allows you to gain valuable insights from your unstructured text content by extracting categories, topics, themes, facets, and sentiment. It is based on [Lexalytics’ Salience](http://www.lexalytics.com/technical-info/salience-engine-for-text-analysis) engine, which is used by Oracle, Cisco, Thomson Reuters, Saleforce.com - Radian6, Visible, Lithium, and 50+ other leaders in the space.
+[Semantria](https://www.lexalytics.com/semantria) is a text analytics and sentiment analysis API. It allows you to gain valuable insights from your unstructured text content by extracting entities, categories, topics, themes, facets, and sentiment. It is based on Lexalytics’ [Salience](https://www.lexalytics.com/salience/server) engine, which is used by Oracle, Cisco, Salesforce.com, Lithium, and 50+ other leaders in the space.
 
-[Semantria](https://semantria.com) uses **Multilingual SDKs**, which are the most convenient way to integrate with the Semantria API. SDKs implement all available Semantria features and demonstrate best practices of API usage.
+The Semantria SDKs are the most convenient way to integrate with the Semantria API to build a continuous or high-volume application. The SDKs implement all available Semantria features and include some simple examples of their use. However, the examples are not intended to demonstrate the best practices for processing large volumes of data. Please contact Lexalytics for guidance if you plan to build your own application.
 
-The SDKs include source code for 7 different languages
+For small volume, or ad-hoc, interactive data exploration check out [Semantria for Excel](https://www.lexalytics.com/semantria/excel).
 
-- C++
-- .Net platform (C# language)
-- Java platform (SE & EE)
-- PHP (Any framework)
-- Python (2.x & 3.x)
-- Ruby
-- JavaScript (browser based, can be easy ported to server-side)
-- Node.js
+We provide SDKs for C++, .Net, Java, PHP, Python (2.x & 3.x), Ruby, Node.js, and JavaScript (browser based, can be easily ported to server-side).
 
-A **free trial** is available at https://semantria.com/trial 
-Please visit out [developer portal](https://semantria.com/developer) for integration information.
+A free trial is available at https://www.lexalytics.com/signup. Please visit https://semantria.readme.io/docs/ for integration information.
 
 Features include
+* Summarization
+* POS Tagging
+* Sentiment Analysis (document, entity, theme/keyword, and category level)
+* Boolean Queries
+* Categorization/Classification (Query and Wikipedia ontology-based)
+* Intentions
+* Entity extraction (both model and dictionary based)
+* Theme/keyword extraction
 
-- [Entity](https://semantria.com/technology/entity-extraction) extraction (both model and dictionary based)
-- [Theme/keyword](https://semantria.com/technology/themes) extraction
-- Categorization/Classification ([Query](https://semantria.com/technology/query-topics) and [Wikipedia ontology](https://semantria.com/technology/concept-matrix)-based)
-- [Summarization](https://semantria.com/technology/summarization)
-- [Sentiment Analysis](https://semantria.com/technology/sentiment-analysis) (document, entity, theme/keyword, and category level)
-- [Collections Mode](https://semantria.com/technology/collection-processing) (birds-eye view on your dataset, combining SPSS-like statistical analysis and full scale NLP approach)
-- [Supports 5 languages natively](https://semantria.com/technology/multi-lingual-support) (entity extraction, categorization, sentiment analysis, etc): English, French, Portuguese, Spanish, and German.
+There is a Collections Mode which provides a birds-eye view on your dataset, combining SPSS-like statistical analysis and full scale NLP analysis.
 
-Semantria also offers a **free Excel Add-In** that let’s you process content directly from within Excel without any coding or integration work required. It is a fully functional API client with an easy to use GUI. (https://semantria.com/excel) 
+Semantria supports 22 languages. See https://www.lexalytics.com/technology/features for a list of supported features in each language. 
 
-Excel Add-In video tutorials are available to help get you started. They cover topics such as categorization, custom entities creation, sentiment adjustment and many more. They are all available here: https://semantria.com/video
+Semantria also offers an Excel Add-In that lets you process content directly from within Excel without any coding or integration work required. It is a fully functional API client with an easy to use GUI. (https://www.lexalytics.com/semantria/excel).
+
+Excel Add-In video tutorials are available to help get you started. They cover topics such as categorization, custom entities creation, sentiment adjustment and many more. They are all available here: https://www.lexalytics.com/support/apps/excel.
