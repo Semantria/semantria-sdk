@@ -1,5 +1,6 @@
 package com.semantria.test;
 
+import com.google.common.base.Joiner;
 import com.semantria.Session;
 import com.semantria.auth.CredentialException;
 import com.semantria.mapping.Collection;
@@ -26,6 +27,8 @@ import com.semantria.mapping.output.statistics.StatsInterval;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,8 +37,19 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
+// Note that several environment variables must be set for these tests
+// to run successfully:
+//
+//    SEMANTRIA_KEY
+//    SEMANTRIA_SECRET
+//    SEMANTRIA_USERNAME
+//    SEMANTRIA_PASSWORD
+
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class SessionTest {
+
+    private static Logger log = LoggerFactory.getLogger(SessionTest.class);
+
     // Get default credentials from environment vars
     String key = System.getenv("SEMANTRIA_KEY");
     String secret = System.getenv("SEMANTRIA_SECRET");
@@ -45,54 +59,65 @@ public class SessionTest {
     private String password = System.getenv("SEMANTRIA_PASSWORD");
 
     private Session session = null;
+    private CallbackHandler callbackHandler = null;
 
     private final String SEMANTRIA_API_VERSION = "4.2";
-	private final String TEST_CONFIG_NAME = "TEST_CONFIG";
-	private final String CLONED_TEST_CONFIG_NAME = "CLONED_TEST_CONFIG";
+    private final String TEST_CONFIG_NAME = "TEST_CONFIG";
+    private final String CLONED_TEST_CONFIG_NAME = "CLONED_TEST_CONFIG";
 
     private void createTestSession() {
         assertNotNull("Missing key", key);
         assertNotNull("Missing secret", secret);
-        session = Session.createSession(key, secret);
-        session.setCallbackHandler(new CallbackHandler());
-        session.setApiVersion(SEMANTRIA_API_VERSION);
+        callbackHandler = new CallbackHandler();
+        session = new Session().withKey(key).withSecret(secret)
+                .withApiVersion(SEMANTRIA_API_VERSION)
+                .withCallbackHandler(callbackHandler);
     }
 
-	private Configuration createConfig(String name) {
+    private void createUserTestSession() {
+        assertNotNull("Missing username", username);
+        assertNotNull("Missing password", password);
+        callbackHandler = new CallbackHandler();
+        session = new Session().withUsername(username).withPassword(password)
+                .withApiVersion(SEMANTRIA_API_VERSION)
+                .withCallbackHandler(callbackHandler);
+    }
+
+    private Configuration createConfig(String name) {
         Configuration conf = new Configuration();
         conf.setIsPrimary(false);
         conf.setName(name);
         conf.setLanguage("English");
         conf.setDocument(new DocumentConfiguration(5, false, "", false, false, false, false, false, false, false, false, false, false, false, false));
         conf.setCollection(new CollectionConfiguration(false, false, false, false, false, false, false, false));
-		List<Configuration> new_configs = session.addConfigurations(Arrays.asList(conf));
+        List<Configuration> new_configs = session.addConfigurations(Arrays.asList(conf));
         assertEquals(1, new_configs.size());
         assertEquals(name, new_configs.get(0).getName());
-		return new_configs.get(0);
-	}
+        return new_configs.get(0);
+    }
 
-	private Configuration getOrCreateConfig(String name) {
-		Configuration config = getConfigByName(name);
-		return (config != null) ? config : createConfig(name);
-	}
+    private Configuration getOrCreateConfig(String name) {
+        Configuration config = getConfigByName(name);
+        return (config != null) ? config : createConfig(name);
+    }
 
-	private Configuration getConfigByName(String name) {
+    private Configuration getConfigByName(String name) {
         for (Configuration config : session.getConfigurations()) {
             if (config.getName().equals(name)) {
-				return config;
+                return config;
             }
         }
-		return null;
-	}
+        return null;
+    }
 
-	private Configuration getConfigById(String id) {
+    private Configuration getConfigById(String id) {
         for (Configuration config : session.getConfigurations()) {
             if (config.getId().equals(id)) {
-				return config;
+                return config;
             }
         }
-		return null;
-	}
+        return null;
+    }
 
     @Test
     public void test01CreateSession() {
@@ -157,7 +182,7 @@ public class SessionTest {
     public void test09CreateUpdateCloneConfiguration() {
         createTestSession();
 
-		Configuration new_config = createConfig(TEST_CONFIG_NAME);
+        Configuration new_config = createConfig(TEST_CONFIG_NAME);
         String new_config_id = new_config.getId();
         assertEquals("English", new_config.getLanguage());
         assertEquals(new Integer(5), new_config.getDocument().getSummarySize());
@@ -178,7 +203,7 @@ public class SessionTest {
         assertEquals(CLONED_TEST_CONFIG_NAME, cloned_config.getName());
         assertEquals(new Integer(20), cloned_config.getDocument().getSummarySize());
 
-		Configuration found_config = getConfigById(cloned_config.getId());
+        Configuration found_config = getConfigById(cloned_config.getId());
         assertNotNull(found_config);
         assertEquals(CLONED_TEST_CONFIG_NAME, found_config.getName());
         assertEquals(new Integer(20), found_config.getDocument().getSummarySize());
@@ -187,8 +212,8 @@ public class SessionTest {
     @Test
     public void test10CRUDCategory() {
         createTestSession();
-		Configuration config = getOrCreateConfig(TEST_CONFIG_NAME);
-		String configId = config.getId();
+        Configuration config = getOrCreateConfig(TEST_CONFIG_NAME);
+        String configId = config.getId();
 
         Category category = new Category();
         category.setName("TEST_CATEGORY_NAME");
@@ -246,8 +271,8 @@ public class SessionTest {
     @Test
     public void test11CRUDQuery() {
         createTestSession();
-		Configuration config = getOrCreateConfig(TEST_CONFIG_NAME);
-		String configId = config.getId();
+        Configuration config = getOrCreateConfig(TEST_CONFIG_NAME);
+        String configId = config.getId();
 
         Query query = new Query();
         query.setName("TEST_QUERY_NAME");
@@ -343,8 +368,8 @@ public class SessionTest {
     @Test
     public void test13CRUDBlacklist() {
         createTestSession();
-		Configuration config = getOrCreateConfig(TEST_CONFIG_NAME);
-		String configId = config.getId();
+        Configuration config = getOrCreateConfig(TEST_CONFIG_NAME);
+        String configId = config.getId();
 
         BlacklistItem blacklistItem = new BlacklistItem();
         blacklistItem.setName("TEST_BLACKLISTED");
@@ -370,7 +395,7 @@ public class SessionTest {
 
         item = null;
         for (BlacklistItem bl : session.getBlacklist(configId)) {
-            if (bl.equals("TEST_BLACKLISTED")) {
+            if (bl.getName().equals("TEST_BLACKLISTED")) {
                 item = bl;
             }
         }
@@ -380,8 +405,8 @@ public class SessionTest {
     @Test
     public void test14CRUDEntities() {
         createTestSession();
-		Configuration config = getOrCreateConfig(TEST_CONFIG_NAME);
-		String configId = config.getId();
+        Configuration config = getOrCreateConfig(TEST_CONFIG_NAME);
+        String configId = config.getId();
 
         UserEntity ue = new UserEntity();
         ue.setName("TEST_USER_ENTITY");
@@ -440,8 +465,8 @@ public class SessionTest {
     @Test
     public void test15CRUDTaxonomy() {
         createTestSession();
-		Configuration config = getOrCreateConfig(TEST_CONFIG_NAME);
-		String configId = config.getId();
+        Configuration config = getOrCreateConfig(TEST_CONFIG_NAME);
+        String configId = config.getId();
 
         TaxonomyNode taxonomyNode = new TaxonomyNode();
         taxonomyNode.setName("TEST_TAXONOMY_NAME");
@@ -506,19 +531,25 @@ public class SessionTest {
     @Test
     public void test16AnalyzeSingleDocument() {
         createTestSession();
-		Configuration config = getOrCreateConfig(TEST_CONFIG_NAME);
-		String configId = config.getId();
+        Configuration config = getOrCreateConfig(TEST_CONFIG_NAME);
+        String configId = config.getId();
 
         session.queueDocument(new Document("TEST_ID_1", "Amazon Web Services has announced a new feature called VM?Ware Import, which allows IT departments to move virtual machine images from their internal data centers to the cloud. It will cost 30?", "tag"), configId);
 
         DocAnalyticData task = null;
         for (int i = 0; i < 5; i++) {
             task = session.getDocument("TEST_ID_1", configId);
-            if (task != null && task.getStatus().equals(TaskStatus.PROCESSED)) {
+            if ((task != null) && task.getStatus().equals(TaskStatus.PROCESSED)) {
                 break;
             }
-			sleep(5);
+            sleep(5);
         }
+        if ((task == null) || (! task.getStatus().equals(TaskStatus.PROCESSED))) {
+            log.info("task = {}", task);
+            fail("gave up waiting for processed task");
+        }
+        // Get result from outgoing API queue to clear the queue for remaining tests.
+        session.getProcessedDocuments(configId);
 
         assertEquals(TaskStatus.PROCESSED, task.getStatus());
     }
@@ -526,8 +557,8 @@ public class SessionTest {
     @Test
     public void test17AnalyzeBatchOfDocuments() {
         createTestSession();
-		Configuration config = getOrCreateConfig(TEST_CONFIG_NAME);
-		String configId = config.getId();
+        Configuration config = getOrCreateConfig(TEST_CONFIG_NAME);
+        String configId = config.getId();
 
         List<Document> tasks = new ArrayList<Document>();
         tasks.add(new Document("BATCH_1", "DUMMY_TEXT"));
@@ -541,26 +572,28 @@ public class SessionTest {
             if (data != null && !data.isEmpty()) {
                 break;
             }
-			sleep(5);
+            sleep(5);
+        }
+        if ((data == null) || data.isEmpty()) {
+            fail("gave up waiting for processed docs");
         }
 
         DocAnalyticData doc = null;
-        if (data != null && data.isEmpty() == false) {
-            for (DocAnalyticData docAnalyticData : data) {
-                if (docAnalyticData.getId().equals("BATCH_1") || docAnalyticData.getId().equals("BATCH_2")) {
-                    doc = docAnalyticData;
-                }
+        for (DocAnalyticData docAnalyticData : data) {
+            log.info("docAnalyticData = {}", docAnalyticData);
+            if (docAnalyticData.getId().equals("BATCH_1") || docAnalyticData.getId().equals("BATCH_2")) {
+                doc = docAnalyticData;
             }
         }
 
-        assertNotNull(doc);
+        assertNotNull("expected a doc from the batch", doc);
     }
 
     @Test
     public void test18AnalyzeCollection() {
         createTestSession();
-		Configuration config = getOrCreateConfig(TEST_CONFIG_NAME);
-		String configId = config.getId();
+        Configuration config = getOrCreateConfig(TEST_CONFIG_NAME);
+        String configId = config.getId();
 
         Collection coll = new Collection();
         coll.setId("TEST_COLLECTION_ID");
@@ -574,23 +607,26 @@ public class SessionTest {
 
         List<CollAnalyticData> data = null;
         for (int i = 0; i < 5; i++) {
+            log.info("data = {}", data);
             data = session.getProcessedCollections(configId);
-            if (data != null && !data.isEmpty()) {
+            if ((data != null) && !data.isEmpty()) {
                 break;
             }
-			sleep(5);
+            sleep(5);
+        }
+
+        if ((data == null) || data.isEmpty()) {
+            fail("gave up waiting for processed collection");
         }
 
         CollAnalyticData col = null;
-        if (data != null && data.isEmpty() == false) {
-            for (CollAnalyticData colAnalyticData : data) {
-                if (colAnalyticData.getId().equals("TEST_COLLECTION_ID")) {
-                    col = colAnalyticData;
-                }
+        for (CollAnalyticData colAnalyticData : data) {
+            if (colAnalyticData.getId().equals("TEST_COLLECTION_ID")) {
+                col = colAnalyticData;
             }
         }
 
-        assertNotNull(col);
+        assertNotNull("expected a collection result", col);
     }
 
     @Test
@@ -605,32 +641,52 @@ public class SessionTest {
 
         for (Configuration conf : session.getConfigurations()) {
             if (conf.getName().equals(TEST_CONFIG_NAME) || conf.getName().equals(CLONED_TEST_CONFIG_NAME)) {
-				fail("found a test config -- these should all have been deleted.");
+                fail("found a test config -- these should all have been deleted.");
             }
         }
     }
 
     @Test
     public void test20AuthWithUsernamePassword() {
-        assertNotNull("Missing username", username);
-        assertNotNull("Missing password", password);
-
-        try {
-            session = Session.createUserSession(username, password);
-        } catch (CredentialException e) {
-            fail("Can't authenticate with username/password: " + e.toString());
-        }
-        session.setApiVersion(SEMANTRIA_API_VERSION);
+        createUserTestSession();
         ServiceStatus status = session.getStatus();
+        assertEquals("available", status.getServiceStatus());
+        if (! callbackHandler.getErrors().isEmpty()) {
+            fail("Can't authenticate with username/password: "
+                    + Joiner.on("\n  ").join(callbackHandler.getErrors()));
+        }
+    }
+
+    @Test
+    public void test21ReauthenticateUsernameSession() {
+        createUserTestSession();
+        ServiceStatus status = session.getStatus();
+        assertEquals("available", status.getServiceStatus());
+        // Small hack to simulate session expiration. Change key (which for username/password
+        // is the user session key). This will cause the first attempt to get status to fail
+        // and thus force an auth session refresh.
+        session.withKey("bad-key");
+        status = session.getStatus();
         assertEquals("available", status.getServiceStatus());
     }
 
-	private void sleep(int seconds) {
-		try {
-			Thread.sleep(seconds * 1000);
-		} catch (InterruptedException e) {
-			// Ignore -- expected exception
-		}
-	}
+    @Test
+    public void test22AuthServiceAuthenticate() {
+        try {
+            createUserTestSession();
+            session.authenticate();
+        } catch (CredentialException e) {
+            fail("Can't authenticate with username/password: " + e.toString());
+        }
+    }
+
+
+    private void sleep(int seconds) {
+        try {
+            Thread.sleep(seconds * 1000);
+        } catch (InterruptedException e) {
+            // Ignore -- expected exception
+        }
+    }
 
 }

@@ -3,9 +3,9 @@ require_once('../semantria/session.php');
 
 print("Semantria Collection processing mode demo.\n");
 
-// the consumer key and secret
-define('CONSUMER_KEY', "");
-define('CONSUMER_SECRET', "");
+// The consumer key and secret
+define('CONSUMER_KEY', getenv("SEMANTRIA_KEY"));
+define('CONSUMER_SECRET', getenv("SEMANTRIA_SECRET"));
 
 class SessionCallbackHandler extends \Semantria\CallbackHandler
 {

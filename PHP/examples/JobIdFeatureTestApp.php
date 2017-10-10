@@ -2,9 +2,9 @@
 
 require_once('../semantria/session.php');
 
-// the consumer key and secret
-define('CONSUMER_KEY', "");
-define('CONSUMER_SECRET', "");
+// The consumer key and secret
+define('CONSUMER_KEY', getenv("SEMANTRIA_KEY"));
+define('CONSUMER_SECRET', getenv("SEMANTRIA_SECRET"));
 
 class SessionCallbackHandler extends \Semantria\CallbackHandler
 {
@@ -95,7 +95,7 @@ switch ($data_sending_mode) {
                 $session->queueDocument($document);
             }
             $length = count($document);
-            print("${length} documents queued for ${job_id} job ID\n");
+            print("${length} documents queued for job ID ${job_id}\n");
         }
         break;
     
@@ -103,7 +103,7 @@ switch ($data_sending_mode) {
         foreach ($job_documents as $job_id => $documents) {
             $session->queueBatch($documents);
             $length = count($documents);
-            print("${length} documents queued for ${job_id} job ID\n");
+            print("${length} documents queued for job ID ${job_id}\n");
         }
         break;
 
@@ -134,7 +134,7 @@ foreach ($jobs as $job_id => $documents_counter) {
         $counter += count($res);
     }
 
-    print("${counter} documents received for ${job_id} Job ID.\n");
+    print("${counter} documents received for job ID ${job_id}\n");
 }
 
 print("\n");

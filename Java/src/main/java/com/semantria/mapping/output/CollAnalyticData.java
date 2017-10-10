@@ -1,5 +1,7 @@
 package com.semantria.mapping.output;
 
+import com.google.common.base.MoreObjects;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -45,7 +47,8 @@ public class CollAnalyticData
     @XmlElement(name="theme")
     public List<CollTheme> getThemes() { return themes; }
 	@XmlElement(name="summary")
-	public String getSummary() { return summary; };
+	public String getSummary() { return summary; }
+
     @XmlElement(name = "tag")
     public String getTag() { return tag; }
     @XmlElement(name="docs_count")
@@ -63,4 +66,13 @@ public class CollAnalyticData
 	public void setSummary(String summary) { this.summary = summary; }
     public void setTag(String tag) { this.tag = tag; }
     public void setDocsCount(Integer docs_count){ this.docs_count = docs_count; }
+
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("id", id)
+                .add("status", status)
+                .add("docs_count", docs_count)
+                .toString();
+    }
+
 }

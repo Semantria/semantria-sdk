@@ -17,34 +17,34 @@ public interface ICallbackHandler
 	 * @param sender An object that fires event, particularly Session.
 	 * @param responseArgs Event arguments.
      */
-	public void onResponse(Object sender, ResponseArgs responseArgs);
+	void onResponse(Object sender, ResponseArgs responseArgs);
 
 	/**
 	 * Occurs when response received.
 	 * @param sender An object that fires event, particularly Session.
 	 * @param requestArgs Event arguments.
      */
-	public void onRequest(Object sender, RequestArgs requestArgs);
+	void onRequest(Object sender, RequestArgs requestArgs);
 
 	/**
 	 * Occurs when server-side error reported.
 	 * @param sender An object that fires event, particularly Session.
 	 * @param errorArgs Event arguments.
      */
-	public void onError(Object sender, ResponseArgs errorArgs);
+	void onError(Object sender, ResponseArgs errorArgs);
 
 	/**
 	 * Occurs when the server return documents analysis data in the response of data queuing requests (auto-response feature).
 	 * @param sender An object that fires event, particularly Session.
 	 * @param processedData Event arguments.
      */
-	public void onDocsAutoResponse(Object sender, List<DocAnalyticData> processedData);
+	void onDocsAutoResponse(Object sender, List<DocAnalyticData> processedData);
 
 	/**
 	 * Occurs when the server return collections analysis data in the response of data queuing requests (auto-response feature).
 	 * @param sender An object that fires event, particularly Session.
 	 * @param processedData Event arguments.
      */
-	public void onCollsAutoResponse(Object sender, List<CollAnalyticData> processedData);
+	void onCollsAutoResponse(Object sender, List<CollAnalyticData> processedData);
 
 }

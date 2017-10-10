@@ -1,11 +1,7 @@
 package com.semantria.mapping.output.features;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 
-/**
- * Created by George on 2/11/2015.
- */
 
 public class DiscoveryModeFeatures
 {
@@ -19,7 +15,7 @@ public class DiscoveryModeFeatures
     private Boolean query_topics;
     private Boolean taxonomy;
 
-    public DiscoveryModeFeatures() {};
+    public DiscoveryModeFeatures() {}
 
     @XmlElement(name="facets")
     public Boolean getFacets() { return facets; }

@@ -9,7 +9,7 @@ public final class Category
 {
     private String id = null;
 	private String name = "";
-	private Float weight = new Float(0);
+	private Float weight = 0.0f;
 	private List<String> samples;
     private transient Timestamp modified = null;
 

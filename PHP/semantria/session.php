@@ -5,7 +5,7 @@ require_once('authrequest.php');
 require_once('jsonserializer.php');
 //require_once('common.php');
 
-define('WRAPPER_VERSION', "4.1.85");
+define('WRAPPER_VERSION', "4.2.86");
 
 class Session
 {

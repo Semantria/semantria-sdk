@@ -23,7 +23,7 @@ public final class ConfigurationsDeleteReq
 			{
 				this.configurations.add( configuration.getId() );
 			}
-		};
+		}
 	}
 
 	@XmlElement(name="id")

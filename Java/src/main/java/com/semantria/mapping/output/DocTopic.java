@@ -1,7 +1,5 @@
 package com.semantria.mapping.output;
 
-import com.semantria.mapping.configuration.SentimentPhrase;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import java.util.List;

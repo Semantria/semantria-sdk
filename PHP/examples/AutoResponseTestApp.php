@@ -4,9 +4,9 @@ require_once('../semantria/session.php');
 
 echo "Semantria Auto-response feature demo.", "\r\n";
 
-// the consumer key and secret
-define('CONSUMER_KEY', "");
-define('CONSUMER_SECRET', "");
+// The consumer key and secret
+define('CONSUMER_KEY', getenv("SEMANTRIA_KEY"));
+define('CONSUMER_SECRET', getenv("SEMANTRIA_SECRET"));
 
 $results = array();
 
@@ -76,43 +76,40 @@ $callback = new SessionCallbackHandler();
 $session->setCallbackHandler($callback);
 
 $configurations = $session->getConfigurations();
-$primary_config = NULL;
-$autoresponse_config = NULL;
+$autoresponse_config_id = NULL;
 
 foreach ($configurations as $configuration) {
-    if ($configuration['is_primary']) {
-        $primary_config = $configuration;
-    } 
-    else if ($configuration['name'] == 'AutoResponseTest') {
-        $autoresponse_config = $configuration;
+    if ($configuration['name'] == 'AutoResponseTestx') {
+        $autoresponse_config_id = $configuration['id'];
     }
 }
 
-if ($autoresponse_config == NULL) {
-    $session->addConfigurations(array(array(
-        'name' => 'AutoResponseTest',
+if ($autoresponse_config_id == NULL) {
+    $configuration = $session->addConfigurations(array(array(
+        'name' => 'AutoResponseTestx',
         'language' => 'English',
-        'is_primary' => TRUE,
         'auto_response' => TRUE,
     )));
-}
-else {
-    $autoresponse_config['is_primary'] = TRUE;
-    $session->updateConfigurations(array($autoresponse_config));
+    print_r($configuration);
+    $autoresponse_config_id = $configuration[0]['id'];
 }
 
-// Queues documents for analysis one by one
+// Queues documents for analysis one by one. (Note: in a real application you
+// would queue a batch of docs! One-by-one is inefficient.)
 $doc_counter = 0;
 foreach ($documents as $doc) {
-    $session->queueDocument(array('id' => uniqid('', TRUE), 'text' => $doc));
+    $session->queueDocument(array('id' => uniqid('', TRUE), 'text' => $doc), $autoresponse_config_id);
     $doc_counter += 1;
+    // Note, this sleep is only needed for the demo. This allows time for some docs to
+    // be processed before all docs are sent. Thus, some results will be returned as
+    // autoresponse data.
     usleep(100000);
-
     $results_len = count($results);
-    print("Documents queued/received rate: ${doc_counter}/${results_len}\n");
+    print("Documents queued: ${doc_counter}, received: ${results_len}\n");
 }
 
-// The final call to get remained data from server, Just for demo purposes.
+// This final call is to get any remaining results from the server.
+// Be sure to do this in your application before it shuts down.
 sleep(1);
 while (count($results) < count($documents)) {
     $result = $session->getProcessedDocuments();
@@ -125,7 +122,5 @@ while (count($results) < count($documents)) {
 }
 
 $results_len = count($results);
-print("Documents queued/received rate: ${total_docs}/${results_len}\n");
+print("Totals:  queued: ${total_docs}, received: ${results_len}\n");
 
-// Sets original primary configuration back after the test.
-$session->updateConfigurations(array($primary_config));

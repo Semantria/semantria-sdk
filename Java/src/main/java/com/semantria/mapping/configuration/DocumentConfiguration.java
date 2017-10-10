@@ -24,7 +24,7 @@ public class DocumentConfiguration
     private Integer summary_size = 3;
     private String pos_types = null;
 
-	public DocumentConfiguration(){};
+	public DocumentConfiguration(){}
 
     public DocumentConfiguration(Integer summary_size, Boolean detect_language, String pos_types, Boolean auto_categories,
                                  Boolean sentiment_phrases, Boolean themes, Boolean mentions, Boolean named_entities,

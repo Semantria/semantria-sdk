@@ -1,5 +1,14 @@
 CHANGELOG
 
+4.2.101 - Check for null message in auto response handler.
+
+4.2.100 - Added storageDocsLimit and isAiAssemblerEnabled to Subscription BillingSettings.
+
+4.2.99 - Added Session.setHttpHeader() method.
+
+4.2.98 - Better handling of username/password authentication failures.
+	- Moving toward fluent style of session intialization.
+
 4.2.97 - Refactored examples.
 
 4.2.96 - Added sentiment phrases to DocTopic.

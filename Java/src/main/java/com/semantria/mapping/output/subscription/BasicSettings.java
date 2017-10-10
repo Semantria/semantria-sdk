@@ -99,4 +99,5 @@ public class BasicSettings
     public void setSentimentPhrasesLimit(Integer sentiment_phrases_limit) { this.sentiment_phrases_limit = sentiment_phrases_limit; }
     public void setDocumentLength(Integer document_length) { this.document_length = document_length; }
 	public void setMetadataLimit(Integer metadata_limit) { this.metadata_limit = metadata_limit; }
+
 }

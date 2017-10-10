@@ -1,6 +1,6 @@
 package com.semantria.example;
 
-import org.apache.commons.lang.StringUtils;
+import com.google.common.base.Strings;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -35,7 +35,7 @@ public class Utils {
             String strLine;
 
             while ((strLine = br.readLine()) != null) {
-                if (StringUtils.isEmpty(strLine) || strLine.length() < 3) {
+                if (Strings.isNullOrEmpty(strLine)) {
                     continue;
                 }
                 data.add(strLine);

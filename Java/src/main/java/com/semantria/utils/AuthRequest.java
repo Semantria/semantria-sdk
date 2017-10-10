@@ -1,5 +1,7 @@
 package com.semantria.utils;
 
+import com.google.common.base.Strings;
+import com.google.gson.Gson;
 import com.semantria.mapping.output.statistics.StatsInterval;
 import com.google.common.base.MoreObjects;
 
@@ -15,9 +17,7 @@ import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Random;
+import java.util.*;
 import java.util.zip.GZIPInputStream;
 
 
@@ -31,19 +31,22 @@ public final class AuthRequest {
 	private String key = "";
 	private String secret = "";
 	private String response = "";
-	private String rurl = "";
-	private String appName = "Java/4.2.97/";
+	private String appName = "Java/4.2.101/";
 	private String apiVersion = "";
 	private String errorMsg = null;
 	private boolean useCompression = false;
-	private int CONNECTION_TIMEOUT = 120000;
+	private Map<String, String> httpHeaders = new HashMap<>();
+	final private int CONNECTION_TIMEOUT = 120000;
+
 
 	public static AuthRequest getInstance(String url, String method) {
-		AuthRequest result = new AuthRequest(url, method);
-		return result;
+		return new AuthRequest(url, method);
 	}
 
 	private AuthRequest(String url, String method) {
+        if (method != null) {
+            method = method.toUpperCase();
+        }
 		this.url = url;
 		this.method = method;
 		this.params = new HashMap<String, String>();
@@ -75,11 +78,16 @@ public final class AuthRequest {
 		return this;
 	}
 
+	public AuthRequest headers(Map<String, String> headers) {
+		httpHeaders.putAll(headers);
+		return this;
+	}
+
 	private void setParam(String key, String value) {
-		if (value != null) {
-			this.params.put(key, value);
-		} else if (this.params.containsKey(key)) {
+		if (value == null) {
 			this.params.remove(key);
+		} else {
+			this.params.put(key, value);
 		}
 	}
 
@@ -139,22 +147,24 @@ public final class AuthRequest {
 	}
 
 	public Integer doRequest() {
+		HttpURLConnection conn = null;
 		try {
+			response = null;
+			errorMsg = null;
 			initSSLContext();
-			HttpURLConnection conn = getOAuthSignedConnection();
+			conn = getOAuthSignedConnection();
 			conn.setConnectTimeout(CONNECTION_TIMEOUT);
 			conn.connect();
 			sendRequestBodyIfSet(conn);
 			receiveResponseFromServer(conn);
 			status = conn.getResponseCode();
-
-			if (status < 202) {
-				errorMsg = null;
-			}
-			conn.disconnect();
 		} catch (Exception e) {
 			System.err.println("Error performing request: " + e);
 			e.printStackTrace();
+		} finally {
+			if (conn != null) {
+				conn.disconnect();
+			}
 		}
 
 		return status;
@@ -166,14 +176,22 @@ public final class AuthRequest {
 		SSLContext.setDefault(ctx);
 	}
 
+	public String getFullUrl() {
+		if (params.isEmpty()) {
+			return url;
+		} else {
+			return url + "?" + buildRequest(params);
+		}
+	}
+
 	private HttpURLConnection getOAuthSignedConnection() throws IOException, NoSuchAlgorithmException, InvalidKeyException {
 		setOAuthParameters();
 
-		rurl = this.url + (!params.isEmpty() ? ("?" + buildRequest(params)) : "");
-		URL url = new URL(rurl);
+		String fullUrl = getFullUrl();
+		URL urlObj = new URL(fullUrl);
 		HttpURLConnection conn = null;
 		if (this.url.startsWith("https")) {
-			conn = (HttpsURLConnection) url.openConnection();
+			conn = (HttpsURLConnection) urlObj.openConnection();
 			((HttpsURLConnection) conn).setHostnameVerifier(new HostnameVerifier() {
 				@Override
 				public boolean verify(String arg0, SSLSession arg1) {
@@ -181,10 +199,10 @@ public final class AuthRequest {
 				}
 			});
 		} else {
-			conn = (HttpURLConnection) url.openConnection();
+			conn = (HttpURLConnection) urlObj.openConnection();
 		}
 
-		setRequestProperties(conn);
+		setRequestProperties(conn, fullUrl);
 
 		return conn;
 	}
@@ -202,21 +220,30 @@ public final class AuthRequest {
 		}
 	}
 
-	private void setRequestProperties(HttpURLConnection conn) throws IOException, InvalidKeyException, NoSuchAlgorithmException {
+	private void setRequestProperties(HttpURLConnection conn, String fullUrl) throws IOException, InvalidKeyException, NoSuchAlgorithmException {
+		for (Map.Entry<String, String> entry : httpHeaders.entrySet()) {
+			conn.setRequestProperty(entry.getKey(), entry.getValue());
+		}
+
 		conn.setRequestProperty("Connection", "close");
 		conn.setDoOutput(true);
 		conn.setRequestMethod(method);
 
-		if (method.equals("GET") && useCompression == true) {
+		if (method.equals("GET") && useCompression) {
 			conn.setRequestProperty("Accept-Encoding", "gzip,deflate");
 		}
-
 		if (!key.isEmpty() && !secret.isEmpty()) {
-			conn.setRequestProperty("Authorization", "OAuth,oauth_consumer_key=\"" + key + "\",oauth_signature=\""
-					+ URLEncoder.encode(signupRequest(rurl, secret), "UTF-8") + "\"");
+			conn.setRequestProperty("Authorization", getAuthorizationHeader(fullUrl));
 		}
 		conn.setRequestProperty("x-app-name", appName);
-		conn.setRequestProperty("x-api-version", apiVersion);
+		if (! Strings.isNullOrEmpty(apiVersion)) {
+			conn.setRequestProperty("x-api-version", apiVersion);
+		}
+	}
+
+	public String getAuthorizationHeader(String fullUrl) throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException {
+		return String.format("OAuth,oauth_consumer_key=\"%s\",oauth_signature=\"%s\"",
+				key, URLEncoder.encode(signRequest(fullUrl, secret), "UTF-8"));
 	}
 
 	private void sendRequestBodyIfSet(HttpURLConnection conn) throws IOException {
@@ -240,15 +267,12 @@ public final class AuthRequest {
 						GZIPInputStream gzipStream = new GZIPInputStream(stream);
 						Reader decoder = new InputStreamReader(gzipStream, "UTF-8");
 						reader = new BufferedReader(decoder);
+						StringBuilder result = new StringBuilder();
 						String text = null;
-						String res = "";
 						while ((text = reader.readLine()) != null) {
-							res += text;
+							result.append(text);
 						}
-
-						response = res;
-					} catch (Exception e) {
-						throw e;
+						response = result.toString();
 					} finally {
 						if (reader != null) {
 							reader.close();
@@ -267,9 +291,9 @@ public final class AuthRequest {
 				data = getBytesFromInputStream(conn.getErrorStream());
 				if (data != null) {
 					errorMsg = new String(data, "UTF-8");
-					errorMsg = new String(data, "UTF-8");
 				}
-			} catch (Exception ex) {
+			} catch (Exception e2) {
+				System.err.println("Error: error occurred while getting error message: " + e2.toString());
 			}
 		}
 	}
@@ -316,13 +340,13 @@ public final class AuthRequest {
 		return request;
 	}
 
-	private String signupRequest(String rurl, String secretkey) throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException {
-		String encodedURL = URLEncoder.encode(rurl, "UTF-8");
+	private String signRequest(String fullUrl, String secretkey) throws UnsupportedEncodingException, NoSuchAlgorithmException, InvalidKeyException {
+		String encodedURL = URLEncoder.encode(fullUrl, "UTF-8");
 		Mac mac = Mac.getInstance("HmacSHA1");
 		SecretKeySpec secret = new SecretKeySpec(secretkey.getBytes(), "HmacSHA1");
 		mac.init(secret);
 		byte[] digest = mac.doFinal(encodedURL.getBytes());
-		String signature = new sun.misc.BASE64Encoder().encode(digest);
+		String signature = java.util.Base64.getEncoder().encodeToString(digest);
 		return signature;
 	}
 
@@ -346,6 +370,15 @@ public final class AuthRequest {
 
 	public Integer getStatus() {
 		return status;
+	}
+
+	public String getMessageFromJsonErrorMessage(String key) {
+		Map<String,Object> map = new Gson().fromJson(errorMsg, Map.class);
+		if (map.containsKey(key)) {
+			return (String) map.get(key);
+		} else {
+			return errorMsg;
+		}
 	}
 
 	@Override

@@ -1,7 +1,6 @@
 package com.semantria.mapping.configuration.stub;
 
 import com.semantria.mapping.configuration.BlacklistItem;
-import com.semantria.mapping.configuration.Category;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;

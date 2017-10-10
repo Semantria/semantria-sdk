@@ -41,6 +41,7 @@ class Session(object):
         self.consumerKey = consumerKey
         self.consumerSecret = consumerSecret
         self.use_compression = use_compression
+        self.http_headers = {}
 
         if applicationName:
             self.applicationName = '{0}/{1}'.format(applicationName, self.wrapperName)
@@ -109,6 +110,20 @@ class Session(object):
             self.format = serializer.gettype()
         else:
             raise SemantriaError('Parameter not found: %s' % serializer)
+
+    # Sets an HTTP header for all new HTTP requests. If a header with
+    # the key already exists, overwrite its value with the new value.
+    # Any existing requests will not be affected.
+    # 
+    # NOTE: HTTP requires all request properties which can legally have
+    # multiple instances with the same key to use a comma-separated list
+    # syntax which enables multiple properties to be appended into a
+    # single property.
+    def setHttpHeader(self, key, value):
+        self.http_headers[key] = value
+
+    def setHttpHeaders(self, new_headers):
+        self.http_headers = new_headers.copy() if new_headers else {}
 
     def getApiVersion(self):
         return self._request.apiVersion
@@ -449,7 +464,8 @@ class Session(object):
 
     def _runRequest(self, method, url, type_=None, postData=None):
         self.Request({"method": method, "url": url, "message": postData})
-        response = self._request.authWebRequest(method, url, postData)
+        response = self._request.authWebRequest(method, url, postData,
+                                                headers=self.http_headers)
         self.Response({
             "status": response["status"],
             "reason": response["reason"],

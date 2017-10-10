@@ -4,12 +4,9 @@ import com.semantria.mapping.output.features.*;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
-/**
- * Created by George on 2/11/2015.
- */
+
 public class FeaturesSet
 {
     private String id;
@@ -21,7 +18,7 @@ public class FeaturesSet
     private DiscoveryModeFeatures discovery_mode;
     private List<Template> templates;
 
-    public FeaturesSet() {};
+    public FeaturesSet() {}
 
     @XmlElement(name="id")
     public String getId() { return id; }

@@ -11,7 +11,7 @@ public class Opinion
 	private Float sentimentScore = null;
 	private String sentimentPolarity = null;
 
-	public Opinion() {};
+	public Opinion() {}
 
 	public Opinion(String quotation, String type, String speaker, String topic, Float sentimentScore, String sentimentPolatiry)
 	{

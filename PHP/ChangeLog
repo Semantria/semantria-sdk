@@ -1,10 +1,13 @@
 CHANGELOG
 
+4.2.86 - Fixed bug in "Unrecognized field modified" bug in AutoResponseTestApp
+	- Also, don't change primary config in AutoResponseTestApp
+
 4.1.85 - Tested with API 4.1.
-	- Added URLs encoding for those methods which require passing of document/collection Ids as the part of URL.
+	- Added URL encoding for those methods which require passing of document/collection Ids as the part of URL.
 
 4.0.84 - Added support of user driven authentication by using username and password.
-	Use overloaded Session constructor to pass user credentials instead of API keys.
+	- Use overloaded Session constructor to pass user credentials instead of API keys.
 
 4.0.83 - Added API 4.0 support.
 	- Analysis adjustment API has been changed and now POST method is for entities adding only.
@@ -30,16 +33,16 @@ CHANGELOG
 3.8.79 - Tested on compatibility with Semantria API 3.8
 	- Added Normalized and Stemmed forms (fields) to the Theme object.
 	- Enhanced Subscription object with the new limits introduced by API 3.8.
-		* Data calls limit / interval / balance represent limit for data API calls the user can send to the API in certain interval. 
-		* Polling calls limit / interval / balance represent limit for polling API calls the user can make to get analysis results from API. 
-		* Settings calls limit / interval / balance represent limit for settings API calls the user can make to adjust analysis results. 
+		* Data calls limit / interval / balance represent limit for data API calls the user can send to the API in certain interval.
+		* Polling calls limit / interval / balance represent limit for polling API calls the user can make to get analysis results from API.
+		* Settings calls limit / interval / balance represent limit for settings API calls the user can make to adjust analysis results.
 	- Enhanced Statistics object with the new fields which reflect Settings and Polling calls statistics.
 	- Added new getSupportedFeatures method that returns supported features from new API end-point.
 	- Reworked test application for Detailed analysis mode. Application tracks document IDs to get data for sent documents.
 	- Added new Entities threshold option to configuration that control entities reporting threshold.
 	- Added User Entities feature support on SDK level.
 		* new User entities limit and User mentions limit in Configuration (collection mode).
-		* new User entities marker in Subscription object that represents whether feature enabled for certain subscription. 
+		* new User entities marker in Subscription object that represents whether feature enabled for certain subscription.
 
 3.5.77 - Added errors handling if curl library returns 0 status (usually network issues). SDK will throw an exception with error details came from curl library.
 
@@ -55,7 +58,7 @@ CHANGELOG
 	- Added long-waiting Tag field to the incoming/outgoing documents. It can be used as free text marker that Semantria will return back to the user.
 	- Added “IsInverted” marker to words returned by POS tagging feature. Marker indicates whether word is a part of sentiment inverting construction like negator.
 	- Modified “Location” output for collection processing mode. Now it returns not only index of the document where entity was mentioned but byte of set and its length as well.
-	
+
 3.1.74 - Tested on compatibility with Semantria API 3.1
 	- Mentions for entities and themes of document processing mode has been introduced.
 	- Opinions for named and user entities has been introduced.
@@ -68,7 +71,7 @@ CHANGELOG
 	- Namesapces are introduced with the help of dependencies managment tool Composer (http://getcomposer.org)
 	- There are Semantria, Semantria\Tools namespaces has been added.
 
-3.0.72 - Removed unnecessary encoding to UTF-8 in JSON serializer. 
+3.0.72 - Removed unnecessary encoding to UTF-8 in JSON serializer.
 
 3.0.71 - Added support of Mentions for attributes of collection processing mode
 	- Added 'attribute_mentions_limit' configuration option for collection mode settings

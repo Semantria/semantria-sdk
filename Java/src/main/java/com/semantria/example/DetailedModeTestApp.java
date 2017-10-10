@@ -1,6 +1,8 @@
 package com.semantria.example;
 
+import com.google.common.base.Strings;
 import com.semantria.Session;
+import com.semantria.auth.CredentialException;
 import com.semantria.mapping.Document;
 import com.semantria.mapping.output.DocAnalyticData;
 import com.semantria.mapping.output.DocCategory;
@@ -10,7 +12,6 @@ import com.semantria.mapping.output.DocTopic;
 import com.semantria.mapping.output.MentionPhrase;
 import com.semantria.mapping.output.SentimentMentionPhrase;
 import com.semantria.mapping.output.Subscription;
-import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,7 +23,7 @@ import java.util.UUID;
 /**
  * Example application that shows using the Semantria API to run
  * detailed analysis on documents from a file.
- * <p/>
+ * <p>
  * Note that this is intended as a simple example of how to use the Java
  * SDK. It is <b>not</b> intended to show the best practice in building
  * a real application. Please contact Lexalytics for guidance, if you
@@ -30,7 +31,7 @@ import java.util.UUID;
  */
 public class DetailedModeTestApp {
 
-    public static void main(String args[]) {
+    public static void main(String args[]) throws CredentialException {
         String filename = "source.txt";
         String key = System.getenv("SEMANTRIA_KEY");
         String secret = System.getenv("SEMANTRIA_SECRET");
@@ -48,7 +49,7 @@ public class DetailedModeTestApp {
             secret = args[2];
         }
 
-        if (StringUtils.isEmpty(key) || StringUtils.isEmpty(secret)) {
+        if (Strings.isNullOrEmpty(key) || Strings.isNullOrEmpty(secret)) {
             System.err.println("Error: Missing key and/or secret\n");
             usage();
         }
@@ -66,14 +67,14 @@ public class DetailedModeTestApp {
     }
 
     private static void usage() {
-        System.out.println("\nDetailedModeTestApp [<file> [<key> <secret>]].\n\n");
-        System.out.println("This example reads data from a file, one document per line,\n");
-        System.out.println("processes it through the Semantria API, and prints some of\n");
-        System.out.println("the results.\n\n");
-        System.out.println("Arguments:\n");
-        System.out.println("  <file>     name of datafile to read (default: source.txt)\n");
-        System.out.println("  <key>      Semantria API key (default: value of SEMANTRIA_KEY environment variable)\n");
-        System.out.println("  <secret>   Semantria API secret (default: value of SEMANTRIA_SECRET environment variable)\n");
+        System.out.format("\nDetailedModeTestApp [<file> [<key> <secret>]].\n\n");
+        System.out.format("This example reads data from a file, one document per line,\n");
+        System.out.format("processes it through the Semantria API, and prints some of\n");
+        System.out.format("the results.\n\n");
+        System.out.format("Arguments:\n");
+        System.out.format("  <file>     name of datafile to read (default: source.txt)\n");
+        System.out.format("  <key>      Semantria API key (default: value of SEMANTRIA_KEY environment variable)\n");
+        System.out.format("  <secret>   Semantria API secret (default: value of SEMANTRIA_SECRET environment variable)\n");
         System.exit(0);
     }
 
@@ -92,12 +93,11 @@ public class DetailedModeTestApp {
 
 
     public DetailedModeTestApp(String key, String secret) {
-        // Create session to communicate with Semantria API
-        session = Session.createSession(key, secret);
-        session.setCallbackHandler(new CallbackHandler());
+        session = new Session().withKey(key).withSecret(secret)
+			.withCallbackHandler(new CallbackHandler());
     }
 
-    void processDocs(List<String> data) {
+    void processDocs(List<String> data) throws CredentialException {
         sendDocs(data);
         if (! (docsTracker.containsValue(DocStatus.QUEUED) || docsTracker.containsValue(DocStatus.PROCESSED))) {
             System.out.format("All docs failed!\n");
@@ -107,7 +107,7 @@ public class DetailedModeTestApp {
         printResults();
     }
 
-    private void sendDocs(List<String> data) {
+    private void sendDocs(List<String> data) throws CredentialException {
         int batchSize = getBatchSize();
         List<Document> outgoingBatch = new ArrayList<Document>(batchSize);
 
@@ -127,7 +127,7 @@ public class DetailedModeTestApp {
         }
     }
 
-    int getBatchSize() {
+    int getBatchSize() throws CredentialException {
         Subscription subscription = session.getSubscription();
         if (subscription == null) {
             System.err.format("Error: Can't get subscription. HTTP status: %d; Error message: %s\n",
@@ -267,19 +267,19 @@ public class DetailedModeTestApp {
         System.out.println();
     }
 
-    List<DocAnalyticData> getProcessedDocuments() {
+    List<DocAnalyticData> getProcessedDocuments() throws CredentialException {
         return getProcessedDocuments(null);
     }
 
-    List<DocAnalyticData> getProcessedDocuments(String configId) {
+    List<DocAnalyticData> getProcessedDocuments(String configId) throws CredentialException {
         return session.getProcessedDocuments(configId);
     }
 
-    void queueBatch(List<Document> batch) {
+    void queueBatch(List<Document> batch) throws CredentialException {
         queueBatch(batch, null);
     }
 
-    void queueBatch(List<Document> batch, String configId) {
+    void queueBatch(List<Document> batch, String configId) throws CredentialException {
 		for (Document doc : batch) {
 			docsTracker.put(doc.getId(), DocStatus.QUEUED);
 		}

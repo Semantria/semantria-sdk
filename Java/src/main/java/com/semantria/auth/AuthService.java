@@ -18,7 +18,7 @@ public class AuthService {
 
     private static Logger log = LoggerFactory.getLogger(AuthService.class);
 
-    private static final String authHost = "https://semantria.com";
+    private String authUrl = "https://semantria.com/auth";
     private static final String appKey = "cd954253-acaf-4dfa-a417-0a8cfb701f12";
 
     private String key;
@@ -29,6 +29,11 @@ public class AuthService {
     public AuthService() {
     }
 
+    public AuthService withAuthUrl(String value) {
+        authUrl = value;
+        return this;
+    }
+
     public String getKey() {
         return key;
     }
@@ -37,7 +42,29 @@ public class AuthService {
         return secret;
     }
 
-    public void authWithUsernameAndPassword(String username, String password, boolean reuseExisting) throws CredentialException {
+    /**
+     * Attempt to authenticate using username/password. Does not consume an auth session.
+     * @throws CredentialException if username/password are invalid
+     */
+    public void authenticate(String username, String password) throws CredentialException {
+        String requestData = getRequestData(username, password);
+        String url = authUrl + "/session.json?appkey=" + appKey;
+        AuthRequest req = AuthRequest.getInstance(url, "POST").body(requestData);
+        req.doRequest();
+        if (req.getStatus() == 200) {
+        } else {
+            throw new CredentialException(req.getStatus(),
+                    "Authentication error: " + req.getMessageFromJsonErrorMessage("error_message"));
+        }
+    }
+
+    /**
+     * Attempt to create an auth session for username/password. If {@code reuseExisting} is true then will first
+     * try to use a pre-existing session if it's still valid. Otherwise this creates a new user session.
+     *
+     * @throws CredentialException if username/password are invalid
+     */
+    public void getSession(String username, String password, boolean reuseExisting) throws CredentialException {
         Map<String, String> cookie = reuseExisting ? loadCookieData() : null;
         String requestData = getRequestData(username, password);
         AuthRequest req;
@@ -46,10 +73,10 @@ public class AuthService {
                 && cookie.containsKey("credHash")
                 && cookie.containsKey("id")
                 && Utils.getHashCode(username + password).equals(cookie.get("credHash"))) {
-            String url = authHost + "/auth/session/" + cookie.get("id") +".json?appkey=" + appKey;
+            String url = authUrl + "/session/" + cookie.get("id") +".json?appkey=" + appKey;
             req = AuthRequest.getInstance(url, "GET");
         } else {
-            String url = authHost + "/auth/session.json?appkey=" + appKey;
+            String url = authUrl + "/session.json?appkey=" + appKey;
             req = AuthRequest.getInstance(url, "POST").body(requestData);
         }
 
@@ -60,14 +87,14 @@ public class AuthService {
             String sessionId = sessionData.id;
             key = sessionData.custom_params.get("key");
             secret = sessionData.custom_params.get("secret");
-
             saveCookieData(sessionId, username, password);
         } else if (cookie != null && req.getStatus() == 404) {
             // Probably session expired, lets try again and create new one
-            authWithUsernameAndPassword(username, password, false);
+            getSession(username, password, false);
         } else {
             removeCookieData();
-            throw new CredentialException("Provided username and password are incorrect");
+            throw new CredentialException(req.getStatus(),
+                    "Authentication error: " + req.getMessageFromJsonErrorMessage("error_message"));
         }
     }
 
@@ -91,7 +118,7 @@ public class AuthService {
 		if (maybeSetCookieDir(System.getProperty("semantria.session"))) return true;
 		if (maybeSetCookieDir("/tmp")) return true;
 		if (maybeSetCookieDir("/temp")) return true;
-		log.debug("No writeable directory found for session data");
+		log.debug("No writeable directory found for session data. Will not cache session data.");
         return false;
     }
 

@@ -138,7 +138,7 @@
 				log("<div style='margin-left: 30px;'/>No entities were extracted for this text");
 			}
 			
-			// Printing of document topics
+			// Printing of query topics
 			log("<div style='margin-left: 15px;'/>Topics:");
 			if (data.topics) {
 				for(var j=0, topic; topic=data.topics[j]; j++) {

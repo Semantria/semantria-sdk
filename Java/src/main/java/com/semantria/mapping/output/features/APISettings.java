@@ -1,11 +1,7 @@
 package com.semantria.mapping.output.features;
 
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 
-/**
- * Created by George on 2/11/2015.
- */
 
 public class APISettings
 {
@@ -16,7 +12,7 @@ public class APISettings
     private Boolean blacklist;
     private Boolean taxonomy;
 
-    public APISettings() {};
+    public APISettings() {}
 
     @XmlElement(name="sentiment_phrases")
     public Boolean getSentimentPhrases() { return sentiment_phrases; }

@@ -1,9 +1,10 @@
 package com.semantria.example;
 
+import com.google.common.base.Strings;
 import com.semantria.Session;
+import com.semantria.auth.CredentialException;
 import com.semantria.mapping.Document;
 import com.semantria.mapping.output.DocAnalyticData;
-import org.apache.commons.lang.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -57,7 +58,7 @@ public class JobIdFeatureTestApp {
             secret = args[2];
         }
 
-        if (StringUtils.isEmpty(key) || StringUtils.isEmpty(secret)) {
+        if (Strings.isNullOrEmpty(key) || Strings.isNullOrEmpty(secret)) {
             System.err.println("Error: Missing key and/or secret\n");
             usage();
         }
@@ -75,14 +76,14 @@ public class JobIdFeatureTestApp {
     }
 
     private static void usage() {
-        System.out.println("\nJobIdFeatureTestApp [<file> [<key> <secret>]].\n\n");
-        System.out.println("This example reads data from a file, one document per line,\n");
-        System.out.println("processes it through the Semantria API, and prints some of\n");
-        System.out.println("the results.\n\n");
-        System.out.println("Arguments:\n");
-        System.out.println("  <file>     name of datafile to read (default: source.txt)\n");
-        System.out.println("  <key>      Semantria API key (default: value of SEMANTRIA_KEY environment variable)\n");
-        System.out.println("  <secret>   Semantria API secret (default: value of SEMANTRIA_SECRET environment variable)\n");
+        System.out.format("\nJobIdFeatureTestApp [<file> [<key> <secret>]].\n\n");
+        System.out.format("This example reads data from a file, one document per line,\n");
+        System.out.format("processes it through the Semantria API, and prints some of\n");
+        System.out.format("the results.\n\n");
+        System.out.format("Arguments:\n");
+        System.out.format("  <file>     name of datafile to read (default: source.txt)\n");
+        System.out.format("  <key>      Semantria API key (default: value of SEMANTRIA_KEY environment variable)\n");
+        System.out.format("  <secret>   Semantria API secret (default: value of SEMANTRIA_SECRET environment variable)\n");
         System.exit(0);
     }
 
@@ -121,12 +122,11 @@ public class JobIdFeatureTestApp {
 
 		public Worker(String key, String secret, String jobId) {
 			this.jobId = jobId;
-			// Create session to communicate with Semantria API
-			session = Session.createSession(key, secret);
-			session.setCallbackHandler(new CallbackHandler());
+			session = new Session().withKey(key).withSecret(secret)
+				.withCallbackHandler(new CallbackHandler());
 		}
 
-		public Object call() {
+		public Object call() throws CredentialException {
 			sendDocs();
 			pollForResults();
 			printResults();
@@ -144,7 +144,7 @@ public class JobIdFeatureTestApp {
             return doc;
         }
 
-		private void sendDocs() {
+		private void sendDocs() throws CredentialException {
             int limit = documents.size();
             for (int start = 0; start < limit; start += BATCH_SIZE) {
                 List<Document> outgoingBatch = documents.subList(start, Math.min(start + BATCH_SIZE, limit));
@@ -153,7 +153,7 @@ public class JobIdFeatureTestApp {
             System.out.format("%s: queued total %d docs\n", jobId, limit);
         }
 
-		private void pollForResults() {
+		private void pollForResults() throws CredentialException {
             while (documents.size() > analysisResults.size()) {
                 Utils.sleep(DELAY_BEFORE_GETTING_RESPONSE);
                 List<DocAnalyticData> processedDocs = session.getProcessedDocumentsByJobId(jobId);

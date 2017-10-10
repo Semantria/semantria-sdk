@@ -1,11 +1,12 @@
 package com.semantria.example;
 
+import com.google.common.base.Strings;
 import com.semantria.Session;
+import com.semantria.auth.CredentialException;
 import com.semantria.mapping.Collection;
 import com.semantria.mapping.output.Attribute;
 import com.semantria.mapping.output.CollAnalyticData;
 import com.semantria.mapping.output.Facet;
-import org.apache.commons.lang.StringUtils;
 
 import java.util.List;
 import java.util.UUID;
@@ -21,7 +22,7 @@ import java.util.UUID;
  */
 public class DiscoveryModeTestApp {
 
-    public static void main(String args[]) {
+    public static void main(String args[]) throws CredentialException {
 
         String filename = "bellagio-data-100.utf8";
         String key = System.getenv("SEMANTRIA_KEY");
@@ -40,7 +41,7 @@ public class DiscoveryModeTestApp {
             secret = args[2];
         }
 
-        if (StringUtils.isEmpty(key) || StringUtils.isEmpty(secret)) {
+        if (Strings.isNullOrEmpty(key) || Strings.isNullOrEmpty(secret)) {
             System.err.println("Error: Missing key and/or secret\n");
             usage();
         }
@@ -58,14 +59,14 @@ public class DiscoveryModeTestApp {
     }
 
     private static void usage() {
-        System.out.println("\nDiscoveryModeTestApp [<file> [<key> <secret>]].\n\n");
-        System.out.println("This example reads data from a file, one document per line,\n");
-        System.out.println("processes it through the Semantria API, and prints some of\n");
-        System.out.println("the results.\n\n");
-        System.out.println("Arguments:\n");
-        System.out.println("  <file>     name of datafile to read (default: source.txt)\n");
-        System.out.println("  <key>      Semantria API key (default: value of SEMANTRIA_KEY environment variable)\n");
-        System.out.println("  <secret>   Semantria API secret (default: value of SEMANTRIA_SECRET environment variable)\n");
+        System.out.format("\nDiscoveryModeTestApp [<file> [<key> <secret>]].\n\n");
+        System.out.format("This example reads data from a file, one document per line,\n");
+        System.out.format("processes it through the Semantria API, and prints some of\n");
+        System.out.format("the results.\n\n");
+        System.out.format("Arguments:\n");
+        System.out.format("  <file>     name of datafile to read (default: source.txt)\n");
+        System.out.format("  <key>      Semantria API key (default: value of SEMANTRIA_KEY environment variable)\n");
+        System.out.format("  <secret>   Semantria API secret (default: value of SEMANTRIA_SECRET environment variable)\n");
         System.exit(0);
     }
 
@@ -79,18 +80,17 @@ public class DiscoveryModeTestApp {
     List<CollAnalyticData> analysisResults = null;
 
     public DiscoveryModeTestApp(String key, String secret) {
-        // Create session to communicate with Semantria API
-        session = Session.createSession(key, secret);
-        session.setCallbackHandler(new CallbackHandler());
+        session = new Session().withKey(key).withSecret(secret)
+			.withCallbackHandler(new CallbackHandler());
     }
 
-    public void processDocs(List<String> data) {
+    public void processDocs(List<String> data) throws CredentialException {
         sendDocs(data);
         pollForResults();
         printResults();
     }
 
-    private void sendDocs(List<String> data) {
+    private void sendDocs(List<String> data) throws CredentialException {
         final String collectionId = UUID.randomUUID().toString();
         Collection collection = new Collection(collectionId);
         collection.setDocuments(data);
@@ -105,7 +105,7 @@ public class DiscoveryModeTestApp {
         }
     }
 
-    private void pollForResults() {
+    private void pollForResults() throws CredentialException {
         System.out.println();
         do {
             Utils.sleep(DELAY_BEFORE_GETTING_RESPONSE);

@@ -16,7 +16,7 @@ public class Subscription
 	private String status = null;
 	private String name = null;
 
-	public Subscription() {};
+	public Subscription() {}
 
 	@XmlElement(name="status")
 	public String getStatus() { return status; }

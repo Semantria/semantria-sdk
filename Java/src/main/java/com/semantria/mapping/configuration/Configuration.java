@@ -1,7 +1,5 @@
 package com.semantria.mapping.configuration;
 
-import com.google.gson.annotations.SerializedName;
-
 import javax.xml.bind.annotation.XmlElement;
 import java.sql.Timestamp;
 

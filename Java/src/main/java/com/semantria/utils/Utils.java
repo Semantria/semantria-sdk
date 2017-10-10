@@ -1,14 +1,20 @@
 package com.semantria.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+
 public class Utils {
+
+    private static Logger log = LoggerFactory.getLogger(Utils.class);
+
     private Utils() {}
 
-    public static String getHashCode(String input)
-    {
+    public static String getHashCode(String input) {
         String hexStr = null;
         try {
             MessageDigest md = MessageDigest.getInstance("SHA1");
@@ -21,10 +27,8 @@ public class Utils {
             for (int i = 0; i < digest.length; i++) {
                 hexStr +=  Integer.toString( ( digest[i] & 0xff ) + 0x100, 16).substring( 1 );
             }
-        } catch (NoSuchAlgorithmException e) {
-            // let's don't throw it to the constructor
-        } catch (UnsupportedEncodingException e) {
-            // let's don't throw it to the constructor
+        } catch (NoSuchAlgorithmException | UnsupportedEncodingException e) {
+            log.error("Can't hash string", e);
         }
 
         return hexStr;

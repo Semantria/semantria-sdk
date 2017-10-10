@@ -23,6 +23,8 @@ public class BillingSettings
     private Integer app_seats_allocated = null;
     private Integer job_ids_permitted = null;
     private Integer job_ids_allocated = null;
+	private Long storage_docs_limit = null;
+	private Boolean is_ai_assembler_enabled = null;
 
 	public BillingSettings(){ }
 
@@ -56,6 +58,10 @@ public class BillingSettings
     public Integer getPermittedJobIds() { return job_ids_permitted; }
     @XmlElement(name="job_ids_allocated")
     public Integer getAllocatedJobIds() { return job_ids_allocated; }
+	@XmlElement(name="storage_docs_limit")
+	public Long getStorageDocsLimit() { return (storage_docs_limit == null) ? 0L : storage_docs_limit; }
+	@XmlElement(name="is_ai_assembler_enabled")
+	public Boolean getIsAiAssemblerEnabled() { return (is_ai_assembler_enabled == null) ? false : is_ai_assembler_enabled; }
 
 	public void setExpirationDate(Long expirationDate) { this.expiration_date = expirationDate; }
 	public void setDocsBalance(Long docsBalance) { this.docs_balance = docsBalance; }
@@ -72,4 +78,7 @@ public class BillingSettings
     public void setAllocatedSeats(Integer seats_allocated) { this.app_seats_allocated = seats_allocated; }
     public void setPermittedJobIds(Integer job_ids_permitted) { this.job_ids_permitted = job_ids_permitted; }
     public void setAllocatedJobIds(Integer job_ids_allocated) { this.job_ids_allocated = job_ids_allocated; }
+	public void setStorageDocsLimit(Long storage_docs_limit) { this.storage_docs_limit = storage_docs_limit; }
+	public void setIsAiAssemblerEnabled(Boolean is_ai_assembler_enabled) { this.is_ai_assembler_enabled = is_ai_assembler_enabled; }
+
 }

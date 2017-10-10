@@ -7,9 +7,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by George on 2/11/2015.
- */
 
 @XmlRootElement(name="supported_features")
 public final class FeaturesList

@@ -30,7 +30,7 @@ public class DocConfiguration
 	private Integer user_opinions_limit = null;
     private Integer auto_categories_limit = null;
 
-	public DocConfiguration(){};
+	public DocConfiguration(){}
 
 	public DocConfiguration(Boolean model_sentiment, Boolean intentions, Integer entity_themes_limit, Integer summary_limit, Integer themes_limit,
                             Integer query_topics_limit, Integer concept_topics_limit, Integer named_entities_limit, Integer user_entities_limit, Integer phrases_limit,

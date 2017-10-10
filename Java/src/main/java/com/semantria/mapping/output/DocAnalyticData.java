@@ -1,6 +1,7 @@
 
 package com.semantria.mapping.output;
 
+import com.google.common.base.MoreObjects;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 
@@ -36,7 +37,7 @@ public final class DocAnalyticData
 	private List<Opinion> opinions = null;
     private List<DocCategory> auto_categories = null;
 
-	public DocAnalyticData() { };
+	public DocAnalyticData() { }
 
 	@XmlElement
 	public String getId() { return id; }
@@ -128,5 +129,13 @@ public final class DocAnalyticData
 	public void setSentimentPolarity(String sentiment_polarity) { this.sentiment_polarity = sentiment_polarity; }
 	public void setOpinions(List<Opinion> opinions) { this.opinions = opinions; }
     public void setAutoCategories(List<DocCategory> auto_categories) { this.auto_categories = auto_categories; }
+
+	public String toString() {
+		return MoreObjects.toStringHelper(this)
+				.add("id", id)
+				.add("status", status)
+				.toString();
+	}
+
 }
 

@@ -34,19 +34,20 @@ class AuthRequest:
         self.applicationName = applicationName
         self.use_compression = use_compression
 
-    def authWebRequest(self, method, url, postData):
+    def authWebRequest(self, method, url, postData, headers=None):
         nonce = self.generateNonce()
         timestamp = self.generateTimestamp()
         query = self.generateQuery(method, url, timestamp, nonce)
         authheader = self.generateAuthHeader(query, timestamp, nonce)
 
-        headers = {"Authorization": authheader}
+        request_headers = headers.copy() if headers else dict()
+        request_headers["Authorization"] = authheader
         if method == "POST":
-            headers["Content-type"] = "application/x-www-form-urlencoded"
-        headers["x-api-version"] = self.apiVersion
-        headers["x-app-name"] = self.applicationName
+            request_headers["Content-type"] = "application/x-www-form-urlencoded"
+        request_headers["x-api-version"] = self.apiVersion
+        request_headers["x-app-name"] = self.applicationName
         if self.use_compression:
-            headers["Accept-encoding"] = "gzip"
+            request_headers["Accept-encoding"] = "gzip"
 
         qparts = urlparse(query)
         qscheme, qnetloc, qpath, qparams, qquery, qfragment = qparts[:6]
@@ -55,7 +56,7 @@ class AuthRequest:
 
         params = {
             'data': postData,
-            'headers': headers
+            'headers': request_headers
         }
 
         response = requests.request(method, host, **params)

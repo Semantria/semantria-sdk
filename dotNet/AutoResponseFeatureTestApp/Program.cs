@@ -10,7 +10,7 @@ using Semantria.Com.Mapping;
 using Semantria.Com.Mapping.Output;
 using Semantria.Com.Mapping.Configuration;
 
-namespace FacetsTest
+namespace AutoResponseTest
 {
     class Program
     {

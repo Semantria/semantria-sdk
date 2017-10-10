@@ -1,5 +1,7 @@
 package com.semantria.example;
 
+import com.google.common.base.Strings;
+import com.semantria.auth.CredentialException;
 import com.semantria.interfaces.ICallbackHandler;
 import com.semantria.mapping.Document;
 import com.semantria.mapping.configuration.Configuration;
@@ -7,7 +9,6 @@ import com.semantria.mapping.output.CollAnalyticData;
 import com.semantria.mapping.output.DocAnalyticData;
 import com.semantria.utils.RequestArgs;
 import com.semantria.utils.ResponseArgs;
-import org.apache.commons.lang.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -30,7 +31,7 @@ import java.util.List;
  */
 public class AutoResponseFeatureTestApp extends DetailedModeTestApp implements ICallbackHandler {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws CredentialException {
         String filename = "source.txt";
         String key = System.getenv("SEMANTRIA_KEY");
         String secret = System.getenv("SEMANTRIA_SECRET");
@@ -48,7 +49,7 @@ public class AutoResponseFeatureTestApp extends DetailedModeTestApp implements I
             secret = args[2];
         }
 
-        if (StringUtils.isEmpty(key) || StringUtils.isEmpty(secret)) {
+        if (Strings.isNullOrEmpty(key) || Strings.isNullOrEmpty(secret)) {
             System.err.println("Error: Missing key and/or secret\n");
             usage();
         }
@@ -66,14 +67,14 @@ public class AutoResponseFeatureTestApp extends DetailedModeTestApp implements I
     }
 
     private static void usage() {
-        System.out.println("\nAutoResponseFeatureTestApp [<file> [<key> <secret>]].\n\n");
-        System.out.println("This example reads data from a file, one document per line,\n");
-        System.out.println("processes it through the Semantria API, and prints some of\n");
-        System.out.println("the results.\n\n");
-        System.out.println("Arguments:\n");
-        System.out.println("  <file>     name of datafile to read (default: source.txt)\n");
-        System.out.println("  <key>      Semantria API key (default: value of SEMANTRIA_KEY environment variable)\n");
-        System.out.println("  <secret>   Semantria API secret (default: value of SEMANTRIA_SECRET environment variable)\n");
+        System.out.format("\nAutoResponseFeatureTestApp [<file> [<key> <secret>]].\n\n");
+        System.out.format("This example reads data from a file, one document per line,\n");
+        System.out.format("processes it through the Semantria API, and prints some of\n");
+        System.out.format("the results.\n\n");
+        System.out.format("Arguments:\n");
+        System.out.format("  <file>     name of datafile to read (default: source.txt)\n");
+        System.out.format("  <key>      Semantria API key (default: value of SEMANTRIA_KEY environment variable)\n");
+        System.out.format("  <secret>   Semantria API secret (default: value of SEMANTRIA_SECRET environment variable)\n");
         System.exit(0);
     }
 
@@ -82,9 +83,9 @@ public class AutoResponseFeatureTestApp extends DetailedModeTestApp implements I
     Configuration autoResponseConfig = null;
     private static String AUTO_RESPONSE_TEST_CONFIG_NAME = "AutoResponseTest";
 
-    public AutoResponseFeatureTestApp(String key, String secret) {
+    public AutoResponseFeatureTestApp(String key, String secret) throws CredentialException {
         super(key, secret);
-        session.setCallbackHandler(this);
+        session.withCallbackHandler(this);
         autoResponseConfig = getOrCreateAutoResponseConfig();
         System.out.format("Using autoresponse config id %s\n", autoResponseConfig.getId());
     }
@@ -93,7 +94,7 @@ public class AutoResponseFeatureTestApp extends DetailedModeTestApp implements I
      * Override getProcessdDocuments to use the autoresponse config rather than the primary config.
      */
     @Override
-    List<DocAnalyticData> getProcessedDocuments() {
+    List<DocAnalyticData> getProcessedDocuments() throws CredentialException {
         return getProcessedDocuments(autoResponseConfig.getId());
     }
 
@@ -101,7 +102,7 @@ public class AutoResponseFeatureTestApp extends DetailedModeTestApp implements I
      * Override queueBatch to use the autoresponse config rather than the primary config.
      */
     @Override
-    void queueBatch(List<Document> batch) {
+    void queueBatch(List<Document> batch) throws CredentialException {
         queueBatch(batch, autoResponseConfig.getId());
         // This is a little bit contrived, but we wait a bit after queueing.
         // This is so some analysis data will be ready when queueing later batches during the run of the
@@ -117,7 +118,7 @@ public class AutoResponseFeatureTestApp extends DetailedModeTestApp implements I
         return 10;
     }
 
-    private Configuration getOrCreateAutoResponseConfig() {
+    private Configuration getOrCreateAutoResponseConfig() throws CredentialException {
         Configuration config = getConfigByName(AUTO_RESPONSE_TEST_CONFIG_NAME);
         if (config != null) {
             return config;
@@ -125,7 +126,7 @@ public class AutoResponseFeatureTestApp extends DetailedModeTestApp implements I
         return createAutoResponseConfig();
     }
 
-    private Configuration getConfigByName(String name) {
+    private Configuration getConfigByName(String name) throws CredentialException {
         for (Configuration config : session.getConfigurations()) {
             if (config.getName().equalsIgnoreCase(name)) {
                 return config;
@@ -135,7 +136,7 @@ public class AutoResponseFeatureTestApp extends DetailedModeTestApp implements I
     }
 
 
-    Configuration createAutoResponseConfig() {
+    Configuration createAutoResponseConfig() throws CredentialException {
         Configuration config = new Configuration();
         config.setName(AUTO_RESPONSE_TEST_CONFIG_NAME);
         config.setLanguage("English");

@@ -4,9 +4,9 @@ require_once('../semantria/session.php');
 
 echo "Semantria service demo ...", "\r\n";
 
-// the consumer key and secret
-define('CONSUMER_KEY', "");
-define('CONSUMER_SECRET', "");
+// The consumer key and secret
+define('CONSUMER_KEY', getenv("SEMANTRIA_KEY"));
+define('CONSUMER_SECRET', getenv("SEMANTRIA_SECRET"));
 
 // Task statuses
 define('TASK_STATUS_UNDEFINED', 'UNDEFINED');
@@ -142,16 +142,16 @@ foreach ($results as $data) {
     echo "Document ", $data["id"], " Sentiment score: ", $data["sentiment_score"], "\r\n";
 
     // Printing of document themes
-    echo "Document themes:", "\r\n";
-    if ($data["themes"]) {
+    if (isset($data["themes"])) {
+        echo "Document themes:", "\r\n";
         foreach ($data["themes"] as $theme) {
             echo "	", $theme["title"], " (sentiment: ", $theme["sentiment_score"], ")", "\r\n";
         }
     }
 
     // Printing of document entities
-    echo "Entities:", "\r\n";
     if (isset($data["entities"])) {
+        echo "Entities:", "\r\n";
         foreach ($data["entities"] as $entity) {
             echo "	", $entity["title"], " : ", $entity["entity_type"], " (sentiment: ", $entity["sentiment_score"], ")", "\r\n";
         }
