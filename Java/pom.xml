@@ -8,13 +8,13 @@
 
     <groupId>com.semantria</groupId>
     <artifactId>semantria-java-sdk</artifactId>
-    <version>4.2.101</version>
+    <version>4.2.102</version>
 
     <properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <slf4j.version>1.7.22</slf4j.version>
         <logback.version>1.1.9</logback.version>
-        <java.version>1.7</java.version>
+        <java.version>1.8</java.version>
     </properties>
 
     <dependencies>
@@ -76,17 +76,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>2.3.1</version>
-                    <configuration>
-                    <archive>
-                        <manifest>
-                            <addClasspath>true</addClasspath>
-                            <mainClass>com.semantria.DetailedModeTestApp</mainClass>
-                            <packageName>com.semantria</packageName>
-                            <addClasspath>true</addClasspath>
-                            <classpathPrefix>lib/</classpathPrefix>
-                         </manifest>
-                    </archive>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
