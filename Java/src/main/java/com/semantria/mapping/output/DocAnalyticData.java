@@ -1,4 +1,3 @@
-
 package com.semantria.mapping.output;
 
 import com.google.common.base.MoreObjects;
@@ -106,7 +105,6 @@ public final class DocAnalyticData
 	public void setMetadata(String value) {
 		GsonBuilder builder = new GsonBuilder();
 		metadata = builder.create().fromJson(value, JsonElement.class);
-		System.out.println(metadata.toString());
 	}
 
 
