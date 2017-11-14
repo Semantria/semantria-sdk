@@ -10,7 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import java.util.List;
 
 @XmlRootElement(name="document")
-public final class DocAnalyticData 
+public class DocAnalyticData 
 {
 	private String id = null;
 	private TaskStatus status = null;

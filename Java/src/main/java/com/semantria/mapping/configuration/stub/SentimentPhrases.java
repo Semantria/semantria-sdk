@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @XmlRootElement(name="phrases")
-public final class SentimentPhrases
+public class SentimentPhrases
 {
     private List<SentimentPhrase> sentimentPhrases = new ArrayList<SentimentPhrase>();
 

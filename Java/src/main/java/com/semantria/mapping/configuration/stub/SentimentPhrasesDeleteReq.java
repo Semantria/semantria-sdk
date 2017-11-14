@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @XmlRootElement(name="phrases")
-public final class SentimentPhrasesDeleteReq
+public class SentimentPhrasesDeleteReq
 {
     private List<String> sentimentPhrases = new ArrayList<String>();
 

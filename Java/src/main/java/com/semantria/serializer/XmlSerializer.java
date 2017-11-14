@@ -14,7 +14,7 @@ import javax.xml.bind.Unmarshaller;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
-public final class XmlSerializer implements ISerializer
+public class XmlSerializer implements ISerializer
 {
 	public Object deserialize(String input, Class<?> type)
 	{

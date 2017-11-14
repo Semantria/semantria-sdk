@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @XmlRootElement(name="queries")
-public final class QueriesDeleteReq
+public class QueriesDeleteReq
 {
 	private List<String> queries = new ArrayList<String>();
 

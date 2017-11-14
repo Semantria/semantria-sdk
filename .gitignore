@@ -44,6 +44,7 @@ Thumbs.db
 .~*.doc#
 ~*.~*
 *.*~
+*.bak
 
 # Visual Studio generated temp files #
 ######################################

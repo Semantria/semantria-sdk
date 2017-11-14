@@ -9,7 +9,7 @@ import java.util.List;
 
 
 @XmlRootElement(name="supported_features")
-public final class FeaturesList
+public class FeaturesList
 {
     private List<FeaturesSet> features = new ArrayList<FeaturesSet>();
 

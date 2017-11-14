@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import java.util.List;
 
-public final class DocTheme
+public class DocTheme
 {
 	private String title = null;
 	private Float sentiment_score = null;

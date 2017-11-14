@@ -146,6 +146,9 @@ public class SessionTest {
         assertEquals("active", subscription.getStatus());
     }
 
+    // Note, this may fail if there are no day statistics yet. This is because daily stats
+    // are rolled up every hour. Wait an hour and run the test again, by which time there
+    // will be some stats available.
     @Test
     public void test05StatisticsOverall() {
         createTestSession();
@@ -160,6 +163,9 @@ public class SessionTest {
         assertNotNull(statistics.getLatestUsedApp());
     }
 
+    // Note, this may fail if there are no day statistics yet. This is because daily stats
+    // are rolled up every hour. Wait an hour and run the test again, by which time there
+    // will be some stats available.
     @Test
     public void test07StatisticsGrouped() {
         createTestSession();

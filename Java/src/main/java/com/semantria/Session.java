@@ -64,7 +64,7 @@ import java.util.Map;
  * <p/>
  * See exammples such as {@code DetailedModeTestApp}.
  */
-public final class Session {
+public class Session {
 
     //<editor-fold desc="Private fields">
 

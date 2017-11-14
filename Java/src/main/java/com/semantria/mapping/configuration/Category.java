@@ -5,7 +5,7 @@ import javax.xml.bind.annotation.XmlElementWrapper;
 import java.sql.Timestamp;
 import java.util.List;
 
-public final class Category 
+public class Category 
 {
     private String id = null;
 	private String name = "";

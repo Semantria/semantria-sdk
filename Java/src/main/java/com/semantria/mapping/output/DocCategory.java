@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import java.util.List;
 
-public final class DocCategory
+public class DocCategory
 {
     private String title = null;
     private String type = null;

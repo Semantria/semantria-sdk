@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @XmlRootElement(name="categories")
-public final class Categories
+public class Categories
 {
 	private List<Category> categories = new ArrayList<Category>();
 

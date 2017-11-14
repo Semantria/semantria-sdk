@@ -21,7 +21,7 @@ import java.util.*;
 import java.util.zip.GZIPInputStream;
 
 
-public final class AuthRequest {
+public class AuthRequest {
 
 	private String method = "GET";
 	private String url = "";
@@ -31,7 +31,7 @@ public final class AuthRequest {
 	private String key = "";
 	private String secret = "";
 	private String response = "";
-	private String appName = "Java/4.2.101/";
+	private String appName = "Java/4.2.103/";
 	private String apiVersion = "";
 	private String errorMsg = null;
 	private boolean useCompression = false;

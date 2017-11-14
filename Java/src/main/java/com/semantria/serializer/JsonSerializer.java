@@ -14,7 +14,7 @@ import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.List;
 
-public final class JsonSerializer implements ISerializer
+public class JsonSerializer implements ISerializer
 {
 
 	public String serialize(Object object)

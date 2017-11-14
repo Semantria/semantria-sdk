@@ -4,7 +4,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import java.util.List;
 
-public final class TaxonomyNode {
+public class TaxonomyNode {
     private String id = null;
     private String name = "";
     private Boolean enforce_parent_matching = null;

@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @XmlRootElement(name="documents")
-public final class Batch
+public class Batch
 {
 	private List<Document> documents = new ArrayList<Document>();
 

@@ -7,7 +7,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 
 @XmlRootElement(name="document")
-public final class Document 
+public class Document 
 {
 	private String id = null;
 	private String text = null;

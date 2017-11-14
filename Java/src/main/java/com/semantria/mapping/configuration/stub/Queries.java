@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @XmlRootElement(name="queries")
-public final class Queries
+public class Queries
 {
 	private List<Query> queries = new ArrayList<Query>();
 

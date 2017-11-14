@@ -1,6 +1,9 @@
 CHANGELOG
 
-4.2.102 - Upgrade pom.xml to java 1.8.  Remove default main test app. Test apps must now be called explicitly when using from the command line.
+4.2.103 - Remove final class modifiers.
+
+4.2.102 - Upgrade pom.xml to java 1.8.
+	- Remove default main test app. Test apps must now be called explicitly when from the command line.
 
 4.2.101 - Check for null message in auto response handler.
 

@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @XmlRootElement(name="taxonomies")
-public final class Taxonomies
+public class Taxonomies
 {
     private List<TaxonomyNode> taxonomies = new ArrayList<TaxonomyNode>();
 

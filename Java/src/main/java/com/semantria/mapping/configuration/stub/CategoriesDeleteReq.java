@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @XmlRootElement(name="categories")
-public final class CategoriesDeleteReq
+public class CategoriesDeleteReq
 {
 	private List<String> categories = new ArrayList<String>();
 

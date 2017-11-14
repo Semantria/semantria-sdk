@@ -2,7 +2,7 @@ package com.semantria.mapping.output;
 
 import javax.xml.bind.annotation.XmlElement;
 
-public final class DocIntention
+public class DocIntention
 {
 	private String type = null;
 	private String evidence_phrase = null;

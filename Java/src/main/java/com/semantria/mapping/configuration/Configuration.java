@@ -3,7 +3,7 @@ package com.semantria.mapping.configuration;
 import javax.xml.bind.annotation.XmlElement;
 import java.sql.Timestamp;
 
-public final class Configuration
+public class Configuration
 {
 	private String id = null;
     private String name = null;

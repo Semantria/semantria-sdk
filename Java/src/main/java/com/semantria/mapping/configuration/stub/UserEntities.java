@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @XmlRootElement(name="entities")
-public final class UserEntities
+public class UserEntities
 {
 	private List<UserEntity> entities = new ArrayList<UserEntity>();
 

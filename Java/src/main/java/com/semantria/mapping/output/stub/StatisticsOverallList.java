@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @XmlRootElement(name="statistics")
-public final class StatisticsOverallList
+public class StatisticsOverallList
 {
     private List<StatisticsOverall> statistics = new ArrayList<StatisticsOverall>();
 

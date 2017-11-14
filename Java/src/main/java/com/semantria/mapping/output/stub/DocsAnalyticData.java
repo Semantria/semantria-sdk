@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @XmlRootElement(name="documents")
-public final class DocsAnalyticData
+public class DocsAnalyticData
 {
 	private List<DocAnalyticData> docAnalytics = new ArrayList<DocAnalyticData>();
 

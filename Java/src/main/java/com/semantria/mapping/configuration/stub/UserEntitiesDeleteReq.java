@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @XmlRootElement(name="entities")
-public final class UserEntitiesDeleteReq
+public class UserEntitiesDeleteReq
 {
 	private List<String> entities = new ArrayList<String>();
 

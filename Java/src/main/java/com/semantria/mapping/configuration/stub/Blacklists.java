@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @XmlRootElement(name="blacklist")
-public final class Blacklists
+public class Blacklists
 {
 	private List<BlacklistItem> item = new ArrayList<BlacklistItem>();
 

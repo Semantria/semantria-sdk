@@ -2,7 +2,7 @@ package com.semantria.mapping.output;
 
 import javax.xml.bind.annotation.XmlElement;
 
-public final class DocModelSentiment
+public class DocModelSentiment
 {
     private String model_name = null;
     private Float mixed_score = null;
