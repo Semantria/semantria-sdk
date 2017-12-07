@@ -183,11 +183,8 @@ class Session(object):
         data = self.serializer.serialize(items)
         return self._runRequest(("POST" if create else "PUT"), url, None, data)
 
-    def cloneConfiguration(self, name, template):
-        if name is None:
-            name = ''
-        items = [name, template]
-        return self.updateConfigurations(items)
+    def cloneConfiguration(self, item):
+        return self.updateConfigurations(item, create=True)
 
     def removeConfigurations(self, config_id):
         url = self.makeUrl('/configurations')

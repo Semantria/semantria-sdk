@@ -233,7 +233,7 @@ class Session
             "template" => $template,
         ));
 
-        return $this->updateConfigurations($items);
+        return $this->updateConfigurations($items, TRUE);
     }
 
     public function updateConfigurations($items, $create = false)
