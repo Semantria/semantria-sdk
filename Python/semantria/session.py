@@ -105,11 +105,10 @@ class Session(object):
         return json_res['custom_params']['key'], json_res['custom_params']['secret']
 
     def registerSerializer(self, serializer):
-        if serializer:
-            self.serializer = serializer
-            self.format = serializer.gettype()
-        else:
-            raise SemantriaError('Parameter not found: %s' % serializer)
+        if not serializer:
+            raise SemantriaError('Parameter \'serializer\' must not be empty')
+        self.serializer = serializer
+        self.format = serializer.gettype()
 
     # Sets an HTTP header for all new HTTP requests. If a header with
     # the key already exists, overwrite its value with the new value.
@@ -148,10 +147,10 @@ class Session(object):
         """ Returns usage statistics
         """
         if not (interval or start or end):
-            raise RuntimeError('One of interval, start or end must be specified')
+            raise SemantriaError('One of interval, start or end must be specified')
         if interval and (interval.lower() not in ["hour", "day", "week", "month", "year"]):
-            raise RuntimeError('Unknown value for interval: {}. Expected hour, day, week, month or year'
-                               .format(interval))
+            raise SemantriaError('Unknown value for interval: {}. Expected hour, day, week, month or year'
+                                 .format(interval))
 
         params = {'config_id': configId,
                   'config_name': config_name,
@@ -178,13 +177,15 @@ class Session(object):
     def updateConfigurations(self, items, create=False):
         if not isinstance(items, list):
             items = [items]
-
         url = self.makeUrl('/configurations')
         data = self.serializer.serialize(items)
         return self._runRequest(("POST" if create else "PUT"), url, None, data)
 
-    def cloneConfiguration(self, item):
-        return self.updateConfigurations(item, create=True)
+    def cloneConfiguration(self, name, template):
+        if not name:
+            raise SemantriaError('Parameter \'name\' must not be empty')
+        items = {"name": name, "template": template}
+        return self.addConfigurations(items)
 
     def removeConfigurations(self, config_id):
         url = self.makeUrl('/configurations')
@@ -375,14 +376,14 @@ class Session(object):
 
     def getDocument(self, doc_id, config_id=None):
         if not doc_id:
-            raise SemantriaError('Parameter not found: %s' % doc_id)
+            raise SemantriaError('Parameter \'doc_id\' must not be empty')
         doc_id = url_quote(doc_id, safe='')
         url = self.makeUrl('/document/{0}'.format(doc_id), config_id)
         return self._runRequest("GET", url, "get_document")
 
     def cancelDocument(self, doc_id, config_id=None):
         if not doc_id:
-            raise SemantriaError('Parameter not found: %s' % doc_id)
+            raise SemantriaError('Parameter \'doc_id\' must not be empty')
         doc_id = url_quote(doc_id, safe='')
         url = self.makeUrl('/document/{0}'.format(doc_id), config_id)
         return self._runRequest("DELETE", url)
@@ -415,16 +416,14 @@ class Session(object):
 
     def getCollection(self, collection_id, config_id=None):
         if not collection_id:
-            raise SemantriaError('Parameter not found: %s' % collection_id)
-
+            raise SemantriaError('Parameter \'collection_id\' must not be empty')
         collection_id = url_quote(collection_id, safe='')
         url = self.makeUrl('/collection/{0}'.format(collection_id), config_id)
         return self._runRequest("GET", url, "get_collection")
 
     def cancelCollection(self, collection_id, config_id=None):
         if not collection_id:
-            raise SemantriaError('Parameter not found: %s' % collection_id)
-
+            raise SemantriaError('Parameter \'collection_id\' must not be empty')
         collection_id = url_quote(collection_id, safe='')
         url = self.makeUrl('/collection/{0}'.format(collection_id), config_id)
         return self._runRequest("DELETE", url)

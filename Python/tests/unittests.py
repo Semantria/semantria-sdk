@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
+
 from __future__ import print_function
-import unittest
-import uuid
+import unittest, uuid, os
 
 import semantria
 
 # the consumer key and secret
-consumerKey = ""
-consumerSecret = ""
+consumerKey = os.getenv('SEMANTRIA_KEY')
+consumerSecret = os.getenv('SEMANTRIA_SECRET')
 
 col_id = str(uuid.uuid1()).replace("-", "")
 doc_id = str(uuid.uuid1()).replace("-", "")
@@ -214,10 +214,10 @@ class SemantriaSessionTest(unittest.TestCase):
             'name': 'TEST_CONFIG_PYTHON3',
             'language': 'English',
             'document': {
-                'query_topics_limit': 5,
-                'concept_topics_limit': 5,
-                'named_entities_limit': 5,
-                'user_entities_limit': 5
+                'query_topics': True,
+                'concept_topics': True,
+                'named_entities': True,
+                'user_entities': True
             }
         }
 
@@ -230,10 +230,11 @@ class SemantriaSessionTest(unittest.TestCase):
                 obj = item
                 break
         self.failIf(obj is None)
-        self.failIf(obj['chars_threshold'] != 80)
+        self.failIf(obj['alphanumeric_threshold'] != 80)
 
-        obj['chars_threshold'] = 20
+        obj['alphanumeric_threshold'] = 20
         config_id = obj['id']
+        del obj['modified']
 
         response = self.session.updateConfigurations([obj])
         self.failIf(len(response) == 0)
@@ -243,10 +244,33 @@ class SemantriaSessionTest(unittest.TestCase):
                 obj = item
                 break
         self.failIf(obj is None)
-        self.failIf(obj['chars_threshold'] != 20)
+        self.failIf(obj['alphanumeric_threshold'] != 20)
 
         response = self.session.removeConfigurations([obj['id']])
         self.failIf(response != 202)
+
+    def test_CloneConfiguration(self):
+        test_configuration = {
+            'name': 'TEST_CONFIG_TO_CLONE',
+            'language': 'English',
+            'alphanumeric_threshold': 17
+        }
+
+        response = self.session.addConfigurations([test_configuration])
+        self.failIf(len(response) != 1)
+
+        config_to_clone = response[0]
+        response = self.session.cloneConfiguration('TEST CLONED CONFIG', config_to_clone['id'])
+        self.failIf(len(response) != 1)
+
+        cloned_config = response[0]
+        self.failIf(cloned_config['name'] != 'TEST CLONED CONFIG')
+        self.failIf(cloned_config['alphanumeric_threshold'] != 17)
+
+        response = self.session.removeConfigurations(
+            [cloned_config['id'], config_to_clone['id']])
+        self.failIf(response != 202)
+
 
 if __name__ == '__main__':
     # unittest.main()
@@ -255,6 +279,7 @@ if __name__ == '__main__':
     suite.addTest(SemantriaSessionTest('test_Status'))
     suite.addTest(SemantriaSessionTest('test_VerifySubscription'))
     suite.addTest(SemantriaSessionTest('test_CRUDConfigurations'))
+    suite.addTest(SemantriaSessionTest('test_CloneConfiguration'))
     suite.addTest(SemantriaSessionTest('test_CRUDBlacklist'))
     suite.addTest(SemantriaSessionTest('test_CRUDCategories'))
     suite.addTest(SemantriaSessionTest('test_CRUDQueries'))

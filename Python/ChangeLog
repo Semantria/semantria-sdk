@@ -1,5 +1,7 @@
 CHANGELOG
 
+4.1.89 - Fixed cloneConfiguration().
+
 4.1.88 - Added session.setHttpHeader() and session.setHttpHeaders().
 
 4.1.87 - Improved error reporting.
