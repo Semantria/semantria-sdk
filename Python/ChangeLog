@@ -1,5 +1,8 @@
 CHANGELOG
 
+4.2.90 - Fixed bug in username/password authentication.
+	- Fixed bug attempting to set modified property in auto response test app.
+
 4.1.89 - Fixed cloneConfiguration().
 
 4.1.88 - Added session.setHttpHeader() and session.setHttpHeaders().

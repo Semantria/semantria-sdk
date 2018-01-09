@@ -1,5 +1,7 @@
 CHANGELOG
 
+4.2.8 - Fixed bug attempting to set modified property in auto response test app
+
 4.1.7 - Tested with API 4.1.
 	- Added URLs encoding for those methods which require passing of document/collection Ids as the part of URL.
 

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import print_function
-import unittest, uuid, os
+import unittest, uuid, os, sys
 
 import semantria
 
@@ -20,24 +20,26 @@ def onRequest(sender, result):
     # print("\n", "REQUEST: ", result)
     pass
 
-
 def onResponse(sender, result):
     # print("\n", "RESPONSE: ", result)
     pass
 
-
 def onError(sender, result):
     print("\n", "ERROR: ", result)
-
+    sys.stdout.flush()
+    sys.stderr.flush()
 
 def onDocsAutoResponse(sender, result):
     # print("\n", "AUTORESPONSE: ", len(result), result)
     pass
 
-
 def onCollsAutoResponse(sender, result):
     # print("\n", "AUTORESPONSE: ", len(result), result)
     pass
+
+
+def isNotSuccess(code):
+    return (code < 200) or (code >= 300)
 
 
 class SemantriaSessionTest(unittest.TestCase):
@@ -67,7 +69,7 @@ class SemantriaSessionTest(unittest.TestCase):
         self.failIf(blacklist is None)
 
         status = self.session.removeBlacklist([blacklist['id']])
-        self.failIf(status != 202)
+        self.failIf(isNotSuccess(status))
 
     def test_CRUDCategories(self):
         response = self.session.getCategories()
@@ -87,7 +89,7 @@ class SemantriaSessionTest(unittest.TestCase):
         self.failIf(obj is None)
 
         response = self.session.removeCategories([obj['id']])
-        self.failIf(response != 202)
+        self.failIf(isNotSuccess(response))
 
     def test_CRUDQueries(self):
         response = self.session.getQueries()
@@ -104,7 +106,7 @@ class SemantriaSessionTest(unittest.TestCase):
         self.failIf(obj is None)
 
         response = self.session.removeQueries([obj['id']])
-        self.failIf(response != 202)
+        self.failIf(isNotSuccess(response))
 
     def test_CRUDPhrases(self):
         response = self.session.getPhrases()
@@ -123,7 +125,7 @@ class SemantriaSessionTest(unittest.TestCase):
         self.failIf(obj is None)
 
         response = self.session.removePhrases([obj['id']])
-        self.failIf(response != 202)
+        self.failIf(isNotSuccess(response))
 
     def test_CRUDEntities(self):
         response = self.session.getEntities()
@@ -142,7 +144,7 @@ class SemantriaSessionTest(unittest.TestCase):
         self.failIf(obj is None)
 
         response = self.session.removeEntities([obj['id']])
-        self.failIf(response != 202)
+        self.failIf(isNotSuccess(response))
 
     def test_CRUDTaxonomy(self):
         response = self.session.getTaxonomy()
@@ -161,11 +163,11 @@ class SemantriaSessionTest(unittest.TestCase):
         self.failIf(obj is None)
 
         response = self.session.removeTaxonomy([obj['id']])
-        self.failIf(response != 202)
+        self.failIf(isNotSuccess(response))
 
     def test_CreateDocument(self):
         status = self.session.queueDocument({"id": doc_id, "text": message})
-        self.failIf(status != 200 and status != 202)
+        self.failIf(isNotSuccess(status))
 
     def test_GetDocument(self):
         status = self.session.getDocument(doc_id)
@@ -178,7 +180,7 @@ class SemantriaSessionTest(unittest.TestCase):
             batch.append({"id": str(uuid.uuid1()).replace("-", ""), "text": message})
             var -= 1
         status = self.session.queueBatch(batch)
-        self.failIf(status != 200 and status != 202)
+        self.failIf(isNotSuccess(status))
 
     def test_GetProcessedDocuments(self):
         status = self.session.getProcessedDocuments()
@@ -186,7 +188,7 @@ class SemantriaSessionTest(unittest.TestCase):
 
     def test_CreateCollection(self):
         status = self.session.queueCollection({"id": col_id, "documents": [message, message]})
-        self.failIf(status != 200 and status != 202)
+        self.failIf(isNotSuccess(status))
 
     def test_GetCollection(self):
         status = self.session.getCollection(col_id)
@@ -224,30 +226,30 @@ class SemantriaSessionTest(unittest.TestCase):
         response = self.session.addConfigurations([test_configuration])
         self.failIf(len(response) == 0)
 
-        obj = None
+        test_config = None
         for item in response:
             if item["name"] == "TEST_CONFIG_PYTHON3":
-                obj = item
+                test_config = item
                 break
-        self.failIf(obj is None)
-        self.failIf(obj['alphanumeric_threshold'] != 80)
+        self.failIf(test_config is None)
+        self.failIf(test_config['alphanumeric_threshold'] != 80)
 
-        obj['alphanumeric_threshold'] = 20
-        config_id = obj['id']
-        del obj['modified']
+        config_id = test_config['id']
+        new_config = {'id': config_id,
+                      'alphanumeric_threshold': 20}
 
-        response = self.session.updateConfigurations([obj])
+        response = self.session.updateConfigurations([new_config])
         self.failIf(len(response) == 0)
-        obj = None
+        test_config = None
         for item in response:
             if item["id"] == config_id:
-                obj = item
+                test_config = item
                 break
-        self.failIf(obj is None)
-        self.failIf(obj['alphanumeric_threshold'] != 20)
+        self.failIf(test_config is None)
+        self.failIf(test_config['alphanumeric_threshold'] != 20)
 
-        response = self.session.removeConfigurations([obj['id']])
-        self.failIf(response != 202)
+        response = self.session.removeConfigurations([config_id])
+        self.failIf(isNotSuccess(response))
 
     def test_CloneConfiguration(self):
         test_configuration = {
@@ -269,7 +271,7 @@ class SemantriaSessionTest(unittest.TestCase):
 
         response = self.session.removeConfigurations(
             [cloned_config['id'], config_to_clone['id']])
-        self.failIf(response != 202)
+        self.failIf(isNotSuccess(response))
 
 
 if __name__ == '__main__':

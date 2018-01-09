@@ -11,12 +11,14 @@ namespace DetailedModeTestApp
     {
         static void Main(string[] args)
         {
-            // Use correct Semantria API credentias here
-            string consumerKey = string.Empty;
-            string consumerSecret = string.Empty;
+            // Set environment vars before calling this program
+            // or edit this file and put your key and secret here.
+            string consumerKey = Environment.GetEnvironmentVariable("SEMANTRIA_KEY");
+            string consumerSecret = Environment.GetEnvironmentVariable("SEMANTRIA_SECRET");
 
-            // A dictionary that keeps IDs of sent documents and their statuses. It's required to make sure that we get correct documents from the API.
-            Dictionary<string, dynamic> docsTracker = new Dictionary<string, dynamic>(4);
+            // docsTracker keeps IDs of sent documents and their statuses.
+            // It's needed to match docs with their analysis results.
+            Dictionary <string, dynamic> docsTracker = new Dictionary<string, dynamic>(4);
             List<string> initialTexts = new List<string>();
 
             Console.WriteLine("Semantria Detailed processing mode demo.");
@@ -28,7 +30,7 @@ namespace DetailedModeTestApp
                 return;
             }
 
-            //Reads collection from the source file
+            // Read collection from the source file
             Console.WriteLine("Reading dataset from file...");
             using (StreamReader stream = new StreamReader(path))
             {
@@ -42,7 +44,6 @@ namespace DetailedModeTestApp
                 }
             }
 
-            // Initializes new session with the serializer object and the keys.
             using (Session session = Session.CreateSession(consumerKey, consumerSecret))
             {
                 // Error callback handler. This event will occur in case of server-side error
@@ -53,9 +54,10 @@ namespace DetailedModeTestApp
 
                 dynamic configList = session.GetConfigurations();
 
-                //Obtaining subscription object to get user limits applicable on server side
+                // Get subscription object to get user limits
                 dynamic subscription = session.GetSubscription();
 
+                // Queue all docs to be analyzed
                 List<dynamic> outgoingBatch = new List<dynamic>(subscription.basic_settings.incoming_batch_limit);
                 IEnumerator<string> iterrator = initialTexts.GetEnumerator();
                 while (iterrator.MoveNext())
@@ -72,7 +74,7 @@ namespace DetailedModeTestApp
 
                     if (outgoingBatch.Count == subscription.basic_settings.incoming_batch_limit)
                     {
-                        // Queues batch of documents for processing on Semantria service
+                        // Queue batch of documents for processing on Semantria service
                         if (session.QueueBatchOfDocuments(outgoingBatch) != -1)
                         {
                             Console.WriteLine(string.Format("{0} documents queued successfully.", outgoingBatch.Count));
@@ -81,9 +83,9 @@ namespace DetailedModeTestApp
                     }
                 }
 
+                // Check for last batch, which may not be a full size batch.
                 if (outgoingBatch.Count > 0)
                 {
-                    // Queues batch of documents for processing on Semantria service
                     if (session.QueueBatchOfDocuments(outgoingBatch) != -1)
                     {
                         Console.WriteLine(string.Format("{0} documents queued successfully.", outgoingBatch.Count));
@@ -92,12 +94,14 @@ namespace DetailedModeTestApp
 
                 Console.WriteLine();
 
-                // As Semantria isn't real-time solution you need to wait some time before getting of the processed results
-                // In real application here can be implemented two separate jobs, one for queuing of source data another one for retreiving
-                // Wait ten seconds while Semantria process queued document
+                // Now, get the  results.
+                // In a real application you would typically implement two separate
+                // jobs, one for queuing docs to analyze and the other one for
+                // retreiving analysis results.
                 List<dynamic> results = new List<dynamic>();
                 while (docsTracker.Any(item => item.Value == "QUEUED"))
                 {
+                    // Wait a bit between polling requests.
                     System.Threading.Thread.Sleep(500);
 
                     // Requests processed results from Semantria service
@@ -115,12 +119,13 @@ namespace DetailedModeTestApp
                 }
                 Console.WriteLine();
 
+                // Print sample of analysis results for each doc. (There's lots more in there!)
                 foreach (dynamic data in results)
                 {
-                    // Printing of document sentiment score
+                    // print document sentiment score
                     Console.WriteLine(string.Format("Document {0}. Sentiment score: {1}", data.id, data.sentiment_score));
 
-                    // Printing of intentions
+                    // print intentions
                     if (data.auto_categories != null && data.auto_categories.Count > 0)
                     {
                         Console.WriteLine("Document categories:");
@@ -128,7 +133,7 @@ namespace DetailedModeTestApp
                             Console.WriteLine(string.Format("\t{0} (strength: {1})", category.title, category.strength_score));
                     }
 
-                    // Printing of document themes
+                    // Print document themes
                     if (data.themes != null && data.themes.Count > 0)
                     {
                         Console.WriteLine("Document themes:");
@@ -136,7 +141,7 @@ namespace DetailedModeTestApp
                             Console.WriteLine(string.Format("\t{0} (sentiment: {1})", theme.title, theme.sentiment_score));
                     }
 
-                    // Printing of document entities
+                    // Print document entities
                     if (data.entities != null && data.entities.Count > 0)
                     {
                         Console.WriteLine("Entities:");
@@ -148,6 +153,7 @@ namespace DetailedModeTestApp
                 }
             }
 
+            Console.WriteLine("Hit any key to exit.");
             Console.ReadKey(false);
         }
     }

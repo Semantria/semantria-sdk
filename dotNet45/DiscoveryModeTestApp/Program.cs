@@ -11,10 +11,12 @@ namespace DiscoveryModeTestApp
 	{
 		static void Main(string[] args)
 		{
-            const string consumerKey = "";
-            const string consumerSecret = "";
+			// Set environment vars before calling this program
+			// or edit this file and put your key and secret here.
+			string consumerKey = Environment.GetEnvironmentVariable("SEMANTRIA_KEY");
+			string consumerSecret = Environment.GetEnvironmentVariable("SEMANTRIA_SECRET");
 
-			dynamic collection = new { id = Guid.NewGuid().ToString(), documents = new List<dynamic>() };
+            dynamic collection = new { id = Guid.NewGuid().ToString(), documents = new List<dynamic>() };
 
 			Console.WriteLine("Semantria Discovery processing mode demo.");
             Console.WriteLine();
@@ -26,7 +28,7 @@ namespace DiscoveryModeTestApp
 				return;
 			}
 
-			//Reads collection from the source file
+			// Read collection from the source file
 			Console.WriteLine("Reading collection from file...");
 			using (StreamReader stream = new StreamReader(path))
 			{
@@ -42,7 +44,6 @@ namespace DiscoveryModeTestApp
 
 			dynamic result = null;
 
-			//Initializes Semantria Session
 			using (Session session = Session.CreateSession(consumerKey, consumerSecret))
 			{
                 // Error callback handler. This event will occur in case of server-side error
@@ -51,7 +52,7 @@ namespace DiscoveryModeTestApp
 					Console.WriteLine(string.Format("{0}: {1}", (int)ea.Status, ea.Message));
 				});
 
-				//Queues collection for analysis using default configuration
+				// Queue collection for analysis using default configuration
 				if (session.QueueCollection(collection) != -1)
 					Console.WriteLine(string.Format("\"{0}\" collection queued successfully.", collection.id));
 
@@ -59,13 +60,13 @@ namespace DiscoveryModeTestApp
 				{
 					Thread.Sleep(1000);
 					Console.WriteLine("Retrieving your processed results...");
-					//Retreives analysis results for queued collection
+					// Retreive analysis results for queued collection
 					result = session.GetCollection(collection.id);
 				}
 				while (result.status == "QUEUED");
 			}
 
-			//Prints analysis results
+			// Print sample of analysis results. (There's lots more in there!)
 			Console.WriteLine();
             Console.WriteLine("Facets and attributes:");
 			foreach (dynamic facet in result.facets)
@@ -78,6 +79,7 @@ namespace DiscoveryModeTestApp
 					Console.WriteLine("\t{0} : {1}", attr.label, attr.count);
 			}
 
+            Console.WriteLine("Hit any key to exit.");
 			Console.ReadKey(false);
 		}
 	}

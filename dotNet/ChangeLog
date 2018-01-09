@@ -1,5 +1,7 @@
 CHANGELOG
 
+4.2.100 - Fixed bug attempting to set modified property in auto response test app.
+
 4.2.99 - Added sentiment phrases to Topic.
 
 4.2.98 - Updated SDK with the new statistics API.

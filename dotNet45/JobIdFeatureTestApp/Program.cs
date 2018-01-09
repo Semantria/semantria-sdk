@@ -11,14 +11,15 @@ namespace JobIdFeatureTestApp
     {
         static void Main(string[] args)
         {
-            // Use correct Semantria API credentias here
-            const string consumerKey = "";
-            const string consumerSecret = "";
+            // Set environment vars before calling this program
+            // or edit this file and put your key and secret here.
+            string consumerKey = Environment.GetEnvironmentVariable("SEMANTRIA_KEY");
+            string consumerSecret = Environment.GetEnvironmentVariable("SEMANTRIA_SECRET");
 
             // null - send every single document separately
             // false - send uniqueJobIdCount batches
             // true - send all documents in single batch
-            bool? dataSendingMode = true;
+            bool? dataSendingMode = false;
             int uniqueJobIdCount = 4;
 
             Dictionary<string, int> jobIds = new Dictionary<string, int>(uniqueJobIdCount);
@@ -33,7 +34,7 @@ namespace JobIdFeatureTestApp
                 return;
             }
 
-            //Generates N unique jobId values
+            // Generate N unique jobId values
             for (int index = 0; index < uniqueJobIdCount; index++)
             {
                 string id = Guid.NewGuid().ToString();
@@ -42,7 +43,7 @@ namespace JobIdFeatureTestApp
                 documents.Add(id, new List<dynamic>());
             }
 
-            //Reads documents from the source file
+            // Read documents from the source file
             Console.WriteLine("Reading documents from file...");
             Console.WriteLine();
             using (StreamReader stream = new StreamReader(path))
@@ -69,7 +70,6 @@ namespace JobIdFeatureTestApp
                 }
             }
 
-            // Initializes new session with the serializer object and the keys.
             using (Session session = Session.CreateSession(consumerKey, consumerSecret))
             {
                 // Error callback handler. This event will occur in case of server-side error
@@ -91,7 +91,7 @@ namespace JobIdFeatureTestApp
                     {
                         foreach (dynamic doc in pair.Value)
                         {
-                            // Queues document for processing on Semantria service
+                            // Queue document for processing on Semantria service
                             session.QueueDocument(doc);
                         }
 
@@ -102,7 +102,7 @@ namespace JobIdFeatureTestApp
                 {
                     foreach (KeyValuePair<string, List<dynamic>> pair in documents)
                     {
-                        // Queues batch of documents for processing on Semantria service
+                        // Queue batch of documents for processing on Semantria service
                         if (session.QueueBatchOfDocuments(pair.Value) != -1)
                         {
                             Console.WriteLine("{0} documents queued for {1} job ID", pair.Value.Count, pair.Key);
@@ -131,8 +131,8 @@ namespace JobIdFeatureTestApp
                     int count = 0;
                     while (jobIds[pair.Key] > 0)
                     {
-                        // Waits half of second while Semantria process queued document
-                        System.Threading.Thread.Sleep(500);
+                        // Wait a bit between polling requests.
+                        System.Threading.Thread.Sleep(200);
 
                         // Requests processed results from Semantria service
                         List<dynamic> results = new List<dynamic>(pair.Value);
@@ -148,6 +148,7 @@ namespace JobIdFeatureTestApp
 
             Console.WriteLine();
             Console.WriteLine("Done!");
+            Console.WriteLine("Hit any key to exit.");
             Console.ReadKey(false);
         }
     }

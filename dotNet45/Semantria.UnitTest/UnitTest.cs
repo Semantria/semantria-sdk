@@ -19,8 +19,10 @@ namespace Semantria.Com.TestUnitApi
             //
         }
 
-        private string _consumerKey = string.Empty;
-        private string _consumerSecret = string.Empty;
+        // Set environment vars before calling this program
+        // or edit this file and put your key and secret here.
+        private string _consumerKey = System.Environment.GetEnvironmentVariable("SEMANTRIA_KEY");
+        private string _consumerSecret = System.Environment.GetEnvironmentVariable("SEMANTRIA_SECRET");
 
         private string _id = "3E08B37B-0D74-4BF0-9380-E4D7E8C0279E"; 
         private string _message = "Amazon Web Services has announced a new feature called VM₤Ware Import, which allows IT departments to move virtual machine images from their internal data centers to the cloud.";
@@ -122,8 +124,13 @@ namespace Semantria.Com.TestUnitApi
         [TestMethod]
         public void GetStatistics()
         {
-            dynamic stat = _session.GetStatistics(_testConfig);
-            Assert.IsNotNull(stat);
+            dynamic stat = _session.GetStatistics(_testConfig, "hour");
+            if (stat == null)
+            {
+                Debug.WriteLine("statistics returned null."
+                    + " This usually means that there is no usage for the given interval."
+                    + " Try again in a few minutes");
+            }
         }
 
         [TestMethod]
@@ -138,24 +145,17 @@ namespace Semantria.Com.TestUnitApi
         {
             dynamic result = _session.GetConfigurations();
             Assert.IsNotNull(result);
-            if (result == null) return;
 
-            dynamic primaryConf = null;
-            foreach (dynamic item in result)
-            {
-                if (item.is_primary == true)
-                {
-                    item.auto_response = false;
-                    item.chars_threshold = 50;
-                    item.one_sentence = true;
-                }
+            string configId = result[0].id;
+            int threshold = result[0].alphanumeric_threshold;
+                       
+            result = _session.UpdateConfigurations(new [] { new { id = configId, alphanumeric_threshold = threshold + 1 } });
+            Assert.IsNotNull(result);
+            Assert.AreEqual(configId, result[0].id);
+            Assert.AreEqual(threshold + 1, result[0].alphanumeric_threshold);
 
-                primaryConf = item;
-                primaryConf.DeleteMember("timestamp");
-            }
-
-            dynamic res = _session.UpdateConfigurations(new [] { primaryConf });
-            Assert.IsTrue(res != null);
+            result = _session.UpdateConfigurations(new[] { new { id = configId, alphanumeric_threshold = threshold } });
+            Assert.IsNotNull(result);
         }
 
         [TestMethod]
@@ -187,41 +187,35 @@ namespace Semantria.Com.TestUnitApi
         {
             dynamic result = _session.GetBlacklist(_testConfig);
 
+            // add 'net*' to blacklist
             result = new List<dynamic>();
             result.Add(new { name = "net*" });
             var obj = _session.AddBlacklist(result, _testConfig);
-            Assert.IsTrue(obj != null);
+            Assert.IsNotNull(obj);
 
+            // Note, this will get all blacklist items compared to AddBlacklist, above,
+            // which only returns the added items.
             result = _session.GetBlacklist(_testConfig);
-            List<dynamic> items = new List<dynamic>();
+            // item = ((IEnumerable) result).FirstOrDefault(x => x.name.Equals("net*"));
+            Assert.IsNotNull(result);
+            
+            // change 'net*' to 'net1*'
+            List<dynamic> newItems = new List<dynamic>();
             foreach (dynamic item in result)
             {
                 if (item.name == "net*")
                 {
-                    item.name = "net1*";
-                    item.DeleteMember("timestamp");
-                    items.Add(item);
+                    newItems.Add(new { name = "net1*", id = item.id });
                 }
             }
-
-            dynamic res = _session.UpdateBlacklist(items, _testConfig);
-            Assert.IsTrue(res != null);
-            
-            foreach (dynamic item in items)
-            {
-                item.name = "net*";
-            }
-            
-            res = _session.UpdateBlacklist(items, _testConfig);
-            Assert.IsTrue(res != null);
-            
-            result = _session.GetBlacklist(_testConfig);
+            result = _session.UpdateBlacklist(newItems, _testConfig);
             Assert.IsNotNull(result);
-            
+              
+            // Delete that blacklist item         
             List<string> ditems = new List<string>();
             foreach (dynamic item in result)
             {
-                if (item.name == "net*")
+                if (item.name == "net1*")
                 {
                     ditems.Add(item.id);
                 }
@@ -239,46 +233,35 @@ namespace Semantria.Com.TestUnitApi
             result = new List<dynamic>();
             result.Add(new { name = "NET" });
             var obj = _session.AddCategories(result, _testConfig);
-            Assert.IsTrue(obj != null);
+            Assert.IsNotNull(obj);
 
             result = _session.GetCategories(_testConfig);
-            List<dynamic> items = new List<dynamic>();
+            Assert.IsNotNull(result);
+
+            List<dynamic> newItems = new List<dynamic>();
             foreach (dynamic item in result)
             {
                 if (item.name == "NET")
                 {
-                    item.name = "NET1*";
-                    item.DeleteMember("timestamp");
-                    items.Add(item);
+                    newItems.Add(new { id = item.id, name = "NET1*" } );
                     break;
                 }
             }
 
-            dynamic res = _session.UpdateCategories(items, _testConfig);
-            Assert.IsTrue(res != null);
-
-            foreach (dynamic item in items)
-            {
-                item.name = "NET";
-            }
-
-            res = _session.UpdateCategories(items, _testConfig);
-            Assert.IsTrue(res != null);
-
-            result = _session.GetCategories(_testConfig);
+            result = _session.UpdateCategories(newItems, _testConfig);
             Assert.IsNotNull(result);
 
             List<string> ditems = new List<string>(); 
             foreach (dynamic item in result)
             {
-                if (item.name == "NET")
+                if (item.name == "NET1*")
                 {
                     ditems.Add(item.id);
                 }
             }
 
             int r = _session.RemoveCategories(ditems, _testConfig);
-            Assert.IsTrue(r == 202, "RESULT: " + res);
+            Assert.IsTrue(r == 202, "RESULT: " + r);
         }
 
         [TestMethod]
@@ -289,45 +272,34 @@ namespace Semantria.Com.TestUnitApi
             result = new List<dynamic>();
             result.Add(new { name = "NET", query = "Data" });
             var obj = _session.AddQueries(result, _testConfig);
-            Assert.IsTrue(obj != null);
+            Assert.IsNotNull(obj);
 
             result = _session.GetQueries(_testConfig);
-            List<dynamic> items = new List<dynamic>();
+            Assert.IsNotNull(result);
+
+            List<dynamic> newItems = new List<dynamic>();
             foreach (dynamic item in result)
             {
                 if (item.name == "NET")
                 {
-                    item.name = "NET1*";
-                    item.DeleteMember("timestamp");
-                    items.Add(item);
+                    newItems.Add(new { id = item.id, name = "NET1*" } );
                 }
             }
 
-            dynamic res = _session.UpdateQueries(items, _testConfig);
-            Assert.IsTrue(res != null);
-
-            foreach (dynamic item in items)
-            {
-                item.name = "NET";
-            }
-
-            res = _session.UpdateQueries(items, _testConfig);
-            Assert.IsTrue(res != null);
-
-            result = _session.GetQueries(_testConfig);
+            result = _session.UpdateQueries(newItems, _testConfig);
             Assert.IsNotNull(result);
 
             List<string> ditems = new List<string>(); 
             foreach (dynamic item in result)
             {
-                if (item.name == "NET")
+                if (item.name == "NET1*")
                 {
                     ditems.Add(item.id);
                 }
             }
 
             int r = _session.RemoveQueries(ditems, _testConfig);
-            Assert.IsTrue(r == 202, "RESULT: " + res);
+            Assert.IsTrue(r == 202, "RESULT: " + r);
         }
 
         [TestMethod]
@@ -338,46 +310,34 @@ namespace Semantria.Com.TestUnitApi
             result = new List<dynamic>();
             result.Add(new { name = "NET", weight = 0.1f });
             var obj = _session.AddSentimentPhrases(result, _testConfig);
-            Assert.IsTrue(obj != null);
+            Assert.IsNotNull(obj);
 
             result = _session.GetSentimentPhrases(_testConfig);
-            List<dynamic> items = new List<dynamic>();
+            Assert.IsNotNull(result);
+
+            List<dynamic> newItems = new List<dynamic>();
             foreach (dynamic item in result)
             {
                 if (item.name == "NET")
                 {
-                    item.name = "NET1*";
-                    item.DeleteMember("timestamp");
-                    items.Add(item);
+                    newItems.Add(new { id = item.id, name = "NET1*" } );
                 }
             }
 
-            dynamic res = _session.UpdateSentimentPhrases(items, _testConfig);
-            Assert.IsTrue(res != null);
-
-            foreach (dynamic item in items)
-            {
-                item.name = "NET";
-            }
-
-            res = _session.UpdateSentimentPhrases(items, _testConfig);
-
-            Assert.IsTrue(res != null);
-
-            result = _session.GetSentimentPhrases(_testConfig);
+            result = _session.UpdateSentimentPhrases(newItems, _testConfig);
             Assert.IsNotNull(result);
 
             List<string> ditems = new List<string>();
             foreach (dynamic item in result)
             {
-                if (item.name == "NET")
+                if (item.name == "NET1*")
                 {
                     ditems.Add(item.id);
                 }
             }
 
             int r = _session.RemoveSentimentPhrases(ditems, _testConfig);
-            Assert.IsTrue(r == 202, "RESULT: " + res);
+            Assert.IsTrue(r == 202, "RESULT: " + r);
         }
 
         [TestMethod]
@@ -388,45 +348,34 @@ namespace Semantria.Com.TestUnitApi
             result = new List<dynamic>();
             result.Add(new { name = "NET", type = "Language" });
             var obj = _session.AddEntities(result, _testConfig);
-            Assert.IsTrue(obj != null);
+            Assert.IsNotNull(obj);
 
             result = _session.GetEntities(_testConfig);
-            List<dynamic> items = new List<dynamic>();
+            Assert.IsNotNull(result);
+
+            List<dynamic> newItems = new List<dynamic>();
             foreach (dynamic item in result)
             {
                 if (item.name == "NET")
                 {
-                    item.name = "NET1*";
-                    item.DeleteMember("timestamp");
-                    items.Add(item);
+                    newItems.Add(new { id = item.id, name = "NET1*" } );
                 }
             }
 
-            dynamic res = _session.UpdateEntities(items, _testConfig);
-            Assert.IsTrue(res != null);
-
-            foreach (dynamic item in items)
-            {
-                item.name = "NET";
-            }
-
-            res = _session.UpdateEntities(items, _testConfig);
-            Assert.IsTrue(res != null);
-
-            result = _session.GetEntities(_testConfig);
+            result = _session.UpdateEntities(newItems, _testConfig);
             Assert.IsNotNull(result);
 
             List<string> ditems = new List<string>();
             foreach (dynamic item in result)
             {
-                if (item.name == "NET")
+                if (item.name == "NET1*")
                 {
                     ditems.Add(item.id);
                 }
             }
 
             int r = _session.RemoveEntities(ditems, _testConfig);
-            Assert.IsTrue(r == 202, "RESULT: " + res);
+            Assert.IsTrue(r == 202, "RESULT: " + r);
         }
 
         [TestMethod]
@@ -437,51 +386,35 @@ namespace Semantria.Com.TestUnitApi
             result = new List<dynamic>();
             result.Add(new { name = "NET", nodes = new [] { new { name = "NETWORK_0" }, new  { name = "NETWORK_1" } }});
             var obj = _session.AddTaxonomy(result, _testConfig);
-            Assert.IsTrue(obj != null);
+            Assert.IsNotNull(obj);
 
             result = _session.GetTaxonomy(_testConfig);
-            List<dynamic> items = new List<dynamic>();
+            Assert.IsNotNull(result);
+
+            List<dynamic> newItems = new List<dynamic>();
             foreach (dynamic item in result)
             {
                 if (item.name == "NET")
                 {
-                    item.name = "NET_1*";
-                    item.nodes = null;
-                    item.topics = null;
-                    item.DeleteMember("timestamp");
-
-                    items.Add(item);
+                    newItems.Add(new { id = item.id, name = "NET_1*" } );
                     break;
                 }
             }
 
-            dynamic res = _session.UpdateTaxonomy(items, _testConfig);
-            Assert.IsTrue(res != null);
-
-            foreach (dynamic item in items)
-            {
-                item.name = "NET";
-                item.nodes = null;
-                item.topics = null;
-            }
-
-            res = _session.UpdateTaxonomy(items, _testConfig);
-            Assert.IsTrue(res != null);
-
-            result = _session.GetTaxonomy(_testConfig);
+            result = _session.UpdateTaxonomy(newItems, _testConfig);
             Assert.IsNotNull(result);
 
             List<string> ditems = new List<string>();
             foreach (dynamic item in result)
             {
-                if (item.name == "NET")
+                if (item.name == "NET_1*")
                 {
                     ditems.Add(item.id);
                 }
             }
 
             int r = _session.RemoveTaxonomy(ditems, _testConfig);
-            Assert.IsTrue(r == 202, "RESULT: " + res);
+            Assert.IsTrue(r == 202, "RESULT: " + r);
         }
 
         [TestMethod]
@@ -489,14 +422,14 @@ namespace Semantria.Com.TestUnitApi
         {
             dynamic task = new { id = _id, text = _message };
 
-            int res = _session.QueueDocument(task, _testConfig);
-            Assert.IsTrue((res == 200 || res == 202), "RESULT: " + res);
+            int result = _session.QueueDocument(task, _testConfig);
+            Assert.IsTrue((result == 200 || result == 202), "RESULT: " + result);
 
             dynamic data = _session.GetDocument(_id, _testConfig);
             Assert.IsNotNull(data);
 
-            int r = _session.CancelDocument(_id, _testConfig);
-            Assert.IsTrue((r == 200 || r == 202 || r == 404), "RESULT: " + res);
+            result = _session.CancelDocument(_id, _testConfig);
+            Assert.IsTrue((result == 200 || result == 202 || result == 404), "RESULT: " + result);
         }
 
         [TestMethod]
@@ -531,22 +464,22 @@ namespace Semantria.Com.TestUnitApi
                 documents = new[] { _message + "1", _message + "2" }
             };
 
-            int res = _session.QueueCollection(task, _testConfig);
-            Assert.IsTrue((res == 200 || res == 202), "RESULT: " + res);
+            int result = _session.QueueCollection(task, _testConfig);
+            Assert.IsTrue((result == 200 || result == 202), "RESULT: " + result);
 
             task = new
             {
                 id = System.Guid.NewGuid().ToString(),
                 documents = new[] { _message + "1", _message + "2" }
             };
-            res = _session.QueueCollection(task, _testConfig);
-            Assert.IsTrue((res == 200 || res == 202), "RESULT: " + res);
+            result = _session.QueueCollection(task, _testConfig);
+            Assert.IsTrue((result == 200 || result == 202), "RESULT: " + result);
 
             dynamic data = _session.GetCollection(_id, _testConfig);
             Assert.IsNotNull(data);
 
-            int r = _session.CancelCollection(_id, _testConfig);
-            Assert.IsTrue((r == 200 || r == 202 || r == 404), "RESULT: " + res);
+            result = _session.CancelCollection(_id, _testConfig);
+            Assert.IsTrue((result == 200 || result == 202 || result == 404), "RESULT: " + result);
 
             dynamic ad = _session.GetProcessedCollections(_testConfig);
             Assert.IsNotNull(ad);
@@ -561,7 +494,7 @@ namespace Semantria.Com.TestUnitApi
         {
             Debug.WriteLine("RESPONSE: {0}({1}) - message: {2}", e.Status, (int)e.Status, e.Message);
             bool res = (e.Status == System.Net.HttpStatusCode.OK || e.Status == System.Net.HttpStatusCode.Accepted || e.Status == System.Net.HttpStatusCode.NotFound);
-            Assert.AreEqual(res, true);
+            Assert.IsTrue(res);
         }
 
         void session_Error(object sender, ResponseEventArgs e)

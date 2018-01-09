@@ -22,7 +22,7 @@ class Session(object):
 
     host = 'https://api.semantria.com'
     wrapperName = 'Python/' + WRAPPER_VERSION
-    default_key_url='https://semantria.com/auth/session',
+    default_key_url='https://semantria.com/auth/session'
     default_app_key='8f46c3c2-ca89-01aa-aad3-f437ea98cf7f'
 
     def __init__(self, consumerKey=None, consumerSecret=None,
