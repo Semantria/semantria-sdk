@@ -51,14 +51,6 @@ function Session(config) {
 	this.format = config.format || "json";
 	this.applicationName = config.applicationName ? (config.applicationName + "/") : "";
 
-	if(!this.consumerKey && !this.consumerSecret) {
-		obtainSessionKeys(this)
-	}
-
-	if(!this.consumerKey || !this.consumerSecret) {
-		throw "ConsumerKey and ConsumerSecret should be specified in order to use SDK";
-	}
-
 	this.applicationName += tpl("NodeJs/{SDK_VERSION}/{format}", {
 		SDK_VERSION: this.SDK_VERSION,
 		format: this.format
@@ -128,10 +120,8 @@ Session.prototype = {
 	},
 
 	/**
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 *    false - synchronous call; retutn Object
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
 	 * @returns {Object|Promise|null}
 	 */
 	getStatus: function(callback) {
@@ -143,10 +133,8 @@ Session.prototype = {
 
 	/**
 	 * @param {string}language
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 *    false - synchronous call; retutn Array of Objects
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
 	 * @returns {Object[]|Promise|null}
 	 */
 	getSupportedFeatures: function(language, callback) {
@@ -160,10 +148,8 @@ Session.prototype = {
 	},
 
 	/**
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 *    false - synchronous call; retutn Object
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
 	 * @returns {Object|Promise|null}
 	 */
 	getSubscription: function(callback) {
@@ -174,24 +160,21 @@ Session.prototype = {
 	},
 
 	/**
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 *    false - synchronous call; retutn Array of Objects
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
 	 * @returns {Object[]|Promise|null}
 	 */
-	getStatistics: function(callback) {
+	getStatistics: function(params, callback) {
 		return runApiRequest(this, {
 			path: 'statistics',
+			getParams: params,
 			callback: callback
 		});
 	},
 
 	/**
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 *    false - synchronous call; retutn Array of Objects
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
 	 * @returns {Object[]|Promise|null}
 	 */
 	getConfigurations: function(callback) {
@@ -203,10 +186,7 @@ Session.prototype = {
 
 	/**
 	 * @param {Object[]} params
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	addConfigurations: function(params, callback) {
@@ -221,10 +201,7 @@ Session.prototype = {
 	/**
 	 * @param {string[]} name - new configuration name
 	 * @param {string[]} template - template configuration id
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	cloneConfiguration: function(name, template, callback) {
@@ -237,10 +214,7 @@ Session.prototype = {
 
 	/**
 	 * @param {Object[]} params
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	updateConfigurations: function(params, callback) {
@@ -254,10 +228,7 @@ Session.prototype = {
 
 	/**
 	 * @param {string[]} params
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	removeConfigurations: function(params, callback) {
@@ -271,10 +242,7 @@ Session.prototype = {
 
 	/**
 	 * @param {string|null} [null] configId  - null default configuration
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	getBlacklist: function(configId, callback) {
@@ -288,10 +256,7 @@ Session.prototype = {
 	/**
 	 * @param {Object[]} params
 	 * @param {string|null} [null] configId  - null default configuration
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	addBlacklist: function(params, configId, callback) {
@@ -307,10 +272,7 @@ Session.prototype = {
 	/**
 	 * @param {Object[]} params
 	 * @param {string|null} [null] configId  - null default configuration
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	updateBlacklist: function(params, configId, callback) {
@@ -326,10 +288,7 @@ Session.prototype = {
 	/**
 	 * @param {string[]} params
 	 * @param {string|null} [null] configId  - null default configuration
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	removeBlacklist: function(params, configId, callback) {
@@ -344,10 +303,7 @@ Session.prototype = {
 
 	/**
 	 * @param {string|null} [null] configId  - null default configuration
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	getCategories: function(configId, callback) {
@@ -361,10 +317,7 @@ Session.prototype = {
 	/**
 	 * @param {Object[]} params
 	 * @param {string|null} [null] configId  - null default configuration
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	addCategories: function(params, configId, callback) {
@@ -380,10 +333,7 @@ Session.prototype = {
 	/**
 	 * @param {Object[]} params
 	 * @param {string|null} [null] configId  - null default configuration
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	updateCategories: function(params, configId, callback) {
@@ -399,10 +349,7 @@ Session.prototype = {
 	/**
 	 * @param {string[]} params
 	 * @param {string|null} [null] configId  - null default configuration
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	removeCategories: function(params, configId, callback) {
@@ -417,10 +364,7 @@ Session.prototype = {
 
 	/**
 	 * @param {string|null} [null] configId  - null default configuration
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	getQueries: function(configId, callback) {
@@ -434,10 +378,7 @@ Session.prototype = {
 	/**
 	 * @param {Object[]} params
 	 * @param {string|null} [null] configId  - null default configuration
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	addQueries: function(params, configId, callback) {
@@ -453,10 +394,7 @@ Session.prototype = {
 	/**
 	 * @param {Object[]} params
 	 * @param {string|null} [null] configId  - null default configuration
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	updateQueries: function(params, configId, callback) {
@@ -472,10 +410,7 @@ Session.prototype = {
 	/**
 	 * @param {string[]} params
 	 * @param {string|null} [null] configId  - null default configuration
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	removeQueries: function(params, configId, callback) {
@@ -490,10 +425,7 @@ Session.prototype = {
 
 	/**
 	 * @param {string|null} [null] configId  - null default configuration
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	getEntities: function(configId, callback) {
@@ -507,10 +439,7 @@ Session.prototype = {
 	/**
 	 * @param {Object[]} params
 	 * @param {string|null} [null] configId  - null default configuration
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	addEntities: function(params, configId, callback) {
@@ -526,10 +455,7 @@ Session.prototype = {
 	/**
 	 * @param {Object[]} params
 	 * @param {string|null} [null] configId  - null default configuration
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	updateEntities: function(params, configId, callback) {
@@ -545,10 +471,7 @@ Session.prototype = {
 	/**
 	 * @param {string[]} params
 	 * @param {string|null} [null] configId  - null default configuration
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	removeEntities: function(params, configId, callback) {
@@ -563,10 +486,7 @@ Session.prototype = {
 
 	/**
 	 * @param {string|null} [null] configId  - null default configuration
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	getPhrases: function(configId, callback) {
@@ -580,10 +500,7 @@ Session.prototype = {
 	/**
 	 * @param {Object[]} params
 	 * @param {string|null} [null] configId  - null default configuration
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	addPhrases: function(params, configId, callback) {
@@ -599,10 +516,7 @@ Session.prototype = {
 	/**
 	 * @param {Object[]} params
 	 * @param {string|null} [null] configId  - null default configuration
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	updatePhrases: function(params, configId, callback) {
@@ -618,10 +532,7 @@ Session.prototype = {
 	/**
 	 * @param {string[]} params
 	 * @param {string|null} [null] configId  - null default configuration
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	removePhrases: function(params, configId, callback) {
@@ -636,10 +547,7 @@ Session.prototype = {
 
 	/**
 	 * @param {string|null} [null] configId  - null default configuration
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	getTaxonomy: function(configId, callback) {
@@ -653,10 +561,7 @@ Session.prototype = {
 	/**
 	 * @param {Object[]} params
 	 * @param {string|null} [null] configId  - null default configuration
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	addTaxonomy: function(params, configId, callback) {
@@ -672,10 +577,7 @@ Session.prototype = {
 	/**
 	 * @param {Object[]} params
 	 * @param {string|null} [null] configId  - null default configuration
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	updateTaxonomy: function(params, configId, callback) {
@@ -691,10 +593,7 @@ Session.prototype = {
 	/**
 	 * @param {string[]} params
 	 * @param {string|null} [null] configId  - null default configuration
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	removeTaxonomy: function(params, configId, callback) {
@@ -710,10 +609,7 @@ Session.prototype = {
 	/**
 	 * @param {Object} doc
 	 * @param {string|null} [null] configId  - null default configuration
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	queueDocument: function(doc, configId, callback) {
@@ -730,10 +626,7 @@ Session.prototype = {
 	/**
 	 * @param {Object[]} batch
 	 * @param {string|null} [null] configId  - null default configuration
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	queueBatchOfDocuments: function(batch, configId, callback) {
@@ -750,10 +643,7 @@ Session.prototype = {
 	/**
 	 * @param {Object} collection
 	 * @param {string|null} [null] configId  - null default configuration
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	queueCollection: function(collection, configId, callback) {
@@ -770,10 +660,7 @@ Session.prototype = {
 	/**
 	 * @param {string} id
 	 * @param {string|null} [null] configId  - null default configuration
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	getDocument: function(id, configId, callback) {
@@ -792,10 +679,7 @@ Session.prototype = {
 	/**
 	 * @param {string} id
 	 * @param {string|null} [null] configId  - null default configuration
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	getCollection: function(id, configId, callback) {
@@ -813,10 +697,7 @@ Session.prototype = {
 	/**
 	 * @param {string} id
 	 * @param {string|null} [null] configId  - null default configuration
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	cancelDocument: function(id, configId, callback) {
@@ -835,10 +716,7 @@ Session.prototype = {
 	/**
 	 * @param {string} id
 	 * @param {string|null} [null] configId  - null default configuration
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	cancelCollection: function(id, configId, callback) {
@@ -856,10 +734,7 @@ Session.prototype = {
 
 	/**
 	 * @param {string|null} [null] configId  - null default configuration
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	getProcessedDocuments: function(configId, callback) {
@@ -872,10 +747,7 @@ Session.prototype = {
 
 	/**
 	 * @param jobId
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	getProcessedDocumentsByJobId: function(jobId, callback) {
@@ -888,10 +760,7 @@ Session.prototype = {
 
 	/**
 	 * @param configId
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	getProcessedCollections: function(configId, callback) {
@@ -904,10 +773,7 @@ Session.prototype = {
 
 	/**
 	 * @param jobId
-	 * @param {(boolean|SemantriaApiCallback)} [false] callback
-	 *    false - synchronous call; retutn api response
-	 *    true  - asynchronous call; retutn Promise
-	 *    SemantriaApiCallback - asynchronous call
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
 	 * @returns {*}
 	 */
 	getProcessedCollectionsByJobId: function(jobId, callback) {
@@ -920,4 +786,4 @@ Session.prototype = {
 }
 
 exports.Session = Session;
-
+exports.obtainSessionKeys = obtainSessionKeys;

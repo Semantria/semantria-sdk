@@ -29,7 +29,7 @@ SemantriaActiveSession.getConfigurations(true)
 		is_primary: false,
 		auto_response: false,
 		language: "English"
-	}], true);
+	}]);
 })
 .then(function(result){
 	appConfigurationId = result[0].id;
@@ -41,7 +41,7 @@ SemantriaActiveSession.getConfigurations(true)
 	return SemantriaActiveSession.queueCollection({
 		id: collectionId,
 		documents: getCollectionDocuments()
-	}, appConfigurationId, true);
+	}, appConfigurationId);
 })
 .then(function() {
 	console.log("Collection #" + collectionId + " queued successfully.");
@@ -50,7 +50,7 @@ SemantriaActiveSession.getConfigurations(true)
 	return new promise(function(resolve, reject) {
 		var wait_fn = function () {
 			console.log("Retrieving your processed results...");
-			SemantriaActiveSession.getCollection(collectionId, appConfigurationId, true)
+			SemantriaActiveSession.getCollection(collectionId, appConfigurationId)
 			.then(function(processedCollection) {
 				if (processedCollection && processedCollection.status == 'PROCESSED') {
 					return resolve(processedCollection)
@@ -85,7 +85,7 @@ SemantriaActiveSession.getConfigurations(true)
 })
 .then(function() {
 	if (!appConfigurationId) return;
-	return SemantriaActiveSession.removeConfigurations([appConfigurationId], true);
+	return SemantriaActiveSession.removeConfigurations([appConfigurationId]);
 });
 
 function getCollectionDocuments() {

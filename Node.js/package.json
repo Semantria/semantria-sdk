@@ -1,26 +1,19 @@
 {
 	"name": "semantria-sdk",
 	"description": "Semantria SDK",
-	"version": "4.1.5",
-
+	"version": "4.2.6",
 	"repository": {
 		"type": "git",
 		"url": "git@github.com:Semantria/semantria-sdk.git"
 	},
-
 	"main": "semantria-sdk.js",
-
 	"scripts": {
 		"test": "mocha --reporter spec tests"
 	},
-
 	"dependencies": {
-		"crypto": "*",
-		"request": "*",
-		"promise": "*",
-		"request-sync": "*"
+		"request": "2.83.0",
+		"promise": "8.0.1"
 	},
-
 	"devDependencies": {
 		"mocha": "*"
 	}

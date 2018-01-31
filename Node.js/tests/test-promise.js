@@ -6,7 +6,7 @@ try { config = require('../test-config.override') } catch(e) {}
 describe('semantria-sdk [promise]', function() {
 	var consumerKey = config.consumerKey,
 		consumerSecret = config.consumerSecret,
-		session = new SemantriaSession(consumerKey, consumerSecret, "myApp"),
+		session = new SemantriaSession(config, "myApp"),
 		config_id = false;
 
 	if (config.apiHost) {
@@ -16,32 +16,36 @@ describe('semantria-sdk [promise]', function() {
 	this.timeout(20000);
 	this.slow(10000);
 
-	before(function( done ) {
-		session.addConfigurations([{
+	before(function(  ) {
+		return session.addConfigurations([{
 			name: "NODEJS_TEST_CONFIG",
 			is_primary: false,
 			auto_response: false,
 			language: "English"
-		}], true).then(function (result) {
+		}]).then(function (result) {
 			if(result instanceof Array && result[0] instanceof Object) {
 				config_id = result[0].id;
 			}
-			done();
 		});
 	});
 
 	after(function( done ) {
-		session.removeConfigurations([config_id], true).then(function() {
+		session.removeConfigurations([config_id]).then(function() {
 			config_id = false;
 			done();
-		});
+		}).catch(done);
 	});
 
 	it('getStatistics()', function ( done ) {
 		var async_wait = true;
-		session.getStatistics(true).then(function(statistics) {
+		var params = {
+			interval: 'Month'
+		}
+		session.getStatistics(params).then(function(results) {
 			async_wait = false;
-			assert.ok( statistics instanceof Object  && typeof statistics.name != "undefined" );
+			assert.ok( results instanceof Array && results.length > 0);
+			var statistics = results[0];
+			assert.ok( statistics instanceof Object  && typeof statistics.docs_queued !== "undefined" );
 			done();
 		}).catch(done);
 		assert.ok(async_wait, 'synchronous call for getStatistics()');
@@ -69,7 +73,7 @@ describe('semantria-sdk [promise]', function() {
 
 	it( "getSupportedFeatures()", function( done ) {
 		var async_wait = true;
-		session.getSupportedFeatures("English", true).then(function(features){
+		session.getSupportedFeatures("English").then(function(features){
 			async_wait = false;
 			assert.ok( features instanceof Array && features[0].language == "English" );
 			done();
@@ -132,8 +136,11 @@ describe('semantria-sdk [promise]', function() {
 			if (!configuration_id) throw 'Test item not was added';
 			var async_wait = true;
 			configuration_name = "Test configuration - renamed";
-			configuration.name = configuration_name;
-			session.updateConfigurations([configuration], true).then(function (result) {
+			var update = {
+				id: configuration.id,
+				name: configuration_name
+			};
+			session.updateConfigurations([update]).then(function (result) {
 				async_wait = false;
 				assert.ok(
 					result instanceof Array && result[0] instanceof Object,
@@ -162,7 +169,7 @@ describe('semantria-sdk [promise]', function() {
 			var async_wait = true;
 			configuration_name = "Test configuration - renamed";
 			configuration.name = configuration_name;
-			session.cloneConfiguration(configuration2_name, configuration_id, true).then(function (result) {
+			session.cloneConfiguration(configuration2_name, configuration_id).then(function (result) {
 				async_wait = false;
 				assert.ok(
 					result instanceof Array && result[0] instanceof Object && typeof result[0].id === 'string',
@@ -194,7 +201,7 @@ describe('semantria-sdk [promise]', function() {
 			var async_wait = true;
 			var ids = [configuration.id];
 			if (configuration2_id) ids.push(configuration2_id);
-			session.removeConfigurations(ids, true).then(function (result) {
+			session.removeConfigurations(ids).then(function (result) {
 				async_wait = false;
 				assert.equal(result, 202, "removeConfigurations() response");
 
@@ -222,7 +229,7 @@ describe('semantria-sdk [promise]', function() {
 		it('getBlacklist()', function ( done ) {
 			if (!config_id) throw 'Test configuration not exists'
 			var async_wait = true;
-			session.getBlacklist(config_id, true).then(function (blacklists) {
+			session.getBlacklist(config_id).then(function (blacklists) {
 				async_wait = false;
 				assert.equal(blacklists, 202, "getBlacklist() is expected to return empty result");
 				done();
@@ -235,7 +242,7 @@ describe('semantria-sdk [promise]', function() {
 			var async_wait = true;
 			session.addBlacklist([{
 					name: blacklist_name
-				}], config_id, true).then(function (result) {
+				}], config_id).then(function (result) {
 				async_wait = false;
 				assert.ok(
 					result instanceof Array && result[0] instanceof Object && typeof result[0].id === 'string',
@@ -246,7 +253,7 @@ describe('semantria-sdk [promise]', function() {
 				delete blacklist.timestamp;
 
 				//check: blacklist exists
-				return session.getBlacklist(config_id, true);
+				return session.getBlacklist(config_id);
 			}).then(function (blacklists) {
 				assert.ok(blacklists instanceof Array, "getBlacklist() is expected to return an array");
 				assert.strictEqual(blacklists.length, 1, "result array is expected to contain one item");
@@ -262,13 +269,16 @@ describe('semantria-sdk [promise]', function() {
 			if (!blacklist_id) throw 'Test item not was added';
 			var async_wait = true;
 			blacklist_name = "test blacklist - renamed";
-			blacklist.name = blacklist_name;
-			session.updateBlacklist([blacklist], config_id, true).then(function (result) {
+			var update = {
+				id: blacklist.id,
+				name: blacklist_name
+			};
+			session.updateBlacklist([update], config_id).then(function (result) {
 				async_wait = false;
 				assert.ok( result instanceof Array && result[0] instanceof Object, "updateBlacklist() response" );
 
 				//check: blacklist was updated
-				return session.getBlacklist(config_id, true);
+				return session.getBlacklist(config_id);
 			}).then(function (blacklists) {
 				assert.ok(blacklists instanceof Array, "getBlacklist() is expected to return an array");
 				assert.strictEqual(blacklists.length, 1, "result array is expected to contain one item");
@@ -283,10 +293,10 @@ describe('semantria-sdk [promise]', function() {
 			if (!config_id) throw 'Test configuration not exists';
 			if (!blacklist_id) throw 'Test item not was added';
 			var async_wait = true;
-			session.removeBlacklist([blacklist.id], config_id, true).then(function (result) {
+			session.removeBlacklist([blacklist.id], config_id).then(function (result) {
 				async_wait = false;
 				assert.equal(result, 202, "removeBlacklist() response");
-				return session.getBlacklist(config_id, true);
+				return session.getBlacklist(config_id);
 			}).then(function (blacklists) {
 				assert.equal(blacklists, 202, "getBlacklist() is expected to return empty result");
 				done();
@@ -303,7 +313,7 @@ describe('semantria-sdk [promise]', function() {
 		it('getCategories()', function ( done ) {
 			if (!config_id) throw 'Test configuration not exists'
 			var async_wait = true;
-			session.getCategories(config_id, true).then(function (categories) {
+			session.getCategories(config_id).then(function (categories) {
 				async_wait = false;
 				assert.equal(categories, 202, "getCategories() is expected to return empty result");
 				done();
@@ -318,7 +328,7 @@ describe('semantria-sdk [promise]', function() {
 					name: category_name,
 					weight: 0.75,
 					samples: ["EC2", "AWS"]
-				}], config_id, true).then(function (result) {
+				}], config_id).then(function (result) {
 				async_wait = false;
 				assert.ok(
 					result instanceof Array && result[0] instanceof Object && typeof result[0].id === 'string',
@@ -329,7 +339,7 @@ describe('semantria-sdk [promise]', function() {
 				delete category.timestamp;
 
 				//check: category exists
-				return session.getCategories(config_id, true);
+				return session.getCategories(config_id);
 			}).then(function (categories) {
 				assert.ok(categories instanceof Array, "getCategories() is expected to return an array");
 				assert.strictEqual(categories.length, 1, "result array is expected to contain one item");
@@ -345,13 +355,16 @@ describe('semantria-sdk [promise]', function() {
 			if (!category_id) throw 'Test item not was added';
 			var async_wait = true;
 			category_name = "test category - renamed";
-			category.name = category_name;
-			session.updateCategories([category], config_id, true).then(function (result) {
+			var update = {
+				id: category.id,
+				name: category_name
+			};
+			session.updateCategories([update], config_id).then(function (result) {
 				async_wait = false;
 				assert.ok( result instanceof Array && result[0] instanceof Object, "updateCategories() response" );
 
 				//check: category was updated
-				return session.getCategories(config_id, true);
+				return session.getCategories(config_id);
 			}).then(function (categories) {
 				assert.ok(categories instanceof Array, "getCategories() is expected to return an array");
 				assert.strictEqual(categories.length, 1, "result array is expected to contain one item");
@@ -366,10 +379,10 @@ describe('semantria-sdk [promise]', function() {
 			if (!config_id) throw 'Test configuration not exists';
 			if (!category_id) throw 'Test item not was added';
 			var async_wait = true;
-			session.removeCategories([category.id], config_id, true).then(function (result) {
+			session.removeCategories([category.id], config_id).then(function (result) {
 				async_wait = false;
 				assert.equal(result, 202, "removeCategories() response");
-				return session.getCategories(config_id, true);
+				return session.getCategories(config_id);
 			}).then(function (categories) {
 				assert.equal(categories, 202, "getCategories() is expected to return empty result");
 				done();
@@ -387,7 +400,7 @@ describe('semantria-sdk [promise]', function() {
 		it('getQueries()', function ( done ) {
 			if (!config_id) throw 'Test configuration not exists'
 			var async_wait = true;
-			session.getQueries(config_id, true).then(function (queries) {
+			session.getQueries(config_id).then(function (queries) {
 				async_wait = false;
 				assert.equal(queries, 202, "getQueries() is expected to return empty result");
 				done();
@@ -401,7 +414,7 @@ describe('semantria-sdk [promise]', function() {
 			session.addQueries([{
 					name: query_name,
 					query: query_query
-				}], config_id, true).then(function (result) {
+				}], config_id).then(function (result) {
 				async_wait = false;
 				assert.ok(
 					result instanceof Array && result[0] instanceof Object && typeof result[0].id === 'string',
@@ -412,7 +425,7 @@ describe('semantria-sdk [promise]', function() {
 				delete query.timestamp;
 
 				//check: query exists
-				return session.getQueries(config_id, true);
+				return session.getQueries(config_id);
 			}).then(function (queries) {
 				assert.ok(queries instanceof Array, "getQueries() is expected to return an array");
 				assert.strictEqual(queries.length, 1, "result array is expected to contain one item");
@@ -429,13 +442,16 @@ describe('semantria-sdk [promise]', function() {
 			if (!query_id) throw 'Test item not was added';
 			var async_wait = true;
 			query_query = "Amazon AND (EC2 OR ec2 OR AWS OR aws)";
-			query.query = query_query;
-			session.updateQueries([query], config_id, true).then(function (result) {
+			var update = {
+				id: query.id,
+				query: query_query
+			};
+			session.updateQueries([update], config_id).then(function (result) {
 				async_wait = false;
 				assert.ok( result instanceof Array && result[0] instanceof Object, "updateQueries() response" );
 
 				//check: query was updated
-				return session.getQueries(config_id, true);
+				return session.getQueries(config_id);
 			}).then(function (queries) {
 				assert.ok(queries instanceof Array, "getQueries() is expected to return an array");
 				assert.strictEqual(queries.length, 1, "result array is expected to contain one item");
@@ -451,10 +467,10 @@ describe('semantria-sdk [promise]', function() {
 			if (!config_id) throw 'Test configuration not exists';
 			if (!query_id) throw 'Test item not was added';
 			var async_wait = true;
-			session.removeQueries([query.id], config_id, true).then(function (result) {
+			session.removeQueries([query.id], config_id).then(function (result) {
 				async_wait = false;
 				assert.equal(result, 202, "removeQueries() response");
-				return session.getQueries(config_id, true);
+				return session.getQueries(config_id);
 			}).then(function (queries) {
 				assert.equal(queries, 202, "getQueries() is expected to return empty result");
 				done();
@@ -471,7 +487,7 @@ describe('semantria-sdk [promise]', function() {
 		it('getEntities()', function ( done ) {
 			if (!config_id) throw 'Test configuration not exists'
 			var async_wait = true;
-			session.getEntities(config_id, true).then(function (entities) {
+			session.getEntities(config_id).then(function (entities) {
 				async_wait = false;
 				assert.equal(entities, 202, "getEntities() is expected to return empty result");
 				done();
@@ -485,7 +501,7 @@ describe('semantria-sdk [promise]', function() {
 			session.addEntities([{
 					name: entity_name,
 					type: "furniture"
-				}], config_id, true).then(function (result) {
+				}], config_id).then(function (result) {
 				async_wait = false;
 				assert.ok(
 					result instanceof Array && result[0] instanceof Object && typeof result[0].id === 'string',
@@ -496,7 +512,7 @@ describe('semantria-sdk [promise]', function() {
 				delete entity.timestamp;
 
 				//check: entity exists
-				return session.getEntities(config_id, true);
+				return session.getEntities(config_id);
 			}).then(function (entities) {
 				assert.ok(entities instanceof Array, "getEntities() is expected to return an array");
 				assert.strictEqual(entities.length, 1, "result array is expected to contain one item");
@@ -512,13 +528,16 @@ describe('semantria-sdk [promise]', function() {
 			if (!entity_id) throw 'Test item not was added';
 			var async_wait = true;
 			entity_name = "test entity - renamed";
-			entity.name = entity_name;
-			session.updateEntities([entity], config_id, true).then(function (result) {
+			var update = {
+				id: entity.id,
+				name: entity_name
+			};
+			session.updateEntities([update], config_id).then(function (result) {
 				async_wait = false;
 				assert.ok( result instanceof Array && result[0] instanceof Object, "updateEntities() response" );
 
 				//check: entity was updated
-				return session.getEntities(config_id, true);
+				return session.getEntities(config_id);
 			}).then(function (entities) {
 				assert.ok(entities instanceof Array, "getEntities() is expected to return an array");
 				assert.strictEqual(entities.length, 1, "result array is expected to contain one item");
@@ -533,10 +552,10 @@ describe('semantria-sdk [promise]', function() {
 			if (!config_id) throw 'Test configuration not exists';
 			if (!entity_id) throw 'Test item not was added';
 			var async_wait = true;
-			session.removeEntities([entity.id], config_id, true).then(function (result) {
+			session.removeEntities([entity.id], config_id).then(function (result) {
 				async_wait = false;
 				assert.equal(result, 202, "removeEntities() response");
-				return session.getEntities(config_id, true);
+				return session.getEntities(config_id);
 			}).then(function (entities) {
 				assert.equal(entities, 202, "getEntities() is expected to return empty result");
 				done();
@@ -553,7 +572,7 @@ describe('semantria-sdk [promise]', function() {
 		it('getPhrases()', function ( done ) {
 			if (!config_id) throw 'Test configuration not exists'
 			var async_wait = true;
-			session.getPhrases(config_id, true).then(function (phrases) {
+			session.getPhrases(config_id).then(function (phrases) {
 				async_wait = false;
 				assert.equal(phrases, 202, "getPhrases() is expected to return empty result");
 				done();
@@ -567,7 +586,7 @@ describe('semantria-sdk [promise]', function() {
 			session.addPhrases([{
 					name: phrase_name,
 					weight: "0.3"
-				}], config_id, true).then(function (result) {
+				}], config_id).then(function (result) {
 				async_wait = false;
 				assert.ok(
 					result instanceof Array && result[0] instanceof Object && typeof result[0].id === 'string',
@@ -578,7 +597,7 @@ describe('semantria-sdk [promise]', function() {
 				delete phrase.timestamp;
 
 				//check: phrase exists
-				return session.getPhrases(config_id, true);
+				return session.getPhrases(config_id);
 			}).then(function (phrases) {
 				assert.ok(phrases instanceof Array, "getPhrases() is expected to return an array");
 				assert.strictEqual(phrases.length, 1, "result array is expected to contain one item");
@@ -594,13 +613,16 @@ describe('semantria-sdk [promise]', function() {
 			if (!phrase_id) throw 'Test item not was added';
 			var async_wait = true;
 			phrase_name = "test phrase - renamed";
-			phrase.name = phrase_name;
-			session.updatePhrases([phrase], config_id, true).then(function (result) {
+			var update = {
+				id: phrase.id,
+				name: phrase_name
+			};
+			session.updatePhrases([update], config_id).then(function (result) {
 				async_wait = false;
 				assert.ok( result instanceof Array && result[0] instanceof Object, "updatePhrases() response" );
 
 				//check: phrase was updated
-				return session.getPhrases(config_id, true);
+				return session.getPhrases(config_id);
 			}).then(function (phrases) {
 				assert.ok(phrases instanceof Array, "getPhrases() is expected to return an array");
 				assert.strictEqual(phrases.length, 1, "result array is expected to contain one item");
@@ -615,10 +637,10 @@ describe('semantria-sdk [promise]', function() {
 			if (!config_id) throw 'Test configuration not exists';
 			if (!phrase_id) throw 'Test item not was added';
 			var async_wait = true;
-			session.removePhrases([phrase.id], config_id, true).then(function (result) {
+			session.removePhrases([phrase.id], config_id).then(function (result) {
 				async_wait = false;
 				assert.equal(result, 202, "removePhrases() response");
-				return session.getPhrases(config_id, true);
+				return session.getPhrases(config_id);
 			}).then(function (phrases) {
 				assert.equal(phrases, 202, "getPhrases() is expected to return empty result");
 				done();
@@ -635,7 +657,7 @@ describe('semantria-sdk [promise]', function() {
 		it('getTaxonomy()', function ( done ) {
 			if (!config_id) throw 'Test configuration not exists'
 			var async_wait = true;
-			session.getTaxonomy(config_id, true).then(function (taxonomies) {
+			session.getTaxonomy(config_id).then(function (taxonomies) {
 				async_wait = false;
 				assert.equal(taxonomies, 202, "getTaxonomy() is expected to return empty result");
 				done();
@@ -648,7 +670,7 @@ describe('semantria-sdk [promise]', function() {
 			var async_wait = true;
 			session.addTaxonomy([{
 					name: taxonomy_name
-				}], config_id, true).then(function (result) {
+				}], config_id).then(function (result) {
 				async_wait = false;
 				assert.ok(
 					result instanceof Array && result[0] instanceof Object && typeof result[0].id === 'string',
@@ -659,7 +681,7 @@ describe('semantria-sdk [promise]', function() {
 				delete taxonomy.timestamp;
 
 				//check: taxonomy exists
-				return session.getTaxonomy(config_id, true);
+				return session.getTaxonomy(config_id);
 			}).then(function (taxonomies) {
 				assert.ok(taxonomies instanceof Array, "getTaxonomy() is expected to return an array");
 				assert.strictEqual(taxonomies.length, 1, "result array is expected to contain one item");
@@ -675,13 +697,16 @@ describe('semantria-sdk [promise]', function() {
 			if (!taxonomy_id) throw 'Test item not was added';
 			var async_wait = true;
 			taxonomy_name = "test taxonomy - renamed";
-			taxonomy.name = taxonomy_name;
-			session.updateTaxonomy([taxonomy], config_id, true).then(function (result) {
+			var update = {
+				id: taxonomy.id,
+				name: taxonomy_name
+			};
+			session.updateTaxonomy([update], config_id).then(function (result) {
 				async_wait = false;
 				assert.ok( result instanceof Array && result[0] instanceof Object, "updateTaxonomy() response" );
 
 				//check: taxonomy was updated
-				return session.getTaxonomy(config_id, true);
+				return session.getTaxonomy(config_id);
 			}).then(function (taxonomies) {
 				assert.ok(taxonomies instanceof Array, "getTaxonomy() is expected to return an array");
 				assert.strictEqual(taxonomies.length, 1, "result array is expected to contain one item");
@@ -696,10 +721,10 @@ describe('semantria-sdk [promise]', function() {
 			if (!config_id) throw 'Test configuration not exists';
 			if (!taxonomy_id) throw 'Test item not was added';
 			var async_wait = true;
-			session.removeTaxonomy([taxonomy.id], config_id, true).then(function (result) {
+			session.removeTaxonomy([taxonomy.id], config_id).then(function (result) {
 				async_wait = false;
 				assert.equal(result, 202, "removeTaxonomy() response");
-				return session.getTaxonomy(config_id, true);
+				return session.getTaxonomy(config_id);
 			}).then(function (taxonomies) {
 				assert.equal(taxonomies, 202, "getTaxonomy() is expected to return empty result");
 				done();
@@ -712,7 +737,7 @@ describe('semantria-sdk [promise]', function() {
 		it('getProcessedDocuments() - empty; ', function ( done ) {
 			if (!config_id) throw 'Test configuration not exists';
 			var async_wait = true;
-			session.getProcessedDocuments(config_id, true).then(function (items) {
+			session.getProcessedDocuments(config_id).then(function (items) {
 				async_wait = false;
 				assert.equal(items, 202);
 				done();
@@ -726,7 +751,7 @@ describe('semantria-sdk [promise]', function() {
 			session.queueDocument({
 				id: "TEST_DOCUMENT_1",
 				text: "it works"
-			}, config_id, true).then(function (result) {
+			}, config_id).then(function (result) {
 				async_wait = false;
 				assert.equal(result, 202);
 				done();
@@ -740,8 +765,8 @@ describe('semantria-sdk [promise]', function() {
 			session.queueDocument({
 				id: "TEST_DOCUMENT_2",
 				text: "it works"
-			}, config_id, true).then(function() {
-				return session.cancelDocument("TEST_DOCUMENT_2", config_id, true);
+			}, config_id).then(function() {
+				return session.cancelDocument("TEST_DOCUMENT_2", config_id);
 			}).then(function(result) {
 				async_wait = false;
 				assert.ok(result instanceof Object);
@@ -762,7 +787,7 @@ describe('semantria-sdk [promise]', function() {
 					id: "TEST_DOCUMENT_4",
 					text: "Some other text goes here"
 				}
-			], config_id, true).then(function (result) {
+			], config_id).then(function (result) {
 				async_wait = false;
 				assert.equal(result, 202);
 				done();
@@ -774,7 +799,7 @@ describe('semantria-sdk [promise]', function() {
 			if (!config_id) throw 'Test configuration not exists';
 			setTimeout(function() {
 				var async_wait = true;
-				session.getDocument("TEST_DOCUMENT_1", config_id, true).then(function (result) {
+				session.getDocument("TEST_DOCUMENT_1", config_id).then(function (result) {
 					async_wait = false;
 					assert.ok(result instanceof Object);
 					done();
@@ -788,7 +813,7 @@ describe('semantria-sdk [promise]', function() {
 			var trys = 4;
 			var processed = {};
 			var testFn = function() {
-				session.getProcessedDocuments(config_id, true).then(function(items) {
+				session.getProcessedDocuments(config_id).then(function(items) {
 					if (items instanceof Array) {
 						for (var i=0; i<items.length; i++) {
 							processed[items[i].id] = true;
@@ -797,9 +822,9 @@ describe('semantria-sdk [promise]', function() {
 					if (Object.keys(processed).length >= 3) {
 						var ids = items.map(function(i){return i.id});
 						assert.ok(processed['TEST_DOCUMENT_1'], 'TEST_DOCUMENT_1 not present in processed documents');
+						assert.ok(processed['TEST_DOCUMENT_2'], 'TEST_DOCUMENT_2 not present in processed documents');
 						assert.ok(processed['TEST_DOCUMENT_3'], 'TEST_DOCUMENT_3 not present in processed documents');
 						assert.ok(processed['TEST_DOCUMENT_4'], 'TEST_DOCUMENT_4 not present in processed documents');
-						assert.ok(typeof processed['TEST_DOCUMENT_2'] == 'undefined', 'TEST_DOCUMENT_2 present in processed documents')
 						done();
 						return;
 					}
@@ -821,7 +846,7 @@ describe('semantria-sdk [promise]', function() {
 		it('getProcessedCollections() - empty', function ( done ) {
 			if (!config_id) throw 'Test configuration not exists';
 			var async_wait = true;
-			session.getProcessedCollections(config_id, true).then(function (items) {
+			session.getProcessedCollections(config_id).then(function (items) {
 				async_wait = false;
 				assert.equal(items, 202);
 				done()
@@ -841,7 +866,7 @@ describe('semantria-sdk [promise]', function() {
 					"it works",
 					"it works"
 				]
-			}, config_id, true).then(function (result) {
+			}, config_id).then(function (result) {
 				async_wait = false;
 				assert.equal(result, 202);
 				done();
@@ -861,8 +886,8 @@ describe('semantria-sdk [promise]', function() {
 					"it works",
 					"it works"
 				]
-			}, config_id, true).then(function () {
-				return session.cancelCollection("TEST_COLLECTION_2", config_id, true);
+			}, config_id).then(function () {
+				return session.cancelCollection("TEST_COLLECTION_2", config_id);
 			}).then(function (result) {
 				async_wait = false;
 				assert.ok(result instanceof Object);
@@ -875,7 +900,7 @@ describe('semantria-sdk [promise]', function() {
 			if (!config_id) throw 'Test configuration not exists';
 			setTimeout(function() {
 				var async_wait = true;
-				session.getCollection("TEST_COLLECTION_1", config_id, true).then(function (result) {
+				session.getCollection("TEST_COLLECTION_1", config_id).then(function (result) {
 					async_wait = false;
 					assert.ok(result instanceof Object);
 					done();
@@ -888,11 +913,11 @@ describe('semantria-sdk [promise]', function() {
 			if (!config_id) throw 'Test configuration not exists';
 			var trys = 4;
 			var testFn = function() {
-				session.getProcessedCollections(config_id, true).then(function (items) {
-					if (items instanceof Array && items.length == 1) {
+				session.getProcessedCollections(config_id).then(function (items) {
+					if (items instanceof Array && items.length == 2) {
 						var ids = items.map(function(i){return i.id});
 						assert.notEqual(-1, ids.indexOf('TEST_COLLECTION_1'), 'TEST_COLLECTION_1 not present in processed collections')
-						assert.equal(-1, ids.indexOf('TEST_COLLECTION_2'), 'TEST_COLLECTION_2 present in processed collections')
+						assert.notEqual(-1, ids.indexOf('TEST_COLLECTION_2'), 'TEST_COLLECTION_2 not present in processed collections')
 						done();
 						return;
 					}

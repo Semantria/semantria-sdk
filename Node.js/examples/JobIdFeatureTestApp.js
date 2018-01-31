@@ -53,7 +53,7 @@ for (var jobId in jobIds) {
 }
 
 //get or create test app configuration
-SemantriaActiveSession.getConfigurations(true)
+SemantriaActiveSession.getConfigurations()
 .then(function(configurations) {
 	for (var i=0; i<configurations.length; i++) {
 		if (configurations[i].name == appConfigurationName) {
@@ -65,7 +65,7 @@ SemantriaActiveSession.getConfigurations(true)
 		is_primary: false,
 		auto_response: false,
 		language: "English"
-	}], true);
+	}]);
 })
 .then(function (configuration) {
 	appConfigurationId = configuration[0].id;
@@ -86,7 +86,7 @@ SemantriaActiveSession.getConfigurations(true)
 
 			var jobId, jobs = [];
 			for (jobId in jobIds) {
-				jobs.push(SemantriaActiveSession.getProcessedDocumentsByJobId(jobId, true));
+				jobs.push(SemantriaActiveSession.getProcessedDocumentsByJobId(jobId));
 			}
 
 
@@ -134,7 +134,7 @@ SemantriaActiveSession.getConfigurations(true)
 })
 .then(function() {
 	if (!appConfigurationId) return;
-	return SemantriaActiveSession.removeConfigurations([appConfigurationId], true);
+	return SemantriaActiveSession.removeConfigurations([appConfigurationId]);
 });
 
 function queueDocumentSingle() {
@@ -144,7 +144,7 @@ function queueDocumentSingle() {
 		var docs = []
 		for (index in docsForJob) {
 			// Queues document for processing on Semantria service
-			docs.push(SemantriaActiveSession.queueDocument(docsForJob[index], appConfigurationId, true));
+			docs.push(SemantriaActiveSession.queueDocument(docsForJob[index], appConfigurationId));
 		}
 		(function(count, jobId) {
 			var job = promise.all(docs).then(function() {
@@ -162,7 +162,7 @@ function queueDocumentBatches() {
 	for (var jobId in documents) {
 		// Queues document for processing on Semantria service
 		(function (jobId) {
-			SemantriaActiveSession.queueBatchOfDocuments(documents[jobId], appConfigurationId, true).then(function () {
+			SemantriaActiveSession.queueBatchOfDocuments(documents[jobId], appConfigurationId).then(function () {
 				console.log("%d documents queued for %s job ID", Object.keys(documents[jobId]).length, jobId);
 			});
 		})(jobId);
@@ -177,7 +177,7 @@ function queueDocumentSingleBatch() {
 	for (var jobId in documents) {
 		batch = batch.concat(documents[jobId]);
 	}
-	return SemantriaActiveSession.queueBatchOfDocuments(batch, appConfigurationId, true).then(function() {
+	return SemantriaActiveSession.queueBatchOfDocuments(batch, appConfigurationId).then(function() {
 		console.log("%d documents queued in single batch", batch.length);
 
 	});

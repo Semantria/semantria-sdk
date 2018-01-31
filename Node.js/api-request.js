@@ -2,14 +2,8 @@ var fs = require('fs');
 var crypto = require('crypto');
 var promise = require('promise');
 var request = require('request');
-//var syncRequest = require('sync-request');
-/*
- reason: sync-request not allow make DELETE request with body
- fail with 'socket hang up' Error
- */
 var console_warn = console.warn;
 console.warn = function(){}
-var syncRequest = require('request-sync');
 console.warn = console_warn;
 
 var session_key_url = 'https://semantria.com/auth/session'
@@ -18,58 +12,58 @@ var session_key_url = 'https://semantria.com/auth/session'
  * @param {Object} config
  */
 function runApiRequest(session, options) {
-	var api_request = {
-		oAuth: {
-			version: "1.0",
-			parameterPrefix: "oauth_",
-			consumerKeyKey: "oauth_consumer_key",
-			versionKey: "oauth_version",
-			signatureMethodKey: "oauth_signature_method",
-			signatureKey: "oauth_signature",
-			timestampKey: "oauth_timestamp",
-			nonceKey: "oauth_nonce"
-		},
-		SDK_VERSION: session.SDK_VERSION,
-		X_API_VERSION: session.X_API_VERSION,
-		API_HOST: session.API_HOST,
-		consumerKey: session.consumerKey,
-		consumerSecret: session.consumerSecret,
-		applicationName: session.applicationName,
-		onRequest: session.onRequest,
-		onResponse: session.onResponse,
-		onError: session.onError,
-		onAfterResponse: session.onAfterResponse,
-		format: session.format,
-		nonce: generateNonce(),
-		timestamp: generateTimestamp(),
-		session: session
-	}
-	api_request.method     = options.method     || 'GET';
-	api_request.path       = options.path       || '';
-	api_request.getParams  = options.getParams  || {};
-	api_request.postParams = options.postParams || null;
-	api_request.url        = generateUrl(api_request);
-	api_request.queryUrl   = generateQueryUrl(api_request);
-	api_request.headers    = getRequestHeaders(api_request);
-	api_request.callAfterResponseHook = options.callAfterResponseHook;
+	return obtainSessionKeys(session).then(function() {
+		if(!session.consumerKey || !session.consumerSecret) {
+			throw "ConsumerKey and ConsumerSecret should be specified in order to use SDK";
+		}
 
-	if(api_request.postParams) {
-		api_request.postParams = Utils.encodeUtf8(JSON.stringify(api_request.postParams))
-	}
+		var api_request = {
+			oAuth: {
+				version: "1.0",
+				parameterPrefix: "oauth_",
+				consumerKeyKey: "oauth_consumer_key",
+				versionKey: "oauth_version",
+				signatureMethodKey: "oauth_signature_method",
+				signatureKey: "oauth_signature",
+				timestampKey: "oauth_timestamp",
+				nonceKey: "oauth_nonce"
+			},
+			SDK_VERSION: session.SDK_VERSION,
+			X_API_VERSION: session.X_API_VERSION,
+			API_HOST: session.API_HOST,
+			consumerKey: session.consumerKey,
+			consumerSecret: session.consumerSecret,
+			applicationName: session.applicationName,
+			onRequest: session.onRequest,
+			onResponse: session.onResponse,
+			onError: session.onError,
+			onAfterResponse: session.onAfterResponse,
+			format: session.format,
+			nonce: generateNonce(),
+			timestamp: generateTimestamp(),
+			session: session
+		}
+		api_request.method     = options.method     || 'GET';
+		api_request.path       = options.path       || '';
+		api_request.getParams  = options.getParams  || {};
+		api_request.postParams = options.postParams || null;
+		api_request.url        = generateUrl(api_request);
+		api_request.queryUrl   = generateQueryUrl(api_request);
+		api_request.headers    = getRequestHeaders(api_request);
+		api_request.callAfterResponseHook = options.callAfterResponseHook;
 
-	api_request.onRequest.call(api_request.session, {
-		method: api_request.method,
-		url: api_request.url,
-		message: api_request.postParams
-	});
+		if(api_request.postParams) {
+			api_request.postParams = Utils.encodeUtf8(JSON.stringify(api_request.postParams))
+		}
 
-	var request_fn;
-	if (typeof options.callback == "function") {
-		request_fn = runAsyncRequest;
-	} else {
-		request_fn = options.callback ? runPromiseRequest : runSyncRequest;
-	}
-	return request_fn(api_request, options.callback);
+		api_request.onRequest.call(api_request.session, {
+			method: api_request.method,
+			url: api_request.url,
+			message: api_request.postParams
+		});
+
+		return runPromiseRequest(api_request);
+	}).nodeify(options.callback);
 }
 
 /**
@@ -229,21 +223,6 @@ var Utils = {
 	}
 }
 
-//function runSyncRequest(api_request) {
-//	var request_options = {
-//		headers: api_request.headers,
-//		followRedirects: false
-//	};
-//
-//	if (api_request.postParams) {
-//		request_options.body = api_request.postParams;
-//	}
-//	var result = syncRequest(api_request.method, api_request.queryUrl, request_options);
-//	return processResponse(api_request, {
-//		status: result.statusCode,
-//		data: result.body.toString('utf8')
-//	});
-//}
 function getRequestOptions(api_request) {
 	var request_options = {
 		url: api_request.queryUrl,
@@ -259,51 +238,24 @@ function getRequestOptions(api_request) {
 	return request_options;
 }
 
-function runSyncRequest(api_request) {
-	var request_options = getRequestOptions(api_request);
-	request_options.encoding = 'utf8';
-	var result = syncRequest(request_options);
-	return processResponse(api_request, {
-		status: result.statusCode,
-		data: result.body
-	});
-}
+var promisedRequest = promise.denodeify(request);
 
-function runAsyncRequest(api_request, callback) {
+function runPromiseRequest(api_request) {
 	var request_options = getRequestOptions(api_request);
-	request(request_options, function(error, response, body) {
-		if(error) {
-			throw error;
+	return promisedRequest(request_options).then(function(response) {
+		var body = response.body;
+		var result = processResponse(api_request, {
+			status: response.statusCode,
+			data: body
+		});
+		if (response.statusCode == 200 || response.statusCode == 202) {
+			return(result);
 		} else {
-			callback(processResponse(api_request, {
-				status: response.statusCode,
-				data: body
-			}));
+			return promise.reject(new Error(result.message || result.data || 'unknown error', result.status));
 		}
 	});
 }
 
-function runPromiseRequest(api_request) {
-	var request_options = getRequestOptions(api_request);
-
-	return new promise(function (resolve, reject){
-		request(request_options, function(error, response, body) {
-			if(error) {
-				reject(error);
-			} else {
-				var result = processResponse(api_request, {
-					status: response.statusCode,
-					data: body
-				});
-				if (response.statusCode == 200 || response.statusCode == 202) {
-					resolve(result);
-				} else {
-					reject(new Error(result.message, result.status));
-				}
-			}
-		});
-	});
-}
 
 function processResponse(api_request, response) {
 	var method = api_request.method.toLowerCase(),
@@ -353,45 +305,62 @@ exports.runApiRequest = runApiRequest;
  * @param {Object} config
  */
 function obtainSessionKeys(session) {
-    if (fs.existsSync(session.session_file)) {
+	if (session.consumerSecret && session.consumerKey) {
+		return promise.resolve(session);
+	}
+	var sessionRefresh = promise.resolve(false);
+	var session_file = session.session_file || '/tmp/session.dat';
+    if (fs.existsSync(session_file)) {
         try {
-            var contents = fs.readFileSync(session.session_file).toString();
+            var contents = fs.readFileSync(session_file).toString();
             var info = JSON.parse(contents)
             if (info.id) {
-                var url = session_key_url + '/' + info.id + '.json?appkey=' + session.appkey
-                var response = syncRequest(url)
-                if (response.statusCode == 200) {
-                    var json_res = JSON.parse(response.body)
-                    session.consumerKey = json_res.custom_params.key
-                    session.consumerSecret = json_res.custom_params.secret
-                    return true
-                }
+                var url = session_key_url + '/' + info.id + '.json?appkey=' + session.appkey;
+                sessionRefresh = promisedRequest(url).then(function(response) {
+					if (response.statusCode != 200) {
+						return(false);
+					}
+					var json_res = JSON.parse(response.body);
+					session.consumerKey = json_res.custom_params.key;
+					session.consumerSecret = json_res.custom_params.secret;
+					return(true);
+				});
             }
         } catch(e) {}
-        // Do something
     }
-    var url = session_key_url + '.json?appkey=' + session.appkey;
-    var data = {
-        username: session.username,
-        password: session.password
-    }
-    var response = syncRequest({
-        url: url,
-        method: "POST",
-        body: JSON.stringify(data),
-        encoding: 'utf8'
-    })
-    if (response.statusCode != 200) {
-        return false
-    }
-    var json_res = JSON.parse(response.body)
-    var info = {
-        id: json_res.id
-    }
-    fs.writeFileSync(session.session_file, JSON.stringify(info))
-    session.consumerKey = json_res.custom_params.key
-    session.consumerSecret = json_res.custom_params.secret
-    return true
-}
 
-exports.obtainSessionKeys = obtainSessionKeys;
+    return sessionRefresh.then(function(worked) {
+		if (worked) {
+			return session;
+		}
+	    var url = session_key_url + '.json?appkey=' + session.appkey;
+	    var data = {
+	        username: session.username || 'unspecified',
+	        password: session.password || 'unspecified'
+	    }
+	    var request_options = {
+	        url: url,
+	        method: "POST",
+	        body: JSON.stringify(data),
+	        encoding: 'utf8'
+	    };
+
+		return promisedRequest(request_options).then(function(response) {
+
+			var json_res = JSON.parse(response.body);
+			if (response.statusCode != 200) {
+				return promise.reject(json_res.error_message);
+			}
+			var info = {
+				id: json_res.id
+			}
+			try {
+				fs.writeFileSync(session_file, JSON.stringify(info))
+			} catch(e) {};
+
+			session.consumerKey = json_res.custom_params.key;
+			session.consumerSecret = json_res.custom_params.secret;
+			return(session);
+		});
+	});
+}

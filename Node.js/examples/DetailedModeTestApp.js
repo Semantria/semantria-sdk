@@ -29,7 +29,7 @@ SemantriaActiveSession.getConfigurations(true)
 		is_primary: false,
 		auto_response: false,
 		language: "English"
-	}], true);
+	}]);
 })
 .then(function(result){
 	appConfigurationId = result[0].id;
@@ -40,7 +40,7 @@ SemantriaActiveSession.getConfigurations(true)
 	var requests = [];
 	for (var i=0; i<outgoingBatches.length; i++) {
 		(function(outgoingBatch){
-			var rq = SemantriaActiveSession.queueBatchOfDocuments(outgoingBatches[i], appConfigurationId, true)
+			var rq = SemantriaActiveSession.queueBatchOfDocuments(outgoingBatches[i], appConfigurationId)
 				.then(function(res){
 					console.log("%d documents queued successfully", outgoingBatch.length);
 				});
@@ -55,7 +55,7 @@ SemantriaActiveSession.getConfigurations(true)
 		var analyticData = [];
 		var wait_fn = function () {
 			console.log("Retrieving your processed results...");
-			SemantriaActiveSession.getProcessedDocuments(appConfigurationId, true)
+			SemantriaActiveSession.getProcessedDocuments(appConfigurationId)
 			.then(function(processedDocuments) {
 
 				if (processedDocuments && processedDocuments.length) {
@@ -129,7 +129,7 @@ SemantriaActiveSession.getConfigurations(true)
 })
 .then(function() {
 	if (!appConfigurationId) return;
-	return SemantriaActiveSession.removeConfigurations([appConfigurationId], true);
+	return SemantriaActiveSession.removeConfigurations([appConfigurationId]);
 });
 
 function getOutgoingBatches(batch_limit) {

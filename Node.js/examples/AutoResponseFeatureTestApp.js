@@ -39,17 +39,17 @@ SemantriaActiveSession.getConfigurations(true)
 		is_primary: false,
 		auto_response: true,
 		language: "English"
-	}], true);
+	}]);
 })
 .then(function(result){
 	appConfigurationId = result[0].id;
 
 	// Queues documents for analysis one by one
 	console.log("Queues documents for analysis one by one.\n");
-	return runForEachCrossDealay(outgoingDocs, 2000, function(doc) {
-		var res = SemantriaActiveSession.queueDocument(doc, appConfigurationId, true);
+	return runForEachCrossDelay(outgoingDocs, 250, function(doc) {
+		var res = SemantriaActiveSession.queueDocument(doc, appConfigurationId);
 		queuedDocsCount++;
-		console.log("Documents queued/received rate: " + queuedDocsCount + "/" + docResultList.length);
+		console.log("Documents queued/received: " + queuedDocsCount + "/" + docResultList.length);
 		return res;
 	});
 })
@@ -60,10 +60,10 @@ SemantriaActiveSession.getConfigurations(true)
 	}
 	return new promise(function(resolve, reject) {
 		var wait_fn = function () {
-			SemantriaActiveSession.getProcessedDocuments(appConfigurationId, true)
+			SemantriaActiveSession.getProcessedDocuments(appConfigurationId)
 			.then(function(result) {
 				processDocuments(result);
-				console.log("Documents queued/received rate: " + queuedDocsCount + "/" + docResultList.length);
+				console.log("Polling: Documents queued/received: " + queuedDocsCount + "/" + docResultList.length);
 				if (docResultList.length >= outgoingDocs.length) {
 					return resolve(true); //all documents already processed
 				}
@@ -74,7 +74,7 @@ SemantriaActiveSession.getConfigurations(true)
 	});
 })
 .then(function() {
-	console.log("\nAutoResponseFeatureModeTestApp successful complete\n");
+	console.log("\nDone: Documents queued/received: " + queuedDocsCount + "/" + docResultList.length + "\n");
 })
 .catch(function(err) {
 	console.log("nAutoResponseFeatureModeTestApp faild\n");
@@ -83,36 +83,36 @@ SemantriaActiveSession.getConfigurations(true)
 })
 .then(function() {
 	if (!appConfigurationId) return;
-	return SemantriaActiveSession.removeConfigurations([appConfigurationId], true);
+	return SemantriaActiveSession.removeConfigurations([appConfigurationId]);
 });
 
 
-function runForEachCrossDealay(items, dalay, fn) {
+function runForEachCrossDelay(items, delay, fn) {
 	return new promise(function (resolve, reject) {
 		var interval,
-			is_complited = false,
+			is_completed = false,
 			calls = [],
 			i = 0;
 
-		var complite = function() {
-			if (is_complited) return;
-			is_complited = true;
+		var complete = function() {
+			if (is_completed) return;
+			is_completed = true;
 			clearInterval(interval);
 			promise.all(calls).then(resolve, reject);
 		}
 
 		interval = setInterval(function () {
 			if (i >= items.length) {
-				return complite();
+				return complete();
 			}
 			calls.push(fn(items[i]).catch(
 				function (err) {
-					complite();
+					complete();
 					return promise.reject(err);
 				}
-			)); //complite on first error
+			)); //complete on first error
 			i++;
-		}, dalay);
+		}, delay);
 	});
 }
 
