@@ -1,6 +1,8 @@
 package com.semantria.example;
 
 import com.google.common.base.Strings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.DataInputStream;
@@ -16,6 +18,8 @@ import java.util.List;
  */
 public class Utils {
 
+    private static Logger log = LoggerFactory.getLogger(Utils.class);
+
     /**
      * Reads contents of {@code filename} and returns a list of lines.
      */
@@ -23,7 +27,7 @@ public class Utils {
 
         File file = new File(filename);
         if (!file.exists()) {
-            System.err.format("Can't find data file, %s.", filename);
+            log.error("Can't find data file: {}", filename);
             return Collections.emptyList();
         }
 
@@ -42,7 +46,8 @@ public class Utils {
             }
             in.close();
         } catch (Exception e) {
-            System.err.format("Error reading data: %s\n", e.toString());
+            log.error("Error reading data: {}", e.getMessage());
+            return null;
         }
 
         return data;

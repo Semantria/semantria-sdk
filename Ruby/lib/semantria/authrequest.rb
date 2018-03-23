@@ -60,10 +60,14 @@ module Semantria
         data = response.body
       end
 
+      # Note, return value is a hash with symbols top level keys
+      # (:status, :reason and :data). However, json objects read from
+      # the API in :data will have string keys.
       {status: response.code.to_i, reason: response.message, data: data}
     end
 
     private
+
     # create the http request object for a given http_method and path
     def get_request(method, path, headers, post_data = nil)
       request = nil

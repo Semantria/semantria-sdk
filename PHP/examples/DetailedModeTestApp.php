@@ -1,6 +1,6 @@
 <?php
 
-require_once('../semantria/session.php');
+require_once('semantria/session.php');
 
 echo "Semantria service demo ...", "\r\n";
 
@@ -68,7 +68,7 @@ $subscription = $session->getSubscription();
 $tracker = array();
 $documets = array();
 
-print("Reading collection from file...\n");
+print("Reading documents from file...\n");
 $file = fopen("source.txt", "r");
 if (!$file) {
     print("");

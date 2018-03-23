@@ -28,7 +28,7 @@ class Session(object):
     def __init__(self, consumerKey=None, consumerSecret=None,
                  serializer=None, applicationName=None, use_compression=False,
                  username=None, password=None,
-                 session_file ='/tmp/session.dat',
+                 session_file ='/tmp/semantria-session.dat',
                  auth_key_url=default_key_url,
                  auth_app_key=default_app_key):
 
@@ -70,39 +70,58 @@ class Session(object):
         self.DocsAutoResponse = SessionEvent(self)
         self.CollsAutoResponse = SessionEvent(self)
 
+    def __repr__(self):
+        return ("{}({!r})".format(self.__class__.__name__, self.host))
+   
+
     def obtainKeys(self, username, password,
                    session_file='/tmp/semantria-session.dat',
                    auth_key_url=default_key_url,
                    auth_app_key=default_app_key):
         import requests
 
-        if os.path.exists(session_file):
-            with open(session_file) as f:
-                f.seek(0)
-                session_id = f.readline()
+        session_id = self.getSavedSessionId(session_file, username)
 
+        if session_id:
             url = '{0}/{1}.json?appkey={2}'.format(auth_key_url, session_id, auth_app_key)
-            res = requests.get(url)
-
-            if res.status_code == 200:
-                json_res = res.json()
-                return json_res['custom_params']['key'], json_res['custom_params']['secret']
+            response = requests.get(url)
+            if response.status_code == 200:
+                json_data = response.json()
+                return json_data['custom_params']['key'], json_data['custom_params']['secret']
 
         url = '{0}.json?appkey={1}'.format(auth_key_url, auth_app_key)
         data = {'username': username, 'password': password}
 
-        res = requests.post(url, data=json.dumps(data))
-        if res.status_code != 200:
+        response = requests.post(url, data=json.dumps(data))
+        if response.status_code != 200:
             return False, False
 
-        json_res = res.json()
-        session_id = json_res['id']
+        json_data = response.json()
+        self.saveSessionId(session_file, username, json_data['id'])
 
-        with open(session_file, 'w') as f:
+        return json_data['custom_params']['key'], json_data['custom_params']['secret']
+
+    # Cache session id in a simple two line format:
+    #   username
+    #   session id
+    def saveSessionId(self, session_file, username, session_id):
+        with open(session_file, mode='w') as f:
             f.seek(0)
+            f.write(username)
+            f.write('\n')
             f.write(session_id)
+            f.write('\n')
 
-        return json_res['custom_params']['key'], json_res['custom_params']['secret']
+    # Returns session id if a reasonable one is found
+    def getSavedSessionId(self, session_file, username):
+        if not os.path.exists(session_file):
+            return None
+        with open(session_file, mode='r') as f:
+            u = f.readline().strip()
+            if u != username:
+                return None
+            return f.readline().strip()
+                
 
     def registerSerializer(self, serializer):
         if not serializer:
@@ -443,8 +462,55 @@ class Session(object):
             result = []
         return result
 
-    def makeUrl(self, path, config_id=None, params=None):
-        url = '{0}{1}.{2}'.format(self.host, path, self.format)
+    # Gets the salience user data directory files for a config as a tar
+    # or zip archive. Writes the archive as a file if path is given
+    # otherwise returns a byte array. If there is an error getting the
+    # archive data, then any error handlers are called and this function
+    # returns the HTTP status. If there is an error writing the archive
+    # file then an exception is raised.
+    def getUserDirectory(self, config_id=None, path=None, format=None):
+        format = self.getArchiveFormat(path, format)
+        url = self.makeUrl('/salience/user-directory', config_id, format=format)
+        response = self._request.authWebRequest("GET", url, None,
+                                                headers=self.http_headers)
+        if not isSuccess(response['status']):
+            self._resolveError(response)
+            return response['status']
+        if path:
+            with open(path, mode='wb') as stream:
+                stream.write(response['data'])
+            return response['status']
+        else:
+            return response['data']
+
+    # Determines the archive format. If an unknown format is given or no
+    # format is given then use zip format. Format is determined first
+    # from the path (if given) then from the the format parameter.
+    def getArchiveFormat(self, path, format):
+        if path:
+            path_lower = path.lower()
+            if path_lower.endswith('.tar.gz'):
+                return 'tar.gz'
+            if path_lower.endswith('.tar'):
+                return 'tar'
+            if path_lower.endswith('.zip'):
+                return 'zip'
+        if format:
+            if format in ['tar.gz', 'tar', 'zip']:
+                return format
+            if format in ['.tar.gz', '.tar', '.zip']:
+                return format[1:]
+        # zip format is the default
+        return 'zip'
+
+
+    def makeUrl(self, path, config_id=None, params=None, format=None):
+        # allow null string to indicate no extra format extension on url
+        if format is None:
+            format = self.format
+        url = self.host + path
+        if format:
+            url += '.' + format
         if params:
             param_string = '&'.join(['{0}={1}'.format(k, params[k])
                                      for k in params if params[k]])
@@ -475,7 +541,7 @@ class Session(object):
             message = response["data"]
 
         if method == "DELETE":
-            if status == 200 or status == 202:
+            if isSuccess(status):
                 return status
             else:
                 self._resolveError(response)
@@ -505,6 +571,9 @@ class SessionEvent:
         self.handlers = set()
         self.sender = sender 
 
+    def __repr__(self):
+        return ("{}({!r})".format(self.__class__.__name__, self.handlers))
+   
     def handle(self, handler): 
         self.handlers.add(handler) 
         return self 
@@ -528,3 +597,13 @@ class SessionEvent:
     __call__ = fire 
     __len__ = getHandlerCount
 
+
+def isSuccess(status):
+    try:
+        code = int(status)
+        return ((code >= 200) and (code < 300))
+    except:
+        sys.stderr.write("ERROR: Bad status from request: {}. {}\n".format(status, sys.exc_info()))
+        traceback.print_tb(sys.exc_info()[2])
+        sys.stderr.write("\n")
+        return False

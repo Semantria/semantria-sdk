@@ -44,8 +44,12 @@ import com.semantria.utils.ResponseArgs;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -212,7 +216,7 @@ public class Session {
     }
 
     /**
-     * Sets what API version to use. Default is 4.2.
+     * Sets what API version to use. Default is most recent API version as of SDK release (this one is 4.2).
      */
     public Session withApiVersion(String apiVersion) {
         this.apiVersion = apiVersion;
@@ -242,7 +246,7 @@ public class Session {
         return this;
     }
 
-    // Compatibility with earlier non-fluent style ...
+    // Compatibility with earlier non-fluent names ...
 
     /**
      * See {@code withCompression}
@@ -1338,6 +1342,65 @@ public class Session {
         }
     }
 
+    public enum ArchiveFormat {
+        ZIP("zip"),
+        TAR("tar"),
+        TAR_GZ("tar.gz");
+        private final String format;
+        ArchiveFormat(final String fmt) {
+            format = fmt;
+        }
+        @Override
+        public String toString() {
+            return format;
+        }
+    }
+
+    private ArchiveFormat getArchiveFormat(Path path) {
+        for (ArchiveFormat format : ArchiveFormat.values()) {
+            if (path.toString().endsWith("." + format.toString())) {
+                return format;
+            }
+        }
+        return ArchiveFormat.ZIP;
+    }
+
+    public byte[] getUserDirectory(String config_id) {
+        return getUserDirectory(config_id, ArchiveFormat.ZIP);
+    }
+
+    public byte[] getUserDirectory(String config_id, ArchiveFormat format) {
+        try {
+            AuthRequest req = makeAuthRequestLiteral("salience/user-directory." + format.toString(), "GET")
+                    .config_id(config_id)
+                    .binary();
+            Integer status = doRequest(req);
+            if (200 == status) {
+                return req.getResponseData();
+            } else {
+                return null;
+            }
+        } catch (CredentialException e) {
+            handleError(e.getStatus(), e.toString());
+            return null;
+        }
+    }
+
+    public void getUserDirectory(String config_id, File file) throws IOException {
+        getUserDirectory(config_id, file.toPath());
+    }
+
+    public void getUserDirectory(String config_id, Path path) throws IOException {
+        byte[] bytes = getUserDirectory(config_id, getArchiveFormat(path));
+        if (bytes == null) {
+            throw new RuntimeException(String.format(
+                    "Can't get user directory for config %s. Check error handler for specific error message",
+                    config_id));
+        }
+        Files.write(path, bytes);
+    }
+
+
     // Interface to API requests at a lower level.
 
     public Integer doRequest(AuthRequest req) throws CredentialException {
@@ -1376,8 +1439,19 @@ public class Session {
         return status;
     }
 
+    public AuthRequest makeAuthRequestLiteral(String path, String method) throws CredentialException {
+        String url = generateRequestUrl(path, null);
+        ensureKeyAndSecret();
+        return AuthRequest.getInstance(url, method)
+                .key(key)
+                .secret(secret)
+                .apiVersion(apiVersion)
+                .headers(httpHeaders)
+                .useCompression(useCompression);
+    }
+
     public AuthRequest makeAuthRequest(String path, String method) throws CredentialException {
-        String url = generateRequestUrl(path);
+        String url = generateRequestUrl(path, requestFormat);
         ensureKeyAndSecret();
         return AuthRequest.getInstance(url, method)
                 .key(key)
@@ -1508,8 +1582,12 @@ public class Session {
 
     }
 
-    private String generateRequestUrl(String path) {
-        return serviceUrl + (path.startsWith("/") ? "" : "/") + path + "." + requestFormat;
+    private String generateRequestUrl(String path, String format) {
+        String url = serviceUrl + (path.startsWith("/") ? "" : "/") + path;
+        if (! Strings.isNullOrEmpty(format)) {
+            url += "." + format;
+        }
+        return url;
     }
 
     private String generateRequestPathWithId(String path, String id) {

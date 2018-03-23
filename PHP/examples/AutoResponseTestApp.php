@@ -1,6 +1,6 @@
 <?php
 
-require_once('../semantria/session.php');
+require_once('semantria/session.php');
 
 echo "Semantria Auto-response feature demo.", "\r\n";
 
@@ -50,7 +50,7 @@ class SessionCallbackHandler extends \Semantria\CallbackHandler
     }
 }
 
-print("Reading collection from file...\n");
+print("Reading documents from file...\n");
 $documents = array();
 $file = fopen("source.txt", "r");
 if (!$file) {

@@ -60,13 +60,13 @@ namespace Semantria.Com
 
         #region Public Methods
         /// <summary>
-        /// Signut a web request using Auth.
+        /// Sign a web request using Auth.
         /// </summary>
         /// <param name="method">Http method GET, POST or DELETE</param>
         /// <param name="url">The full url, including the querystring.</param>
         /// <param name="postData">Data to post in xml or json fromat</param>
         /// <returns>The web server response.</returns>
-        public AuthResponse AuthWebRequest(QueryMethod method, string url, string postData)
+        public AuthResponse AuthWebRequest(QueryMethod method, string url, string postData, bool isBinary)
         {
             string querystring = string.Empty;
             string authheader = string.Empty;
@@ -86,7 +86,7 @@ namespace Semantria.Com
                 timeStamp,
                 nonce);
 
-            AuthResponse authResponse = WebRequest(method, querystring, postData, authheader);
+            AuthResponse authResponse = WebRequest(method, querystring, postData, authheader, isBinary);
             return authResponse;
         }
 
@@ -94,7 +94,7 @@ namespace Semantria.Com
 
         #region Private Methods
 
-        private AuthResponse WebRequest(QueryMethod method, string url, string postData, string authheader)
+        private AuthResponse WebRequest(QueryMethod method, string url, string postData, string authheader, bool isBinary)
         {
             HttpWebRequest webRequest = null;
             StreamWriter requestWriter = null;
@@ -134,7 +134,7 @@ namespace Semantria.Com
                 }
             }
 
-            AuthResponse authResponse = WebResponseGet(webRequest);
+            AuthResponse authResponse = WebResponseGet(webRequest, isBinary);
             authResponse.Method = method;
             
             webRequest = null;
@@ -142,40 +142,18 @@ namespace Semantria.Com
             return authResponse;
         }
 
-        private AuthResponse WebResponseGet(HttpWebRequest webRequest)
+        private AuthResponse WebResponseGet(HttpWebRequest webRequest, bool isBinary)
         {
-            StreamReader responseReader = null;
             AuthResponse authResponse = new AuthResponse();
-            Stream stream = null;
-
             try
             {
-                HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
-                using (response)
-                {
-                    authResponse.Status = response.StatusCode;
-                    stream = response.GetResponseStream();
-                    responseReader = new StreamReader(stream);
-                    authResponse.Data = responseReader.ReadToEnd();
-                }
+                readGoodResponse(webRequest, authResponse, isBinary);
             }
             catch (WebException e)
             {
                 if (e.Status == WebExceptionStatus.ProtocolError)
                 {
-                    HttpWebResponse response = (HttpWebResponse)e.Response;
-                    using (response)
-                    {
-                        authResponse.Status = response.StatusCode;
-                        authResponse.Data = response.StatusDescription;
-
-                        stream = response.GetResponseStream();
-                        if (null != stream && stream.CanRead)
-                        {
-                            responseReader = new StreamReader(stream);
-                            authResponse.Data = responseReader.ReadToEnd();
-                        }
-                    }
+                    readProtocolError(e, authResponse);
                 }
                 else
                 {
@@ -183,20 +161,54 @@ namespace Semantria.Com
                     authResponse.Data = e.Message;
                 }
             }
-            finally
-            {
-                if (stream != null)
-                {
-                    stream.Close();
-                }
-                if (responseReader != null)
-                {
-                    responseReader.Close();
-                    responseReader = null;
-                }
-            }
 
             return authResponse;
+        }
+
+        private static void readGoodResponse(HttpWebRequest webRequest, AuthResponse authResponse, bool isBinary)
+        {
+            HttpWebResponse response = (HttpWebResponse)webRequest.GetResponse();
+            using (response)
+            {
+                authResponse.Status = response.StatusCode;
+                if (isBinary) {
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        response.GetResponseStream().CopyTo(ms);
+                        authResponse.BinaryData = ms.ToArray();
+                    }
+                }
+                else
+                {                    
+                    using (Stream stream = response.GetResponseStream())
+                    {
+                        using (StreamReader responseReader = new StreamReader(stream))
+                        {
+                            authResponse.Data = responseReader.ReadToEnd();
+                        }
+                    }
+                }
+            }
+        }
+
+        private static void readProtocolError(WebException e, AuthResponse authResponse)
+        {
+            using (HttpWebResponse response = (HttpWebResponse)e.Response)
+            {
+                authResponse.Status = response.StatusCode;
+                authResponse.Data = response.StatusDescription;
+                using (Stream stream = response.GetResponseStream())
+                {
+                    if (null != stream && stream.CanRead)
+                    {
+                        using (StreamReader responseReader = new StreamReader(stream))
+                        {
+                            authResponse.Data = responseReader.ReadToEnd();
+                        }
+                    }
+                }
+
+            }
         }
 
         private string GenerateQueryUrl(Uri url)

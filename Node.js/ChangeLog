@@ -1,5 +1,7 @@
 CHANGELOG
 
+4.2.7 - Added getUserDirectory.
+
 4.2.6 - Did away with "sync" mode (3rd party library doesn't work anymore and is very non-Node)
 	- Changed callbacks to be node-style (err, result) so that errors can be properly propagated
 4.1.5 - Tested with API 4.1.

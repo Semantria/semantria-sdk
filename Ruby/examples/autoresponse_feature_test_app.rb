@@ -1,9 +1,12 @@
 #!/usr/bin/env ruby
-require 'semantria'
 
-# the consumer key and secret
-consumer_key = ''
-consumer_secret = ''
+require File.expand_path('lib/semantria')
+
+# API Key/Secret
+# Set the environment vars before calling this program
+# or edit this file and put your key and secret here.
+$consumer_key = ENV['SEMANTRIA_KEY']
+$consumer_secret = ENV['SEMANTRIA_SECRET']
 
 $results = []
 
@@ -48,51 +51,50 @@ end
 
 # Initializes new session with the keys and app name.
 # We also will use compression.
-session = Semantria::Session.new(consumer_key, consumer_secret, 'TestApp', true)
+session = Semantria::Session.new($consumer_key, $consumer_secret,
+                                 application_name:'TestApp',
+                                 use_compression:true)
+
 # Initialize session callback handlers
 callback = SessionCallbackHandler.new()
 session.setCallbackHandler(callback)
 
-# Remembers primary configuration to set it back after the test.
+# Get or create auto response config
 configurations = session.getConfigurations()
-primary_configuration = nil
-autoresponse_configuration = nil
+config_id = nil
 
 configurations.each do |c|
-  if c['is_primary']
-    primary_configuration = c
-  end
-
   if c['name'] == 'AutoResponseTest'
-    autoresponse_configuration = c
+    config_id = c['id']
   end
 end
 
-if autoresponse_configuration.nil?
-  session.addConfigurations({
+if config_id.nil?
+  response = session.addConfigurations({
     'name' => 'AutoResponseTest',
     'language' => 'English',
-    'is_primary' => True,
     'auto_response' => True,
   })
-else
-  autoresponse_configuration['is_primary'] = true
-  session.updateConfigurations([autoresponse_configuration])
+  config_id = response[0]['id']
 end
 
 # Queues documents for analysis one by one
 counter = 0
 documents.each do |document|
-  session.queueDocument({'id' => rand(10 ** 10).to_s.rjust(10, '0'), 'text' => document})
+  session.queueDocument({'id' => rand(10 ** 10).to_s.rjust(10, '0'), 'text' => document},
+                        config_id)
   counter += 1
   sleep(0.1)
   print("Documents queued/received rate: #{counter}/#{$results.size}\n")
 end
 
-# The final call to get remained data from server, Just for demo purposes.
+# Finally, poll for any docs that weren't returned via auto response.
+# This is needed in this demo because it is only processing a fixed number of docs.
+# A continuous process that runs forever would not need to do this step, because
+# it would never get to the end of it's docs to be processed.
 sleep(1)
 while $results.size < documents.size
-  result = session.getProcessedDocuments()
+  result = session.getProcessedDocuments(config_id)
   result.each { |data| $results.push(data) }
 
   sleep(0.5)
@@ -100,5 +102,3 @@ end
 
 print("\nDocuments queued/received rate: #{documents.size}/#{$results.size}\n")
 
-# Sets original primary configuration back after the test.
-session.updateConfigurations([primary_configuration])

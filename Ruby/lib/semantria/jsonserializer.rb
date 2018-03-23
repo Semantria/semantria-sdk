@@ -9,7 +9,6 @@ module Semantria
 
     def serialize(obj, wrapper = nil)
       str = JSON.generate(obj)
-
       str.encoding.name != 'UTF-8' ? str.encode('UTF-8') : str
     end
 

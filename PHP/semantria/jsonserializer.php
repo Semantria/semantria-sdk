@@ -8,16 +8,14 @@ class JsonSerializer
         return "json";
     }
 
-    function serialize($obj, $wrapper = NULL)
+    function serialize($obj)
     {
-        //$obj = processUpdateProxyClonedElement($obj);
-        $str = json_encode($obj);
-        return $str;
+        return json_encode($obj);
     }
 
-    function deserialize($str, $handler = NULL)
+    function deserialize($str)
     {
-        $obj = json_decode($str, TRUE);
-        return $obj;
+        return json_decode($str, TRUE);
     }
+
 }

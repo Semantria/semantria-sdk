@@ -7,6 +7,7 @@ using System.Linq;
 using Semantria.Com.Mapping.Configuration;
 using Semantria.Com.Mapping.Output;
 using Semantria.Com.Mapping;
+using System.IO;
 
 namespace Semantria.Com.TestUnitApi
 {
@@ -18,64 +19,56 @@ namespace Semantria.Com.TestUnitApi
     {
         public UnitTest()
         {
-            //
-            // TODO: Add constructor logic here
-            //
         }
 
-        private string _consumerKey = "devkey";
-        private string _consumerSecret = "devsecret";
+        // Set environment vars before calling this program
+        // or edit this file and put your key and secret here.
+        private string _consumerKey = System.Environment.GetEnvironmentVariable("SEMANTRIA_KEY");
+        private string _consumerSecret = System.Environment.GetEnvironmentVariable("SEMANTRIA_SECRET");
 
-        private static string _configId = null;
         private string _docId = "3E08B37B-0D74-4BF0-9380-E4D7E8C0279E"; 
         private string _message = "Amazon Web Services has announced a new feature called VM₤Ware Import, which allows IT departments to move virtual machine images from their internal data centers to the cloud.";
 
+        private readonly string TEST_CONFIG_NAME = "TEST_CONFIG";
+        private readonly string TEST_CLONE_CONFIG_NAME = "TEST_CLONE_CONFIG";
+        private string _configId = null;
         private Session _session = null;
 
-        private TestContext _testContextInstance;
-
-        /// <summary>
-        ///Gets or sets the test context which provides
-        ///information about and functionality for the current test run.
-        ///</summary>
-        public TestContext TestContext
-        {
-            get
-            {
-                return _testContextInstance;
-            }
-            set
-            {
-                _testContextInstance = value;
-            }
-        }
-
         #region Additional test attributes
-        //
-        // You can use the following additional attributes as you write your tests:
-        //
-        // Use ClassInitialize to run code before running the first test in the class
-        // [ClassInitialize()]
-        // public static void MyClassInitialize(TestContext testContext) { }
-        //
-        // Use ClassCleanup to run code after all tests in a class have run
-        // [ClassCleanup()]
-        // public static void MyClassCleanup() { }
-        //
-        // Use TestInitialize to run code before running each test 
+  
         [TestInitialize()]
         public void MyTestInitialize() 
         {
             _session = Session.CreateSession(_consumerKey, _consumerSecret);
-            _session.Host = "https://dev2.semantria.com";
 
             _session.Request += new Session.RequestHandler(session_Request);
             _session.Response += new Session.ResponseHandler(session_Response);
             _session.Error += new Session.ErrorHandler(session_Error);
             _session.DocsAutoResponse += new Session.DocsAutoResponseHandler(session_DocsAutoResponse);
-            _session.CollsAutoResponse += new Session.CollsAutoResponseHandler(session_CollsAutoResponse);        
+            _session.CollsAutoResponse += new Session.CollsAutoResponseHandler(session_CollsAutoResponse);
+
+            CreateOrGetTestConfig();      
         }
-        
+
+        private void CreateOrGetTestConfig()
+        {   
+            List<Configuration> configsList = _session.GetConfigurations();
+            Configuration config = null;
+            // Updates or Creates new configuration for the test
+            if (!configsList.Any(item => item.Name.Equals(TEST_CONFIG_NAME)))
+            {
+                List<Configuration> newConfigs = new List<Configuration>();
+                newConfigs.Add(new Configuration { Name = TEST_CONFIG_NAME, Language = "English" });
+                List<Configuration> result = _session.AddConfigurations(newConfigs);
+                config = result[0];
+            }
+            else
+            {
+                config = configsList.First(item => item.Name.Equals(TEST_CONFIG_NAME));
+            }
+            _configId = config.Id;
+        }
+
         // Use TestCleanup to run code after each test has run
         [TestCleanup()]
         public void MyTestCleanup() 
@@ -140,7 +133,6 @@ namespace Semantria.Com.TestUnitApi
             Assert.IsNotNull(result);
             if (result == null) return;
 
-            string name = "dotNetSDK_CloneTest";
             string template = string.Empty;
             Configuration primaryConfig = null;
             foreach (Configuration item in result)
@@ -153,56 +145,54 @@ namespace Semantria.Com.TestUnitApi
                 }
             }
             Assert.AreNotSame(string.Empty, template);
-            Configuration clone = _session.CloneConfiguration(name, template);
+            Configuration clone = _session.CloneConfiguration(TEST_CLONE_CONFIG_NAME, template);
             Assert.IsNotNull(clone);
             Assert.AreNotEqual(primaryConfig.Id, clone.Id);
             Assert.AreNotEqual(primaryConfig.Name, clone.Name);
 
-            _configId = clone.Id;
-            result[0].AlphanumericThreshold = 0;
-            result[0].Modified = UInt64.MinValue;
-            result = _session.UpdateConfigurations(result);
+            List<Configuration> updateConfigs = new List<Configuration>();
+            updateConfigs.Add(new Configuration { Id = clone.Id, AlphanumericThreshold = 0 });
+            result = _session.UpdateConfigurations(updateConfigs);
             Assert.IsNotNull(result);
 
             result = _session.GetConfigurations();
-            if (!result.Any(item => item.Name.Equals(name)))
+            if (!result.Any(item => item.Name.Equals(TEST_CLONE_CONFIG_NAME)))
             {
-                Assert.Fail();
+                Assert.Fail("can't find cloned config");
             }
 
-            if (result.Where(item => item.Name.Equals(name)).First().AlphanumericThreshold != 0)
+            if (result.Where(item => item.Name.Equals(TEST_CLONE_CONFIG_NAME)).First().AlphanumericThreshold != 0)
             {
-                Assert.Fail();
+                Assert.Fail("alphanumeric threshold on cloned config not changed");
             }
 
             List<string> removeList = new List<string>();
-            removeList.Add(_configId);
+            removeList.Add(clone.Id);
             var res = _session.RemoveConfigurations(removeList);
             Assert.AreEqual(202, res);
 
             result = _session.GetConfigurations();
-            if (result.Any(item => item.Name.Equals(name)))
+            if (result.Any(item => item.Name.Equals(TEST_CLONE_CONFIG_NAME)))
             {
-                Assert.Fail();
+                Assert.Fail("one or more cloned configs still exist");
             }
         }
 
         [TestMethod]
         public void CreateConfiguration()
         {
-            string name = "dotNetSDK_TestConfiguration";
             List<Configuration> result = _session.AddConfigurations(new List<Configuration>()
             {
                 new Configuration()
                 {
-                    Name = name,
+                    Name = TEST_CONFIG_NAME,
                     Language = "English"
                 }
             });
 
             Assert.IsNotNull(result);
             Configuration added = result[0];
-            Assert.AreEqual(added.Name, name);
+            Assert.AreEqual(added.Name, TEST_CONFIG_NAME);
 
             _configId = added.Id;
         }
@@ -216,7 +206,7 @@ namespace Semantria.Com.TestUnitApi
             result = new List<BlacklistedItem>();
             result.Add(new BlacklistedItem { Name = "net*" });
             var obj = _session.AddBlacklist(result, _configId);
-            Assert.IsTrue(obj != null);
+            Assert.IsNotNull(obj);
 
             result = _session.GetBlacklist(_configId);
             List<BlacklistedItem> items = new List<BlacklistedItem>();
@@ -231,7 +221,7 @@ namespace Semantria.Com.TestUnitApi
             }
 
             List<BlacklistedItem> res = _session.UpdateBlacklist(items, _configId);
-            Assert.IsTrue(res != null);
+            Assert.IsNotNull(res);
 
             foreach (BlacklistedItem item in items)
             {
@@ -239,7 +229,7 @@ namespace Semantria.Com.TestUnitApi
             }
 
             res = _session.UpdateBlacklist(items, _configId);
-            Assert.IsTrue(res != null);
+            Assert.IsNotNull(res);
 
             result = _session.GetBlacklist(_configId);
             Assert.IsNotNull(result);
@@ -266,7 +256,7 @@ namespace Semantria.Com.TestUnitApi
             result = new List<Category>();
             result.Add(new Category { Name = "NET" });
             var obj = _session.AddCategories(result, _configId);
-            Assert.IsTrue(obj != null);
+            Assert.IsNotNull(obj);
 
             result = _session.GetCategories(_configId);
             List<Category> items = new List<Category>();
@@ -282,7 +272,7 @@ namespace Semantria.Com.TestUnitApi
             }
 
             List<Category> res = _session.UpdateCategories(items, _configId);
-            Assert.IsTrue(res != null);
+            Assert.IsNotNull(res);
 
             foreach (Category item in items)
             {
@@ -290,7 +280,7 @@ namespace Semantria.Com.TestUnitApi
             }
 
             res = _session.UpdateCategories(items, _configId);
-            Assert.IsTrue(res != null);
+            Assert.IsNotNull(res);
 
             result = _session.GetCategories(_configId);
             Assert.IsNotNull(result);
@@ -317,7 +307,7 @@ namespace Semantria.Com.TestUnitApi
             result = new List<Query>(); 
             result.Add(new Query { Name = "NET", Content = "Data" });
             var obj = _session.AddQueries(result, _configId);
-            Assert.IsTrue(obj != null);
+            Assert.IsNotNull(obj);
 
             result = _session.GetQueries(_configId);
             List<Query> items = new List<Query>();
@@ -332,7 +322,7 @@ namespace Semantria.Com.TestUnitApi
             }
 
             List<Query> res = _session.UpdateQueries(items, _configId);
-            Assert.IsTrue(res != null);
+            Assert.IsNotNull(res);
 
             foreach (Query item in items)
             {
@@ -340,7 +330,7 @@ namespace Semantria.Com.TestUnitApi
             }
 
             res = _session.UpdateQueries(items, _configId);
-            Assert.IsTrue(res != null);
+            Assert.IsNotNull(res);
 
             result = _session.GetQueries(_configId);
             Assert.IsNotNull(result);
@@ -367,7 +357,7 @@ namespace Semantria.Com.TestUnitApi
             result = new List<SentimentPhrase>();
             result.Add(new SentimentPhrase { Name = "NET", Weight = 0.1f });
             var obj = _session.AddSentimentPhrases(result, _configId);
-            Assert.IsTrue(obj != null);
+            Assert.IsNotNull(obj);
 
             result = _session.GetSentimentPhrases(_configId);
             List<SentimentPhrase> items = new List<SentimentPhrase>();
@@ -382,7 +372,7 @@ namespace Semantria.Com.TestUnitApi
             }
 
             List<SentimentPhrase> res = _session.UpdateSentimentPhrases(items, _configId);
-            Assert.IsTrue(res != null);
+            Assert.IsNotNull(res);
 
             foreach (SentimentPhrase item in items)
             {
@@ -391,7 +381,7 @@ namespace Semantria.Com.TestUnitApi
 
             res = _session.UpdateSentimentPhrases(items, _configId);
 
-            Assert.IsTrue(res != null);
+            Assert.IsNotNull(res);
 
             result = _session.GetSentimentPhrases(_configId);
             Assert.IsNotNull(result);
@@ -418,7 +408,7 @@ namespace Semantria.Com.TestUnitApi
             result = new List<UserEntity>();
             result.Add(new UserEntity { Name = "NET", Type = "Language" });
             var obj = _session.AddEntities(result, _configId);
-            Assert.IsTrue(obj != null);
+            Assert.IsNotNull(obj);
 
             result = _session.GetEntities(_configId);
             List<UserEntity> items = new List<UserEntity>();
@@ -433,7 +423,7 @@ namespace Semantria.Com.TestUnitApi
             }
 
             List<UserEntity> res = _session.UpdateEntities(items, _configId);
-            Assert.IsTrue(res != null);
+            Assert.IsNotNull(res);
 
             foreach (UserEntity item in items)
             {
@@ -441,7 +431,7 @@ namespace Semantria.Com.TestUnitApi
             }
 
             res = _session.UpdateEntities(items, _configId);
-            Assert.IsTrue(res != null);
+            Assert.IsNotNull(res);
 
             result = _session.GetEntities(_configId);
             Assert.IsNotNull(result);
@@ -468,7 +458,7 @@ namespace Semantria.Com.TestUnitApi
             result = new List<TaxonomyNode>();
             result.Add(new TaxonomyNode { Name = "NET", Nodes = new List<TaxonomyNode>(new TaxonomyNode[] { new TaxonomyNode() { Name = "NETWORK_0" }, new TaxonomyNode() { Name = "NETWORK_1" } })});
             var obj = _session.AddTaxonomy(result, _configId);
-            Assert.IsTrue(obj != null);
+            Assert.IsNotNull(obj);
 
             result = _session.GetTaxonomy(_configId);
             List<TaxonomyNode> items = new List<TaxonomyNode>();
@@ -486,7 +476,7 @@ namespace Semantria.Com.TestUnitApi
             }
 
             List<TaxonomyNode> res = _session.UpdateTaxonomy(items, _configId);
-            Assert.IsTrue(res != null);
+            Assert.IsNotNull(res);
 
             foreach (TaxonomyNode item in items)
             {
@@ -497,7 +487,7 @@ namespace Semantria.Com.TestUnitApi
             }
 
             res = _session.UpdateTaxonomy(items, _configId);
-            Assert.IsTrue(res != null);
+            Assert.IsNotNull(res);
 
             result = _session.GetTaxonomy(_configId);
             Assert.IsNotNull(result);
@@ -580,19 +570,64 @@ namespace Semantria.Com.TestUnitApi
         }
 
         [TestMethod]
-        public void RemoveConfiguration()
+        public void GetUserDirectory()
         {
-            string name = "dotNetSDK_TestConfiguration";
+            List<Query> result = _session.GetQueries(_configId);
+            Assert.IsNotNull(result);
+
+            result = new List<Query>();
+            string queryString = "dog AND cat";
+            result.Add(new Query { Name = "q1", Content = queryString });
+            var obj = _session.AddQueries(result, _configId);
+            Assert.IsNotNull(obj);
+
+            byte[] data = _session.GetUserDirectory(_configId, "tar");
+            // Since tar is not compressed we can just search for the query string
+            Assert.IsTrue(SearchBytes(System.Text.Encoding.UTF8.GetBytes(queryString), data));
+
+            string tempDir = System.Environment.GetEnvironmentVariable("temp");
+            if (tempDir == null)
+            {
+                tempDir = "\\tmp";
+            }
+            string tarFile = Path.Combine(tempDir, "test-user-dir.tar");
+            _session.WriteUserDirectoryToFile(_configId, tarFile);
+            System.Console.WriteLine(string.Format("Check that tarfile contains valid data: {0}", tarFile));
+
+            // Cleanup queries
+            result = _session.GetQueries(_configId);
+            List<string> ditems = new List<string>(); 
+            foreach (Query item in result)
+            {
+                ditems.Add(item.Id);
+            }
+            _session.RemoveQueries(ditems, _configId);
+        }
+
+        [TestMethod]
+        public void RemoveConfigurations()
+        {
             List<string> removeList = new List<string>();
             removeList.Add(_configId);
             var res = _session.RemoveConfigurations(removeList);
             Assert.AreEqual(202, res);
+        }
 
-            List<Configuration> result = _session.GetConfigurations();
-            if (result.Any(item => item.Name.Equals(name)))
+        // Returns true if 'what' is a subsequence of 'bytes'
+        private static bool SearchBytes(byte[] what, byte[] bytes)
+        {
+            var len = what.Length;
+            var limit = bytes.Length - len;
+            for (var i = 0; i <= limit; i++)
             {
-                Assert.Fail();
+                var k = 0;
+                for (; k < len; k++)
+                {
+                    if (what[k] != bytes[i + k]) break;
+                }
+                if (k == len) return true;
             }
+            return false;
         }
 
         void session_Request(object sender, RequestEventArgs e)

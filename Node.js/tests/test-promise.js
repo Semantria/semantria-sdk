@@ -1,17 +1,15 @@
+var fs = require('fs');
 var assert = require("assert");
 var SemantriaSession = require("../").Session;
 var config = require('../test-config');
 try { config = require('../test-config.override') } catch(e) {}
 
 describe('semantria-sdk [promise]', function() {
-	var consumerKey = config.consumerKey,
-		consumerSecret = config.consumerSecret,
-		session = new SemantriaSession(config, "myApp"),
+    var new_config = Object.assign({}, config);
+    new_config.consumerKey = config.consumerKey || process.env.SEMANTRIA_KEY;
+    new_config.consumerSecret = config.consumerSecret || process.env.SEMANTRIA_SECRET;
+	var session = new SemantriaSession(new_config, "test"),
 		config_id = false;
-
-	if (config.apiHost) {
-		session.API_HOST = config.apiHost
-	}
 
 	this.timeout(20000);
 	this.slow(10000);
@@ -125,7 +123,7 @@ describe('semantria-sdk [promise]', function() {
 						find_configuration = configurations[i];
 					}
 				}
-				assert.ok( find_configuration instanceof Object, "test configuration not exists" );
+				assert.ok( find_configuration instanceof Object, "test configuration does not exist" );
 				assert.strictEqual(find_configuration.name, configuration_name, "test configuration has not correct name");
 				done();
 			}).catch(done);
@@ -156,7 +154,7 @@ describe('semantria-sdk [promise]', function() {
 						find_configuration = configurations[i];
 					}
 				}
-				assert.ok( find_configuration instanceof Object, "test configuration not exists" );
+				assert.ok( find_configuration instanceof Object, "test configuration does not exist" );
 				assert.strictEqual(find_configuration.name, configuration_name, "test configuration has not correct name");
 				done();
 			}).catch(done);
@@ -188,7 +186,7 @@ describe('semantria-sdk [promise]', function() {
 						find_configuration = configurations[i];
 					}
 				}
-				assert.ok( find_configuration instanceof Object, "test configuration not exists" );
+				assert.ok( find_configuration instanceof Object, "test configuration does not exist" );
 				assert.strictEqual(find_configuration.name, configuration2_name, "test configuration has not correct name");
 				done();
 			}).catch(done);
@@ -227,7 +225,7 @@ describe('semantria-sdk [promise]', function() {
 			blacklist_name = "test blacklist";
 
 		it('getBlacklist()', function ( done ) {
-			if (!config_id) throw 'Test configuration not exists'
+			if (!config_id) throw 'Test configuration does not exist'
 			var async_wait = true;
 			session.getBlacklist(config_id).then(function (blacklists) {
 				async_wait = false;
@@ -238,7 +236,7 @@ describe('semantria-sdk [promise]', function() {
 		});
 
 		it('addBlacklist()', function ( done ) {
-			if (!config_id) throw 'Test configuration not exists';
+			if (!config_id) throw 'Test configuration does not exist';
 			var async_wait = true;
 			session.addBlacklist([{
 					name: blacklist_name
@@ -265,7 +263,7 @@ describe('semantria-sdk [promise]', function() {
 		});
 
 		it('updateBlacklist()', function ( done ) {
-			if (!config_id) throw 'Test configuration not exists';
+			if (!config_id) throw 'Test configuration does not exist';
 			if (!blacklist_id) throw 'Test item not was added';
 			var async_wait = true;
 			blacklist_name = "test blacklist - renamed";
@@ -290,7 +288,7 @@ describe('semantria-sdk [promise]', function() {
 		});
 
 		it('removeBlacklist()', function ( done ) {
-			if (!config_id) throw 'Test configuration not exists';
+			if (!config_id) throw 'Test configuration does not exist';
 			if (!blacklist_id) throw 'Test item not was added';
 			var async_wait = true;
 			session.removeBlacklist([blacklist.id], config_id).then(function (result) {
@@ -311,7 +309,7 @@ describe('semantria-sdk [promise]', function() {
 			category_name = "test category";
 
 		it('getCategories()', function ( done ) {
-			if (!config_id) throw 'Test configuration not exists'
+			if (!config_id) throw 'Test configuration does not exist'
 			var async_wait = true;
 			session.getCategories(config_id).then(function (categories) {
 				async_wait = false;
@@ -322,7 +320,7 @@ describe('semantria-sdk [promise]', function() {
 		});
 
 		it('addCategories()', function ( done ) {
-			if (!config_id) throw 'Test configuration not exists';
+			if (!config_id) throw 'Test configuration does not exist';
 			var async_wait = true;
 			session.addCategories([{
 					name: category_name,
@@ -351,7 +349,7 @@ describe('semantria-sdk [promise]', function() {
 		});
 
 		it('updateCategories()', function ( done ) {
-			if (!config_id) throw 'Test configuration not exists';
+			if (!config_id) throw 'Test configuration does not exist';
 			if (!category_id) throw 'Test item not was added';
 			var async_wait = true;
 			category_name = "test category - renamed";
@@ -376,7 +374,7 @@ describe('semantria-sdk [promise]', function() {
 		});
 
 		it('removeCategories()', function ( done ) {
-			if (!config_id) throw 'Test configuration not exists';
+			if (!config_id) throw 'Test configuration does not exist';
 			if (!category_id) throw 'Test item not was added';
 			var async_wait = true;
 			session.removeCategories([category.id], config_id).then(function (result) {
@@ -398,7 +396,7 @@ describe('semantria-sdk [promise]', function() {
 			query_query = "Amazon AND (EC2 OR AWS)";
 
 		it('getQueries()', function ( done ) {
-			if (!config_id) throw 'Test configuration not exists'
+			if (!config_id) throw 'Test configuration does not exist'
 			var async_wait = true;
 			session.getQueries(config_id).then(function (queries) {
 				async_wait = false;
@@ -409,7 +407,7 @@ describe('semantria-sdk [promise]', function() {
 		});
 
 		it('addQueries()', function ( done ) {
-			if (!config_id) throw 'Test configuration not exists';
+			if (!config_id) throw 'Test configuration does not exist';
 			var async_wait = true;
 			session.addQueries([{
 					name: query_name,
@@ -438,7 +436,7 @@ describe('semantria-sdk [promise]', function() {
 		});
 
 		it('updateQueries()', function ( done ) {
-			if (!config_id) throw 'Test configuration not exists';
+			if (!config_id) throw 'Test configuration does not exist';
 			if (!query_id) throw 'Test item not was added';
 			var async_wait = true;
 			query_query = "Amazon AND (EC2 OR ec2 OR AWS OR aws)";
@@ -464,7 +462,7 @@ describe('semantria-sdk [promise]', function() {
 		});
 
 		it('removeQueries()', function ( done ) {
-			if (!config_id) throw 'Test configuration not exists';
+			if (!config_id) throw 'Test configuration does not exist';
 			if (!query_id) throw 'Test item not was added';
 			var async_wait = true;
 			session.removeQueries([query.id], config_id).then(function (result) {
@@ -485,7 +483,7 @@ describe('semantria-sdk [promise]', function() {
 			entity_name = "test entity";
 
 		it('getEntities()', function ( done ) {
-			if (!config_id) throw 'Test configuration not exists'
+			if (!config_id) throw 'Test configuration does not exist'
 			var async_wait = true;
 			session.getEntities(config_id).then(function (entities) {
 				async_wait = false;
@@ -496,7 +494,7 @@ describe('semantria-sdk [promise]', function() {
 		});
 
 		it('addEntities()', function ( done ) {
-			if (!config_id) throw 'Test configuration not exists';
+			if (!config_id) throw 'Test configuration does not exist';
 			var async_wait = true;
 			session.addEntities([{
 					name: entity_name,
@@ -524,7 +522,7 @@ describe('semantria-sdk [promise]', function() {
 		});
 
 		it('updateEntities()', function ( done ) {
-			if (!config_id) throw 'Test configuration not exists';
+			if (!config_id) throw 'Test configuration does not exist';
 			if (!entity_id) throw 'Test item not was added';
 			var async_wait = true;
 			entity_name = "test entity - renamed";
@@ -549,7 +547,7 @@ describe('semantria-sdk [promise]', function() {
 		});
 
 		it('removeEntities()', function ( done ) {
-			if (!config_id) throw 'Test configuration not exists';
+			if (!config_id) throw 'Test configuration does not exist';
 			if (!entity_id) throw 'Test item not was added';
 			var async_wait = true;
 			session.removeEntities([entity.id], config_id).then(function (result) {
@@ -570,7 +568,7 @@ describe('semantria-sdk [promise]', function() {
 			phrase_name = "test phrase";
 
 		it('getPhrases()', function ( done ) {
-			if (!config_id) throw 'Test configuration not exists'
+			if (!config_id) throw 'Test configuration does not exist'
 			var async_wait = true;
 			session.getPhrases(config_id).then(function (phrases) {
 				async_wait = false;
@@ -581,7 +579,7 @@ describe('semantria-sdk [promise]', function() {
 		});
 
 		it('addPhrases()', function ( done ) {
-			if (!config_id) throw 'Test configuration not exists';
+			if (!config_id) throw 'Test configuration does not exist';
 			var async_wait = true;
 			session.addPhrases([{
 					name: phrase_name,
@@ -609,7 +607,7 @@ describe('semantria-sdk [promise]', function() {
 		});
 
 		it('updatePhrases()', function ( done ) {
-			if (!config_id) throw 'Test configuration not exists';
+			if (!config_id) throw 'Test configuration does not exist';
 			if (!phrase_id) throw 'Test item not was added';
 			var async_wait = true;
 			phrase_name = "test phrase - renamed";
@@ -634,7 +632,7 @@ describe('semantria-sdk [promise]', function() {
 		});
 
 		it('removePhrases()', function ( done ) {
-			if (!config_id) throw 'Test configuration not exists';
+			if (!config_id) throw 'Test configuration does not exist';
 			if (!phrase_id) throw 'Test item not was added';
 			var async_wait = true;
 			session.removePhrases([phrase.id], config_id).then(function (result) {
@@ -655,7 +653,7 @@ describe('semantria-sdk [promise]', function() {
 			taxonomy_name = "test taxonomy";
 
 		it('getTaxonomy()', function ( done ) {
-			if (!config_id) throw 'Test configuration not exists'
+			if (!config_id) throw 'Test configuration does not exist'
 			var async_wait = true;
 			session.getTaxonomy(config_id).then(function (taxonomies) {
 				async_wait = false;
@@ -666,7 +664,7 @@ describe('semantria-sdk [promise]', function() {
 		});
 
 		it('addTaxonomy()', function ( done ) {
-			if (!config_id) throw 'Test configuration not exists';
+			if (!config_id) throw 'Test configuration does not exist';
 			var async_wait = true;
 			session.addTaxonomy([{
 					name: taxonomy_name
@@ -693,7 +691,7 @@ describe('semantria-sdk [promise]', function() {
 		});
 
 		it('updateTaxonomy()', function ( done ) {
-			if (!config_id) throw 'Test configuration not exists';
+			if (!config_id) throw 'Test configuration does not exist';
 			if (!taxonomy_id) throw 'Test item not was added';
 			var async_wait = true;
 			taxonomy_name = "test taxonomy - renamed";
@@ -718,7 +716,7 @@ describe('semantria-sdk [promise]', function() {
 		});
 
 		it('removeTaxonomy()', function ( done ) {
-			if (!config_id) throw 'Test configuration not exists';
+			if (!config_id) throw 'Test configuration does not exist';
 			if (!taxonomy_id) throw 'Test item not was added';
 			var async_wait = true;
 			session.removeTaxonomy([taxonomy.id], config_id).then(function (result) {
@@ -735,7 +733,7 @@ describe('semantria-sdk [promise]', function() {
 
 	describe('Document functions', function () {
 		it('getProcessedDocuments() - empty; ', function ( done ) {
-			if (!config_id) throw 'Test configuration not exists';
+			if (!config_id) throw 'Test configuration does not exist';
 			var async_wait = true;
 			session.getProcessedDocuments(config_id).then(function (items) {
 				async_wait = false;
@@ -746,7 +744,7 @@ describe('semantria-sdk [promise]', function() {
 		});
 
 		it('queueDocument()', function ( done ) {
-			if (!config_id) throw 'Test configuration not exists';
+			if (!config_id) throw 'Test configuration does not exist';
 			var async_wait = true;
 			session.queueDocument({
 				id: "TEST_DOCUMENT_1",
@@ -760,7 +758,7 @@ describe('semantria-sdk [promise]', function() {
 		});
 
 		it('cancelDocument()', function ( done ) {
-			if (!config_id) throw 'Test configuration not exists';
+			if (!config_id) throw 'Test configuration does not exist';
 			var async_wait = true;
 			session.queueDocument({
 				id: "TEST_DOCUMENT_2",
@@ -776,7 +774,7 @@ describe('semantria-sdk [promise]', function() {
 		});
 
 		it('queueBatchOfDocuments()', function ( done ) {
-			if (!config_id) throw 'Test configuration not exists';
+			if (!config_id) throw 'Test configuration does not exist';
 			var async_wait = true;
 			session.queueBatchOfDocuments([
 				{
@@ -796,7 +794,7 @@ describe('semantria-sdk [promise]', function() {
 		});
 
 		it('getDocument()', function ( done ) {
-			if (!config_id) throw 'Test configuration not exists';
+			if (!config_id) throw 'Test configuration does not exist';
 			setTimeout(function() {
 				var async_wait = true;
 				session.getDocument("TEST_DOCUMENT_1", config_id).then(function (result) {
@@ -809,7 +807,7 @@ describe('semantria-sdk [promise]', function() {
 		});
 
 		it('getProcessedDocuments() - after processing test items', function ( done ) {
-			if (!config_id) throw 'Test configuration not exists';
+			if (!config_id) throw 'Test configuration does not exist';
 			var trys = 4;
 			var processed = {};
 			var testFn = function() {
@@ -844,7 +842,7 @@ describe('semantria-sdk [promise]', function() {
 
 	describe('Collection functions', function () {
 		it('getProcessedCollections() - empty', function ( done ) {
-			if (!config_id) throw 'Test configuration not exists';
+			if (!config_id) throw 'Test configuration does not exist';
 			var async_wait = true;
 			session.getProcessedCollections(config_id).then(function (items) {
 				async_wait = false;
@@ -855,7 +853,7 @@ describe('semantria-sdk [promise]', function() {
 		});
 
 		it('queueCollection()', function ( done ) {
-			if (!config_id) throw 'Test configuration not exists';
+			if (!config_id) throw 'Test configuration does not exist';
 			var async_wait = true;
 			session.queueCollection({
 				id: "TEST_COLLECTION_1",
@@ -875,7 +873,7 @@ describe('semantria-sdk [promise]', function() {
 		});
 
 		it('cancelCollection()', function ( done ) {
-			if (!config_id) throw 'Test configuration not exists';
+			if (!config_id) throw 'Test configuration does not exist';
 			var async_wait = true;
 			session.queueCollection({
 				id: "TEST_COLLECTION_2",
@@ -897,7 +895,7 @@ describe('semantria-sdk [promise]', function() {
 		});
 
 		it('getCollection()', function ( done ) {
-			if (!config_id) throw 'Test configuration not exists';
+			if (!config_id) throw 'Test configuration does not exist';
 			setTimeout(function() {
 				var async_wait = true;
 				session.getCollection("TEST_COLLECTION_1", config_id).then(function (result) {
@@ -910,7 +908,7 @@ describe('semantria-sdk [promise]', function() {
 		});
 
 		it('getProcessedCollections() - after processing test items', function ( done ) {
-			if (!config_id) throw 'Test configuration not exists';
+			if (!config_id) throw 'Test configuration does not exist';
 			var trys = 4;
 			var testFn = function() {
 				session.getProcessedCollections(config_id).then(function (items) {
@@ -933,5 +931,43 @@ describe('semantria-sdk [promise]', function() {
 			}
 			setTimeout(testFn, 1000);
 		});
-	})
+	});
+
+	describe('get salience user directory', function () {
+		var query = null,
+			query_id = false,
+			query_name = "q2",
+			query_query = "dog AND cat";
+
+		it('getUserDirectory()', function ( done ) {
+			if (!config_id) throw 'Test configuration does not exist';
+			var async_wait = true;
+			session.addQueries([{
+				name: query_name,
+				query: query_query
+			}], config_id)
+			.then(function (result) {
+				async_wait = false;
+				assert.ok(
+					result instanceof Array && result[0] instanceof Object && typeof result[0].id === 'string',
+					"addQueries() response"
+				);
+				query = result[0];
+				query_id = query.id
+				return session.getUserDirectory(config_id, 'tar');
+			})
+			.then(function (bytes) {
+				assert.ok(bytes.indexOf(query_query) > -1);
+				var path = (process.env.TEMP || "/tmp") + "/test.tar";
+				fs.writeFile(path, bytes, function(err) {
+					if (err) {
+						return console.log("Error writing tar file, '%s': %s", path, err);
+					}
+				});
+				done();
+			}).catch(done);
+			assert.ok(async_wait, 'synchronous call for addQueries()');
+		});
+	});
+
 })

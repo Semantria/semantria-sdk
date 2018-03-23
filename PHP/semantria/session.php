@@ -3,9 +3,10 @@ namespace Semantria;
 
 require_once('authrequest.php');
 require_once('jsonserializer.php');
-//require_once('common.php');
 
-define('WRAPPER_VERSION', "4.2.86");
+//error_reporting(E_ALL);
+
+define('WRAPPER_VERSION', "4.2.87");
 
 class Session
 {
@@ -18,6 +19,7 @@ class Session
     protected $format = 'json';
     protected $wrapperName = 'PHP';
 
+    // urls start with http and do not include a trailing slash
     private $host = "https://api.semantria.com";
     private $key_url = "https://semantria.com/auth/session";
     private $app_key = "cd954253-acaf-4dfa-a417-0a8cfb701f12";
@@ -25,7 +27,10 @@ class Session
     private $use_compression = FALSE;
     private $request;
 
-    public function __construct($consumerKey = NULL, $consumerSecret = NULL, $serializer = NULL, $applicationName = NULL, $use_compression = FALSE, $username = NULL, $password = NULL, $session_file = '/tmp/session.dat')
+    public function __construct($consumerKey = NULL, $consumerSecret = NULL,
+                                $serializer = NULL, $applicationName = NULL, $use_compression = FALSE,
+                                $username = NULL, $password = NULL,
+                                $session_file = '/tmp/semantria-session.dat')
     {
     	$this->use_compression = $use_compression;
     	
@@ -43,7 +48,7 @@ class Session
     	$this->format = $serializer->getType();
     	$this->applicationName = $this->applicationName . '/' . strtoupper($this->format);
     	
-    	if (empty($consumerKey) && empty($consumerSecret)) {
+    	if ((empty($consumerKey) || empty($consumerSecret)) && ($username && $password)) {
     		list($consumerKey, $consumerSecret) = $this->obtainKeys($username, $password, $session_file);
     		if (empty($consumerKey) || empty($consumerSecret)) {
     			throw new \Exception('Cannot obtain Semantria keys. Wrong username or password.');
@@ -52,7 +57,6 @@ class Session
         if (empty($consumerKey)) {
             throw new \Exception('Consumer KEY can\'t be empty.');
         }
-
         if (empty($consumerSecret)) {
             throw new \Exception('Consumer SECRET can\'t be empty.');
         }
@@ -68,9 +72,11 @@ class Session
         );
     }
 
+    
+
 	protected function obtainKeys($username, $password, $session_file = '/tmp/semantria-session.dat') {
-		if (file_exists($session_file)) {
-			$session_id = file_get_contents($session_file);
+      $session_id = $this->getSavedSessionId($session_file, $username);
+		if ($session_id) {
 			$url = "{$this->key_url}/{$session_id}.json?appkey={$this->app_key}";
 			$result = $this->request($url, "GET");
 			if ($result['status'] == 200) {
@@ -82,10 +88,7 @@ class Session
 		}
 
 		$url = "{$this->key_url}.json?appkey={$this->app_key}";
-		$items = array(
-				'username' => $username, 
-				'password' => $password
-		);
+		$items = array('username' => $username, 'password' => $password);
 	    $data = $this->serializer->serialize($items);
 	    $result = $this->request($url, "POST", NULL, $data);
 
@@ -95,13 +98,33 @@ class Session
 	    
 	    $message = $this->serializer->deserialize($result['message']);
 	    $session_id = $message['id'];
-	    if ($session_id && $session_file) {
-	    	file_put_contents($session_file, $session_id);
-	    }
+        $this->saveSessionId($session_file, $username, $session_id);
 	    
 	    return array($message['custom_params']['key'], $message['custom_params']['secret']);
     }
     
+
+    # Cache session id in a simple two line format:
+    #   username
+    #   session id
+    protected function saveSessionId($session_file, $username, $session_id) {
+      if ($session_file && $session_id) {
+        file_put_contents($session_file,
+                          $username . "\n" . $session_id . "\n");
+      }
+    }
+
+    # Returns session id if a reasonable one is found
+    protected function getSavedSessionId($session_file, $username) {
+      if (is_readable($session_file)) {
+        $lines = file($session_file);
+        if ((count($lines) == 2) || (trim($lines[0]) == $username)) {
+          return trim($lines[1]);
+        }
+      }
+      return null;
+    }
+
     protected function request($url, $method, $headers = NULL, $postfields = NULL) {
     	$ci = curl_init();
     	
@@ -133,7 +156,6 @@ class Session
     		case 'DELETE':
     			curl_setopt($ci, CURLOPT_CUSTOMREQUEST, 'DELETE');
     			if (!empty($postfields)) {
-    				//$url = "{$url}?{$postfields}";
     				curl_setopt($ci, CURLOPT_POSTFIELDS, $postfields);
     			}
     	}
@@ -152,6 +174,18 @@ class Session
     	
     	$result = array("status" => $code, "message" => $message);
     	return $result;
+    }
+
+    public function setHost($host) {
+        // starts with "http"?
+        if (substr(strtolower($host), 0, 4) !== "http") {
+            $host = "https://$host";
+        }
+        // ends with "/"?
+        if (substr($host, -1) === "/") {
+            $host = substr($host, 0, -1);
+        }
+        $this->host = $host;
     }
 
     public function setCallbackHandler(&$callback)
@@ -182,7 +216,6 @@ class Session
     }
     
     /**
-     *
      * @param string $apiVersion
      */
     public function setApiVersion($apiVersion) {
@@ -191,13 +224,13 @@ class Session
 
     public function getStatus()
     {
-        $url = "{$this->host}/status.{$this->format}";
+        $url = $this->makeUrl("/status");
         return $this->runRequest("GET", $url, "get_status");
     }
 
     public function getSupportedFeatures($language = null)
     {
-	    if ($language) {
+        if ($language) {
             $url = "{$this->host}/features.{$this->format}?language={$language}";
         } else {
             $url = "{$this->host}/features.{$this->format}";
@@ -241,8 +274,7 @@ class Session
         if (!is_array($items)) $items = array($items);
 
         $url = "{$this->host}/configurations.{$this->format}";
-        $wrapper = $this->getTypeWrapper("update_configurations");
-        $data = $this->serializer->serialize($items, $wrapper);
+        $data = $this->serializer->serialize($items);
         return $this->runRequest(($create ? "POST" : "PUT"), $url, NULL, $data);
     }
 
@@ -251,19 +283,13 @@ class Session
         if (!is_array($items)) $items = array($items);
 
         $url = "{$this->host}/configurations.{$this->format}";
-        $wrapper = $this->getTypeWrapper("remove_configurations");
-        $data = $this->serializer->serialize($items, $wrapper);
+        $data = $this->serializer->serialize($items);
         return $this->runRequest("DELETE", $url, NULL, $data);
     }
 
     public function getBlacklist($configId = NULL)
     {
-        if (isset($configId)) {
-            $url = "{$this->host}/blacklist.{$this->format}?config_id={$configId}";
-        } else {
-            $url = "{$this->host}/blacklist.{$this->format}";
-        }
-
+        $url = $this->makeUrl("/blacklist", $configId);
         $result = $this->runRequest("GET", $url, "get_blacklist");
         if (!isset($result)) {
             $result = array();
@@ -278,38 +304,21 @@ class Session
 
     public function updateBlacklist($items, $configId = NULL, $create = TRUE)
     {
-        if (isset($configId)) {
-            $url = "{$this->host}/blacklist.{$this->format}?config_id={$configId}";
-        } else {
-            $url = "{$this->host}/blacklist.{$this->format}";
-        }
-
-        $wrapper = $this->getTypeWrapper("update_blacklist");
-        $data = $this->serializer->serialize($items, $wrapper);
+        $url = $this->makeUrl("/blacklist", $configId);
+        $data = $this->serializer->serialize($items);
         return $this->runRequest(($create ? "POST" : "PUT"), $url, NULL, $data);
     }
 
     public function removeBlacklist($items, $configId = NULL)
     {
-        if (isset($configId)) {
-            $url = "{$this->host}/blacklist.{$this->format}?config_id={$configId}";
-        } else {
-            $url = "{$this->host}/blacklist.{$this->format}";
-        }
-
-        $wrapper = $this->getTypeWrapper("remove_blacklist");
-        $data = $this->serializer->serialize($items, $wrapper);
+        $url = $this->makeUrl("/blacklist", $configId);
+        $data = $this->serializer->serialize($items);
         return $this->runRequest("DELETE", $url, NULL, $data);
     }
 
     public function getCategories($configId = NULL)
     {
-        if (isset($configId)) {
-            $url = "{$this->host}/categories.{$this->format}?config_id={$configId}";
-        } else {
-            $url = "{$this->host}/categories.{$this->format}";
-        }
-
+        $url = $this->makeUrl("/categories", $configId);
         $result = $this->runRequest("GET", $url, "get_categories");
         if (!isset($result)) {
             $result = array();
@@ -324,38 +333,21 @@ class Session
 
     public function updateCategories($items, $configId = NULL, $create = FALSE)
     {
-        if (isset($configId)) {
-            $url = "{$this->host}/categories.{$this->format}?config_id={$configId}";
-        } else {
-            $url = "{$this->host}/categories.{$this->format}";
-        }
-
-        $wrapper = $this->getTypeWrapper("update_categories");
-        $data = $this->serializer->serialize($items, $wrapper);
+        $url = $this->makeUrl("/categories", $configId);
+        $data = $this->serializer->serialize($items);
         return $this->runRequest(($create ? "POST" : "PUT"), $url, NULL, $data);
     }
 
     public function removeCategories($items, $configId = NULL)
     {
-        if (isset($configId)) {
-            $url = "{$this->host}/categories.{$this->format}?config_id={$configId}";
-        } else {
-            $url = "{$this->host}/categories.{$this->format}";
-        }
-
-        $wrapper = $this->getTypeWrapper("remove_categories");
-        $data = $this->serializer->serialize($items, $wrapper);
+        $url = $this->makeUrl("/categories", $configId);
+        $data = $this->serializer->serialize($items);
         return $this->runRequest("DELETE", $url, NULL, $data);
     }
 
     public function getQueries($configId = NULL)
     {
-        if (isset($configId)) {
-            $url = "{$this->host}/queries.{$this->format}?config_id={$configId}";
-        } else {
-            $url = "{$this->host}/queries.{$this->format}";
-        }
-
+        $url = $this->makeUrl("/queries", $configId);
         $result = $this->runRequest("GET", $url, "get_queries");
         if (!isset($result)) {
             $result = array();
@@ -370,38 +362,21 @@ class Session
 
     public function updateQueries($items, $configId = NULL, $create = FALSE)
     {
-        if (isset($configId)) {
-            $url = "{$this->host}/queries.{$this->format}?config_id={$configId}";
-        } else {
-            $url = "{$this->host}/queries.{$this->format}";
-        }
-
-        $wrapper = $this->getTypeWrapper("update_queries");
-        $data = $this->serializer->serialize($items, $wrapper);
+        $url = $this->makeUrl("/queries", $configId);
+        $data = $this->serializer->serialize($items);
         return $this->runRequest(($create ? "POST" : "PUT"), $url, NULL, $data);
     }
 
     public function removeQueries($items, $configId = NULL)
     {
-        if (isset($configId)) {
-            $url = "{$this->host}/queries.{$this->format}?config_id={$configId}";
-        } else {
-            $url = "{$this->host}/queries.{$this->format}";
-        }
-
-        $wrapper = $this->getTypeWrapper("remove_queries");
-        $data = $this->serializer->serialize($items, $wrapper);
+        $url = $this->makeUrl("/queries", $configId);
+        $data = $this->serializer->serialize($items);
         return $this->runRequest("DELETE", $url, NULL, $data);
     }
 
     public function getPhrases($configId = null)
     {
-        if (isset($configId)) {
-            $url = "{$this->host}/phrases.{$this->format}?config_id={$configId}";
-        } else {
-            $url = "{$this->host}/phrases.{$this->format}";
-        }
-
+        $url = $this->makeUrl("/phrases", $configId);
         $result = $this->runRequest("GET", $url, "get_phrases");
         if (!isset($result)) {
             $result = array();
@@ -416,38 +391,21 @@ class Session
 
     public function updatePhrases($items, $configId = NULL, $create = FALSE)
     {
-        if (isset($configId)) {
-            $url = "{$this->host}/phrases.{$this->format}?config_id={$configId}";
-        } else {
-            $url = "{$this->host}/phrases.{$this->format}";
-        }
-
-        $wrapper = $this->getTypeWrapper("update_phrases");
-        $data = $this->serializer->serialize($items, $wrapper);
+        $url = $this->makeUrl("/phrases", $configId);
+        $data = $this->serializer->serialize($items);
         return $this->runRequest(($create ? "POST" : "PUT"), $url, NULL, $data);
     }
 
     public function removePhrases($items, $configId = NULL)
     {
-        if (isset($configId)) {
-            $url = "{$this->host}/phrases.{$this->format}?config_id={$configId}";
-        } else {
-            $url = "{$this->host}/phrases.{$this->format}";
-        }
-
-        $wrapper = $this->getTypeWrapper("remove_phrases");
-        $data = $this->serializer->serialize($items, $wrapper);
+        $url = $this->makeUrl("/phrases", $configId);
+        $data = $this->serializer->serialize($items);
         return $this->runRequest("DELETE", $url, NULL, $data);
     }
 
     public function getTaxonomy($configId = null)
     {
-        if (isset($configId)) {
-            $url = "{$this->host}/taxonomy.{$this->format}?config_id={$configId}";
-        } else {
-            $url = "{$this->host}/taxonomy.{$this->format}";
-        }
-
+        $url = $this->makeUrl("/taxonomy", $configId);
         $result = $this->runRequest("GET", $url, "get_taxonomy");
         if (!isset($result)) {
             $result = array();
@@ -462,38 +420,21 @@ class Session
 
     public function updateTaxonomy($items, $configId = NULL, $create = FALSE)
     {
-        if (isset($configId)) {
-            $url = "{$this->host}/taxonomy.{$this->format}?config_id={$configId}";
-        } else {
-            $url = "{$this->host}/taxonomy.{$this->format}";
-        }
-
-        $wrapper = $this->getTypeWrapper("update_taxonomy");
-        $data = $this->serializer->serialize($items, $wrapper);
+        $url = $this->makeUrl("/taxonomy", $configId);
+        $data = $this->serializer->serialize($items);
         return $this->runRequest(($create ? "POST" : "PUT"), $url, NULL, $data);
     }
 
     public function removeTaxonomy($items, $configId = NULL)
     {
-        if (isset($configId)) {
-            $url = "{$this->host}/taxonomy.{$this->format}?config_id={$configId}";
-        } else {
-            $url = "{$this->host}/taxonomy.{$this->format}";
-        }
-
-        $wrapper = $this->getTypeWrapper("remove_taxonomy");
-        $data = $this->serializer->serialize($items, $wrapper);
+        $url = $this->makeUrl("/taxonomy", $configId);
+        $data = $this->serializer->serialize($items);
         return $this->runRequest("DELETE", $url, NULL, $data);
     }
 
     public function getEntities($configId = NULL)
     {
-        if (isset($configId)) {
-            $url = "{$this->host}/entities.{$this->format}?config_id={$configId}";
-        } else {
-            $url = "{$this->host}/entities.{$this->format}";
-        }
-
+        $url = $this->makeUrl("/entities", $configId);
         $result = $this->runRequest("GET", $url, "get_entities");
         if (!isset($result)) {
             $result = array();
@@ -508,40 +449,22 @@ class Session
 
     public function updateEntities($items, $configId = NULL, $create = FALSE)
     {
-        if (isset($configId)) {
-            $url = "{$this->host}/entities.{$this->format}?config_id={$configId}";
-        } else {
-            $url = "{$this->host}/entities.{$this->format}";
-        }
-
-        $wrapper = $this->getTypeWrapper("update_entities");
-        $data = $this->serializer->serialize($items, $wrapper);
+        $url = $this->makeUrl("/entities", $configId);
+        $data = $this->serializer->serialize($items);
         return $this->runRequest(($create ? "POST" : "PUT"), $url, NULL, $data);
     }
 
     public function removeEntities($items, $configId = NULL)
     {
-        if (isset($configId)) {
-            $url = "{$this->host}/entities.{$this->format}?config_id={$configId}";
-        } else {
-            $url = "{$this->host}/entities.{$this->format}";
-        }
-
-        $wrapper = $this->getTypeWrapper("remove_entities");
-        $data = $this->serializer->serialize($items, $wrapper);
+        $url = $this->makeUrl("/entities", $configId);
+        $data = $this->serializer->serialize($items);
         return $this->runRequest("DELETE", $url, NULL, $data);
     }
 
     public function queueDocument($task, $configId = NULL)
     {
-        if (isset($configId)) {
-            $url = "{$this->host}/document.{$this->format}?config_id={$configId}";
-        } else {
-            $url = "{$this->host}/document.{$this->format}";
-        }
-
-        $wrapper = $this->getTypeWrapper("queue_document");
-        $data = $this->serializer->serialize($task, $wrapper);
+        $url = $this->makeUrl("/document", $configId);
+        $data = $this->serializer->serialize($task);
 
         $result = $this->runRequest("POST", $url, "get_processed_documents", $data);
         if (isset($result) && !is_int($result)) {
@@ -554,14 +477,8 @@ class Session
 
     public function queueBatch($batch, $configId = NULL)
     {
-        if (isset($configId)) {
-            $url = "{$this->host}/document/batch.{$this->format}?config_id={$configId}";
-        } else {
-            $url = "{$this->host}/document/batch.{$this->format}";
-        }
-
-        $wrapper = $this->getTypeWrapper("queue_batch_documents");
-        $data = $this->serializer->serialize($batch, $wrapper);
+        $url = $this->makeUrl("/document/batch", $configId);
+        $data = $this->serializer->serialize($batch);
 
         $result = $this->runRequest("POST", $url, "get_processed_documents", $data);
         if (isset($result) && !is_int($result)) {
@@ -578,12 +495,7 @@ class Session
 
         $id = rawurlencode($id);
 
-        if (isset($configId)) {
-            $url = "{$this->host}/document/{$id}.{$this->format}?config_id={$configId}";
-        } else {
-            $url = "{$this->host}/document/{$id}.{$this->format}";
-        }
-
+        $url = $this->makeUrl("/document/{$id}", $configId);
         return $this->runRequest("GET", $url, "get_document");
     }
 
@@ -593,23 +505,13 @@ class Session
 
         $id = rawurlencode($id);
 
-        if (isset($configId)) {
-            $url = "{$this->host}/document/{$id}.{$this->format}?config_id={$configId}";
-        } else {
-            $url = "{$this->host}/document/{$id}.{$this->format}";
-        }
-
+        $url = $this->makeUrl("/document/{$id}", $configId);
         return $this->runRequest("DELETE", $url);
     }
 
     public function getProcessedDocuments($configId = NULL)
     {
-        if (isset($configId)) {
-            $url = "{$this->host}/document/processed.{$this->format}?config_id={$configId}";
-        } else {
-            $url = "{$this->host}/document/processed.{$this->format}";
-        }
-
+        $url = $this->makeUrl("/document/processed", $configId);
         $result = $this->runRequest("GET", $url, "get_processed_documents");
         if (!isset($result)) {
             $result = array();
@@ -629,14 +531,8 @@ class Session
 
     public function queueCollection($task, $configId = NULL)
     {
-        if (isset($configId)) {
-            $url = "{$this->host}/collection.{$this->format}?config_id={$configId}";
-        } else {
-            $url = "{$this->host}/collection.{$this->format}";
-        }
-
-        $wrapper = $this->getTypeWrapper("queue_collection");
-        $data = $this->serializer->serialize($task, $wrapper);
+        $url = $this->makeUrl("/collection", $configId);
+        $data = $this->serializer->serialize($task);
 
         $result = $this->runRequest("POST", $url, "get_processed_collections", $data);
         if (isset($result) && !is_int($result)) {
@@ -653,12 +549,7 @@ class Session
 
         $id = rawurlencode($id);
 
-        if (isset($configId)) {
-            $url = "{$this->host}/collection/{$id}.{$this->format}?config_id={$configId}";
-        } else {
-            $url = "{$this->host}/collection/{$id}.{$this->format}";
-        }
-
+        $url = $this->makeUrl("/collection/{$id}", $configId);
         return $this->runRequest("GET", $url, "get_collection");
     }
 
@@ -668,23 +559,13 @@ class Session
 
         $id = rawurlencode($id);
 
-        if (isset($configId)) {
-            $url = "{$this->host}/collection/{$id}.{$this->format}?config_id={$configId}";
-        } else {
-            $url = "{$this->host}/collection/{$id}.{$this->format}";
-        }
-
+        $url = $this->makeUrl("/collection/{$id}", $configId);
         return $this->runRequest("DELETE", $url);
     }
 
     public function getProcessedCollections($configId = NULL)
     {
-        if (isset($configId)) {
-            $url = "{$this->host}/collection/processed.{$this->format}?config_id={$configId}";
-        } else {
-            $url = "{$this->host}/collection/processed.{$this->format}";
-        }
-
+        $url = $this->makeUrl("/collection/processed", $configId);
         $result = $this->runRequest("GET", $url, "get_processed_collections");
         if (!isset($result)) {
             $result = array();
@@ -702,10 +583,37 @@ class Session
         return $result;
     }
 
-    private function runRequest($method, $url, $type = NULL, $postData = NULL)
+    /** Returns archive of Salience user directory for $configId.
+     *
+     * @param $format  - one of "zip", "tar", "tar.gz"
+     * @param $configId
+     */
+    public function getUserDirectory($format = "zip", $configId = NULL)
+    {
+        $url = $this->makeUrl("/salience/user-directory.{$format}", $configId, true);
+        $result = $this->runRequest("GET", $url, "get_user_directory", NULL, true);
+        return $result;
+    }
+
+
+    private function makeUrl($path, $configId = NULL, $isBinary = false)
+    {
+        if (substr($path, 0, 1) !== "/") {
+            $path = "/{$path}";
+        }
+        $url = "{$this->host}{$path}";
+        if (! $isBinary) {
+            $url .= ".{$this->format}";
+        }
+        if (isset($configId)) {
+            $url .= "?config_id={$configId}";
+        }
+        return $url;
+    }
+
+    private function runRequest($method, $url, $type = NULL, $postData = NULL, $isBinary = false)
     {
         $this->onRequest(array("method" => $method, "url" => $url, "message" => $postData));
-
         $response = $this->request->authWebRequest($method, $url, $postData);
         $this->onResponse($response);
 
@@ -721,8 +629,10 @@ class Session
             }
         } else {
             if ($status == 200) {
-                $handler = $this->getTypeHandler($type);
-                $obj = $this->serializer->deserialize($message, $handler);
+                if ($isBinary) {
+                    return $message;
+                }
+                $obj = $this->serializer->deserialize($message);
                 return $obj;
             } else if ($status == 202) {
                 if ($method == "POST") {
@@ -744,77 +654,6 @@ class Session
             $this->onError(array("status" => $status, "message" => $message));
         else
             throw new \Exception('Exception code: ' . $status . ' and message: ' . $message);
-    }
-
-    private function getTypeHandler($type)
-    {
-        if ($this->serializer->gettype() == "json") {
-            return NULL;
-        }
-
-        // Only for xml serializer
-        // Need another implementations
-        /*
-        if ($type == "get_status") {
-            return new GetStatusHandler();
-        } elseif ($type == "get_subscription") {
-            return new GetSubscriptionHandler();
-        } elseif ($type == "get_configurations") {
-            return new GetConfigurationsHandler();
-        } elseif ($type == "get_blacklist") {
-            return new GetBlacklistHandler();
-        } elseif ($type == "get_categories") {
-            return new GetCategoriesHandler();
-        } elseif ($type == "get_queries") {
-            return new GetQueriesHandler();
-        } elseif ($type == "get_phrases") {
-            return new GetSentimentPhrasesHandler();
-        } elseif ($type == "get_entities") {
-            return new GetEntitiesHandler();
-        } elseif ($type == "get_document") {
-            return new GetDocumentHandler();
-        } elseif ($type == "get_processed_documents") {
-            return new GetProcessedDocumentsHandler();
-        } elseif ($type == "get_collection") {
-            return new GetCollectionHandler();
-        } elseif ($type == "get_processed_collections") {
-            return new GetProcessedCollectionsHandler();
-        } else {
-            return null;
-        }
-        */
-    }
-
-    private function getTypeWrapper($type)
-    {
-        if ($this->serializer->gettype() == "json") {
-            return null;
-        }
-
-        // Only for xml serializer
-        /*
-        if ($type == "update_configurations") {
-            return array("root" => "configurations", "added" => "configuration", "removed" => "configuration");
-        } elseif ($type == "update_blacklist") {
-            return array("root" => "blacklist", "added" => "item", "removed" => "item");
-        } elseif ($type == "update_categories") {
-            return array("root" => "categories", "added" => "category", "removed" => "category", "samples" => "sample");
-        } elseif ($type == "update_queries") {
-            return array("root" => "queries", "added" => "query", "removed" => "query");
-        } elseif ($type == "update_sentiment_phrases") {
-            return array("root" => "phrases", "added" => "phrase", "removed" => "phrase");
-        } elseif ($type == "update_entities") {
-            return array("root" => "entities", "added" => "entity", "removed" => "entity");
-        } elseif ($type == "queue_document") {
-            return array("root" => "document");
-        } elseif ($type == "queue_batch_documents") {
-            return array("root" => "documents", "item" => "document");
-        } elseif ($type == "queue_collection") {
-            return array("root" => "collection", "documents" => "document");
-        } else {
-            return NULL;
-        }
-        */
     }
 
     private function onRequest($request)

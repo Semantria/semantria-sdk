@@ -3,9 +3,24 @@
 // require_once 'PHPUnit/Autoload.php';
 require_once 'semantria/session.php';
 
-// the consumer key and secret
-define('CONSUMER_KEY', "");
-define('CONSUMER_SECRET', "");
+
+// API Key/Secret
+// Set the environment vars before calling this program
+// or edit this file and put your key and secret here.
+define('CONSUMER_KEY', getenv("SEMANTRIA_KEY"));
+define('CONSUMER_SECRET', getenv("SEMANTRIA_SECRET"));
+
+// If set will run username/password authentication test
+define('SEMANTRIA_USERNAME', getenv('SEMANTRIA_USERNAME'));
+define('SEMANTRIA_PASSWORD', getenv('SEMANTRIA_PASSWORD'));
+
+
+if (empty(CONSUMER_KEY) || empty(CONSUMER_SECRET)) {
+  error_log("Error: missing key/secret.\n"
+            . "  Define SEMANTRIA_KEY and SEMANTRIA_SECRET before running tests.");
+  exit(1);
+}
+
 
 $id = uniqid('');
 $message = "Amazon Web Services has announced a new feature called VM£Ware Import, which "
@@ -48,20 +63,48 @@ class SessionCallbackHandler extends \Semantria\CallbackHandler
  * Class SemantriaTest
  * @property \Semantria\Session $session
  */
-class SemantriaTest extends PHPUnit_Framework_TestCase
+class SemantriaTest extends PHPUnit\Framework\TestCase
 {
-    private $consumerKey;
-    private $consumerSecret;
     private $session;
+    private $testConfigId;
+
+    private $testConfigName = 'TEST_CONFIG';
 
     function setUp()
     {
-        $this->consumerKey = CONSUMER_KEY;
-        $this->consumerSecret = CONSUMER_SECRET;
-        $this->session = new \Semantria\Session($this->consumerKey, $this->consumerSecret, NULL, NULL, TRUE);
-
+        $this->session = new \Semantria\Session(CONSUMER_KEY, CONSUMER_SECRET, NULL, NULL, TRUE);
         $callback = new SessionCallbackHandler();
         $this->session->setCallbackHandler($callback);
+    }
+
+    function getOrCreateTestConfig()
+    {
+        $test_config = null;
+        $response = $this->session->getQueries();
+        foreach ($response as $configuration) {
+            if ($configuration['name'] == $this->testConfigName) {
+                $test_config = $configuration;
+                break;
+            }
+        }
+        if ($test_config) {
+            $this->testConfigId = $tedtConfig['id'];
+        } else {
+            $new_config = array(
+                'name' => $this->testConfigName,
+                'language' => 'English',
+                'document' => array(
+                    'query_topics' => true,
+                    'concept_topics' => true,
+                    'named_entities' => true,
+                    'user_entities' => true,
+                ),
+            );  
+            $response = $this->session->addConfigurations(array($new_config));
+            $this->assertEquals(1, count($response));
+            $this->testConfigId = $response[0]['id'];
+        }
+        return $this->testConfigId;
     }
 
     function testGetStatus()
@@ -82,52 +125,54 @@ class SemantriaTest extends PHPUnit_Framework_TestCase
         $this->assertInternalType('array', $response);
     }
 
-    function testCRUDConfirurations()
+    function testCRUDConfigurations()
     {
-        $test_configuration = array(
-            'auto_response' => false,
-            'is_primary' => false,
-            'name' => 'TEST_CONFIG',
+        $test_config = array(
+            'name' => $this->testConfigName,
             'language' => 'English',
+            'alphanumeric_threshold' => 85,
             'document' => array(
-                'query_topics_limit' => 5,
-                'concept_topics_limit' => 5,
-                'named_entities_limit' => 5,
-                'user_entities_limit' => 5,
+                'query_topics' => true,
+                'concept_topics' => true,
+                'named_entities' => true,
+                'user_entities' => true,
             ),
         );
 
-        $response = $this->session->addConfigurations(array($test_configuration));
+        $response = $this->session->addConfigurations(array($test_config));
         $this->assertNotEquals(0, count($response));
 
-        $test_configuration = null;
+        $test_config = null;
         foreach ($response as $configuration) {
-            if ($configuration['name'] == 'TEST_CONFIG') {
-                $test_configuration = $configuration;
+            if ($configuration['name'] == $this->testConfigName) {
+                $test_config = $configuration;
                 break;
             }
         }
 
-        $this->assertNotNull($test_configuration);
-        $this->assertNotEmpty($test_configuration['id']);
-        $this->assertEquals('English', $test_configuration['language']);
-        $this->assertEquals(80, $test_configuration['chars_threshold']);
-        $configuration_id = $test_configuration['id'];
+        $this->assertNotNull($test_config);
+        $this->assertNotEmpty($test_config['id']);
+        $this->assertEquals('English', $test_config['language']);
+        $this->assertEquals(85, $test_config['alphanumeric_threshold']);
+        $configuration_id = $test_config['id'];
 
-        $test_configuration['chars_threshold'] = 20;
-        $response = $this->session->updateConfigurations(array($test_configuration));
+        $new_config = array(
+            'id' => $configuration_id,
+            'alphanumeric_threshold' => 20,
+        );
+        $response = $this->session->updateConfigurations(array($new_config));
         $this->assertNotEquals(0, count($response));
 
-        $test_configuration = null;
+        $test_config = null;
         foreach ($response as $configuration) {
             if ($configuration['id'] == $configuration_id) {
-                $test_configuration = $configuration;
+                $test_config = $configuration;
                 break;
             }
         }
 
-        $this->assertNotNull($test_configuration);
-        $this->assertEquals(20, $test_configuration['chars_threshold']);
+        $this->assertNotNull($test_config);
+        $this->assertEquals(20, $test_config['alphanumeric_threshold']);
     }
 
     function testCRUDBlacklist()
@@ -313,16 +358,62 @@ class SemantriaTest extends PHPUnit_Framework_TestCase
         $this->assertInternalType('array', $response);
     }
 
-    /*
-	function testCancelCollection() {
-		$status = $this->session->cancelCollection($GLOBALS["id"]);
-		$this->assertTrue(isset($status) && ($status == 200 || $status == 202));
-	}
-    */
-
     function testGetProcessedCollections()
     {
         $response = $this->session->getProcessedCollections();
         $this->assertInternalType('array', $response);
     }
+
+    function testGetUserDirectory()
+    {
+        $configId = $this->getOrCreateTestConfig();
+        $query_name = "q1";
+        $query_query = "dog AND cat";
+        $response = $this->session->addQueries(
+                array(array("name" => $query_name, "query" => $query_query)),
+                $configId);
+        $this->assertEquals(1, count($response));
+
+        $query = null;
+        foreach ($response as $item) {
+            if ($item['name'] == $query_name) {
+                $query = $item;
+                break;
+            }
+        }
+        $this->assertNotNull($query);
+
+        $bytes = $this->session->getUserDirectory("tar", $configId);
+        // Check that bytes contains query.
+        // (This works because tar is an uncompressed format and query contains only single byte chars.)
+        $this->assertTrue(strpos($bytes, $query_query) >= 0);
+        $this->writeBytesToFile($bytes, "test.tar");
+
+        $this->session->removeQueries(array($query['id']), $configId);
+    }
+
+    function writeBytesToFile($bytes, $filename)
+    {
+        $file = fopen($filename, "w");
+        $this->assertNotNull($file);
+        fwrite($file, $bytes);
+        fclose($file);
+    }
+
+    function testUsernamePasswordAuthentication()
+    {
+        if (empty(SEMANTRIA_USERNAME) || empty(SEMANTRIA_PASSWORD)) {
+            $this->assertTrue(true);   // keep unit test happy
+            return;
+        }
+
+        $user_session = new \Semantria\Session(null, null, null, null, true,
+                                               SEMANTRIA_USERNAME, SEMANTRIA_PASSWORD);
+        $callback = new SessionCallbackHandler();
+        $user_session->setCallbackHandler($callback);
+      
+        $response = $user_session->getStatus();
+        $this->assertInternalType('array', $response);
+    }
+
 }

@@ -1,18 +1,18 @@
 var SemantriaSession = require("../").Session;
 var promise = require('promise');
 var config = require('../test-config');
+var fs = require('fs');
+var path = require('path');
+
 try { config = require('../test-config.override') } catch(e) {}
 
-var consumerKey = config.consumerKey,
-	consumerSecret = config.consumerSecret,
-	appConfigurationId = false,
+var new_config = Object.assign({}, config);
+new_config.consumerKey = config.consumerKey || process.env.SEMANTRIA_KEY;
+new_config.consumerSecret = config.consumerSecret || process.env.SEMANTRIA_SECRET;
+var appConfigurationId = false,
 	appConfigurationName = "DetailedModeTestApp Configuration",
 	docsTracker = {},
-	SemantriaActiveSession = new SemantriaSession(consumerKey, consumerSecret, "myApp");
-
-if (config.apiHost) {
-	SemantriaActiveSession.API_HOST = config.apiHost
-}
+	SemantriaActiveSession = new SemantriaSession(new_config, "DetailedTest");
 
 console.log("Semantria Document processing mode demo.");
 
@@ -123,7 +123,7 @@ SemantriaActiveSession.getConfigurations(true)
 
 })
 .catch(function(err) {
-	console.log("DetailedModeTestApp faild\n");
+	console.log("DetailedModeTestApp failed\n");
 	console.log(err);
 	console.log(err.stack);
 })
@@ -133,7 +133,7 @@ SemantriaActiveSession.getConfigurations(true)
 });
 
 function getOutgoingBatches(batch_limit) {
-	var initialTexts = require('./source.json');
+	var initialTexts = getTestDocuments();
 	var batch = [], batches = [];
 	for(var i=0, item; item=initialTexts[i]; i++) {
 		// Creates a sample document which need to be processed on Semantria
@@ -156,3 +156,10 @@ function getOutgoingBatches(batch_limit) {
 	return batches;
 }
 
+function getTestDocuments() {
+    var filename = path.resolve(__dirname, 'source.txt');
+    var lines = fs.readFileSync(filename, 'utf8').toString().split("\n");
+    // Filter out any empty or very short docs
+    lines = lines.filter(function(item) { return item.length > 3; });
+    return lines;
+}

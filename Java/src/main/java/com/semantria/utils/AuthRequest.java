@@ -1,9 +1,12 @@
 package com.semantria.utils;
 
+import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.google.gson.Gson;
 import com.semantria.mapping.output.statistics.StatsInterval;
 import com.google.common.base.MoreObjects;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
@@ -23,6 +26,8 @@ import java.util.zip.GZIPInputStream;
 
 public class AuthRequest {
 
+	private static Logger log = LoggerFactory.getLogger(AuthRequest.class);
+
 	private String method = "GET";
 	private String url = "";
 	private HashMap<String, String> params = null;
@@ -30,8 +35,10 @@ public class AuthRequest {
 	private Integer status = 0;
 	private String key = "";
 	private String secret = "";
-	private String response = "";
-	private String appName = "Java/4.2.103/";
+	private boolean isBinaryResponse = false;
+	private String responseString = "";
+	private byte[] responseData = null;
+	private String appName = "Java/4.2.104/";
 	private String apiVersion = "";
 	private String errorMsg = null;
 	private boolean useCompression = false;
@@ -70,6 +77,14 @@ public class AuthRequest {
 		if (body != null) {
 			this.body = body;
 		}
+		return this;
+	}
+
+	/**
+	 * Sets request to return binary data rather than string.
+	 */
+	public AuthRequest binary() {
+		isBinaryResponse = true;
 		return this;
 	}
 
@@ -149,18 +164,21 @@ public class AuthRequest {
 	public Integer doRequest() {
 		HttpURLConnection conn = null;
 		try {
-			response = null;
+			responseString = null;
 			errorMsg = null;
 			initSSLContext();
 			conn = getOAuthSignedConnection();
 			conn.setConnectTimeout(CONNECTION_TIMEOUT);
 			conn.connect();
 			sendRequestBodyIfSet(conn);
-			receiveResponseFromServer(conn);
 			status = conn.getResponseCode();
+			log.trace("status: {}", status);
+			receiveResponseFromServer(conn);
 		} catch (Exception e) {
-			System.err.println("Error performing request: " + e);
-			e.printStackTrace();
+			log.error("Error performing request. {} {}, params: {}",
+					method, url,
+					((params == null) ? null : Joiner.on(",").withKeyValueSeparator(":").join(params)),
+					e);
 		} finally {
 			if (conn != null) {
 				conn.disconnect();
@@ -255,74 +273,88 @@ public class AuthRequest {
 	}
 
 	private void receiveResponseFromServer(HttpURLConnection conn) throws IOException {
-		byte[] data = null;
+		int status = conn.getResponseCode();
+		if ((status >= 200) && (status < 300)) {
+            receiveSuccessResponseFromServer(conn);
+        } else {
+            receiveErrorResponseFromServer(conn);
+        }
+    }
 
+	private void receiveSuccessResponseFromServer(HttpURLConnection conn) throws IOException {
 		try {
 			String gzip = conn.getRequestProperty("Accept-Encoding");
 			if (gzip != null && gzip.contains("gzip")) {
 				InputStream stream = conn.getInputStream();
 				if (stream != null && stream.available() > 0) {
-					BufferedReader reader = null;
-					try {
-						GZIPInputStream gzipStream = new GZIPInputStream(stream);
-						Reader decoder = new InputStreamReader(gzipStream, "UTF-8");
-						reader = new BufferedReader(decoder);
-						StringBuilder result = new StringBuilder();
-						String text = null;
-						while ((text = reader.readLine()) != null) {
-							result.append(text);
-						}
-						response = result.toString();
-					} finally {
-						if (reader != null) {
-							reader.close();
-						}
+					GZIPInputStream gzipStream = new GZIPInputStream(stream);
+					responseData = getBytesFromInputStream(gzipStream);
+					if ((responseData != null) && !isBinaryResponse) {
+						responseString = new String(responseData, "UTF-8");
 					}
 				}
 			} else {
-				data = getBytesFromInputStream(conn.getInputStream());
-				if (data != null) {
-					response = new String(data, "UTF-8");
+				responseData = getBytesFromInputStream(conn.getInputStream());
+				if ((responseData != null) && !isBinaryResponse) {
+					responseString = new String(responseData, "UTF-8");
 				}
-
 			}
-		} catch (Exception e) {
-			try {
-				data = getBytesFromInputStream(conn.getErrorStream());
-				if (data != null) {
-					errorMsg = new String(data, "UTF-8");
-				}
-			} catch (Exception e2) {
-				System.err.println("Error: error occurred while getting error message: " + e2.toString());
+		} catch (IOException e) {
+			log.error("Error reading success response from server", e);
+			responseData = null;
+			responseString = "";
+			errorMsg = "Error reading success response from server: " + e.getMessage();
+			throw e;
+        }
+    }
+    
+	private void receiveErrorResponseFromServer(HttpURLConnection conn) throws IOException {
+		try {
+			responseData = getBytesFromInputStream(conn.getErrorStream());
+			if (responseData != null) {
+				errorMsg = new String(responseData, "UTF-8");
 			}
+		} catch (IOException e) {
+			log.error("Error reading error response from server", e);
+			responseData = null;
+			responseString = "";
+			errorMsg = "Error reading error response from server: " + e.getMessage();
+			throw e;
 		}
 	}
 
 	private byte[] getBytesFromInputStream(InputStream is) throws IOException {
-		int len;
-		int size = 1024;
 		byte[] result;
-
 		if (is instanceof ByteArrayInputStream) {
-			size = is.available();
+			int size = is.available();
+			log.trace("Reading {} bytes from {}", size, is);
 			result = new byte[size];
-			len = is.read(result, 0, size);
+			int len = is.read(result, 0, size);
+			log.trace("Done. Read {} bytes from {}", len, is);
 		} else {
+			log.trace("Reading from {}", is);
 			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			int size = 2048;
 			result = new byte[size];
+			int total = 0, len;
 			while ((len = is.read(result, 0, size)) != -1) {
 				bos.write(result, 0, len);
+				total += len;
+				log.trace("Read {} bytes so far from {}", total, is);
 			}
 			result = bos.toByteArray();
+			log.trace("Done. Read {} bytes from {}", total, is);
 		}
-
 		is.close();
-
 		return result;
 	}
 
 	public String getResponse() {
-		return response;
+		return responseString;
+	}
+
+	public byte[] getResponseData() {
+		return responseData;
 	}
 
 	private String buildRequest(HashMap<String, String> map) {

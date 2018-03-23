@@ -1,12 +1,19 @@
 #!/usr/bin/env ruby
+
 require 'securerandom'
-require 'semantria'
+require File.expand_path('lib/semantria')
 
-print 'Semantria Detailed mode demo ...', "\r\n"
+print 'Semantria Detailed Mode example ...', "\r\n"
 
-# the consumer key and secret
-$consumer_key = ''
-$consumer_secret = ''
+# API Key/Secret
+# Set the environment vars before calling this program
+# or edit this file and put your key and secret here.
+$consumer_key = ENV['SEMANTRIA_KEY']
+$consumer_secret = ENV['SEMANTRIA_SECRET']
+
+if !defined?($consumer_key) or !defined?($consumer_secret)
+  raise "Missing key/secret"
+end
 
 # Task statuses
 $TASK_STATUS_UNDEFINED = 'UNDEFINED'
@@ -40,7 +47,9 @@ end
 
 # Initializes new session with the keys and app name.
 # We also will use compression.
-session = Semantria::Session.new($consumer_key, $consumer_secret, 'TestApp', true)
+session = Semantria::Session.new($consumer_key, $consumer_secret,
+                                 application_name:'TestApp',
+                                 use_compression:true)
 
 # Initialize session callback handlers
 callback = SessionCallbackHandler.new()

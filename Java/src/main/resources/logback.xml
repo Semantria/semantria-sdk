@@ -8,6 +8,8 @@
 
     <logger name="com.semantria" level="warn"/>
     <logger name="com.semantria.example" level="info"/>
+    <logger name="com.semantria.utils" level="info"/>
+    <logger name="com.semantria.auth" level="info"/>
 
     <root level="warn" >
         <appender-ref ref="console"/>

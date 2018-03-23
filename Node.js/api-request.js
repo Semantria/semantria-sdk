@@ -47,6 +47,7 @@ function runApiRequest(session, options) {
 		api_request.path       = options.path       || '';
 		api_request.getParams  = options.getParams  || {};
 		api_request.postParams = options.postParams || null;
+		api_request.isBinary   = options.isBinary   || false;
 		api_request.url        = generateUrl(api_request);
 		api_request.queryUrl   = generateQueryUrl(api_request);
 		api_request.headers    = getRequestHeaders(api_request);
@@ -121,7 +122,10 @@ function generateQueryUrl(api_request) {
 	api_request.getParams[api_request.oAuth.versionKey]         = api_request.oAuth.version;
 
 	var queryStr = createQueryString(api_request.getParams);
-	var url = api_request.API_HOST + '/' + api_request.path + '.' + api_request.format;
+	var url = api_request.API_HOST + '/' + api_request.path;
+	if (! api_request.isBinary) {
+		url +=	'.' + api_request.format;
+	}
 	url += queryStr;
 
 	return url;
@@ -133,7 +137,10 @@ function generateQueryUrl(api_request) {
  */
 function generateUrl(api_request) {
 	var queryStr = createQueryString(api_request.getParams);
-	var url = api_request.API_HOST + '/' + api_request.path + '.' + api_request.format;
+	var url = api_request.API_HOST + '/' + api_request.path;
+	if (! api_request.isBinary) {
+		url +=	'.' + api_request.format;
+	}
 	url += queryStr;
 
 	return url;
@@ -278,7 +285,10 @@ function processResponse(api_request, response) {
 		});
 	} else {
 		if (status == 200) {
-			var result =  JSON.parse(Utils.decodeUtf8(message));
+			var result = message;
+			if (! api_request.isBinary) {
+				result = JSON.parse(Utils.decodeUtf8(message));
+			}
 			if (api_request.callAfterResponseHook) {
 				api_request.onAfterResponse.call(api_request.session, result);
 			}
@@ -309,7 +319,7 @@ function obtainSessionKeys(session) {
 		return promise.resolve(session);
 	}
 	var sessionRefresh = promise.resolve(false);
-	var session_file = session.session_file || '/tmp/session.dat';
+	var session_file = session.session_file || '/tmp/semantria-session.dat';
     if (fs.existsSync(session_file)) {
         try {
             var contents = fs.readFileSync(session_file).toString();

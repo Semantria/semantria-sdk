@@ -20,6 +20,7 @@ namespace Semantria.Com
         private QueryMethod _method = QueryMethod.GET;
         private HttpStatusCode _status = HttpStatusCode.Unauthorized;
         private string _data = string.Empty;
+        private byte[] _binaryData = null;
 
 
         public QueryMethod Method
@@ -39,5 +40,12 @@ namespace Semantria.Com
             get { return _data; }
             set { _data = value; }
         }
+
+        public byte[] BinaryData
+        {
+            get { return _binaryData; }
+            set { _binaryData = value; }
+        }
+
     }
 }

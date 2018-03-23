@@ -1,10 +1,13 @@
 #!/usr/bin/env ruby
-require 'securerandom'
-require 'semantria'
 
-# the consumer key and secret
-consumer_key = ''
-consumer_secret = ''
+require 'securerandom'
+require File.expand_path('lib/semantria')
+
+# API Key/Secret
+# Set the environment vars before calling this program
+# or edit this file and put your key and secret here.
+$consumer_key = ENV['SEMANTRIA_KEY']
+$consumer_secret = ENV['SEMANTRIA_SECRET']
 
 # 0 - send every single document separately
 # 1 - send uniqueJobIdCount batches
@@ -58,7 +61,9 @@ end
 
 # Initializes new session with the keys and app name.
 # We also will use compression.
-session = Semantria::Session.new(consumer_key, consumer_secret, 'TestApp', true)
+session = Semantria::Session.new($consumer_key, $consumer_secret,
+                                 application_name:'TestApp',
+                                 use_compression:true)
 
 # Initialize session callback handlers
 callback = SessionCallbackHandler.new()

@@ -1,5 +1,5 @@
 <?php
-require_once('../semantria/session.php');
+require_once('semantria/session.php');
 
 print("Semantria Collection processing mode demo.\n");
 
@@ -42,7 +42,7 @@ class SessionCallbackHandler extends \Semantria\CallbackHandler
 
 print("Reading collection from file...\n");
 $documents = array();
-$file = fopen("source.txt", "r");
+$file = fopen("bellagio-data-100.utf8", "r");
 if (!$file) {
     print("");
     exit(1);

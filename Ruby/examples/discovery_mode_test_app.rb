@@ -1,9 +1,12 @@
 #!/usr/bin/env ruby
-require 'semantria'
 
-# the consumer key and secret
-consumer_key = ''
-consumer_secret = ''
+require File.expand_path('lib/semantria')
+
+# API Key/Secret
+# Set the environment vars before calling this program
+# or edit this file and put your key and secret here.
+$consumer_key = ENV['SEMANTRIA_KEY']
+$consumer_secret = ENV['SEMANTRIA_SECRET']
 
 class SessionCallbackHandler < Semantria::CallbackHandler
   def onRequest(sender, args)
@@ -32,7 +35,7 @@ print("Semantria Discovery mode demo.\n")
 documents = []
 
 print("Reading collection from file...\n")
-f = File.open('source.txt').read
+f = File.open('bellagio-data-100.utf8').read
 f.gsub!(/\r\n?/, "\n")
 f.each_line do |line|
   documents.push(line)
@@ -44,8 +47,10 @@ if documents.size < 1
 end
 
 # Initializes new session with the keys and app name.
-# We also will use compression.
-session = Semantria::Session.new(consumer_key, consumer_secret, 'TestApp', true)
+session = Semantria::Session.new($consumer_key, $consumer_secret,
+                                 application_name:'TestApp',
+                                 use_compression:true)
+
 # Initialize session callback handlers
 callback = SessionCallbackHandler.new()
 session.setCallbackHandler(callback)
@@ -60,7 +65,7 @@ if status != 200 and status != 202
   exit(1)
 end
 
-print("#{collection_id} collection queued successfully.\n")
+print("Collection queued successfully (collection id: #{collection_id}\n")
 
 # Retreives analysis results for queued collection
 status = nil
@@ -78,7 +83,7 @@ if result['status'] != 'PROCESSED'
 	exit(1)
 end
 
-# Prints analysis results 
+# Prints a sample of analysis results 
 print("\n")
 result['facets'].nil? or result['facets'].each do |facet|
 	print(facet['label'], " : ", facet['count'], "\n")

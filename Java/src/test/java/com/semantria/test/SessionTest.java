@@ -5,31 +5,23 @@ import com.semantria.Session;
 import com.semantria.auth.CredentialException;
 import com.semantria.mapping.Collection;
 import com.semantria.mapping.Document;
-import com.semantria.mapping.configuration.BlacklistItem;
-import com.semantria.mapping.configuration.Category;
-import com.semantria.mapping.configuration.CollectionConfiguration;
-import com.semantria.mapping.configuration.Configuration;
-import com.semantria.mapping.configuration.DocumentConfiguration;
-import com.semantria.mapping.configuration.Query;
-import com.semantria.mapping.configuration.SentimentPhrase;
-import com.semantria.mapping.configuration.TaxonomyNode;
-import com.semantria.mapping.configuration.TaxonomyTopic;
-import com.semantria.mapping.configuration.UserEntity;
-import com.semantria.mapping.output.CollAnalyticData;
-import com.semantria.mapping.output.DocAnalyticData;
-import com.semantria.mapping.output.FeaturesSet;
-import com.semantria.mapping.output.ServiceStatus;
-import com.semantria.mapping.output.Subscription;
-import com.semantria.mapping.output.TaskStatus;
+import com.semantria.mapping.configuration.*;
+import com.semantria.mapping.output.*;
 import com.semantria.mapping.output.statistics.StatisticsGrouped;
 import com.semantria.mapping.output.statistics.StatisticsOverall;
 import com.semantria.mapping.output.statistics.StatsInterval;
+import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
+import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runners.MethodSorters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -65,7 +57,14 @@ public class SessionTest {
     private final String TEST_CONFIG_NAME = "TEST_CONFIG";
     private final String CLONED_TEST_CONFIG_NAME = "CLONED_TEST_CONFIG";
 
+    private final int POLL_LIMIT = 24;      // Number of times to poll before giving up
+    private final int POLL_INTERVAL = 24;   // Seconds to wait between poll requests
+
     private void createTestSession() {
+        if (session != null) {
+            log.info("Reusing session: {}", session);
+            return;
+        }
         assertNotNull("Missing key", key);
         assertNotNull("Missing secret", secret);
         callbackHandler = new CallbackHandler();
@@ -75,6 +74,10 @@ public class SessionTest {
     }
 
     private void createUserTestSession() {
+        if (session != null) {
+            log.info("Reusing session: {}", session);
+            return;
+        }
         assertNotNull("Missing username", username);
         assertNotNull("Missing password", password);
         callbackHandler = new CallbackHandler();
@@ -88,8 +91,8 @@ public class SessionTest {
         conf.setIsPrimary(false);
         conf.setName(name);
         conf.setLanguage("English");
-        conf.setDocument(new DocumentConfiguration(5, false, "", false, false, false, false, false, false, false, false, false, false, false, false));
-        conf.setCollection(new CollectionConfiguration(false, false, false, false, false, false, false, false));
+        conf.setDocument(new DocumentConfiguration(5, true, "", true, true, true, true, true, true, true, true, true, true, false, false));
+        conf.setCollection(new CollectionConfiguration(true, true, true, true, true, true, true, true));
         List<Configuration> new_configs = session.addConfigurations(Arrays.asList(conf));
         assertEquals(1, new_configs.size());
         assertEquals(name, new_configs.get(0).getName());
@@ -117,6 +120,12 @@ public class SessionTest {
             }
         }
         return null;
+    }
+
+    private String setupTestConfig() {
+        createTestSession();
+        Configuration config = getOrCreateConfig(TEST_CONFIG_NAME);
+        return config.getId();
     }
 
     @Test
@@ -187,7 +196,6 @@ public class SessionTest {
     @Test
     public void test09CreateUpdateCloneConfiguration() {
         createTestSession();
-
         Configuration new_config = createConfig(TEST_CONFIG_NAME);
         String new_config_id = new_config.getId();
         assertEquals("English", new_config.getLanguage());
@@ -217,9 +225,7 @@ public class SessionTest {
 
     @Test
     public void test10CRUDCategory() {
-        createTestSession();
-        Configuration config = getOrCreateConfig(TEST_CONFIG_NAME);
-        String configId = config.getId();
+        String configId = setupTestConfig();
 
         Category category = new Category();
         category.setName("TEST_CATEGORY_NAME");
@@ -276,9 +282,7 @@ public class SessionTest {
 
     @Test
     public void test11CRUDQuery() {
-        createTestSession();
-        Configuration config = getOrCreateConfig(TEST_CONFIG_NAME);
-        String configId = config.getId();
+        String configId = setupTestConfig();
 
         Query query = new Query();
         query.setName("TEST_QUERY_NAME");
@@ -336,8 +340,8 @@ public class SessionTest {
 
     @Test
     public void test12CRUDSentimentPhrase() {
-        String configId = null;
-        createTestSession();
+        String configId = setupTestConfig();
+
         SentimentPhrase sentimentPhrase = new SentimentPhrase();
         sentimentPhrase.setName("TEST_NAME");
         sentimentPhrase.setWeight(0.1f);
@@ -373,9 +377,7 @@ public class SessionTest {
 
     @Test
     public void test13CRUDBlacklist() {
-        createTestSession();
-        Configuration config = getOrCreateConfig(TEST_CONFIG_NAME);
-        String configId = config.getId();
+        String configId = setupTestConfig();
 
         BlacklistItem blacklistItem = new BlacklistItem();
         blacklistItem.setName("TEST_BLACKLISTED");
@@ -410,9 +412,7 @@ public class SessionTest {
 
     @Test
     public void test14CRUDEntities() {
-        createTestSession();
-        Configuration config = getOrCreateConfig(TEST_CONFIG_NAME);
-        String configId = config.getId();
+        String configId = setupTestConfig();
 
         UserEntity ue = new UserEntity();
         ue.setName("TEST_USER_ENTITY");
@@ -470,9 +470,7 @@ public class SessionTest {
 
     @Test
     public void test15CRUDTaxonomy() {
-        createTestSession();
-        Configuration config = getOrCreateConfig(TEST_CONFIG_NAME);
-        String configId = config.getId();
+        String configId = setupTestConfig();
 
         TaxonomyNode taxonomyNode = new TaxonomyNode();
         taxonomyNode.setName("TEST_TAXONOMY_NAME");
@@ -536,23 +534,21 @@ public class SessionTest {
 
     @Test
     public void test16AnalyzeSingleDocument() {
-        createTestSession();
-        Configuration config = getOrCreateConfig(TEST_CONFIG_NAME);
-        String configId = config.getId();
+        String configId = setupTestConfig();
 
         session.queueDocument(new Document("TEST_ID_1", "Amazon Web Services has announced a new feature called VM?Ware Import, which allows IT departments to move virtual machine images from their internal data centers to the cloud. It will cost 30?", "tag"), configId);
 
         DocAnalyticData task = null;
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < POLL_LIMIT; i++) {
             task = session.getDocument("TEST_ID_1", configId);
             if ((task != null) && task.getStatus().equals(TaskStatus.PROCESSED)) {
                 break;
             }
-            sleep(5);
+            sleep(POLL_INTERVAL);
         }
         if ((task == null) || (! task.getStatus().equals(TaskStatus.PROCESSED))) {
             log.info("task = {}", task);
-            fail("gave up waiting for processed task");
+            fail("gave up waiting for single doc");
         }
         // Get result from outgoing API queue to clear the queue for remaining tests.
         session.getProcessedDocuments(configId);
@@ -562,9 +558,7 @@ public class SessionTest {
 
     @Test
     public void test17AnalyzeBatchOfDocuments() {
-        createTestSession();
-        Configuration config = getOrCreateConfig(TEST_CONFIG_NAME);
-        String configId = config.getId();
+        String configId = setupTestConfig();
 
         List<Document> tasks = new ArrayList<Document>();
         tasks.add(new Document("BATCH_1", "DUMMY_TEXT"));
@@ -573,15 +567,15 @@ public class SessionTest {
         session.QueueBatchOfDocuments(tasks, configId);
 
         List<DocAnalyticData> data = null;
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < POLL_LIMIT; i++) {
             data = session.getProcessedDocuments(configId);
             if (data != null && !data.isEmpty()) {
                 break;
             }
-            sleep(5);
+            sleep(POLL_INTERVAL);
         }
         if ((data == null) || data.isEmpty()) {
-            fail("gave up waiting for processed docs");
+            fail("gave up waiting for batch of docs");
         }
 
         DocAnalyticData doc = null;
@@ -597,9 +591,7 @@ public class SessionTest {
 
     @Test
     public void test18AnalyzeCollection() {
-        createTestSession();
-        Configuration config = getOrCreateConfig(TEST_CONFIG_NAME);
-        String configId = config.getId();
+        String configId = setupTestConfig();
 
         Collection coll = new Collection();
         coll.setId("TEST_COLLECTION_ID");
@@ -612,17 +604,17 @@ public class SessionTest {
         session.queueCollection(coll, configId);
 
         List<CollAnalyticData> data = null;
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < POLL_LIMIT; i++) {
             log.info("data = {}", data);
             data = session.getProcessedCollections(configId);
             if ((data != null) && !data.isEmpty()) {
                 break;
             }
-            sleep(5);
+            sleep(POLL_INTERVAL);
         }
 
         if ((data == null) || data.isEmpty()) {
-            fail("gave up waiting for processed collection");
+            fail("gave up waiting for collection");
         }
 
         CollAnalyticData col = null;
@@ -636,23 +628,6 @@ public class SessionTest {
     }
 
     @Test
-    public void test19Cleanup() {
-        createTestSession();
-
-        for (Configuration config : session.getConfigurations()) {
-            if (config.getName().equals(TEST_CONFIG_NAME) || config.getName().equals(CLONED_TEST_CONFIG_NAME)) {
-                session.removeConfigurations(Arrays.asList(config));
-            }
-        }
-
-        for (Configuration conf : session.getConfigurations()) {
-            if (conf.getName().equals(TEST_CONFIG_NAME) || conf.getName().equals(CLONED_TEST_CONFIG_NAME)) {
-                fail("found a test config -- these should all have been deleted.");
-            }
-        }
-    }
-
-    @Test
     public void test20AuthWithUsernamePassword() {
         createUserTestSession();
         ServiceStatus status = session.getStatus();
@@ -661,12 +636,16 @@ public class SessionTest {
             fail("Can't authenticate with username/password: "
                     + Joiner.on("\n  ").join(callbackHandler.getErrors()));
         }
+        // Call getStatus again. This should just used the saved session key
+        status = session.getStatus();
+        assertEquals("available", status.getServiceStatus());
     }
 
     @Test
     public void test21ReauthenticateUsernameSession() {
         createUserTestSession();
         ServiceStatus status = session.getStatus();
+        assertNotNull("can't get status - bad username/password?", status);
         assertEquals("available", status.getServiceStatus());
         // Small hack to simulate session expiration. Change key (which for username/password
         // is the user session key). This will cause the first attempt to get status to fail
@@ -683,6 +662,54 @@ public class SessionTest {
             session.authenticate();
         } catch (CredentialException e) {
             fail("Can't authenticate with username/password: " + e.toString());
+        }
+    }
+
+    // Creates a config, adds some queries, then checks that the query
+    // file exists in the tar archive. (zip is the default format, so
+    // checking a different format.)
+    @Test
+    public void test23GetUserDirectory() throws IOException {
+        String configId = setupTestConfig();
+
+        List<Query> queries = session.addQueries(Arrays.asList(new Query("q1", "dog AND cat"), new Query("q2", "red OR green")), configId);
+
+        session.getUserDirectory(configId, new File("/kevin/tmp/junk.tar"));
+        byte[] bytes = session.getUserDirectory(configId, Session.ArchiveFormat.TAR);
+        assertNotNull("user directory tar bytes is null", bytes);
+
+        try (TarArchiveInputStream tar = new TarArchiveInputStream(
+                new BufferedInputStream(new ByteArrayInputStream(bytes)))) {
+            List<String> names = new ArrayList<>();
+            TarArchiveEntry entry = tar.getNextTarEntry();
+            while (entry != null) {
+                log.info("tar entry: {},  size: {}", entry.getName(), entry.getSize());
+                names.add(entry.getName());
+                entry = tar.getNextTarEntry();
+            }
+            assertTrue("missing query topics file", names.contains("imports/query-topics.dat"));
+            assertTrue("missing manifest", names.contains("manifest.txt"));
+            session.removeQueries(queries, configId);
+        } catch (IOException e) {
+            log.error("can't read tar file", e);
+            fail("error reading tar from bytes");
+        }
+    }
+
+    @Test
+    public void test99Cleanup() {
+        createTestSession();
+
+        for (Configuration config : session.getConfigurations()) {
+            if (config.getName().equals(TEST_CONFIG_NAME) || config.getName().equals(CLONED_TEST_CONFIG_NAME)) {
+                session.removeConfigurations(Arrays.asList(config));
+            }
+        }
+
+        for (Configuration conf : session.getConfigurations()) {
+            if (conf.getName().equals(TEST_CONFIG_NAME) || conf.getName().equals(CLONED_TEST_CONFIG_NAME)) {
+                fail("found a test config -- these should all have been deleted.");
+            }
         }
     }
 

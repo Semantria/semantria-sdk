@@ -24,7 +24,7 @@ public class AuthService {
     private String key;
     private String secret;
     private File cookieDir = null;
-    private String cookieFileName = "session.dat";
+    private String cookieFileName = "semantria-session.dat";
 
     public AuthService() {
     }
@@ -51,8 +51,7 @@ public class AuthService {
         String url = authUrl + "/session.json?appkey=" + appKey;
         AuthRequest req = AuthRequest.getInstance(url, "POST").body(requestData);
         req.doRequest();
-        if (req.getStatus() == 200) {
-        } else {
+        if (req.getStatus() != 200) {
             throw new CredentialException(req.getStatus(),
                     "Authentication error: " + req.getMessageFromJsonErrorMessage("error_message"));
         }
@@ -65,15 +64,12 @@ public class AuthService {
      * @throws CredentialException if username/password are invalid
      */
     public void getSession(String username, String password, boolean reuseExisting) throws CredentialException {
-        Map<String, String> cookie = reuseExisting ? loadCookieData() : null;
+        String sessionId = reuseExisting ? loadCookieData(username) : null;
         String requestData = getRequestData(username, password);
         AuthRequest req;
 
-        if ((cookie != null)
-                && cookie.containsKey("credHash")
-                && cookie.containsKey("id")
-                && Utils.getHashCode(username + password).equals(cookie.get("credHash"))) {
-            String url = authUrl + "/session/" + cookie.get("id") +".json?appkey=" + appKey;
+        if (sessionId != null) {
+            String url = authUrl + "/session/" + sessionId +".json?appkey=" + appKey;
             req = AuthRequest.getInstance(url, "GET");
         } else {
             String url = authUrl + "/session.json?appkey=" + appKey;
@@ -84,11 +80,11 @@ public class AuthService {
         if (req.getStatus() == 200) {
             Gson gson = new Gson();
             AuthSessionData sessionData = gson.fromJson(req.getResponse(), AuthSessionData.class);
-            String sessionId = sessionData.id;
+            sessionId = sessionData.id;
             key = sessionData.custom_params.get("key");
             secret = sessionData.custom_params.get("secret");
-            saveCookieData(sessionId, username, password);
-        } else if (cookie != null && req.getStatus() == 404) {
+            saveCookieData(sessionId, username);
+        } else if ((sessionId != null) && (req.getStatus() == 404)) {
             // Probably session expired, lets try again and create new one
             getSession(username, password, false);
         } else {
@@ -99,7 +95,7 @@ public class AuthService {
     }
 
     private String getRequestData(String username, String password) {
-        Map<String, String> requestDataMap = new HashMap<String, String>();
+        Map<String, String> requestDataMap = new HashMap<>();
         Gson gson = new Gson();
 
         requestDataMap.put("password", password);
@@ -134,20 +130,22 @@ public class AuthService {
 		return false;
     }
 
-    private Map<String, String> loadCookieData() {
+    private String loadCookieData(String username) {
 		if (! initializeCookieDir()) {
 			return null;
 		}
-
         try {
             File sessionFile = new File(cookieDir, cookieFileName);
-
             if (sessionFile.exists()) {
                 String sessionData = new String(Files.readAllBytes(sessionFile.toPath()));
-                if (!Strings.isNullOrEmpty(sessionData)) {
-                    Gson gson = new Gson();
-                    return gson.fromJson(sessionData, Map.class);
+                if (Strings.isNullOrEmpty(sessionData)) {
+                    return null;
                 }
+                String[] parts = sessionData.split("\n");
+                if ((parts.length < 2) || (! username.equals(parts[0].trim()))) {
+                    return null;
+                }
+                return parts[1].trim();
             }
         } catch (IOException e) {
 			log.debug("Error reading session data", e);
@@ -156,18 +154,12 @@ public class AuthService {
         return null;
     }
 
-    private void saveCookieData(String sessionId, String username, String password) {
+    private void saveCookieData(String sessionId, String username) {
         if (! initializeCookieDir()) {
             return;
         }
-
         try {
-            Gson gson = new Gson();
-            Map<String, String> sessionDataMap = new HashMap<String, String>();
-            sessionDataMap.put("id", sessionId);
-            sessionDataMap.put("credHash", Utils.getHashCode(username + password));
-            String sessionData = gson.toJson(sessionDataMap);
-
+            String sessionData = String.format("%s\n%s\n", username, sessionId);
             File sessionFile = new File(cookieDir, cookieFileName);
             if (!sessionFile.exists()) {
                 sessionFile.createNewFile();

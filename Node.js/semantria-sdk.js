@@ -47,7 +47,7 @@ function Session(config) {
 	this.username = config.username;
 	this.password = config.password;
 	this.appkey = config.appkey || 'cd954253-acaf-4dfa-a417-0a8cfb701f12';
-	this.session_file = config.session_file || '/tmp/session.dat' ;
+	this.session_file = config.session_file || '/tmp/semantria-session.dat' ;
 	this.format = config.format || "json";
 	this.applicationName = config.applicationName ? (config.applicationName + "/") : "";
 
@@ -55,6 +55,13 @@ function Session(config) {
 		SDK_VERSION: this.SDK_VERSION,
 		format: this.format
 	});
+
+	if (config.apiHost) {
+		this.API_HOST = config.apiHost;
+	}
+	if (! this.API_HOST.toLowerCase().startsWith('http')) {
+		this.API_HOST = 'https://' + this.API_HOST;
+	}
 };
 
 Session.prototype = {
@@ -782,7 +789,26 @@ Session.prototype = {
 			getParams: { job_id: jobId },
 			callback: callback
 		});
+	},
+
+	/**
+	 * Gets Salience user directory files as an archive (zip, tar, tar.gz)
+	 * 
+	 * @param {string|null} [null] configId  - null default configuration
+	 * @param {string|null} ["zip"] configId  - archive format (one of "zip", "tar", "tar.gz")
+	 * @param {(SemantriaApiCallback)}  If specified, callback with results. Else a promise will be returned
+	 * @returns {*}
+	 */
+	getUserDirectory: function(configId, format, callback) {
+		format = format || "zip";
+		return runApiRequest(this, {
+			isBinary: true,
+			path: "salience/user-directory." + format,
+			getParams: { config_id: configId },
+			callback: callback
+		});
 	}
+
 }
 
 exports.Session = Session;

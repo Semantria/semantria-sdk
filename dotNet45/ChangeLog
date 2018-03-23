@@ -1,5 +1,7 @@
 CHANGELOG
 
+4.2.101 - Added Session.GetUserDirectory & WriteUserDirectoryToFile
+
 4.2.8 - Fixed bug attempting to set modified property in auto response test app
 
 4.1.7 - Tested with API 4.1.

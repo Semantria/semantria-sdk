@@ -2,23 +2,21 @@
 var SemantriaSession = require("../").Session;
 var promise = require('promise');
 var config = require('../test-config');
+var fs = require('fs');
+var path = require('path');
+
 try { config = require('../test-config.override') } catch(e) {}
 
-var consumerKey = config.consumerKey,
-	consumerSecret = config.consumerSecret,
-	docResultList = [],
+var new_config = Object.assign({}, config);
+new_config.consumerKey = config.consumerKey || process.env.SEMANTRIA_KEY;
+new_config.consumerSecret = config.consumerSecret || process.env.SEMANTRIA_SECRET;
+var docResultList = [],
 	totalReceivedDocs = 0,
 	queuedDocsCount = 0,
 	outgoingDocs = getOutgoingDocs(),
-//	oldPrimaryConfig = null,
-//	autoResponseTestConfig = null,
 	appConfigurationId = false,
 	appConfigurationName = "AutoResponseFeatureModeTestApp Configuration",
-	SemantriaActiveSession = new SemantriaSession(consumerKey, consumerSecret, "myApp");
-
-if (config.apiHost) {
-	SemantriaActiveSession.API_HOST = config.apiHost
-}
+	SemantriaActiveSession = new SemantriaSession(new_config, "AutoResponseTest");
 
 SemantriaActiveSession.onError = function (err) {
 	console.log("Error: " + err.status + " " + err.message);
@@ -77,7 +75,7 @@ SemantriaActiveSession.getConfigurations(true)
 	console.log("\nDone: Documents queued/received: " + queuedDocsCount + "/" + docResultList.length + "\n");
 })
 .catch(function(err) {
-	console.log("nAutoResponseFeatureModeTestApp faild\n");
+	console.log("nAutoResponseFeatureModeTestApp failed\n");
 	console.log(err);
 	console.log(err.stack);
 })
@@ -118,7 +116,7 @@ function runForEachCrossDelay(items, delay, fn) {
 
 function getOutgoingDocs() {
 	var outgoingDocs = [];
-	var initialTexts = require('./source.json');
+	var initialTexts = getTestDocuments();
 	for(var i=0, item; item=initialTexts[i]; i++) {
 		// Creates a sample document which need to be processed on Semantria
 		var id = Math.floor(Math.random() * 10000000);
@@ -138,3 +136,10 @@ function processDocuments(result) {
 	}
 }
 
+function getTestDocuments() {
+    var filename = path.resolve(__dirname, 'source.txt');
+    var lines = fs.readFileSync(filename, 'utf8').toString().split("\n");
+    // Filter out any empty or very short docs
+    lines = lines.filter(function(item) { return item.length > 3; });
+    return lines;
+}

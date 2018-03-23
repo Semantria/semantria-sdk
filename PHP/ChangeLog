@@ -1,5 +1,7 @@
 CHANGELOG
 
+4.2.87	Added getUserDirectory.
+
 4.2.86 - Fixed bug in "Unrecognized field modified" bug in AutoResponseTestApp
 	- Also, don't change primary config in AutoResponseTestApp
 

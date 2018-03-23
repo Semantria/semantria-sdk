@@ -204,16 +204,16 @@ namespace Semantria.Com
         {
             //GET https://api.semantria.com/status.json
             string url = String.Format("{0}/status.{1}", _host, _format);
-            AuthResponse authResponse = this.RunRequest(QueryMethod.GET, url, null);
-            return this.ProcessGetResponse(authResponse);
+            AuthResponse authResponse = RunRequest(QueryMethod.GET, url, null);
+            return ProcessGetResponse(authResponse);
         }
 
         public dynamic GetSubscription()
         {
             //GET https://api.semantria.com/subscription.json
             string url = String.Format("{0}/subscription.{1}", _host, _format);
-            AuthResponse authResponse = this.RunRequest(QueryMethod.GET, url, null);
-            return this.ProcessGetResponse(authResponse);
+            AuthResponse authResponse = RunRequest(QueryMethod.GET, url, null);
+            return ProcessGetResponse(authResponse);
         }
 
         public dynamic GetStatistics(string configId = null, string interval = null)
@@ -234,8 +234,8 @@ namespace Semantria.Com
                 url = String.Format("{0}/statistics.{1}?interval={2}", _host, _format, interval);
             }
             
-            AuthResponse authResponse = this.RunRequest(QueryMethod.GET, url, null);
-            return this.ProcessGetResponse(authResponse);
+            AuthResponse authResponse = RunRequest(QueryMethod.GET, url, null);
+            return ProcessGetResponse(authResponse);
         }
 
         public dynamic GetSupportedFeatures(string language = null)
@@ -248,8 +248,8 @@ namespace Semantria.Com
                 url = String.Format("{0}/features.{1}?language={2}", _host, _format, language);
             }
 
-            AuthResponse authResponse = this.RunRequest(QueryMethod.GET, url, null);
-            dynamic obj = this.ProcessGetResponse(authResponse);
+            AuthResponse authResponse = RunRequest(QueryMethod.GET, url, null);
+            dynamic obj = ProcessGetResponse(authResponse);
             
             return obj;
         }
@@ -260,31 +260,31 @@ namespace Semantria.Com
 
         public dynamic GetConfigurations()
         {
-            AuthResponse authResponse = this.Get("configurations");
-            dynamic obj = this.ProcessGetResponse(authResponse);
+            AuthResponse authResponse = Get("configurations");
+            dynamic obj = ProcessGetResponse(authResponse);
             return obj;
         }
 
 
         public dynamic AddConfigurations(dynamic items)
         {
-            return this.Add(QueryMethod.POST, items, "configurations");
+            return Add(QueryMethod.POST, items, "configurations");
         }
 
         public dynamic UpdateConfigurations(dynamic items)
         {
-            return this.Update(QueryMethod.PUT, items, "configurations");
+            return Update(QueryMethod.PUT, items, "configurations");
         }
 
         public int RemoveConfigurations(dynamic items)
         {
-            return this.Delete(QueryMethod.DELETE, items, "configurations");
+            return Delete(QueryMethod.DELETE, items, "configurations");
         }
 
         public dynamic CloneConfiguration(string name, string template)
         {
             var item = new[] { new {name = name, template = template} };
-            return this.Add(QueryMethod.POST, item, "configurations");
+            return Add(QueryMethod.POST, item, "configurations");
         }
 
         #endregion Configuration
@@ -293,24 +293,24 @@ namespace Semantria.Com
 
         public dynamic GetBlacklist(string configId = null)
         {
-            AuthResponse authResponse = this.Get("blacklist", configId);
-            dynamic obj = this.ProcessGetResponse(authResponse);
+            AuthResponse authResponse = Get("blacklist", configId);
+            dynamic obj = ProcessGetResponse(authResponse);
             return obj;
         }
 
         public dynamic AddBlacklist(dynamic items, string configId = null)
         {
-            return this.Add(QueryMethod.POST, items, "blacklist", configId);
+            return Add(QueryMethod.POST, items, "blacklist", configId);
         }
 
         public dynamic UpdateBlacklist(dynamic items, string configId = null)
         {
-            return this.Update(QueryMethod.PUT, items, "blacklist", configId);
+            return Update(QueryMethod.PUT, items, "blacklist", configId);
         }
 
         public int RemoveBlacklist(dynamic items, string configId = null)
         {
-            return this.Delete(QueryMethod.DELETE, items, "blacklist", configId);
+            return Delete(QueryMethod.DELETE, items, "blacklist", configId);
         }
 
         #endregion Blacklist
@@ -319,23 +319,23 @@ namespace Semantria.Com
 
         public dynamic GetCategories(string configId = null)
         {
-            AuthResponse authResponse = this.Get("categories", configId);
-            return this.ProcessGetResponse(authResponse);
+            AuthResponse authResponse = Get("categories", configId);
+            return ProcessGetResponse(authResponse);
         }
 
         public dynamic AddCategories(dynamic items, string configId = null)
         {
-            return this.Add(QueryMethod.POST, items, "categories", configId);
+            return Add(QueryMethod.POST, items, "categories", configId);
         }
 
         public dynamic UpdateCategories(dynamic items, string configId = null)
         {
-            return this.Update(QueryMethod.PUT, items, "categories", configId);
+            return Update(QueryMethod.PUT, items, "categories", configId);
         }
 
         public int RemoveCategories(dynamic items, string configId = null)
         {
-            return this.Delete(QueryMethod.DELETE, items, "categories", configId);
+            return Delete(QueryMethod.DELETE, items, "categories", configId);
         }
 
         #endregion Category
@@ -344,23 +344,23 @@ namespace Semantria.Com
 
         public dynamic GetQueries(string configId = null)
         {
-            AuthResponse authResponse = this.Get("queries", configId);
-            return this.ProcessGetResponse(authResponse);
+            AuthResponse authResponse = Get("queries", configId);
+            return ProcessGetResponse(authResponse);
         }
 
         public dynamic AddQueries(dynamic items, string configId = null)
         {
-            return this.Add(QueryMethod.POST, items, "queries", configId);
+            return Add(QueryMethod.POST, items, "queries", configId);
         }
 
         public dynamic UpdateQueries(dynamic items, string configId = null)
         {
-            return this.Update(QueryMethod.PUT, items, "queries", configId);
+            return Update(QueryMethod.PUT, items, "queries", configId);
         }
 
         public int RemoveQueries(dynamic items, string configId = null)
         {
-            return this.Delete(QueryMethod.DELETE, items, "queries", configId);
+            return Delete(QueryMethod.DELETE, items, "queries", configId);
         }
 
         #endregion Query
@@ -369,23 +369,23 @@ namespace Semantria.Com
 
         public dynamic GetEntities(string configId = null)
         {
-            AuthResponse authResponse = this.Get("entities", configId);
-            return this.ProcessGetResponse(authResponse);
+            AuthResponse authResponse = Get("entities", configId);
+            return ProcessGetResponse(authResponse);
         }
 
         public dynamic AddEntities(dynamic items, string configId = null)
         {
-            return this.Add(QueryMethod.POST, items, "entities", configId);
+            return Add(QueryMethod.POST, items, "entities", configId);
         }
 
         public dynamic UpdateEntities(dynamic items, string configId = null)
         {
-            return this.Update(QueryMethod.PUT, items, "entities", configId);
+            return Update(QueryMethod.PUT, items, "entities", configId);
         }
 
         public int RemoveEntities(dynamic items, string configId = null)
         {
-            return this.Delete(QueryMethod.DELETE, items, "entities", configId);
+            return Delete(QueryMethod.DELETE, items, "entities", configId);
         }
 
         #endregion Entity
@@ -394,23 +394,23 @@ namespace Semantria.Com
 
         public dynamic GetSentimentPhrases(string configId = null)
         {
-            AuthResponse authResponse = this.Get("phrases", configId);
-            return this.ProcessGetResponse(authResponse);
+            AuthResponse authResponse = Get("phrases", configId);
+            return ProcessGetResponse(authResponse);
         }
 
         public dynamic AddSentimentPhrases(dynamic items, string configId = null)
         {
-            return this.Add(QueryMethod.POST, items, "phrases", configId);
+            return Add(QueryMethod.POST, items, "phrases", configId);
         }
 
         public dynamic UpdateSentimentPhrases(dynamic items, string configId = null)
         {
-            return this.Update(QueryMethod.PUT, items, "phrases", configId);
+            return Update(QueryMethod.PUT, items, "phrases", configId);
         }
 
         public int RemoveSentimentPhrases(dynamic items, string configId = null)
         {
-            return this.Delete(QueryMethod.DELETE, items, "phrases", configId);
+            return Delete(QueryMethod.DELETE, items, "phrases", configId);
         }
 
         #endregion SentimentPhrase
@@ -419,23 +419,23 @@ namespace Semantria.Com
 
         public dynamic GetTaxonomy(string configId = null)
         {
-            AuthResponse authResponse = this.Get("taxonomy", configId);
-            return this.ProcessGetResponse(authResponse);
+            AuthResponse authResponse = Get("taxonomy", configId);
+            return ProcessGetResponse(authResponse);
         }
 
         public dynamic AddTaxonomy(dynamic items, string configId = null)
         {
-            return this.Add(QueryMethod.POST, items, "taxonomy", configId);
+            return Add(QueryMethod.POST, items, "taxonomy", configId);
         }
 
         public dynamic UpdateTaxonomy(dynamic items, string configId = null)
         {
-            return this.Update(QueryMethod.PUT, items, "taxonomy", configId);
+            return Update(QueryMethod.PUT, items, "taxonomy", configId);
         }
 
         public int RemoveTaxonomy(dynamic items, string configId = null)
         {
-            return this.Delete(QueryMethod.DELETE, items, "taxonomy", configId);
+            return Delete(QueryMethod.DELETE, items, "taxonomy", configId);
         }
 
         #endregion Taxonomy
@@ -450,7 +450,7 @@ namespace Semantria.Com
                 url = String.Format("{0}/document.{1}?config_id={2}", _host, _format, configId);
             }
             string data = _serializer.Serialize(task);
-            dynamic result = this.PostAnalyticData(url, data);
+            dynamic result = PostAnalyticData(url, data);
 
             if (result != null)
             {
@@ -475,7 +475,7 @@ namespace Semantria.Com
                 url = String.Format("{0}/document/batch.{1}?config_id={2}", _host, _format, configId);
             }
 
-            dynamic result = this.PostQueueBatch(url, tasks);
+            dynamic result = PostQueueBatch(url, tasks);
 
             if (result != null)
             {
@@ -500,8 +500,8 @@ namespace Semantria.Com
             {
                 url = String.Format("{0}/document/{1}.{2}?config_id={3}", _host, encodedId, _format, configId);
             }
-            AuthResponse authResponse = this.RunRequest(QueryMethod.GET, url, null);
-            return this.ProcessGetResponse(authResponse);
+            AuthResponse authResponse = RunRequest(QueryMethod.GET, url, null);
+            return ProcessGetResponse(authResponse);
         }
 
         public int CancelDocument(string id, string configId = null)
@@ -512,8 +512,8 @@ namespace Semantria.Com
             {
                 url = String.Format("{0}/document/{1}.{2}?config_id={3}", _host, encodedId, _format, configId);
             }
-            AuthResponse authResponse = this.RunRequest(QueryMethod.DELETE, url, null);
-            return this.ProcessPostResponse(authResponse);
+            AuthResponse authResponse = RunRequest(QueryMethod.DELETE, url, null);
+            return ProcessPostResponse(authResponse);
         }
 
         public List<dynamic> GetProcessedDocuments(string configId = null)
@@ -523,7 +523,7 @@ namespace Semantria.Com
             {
                 url = String.Format("{0}/document/processed.{1}?config_id={2}", _host, _format, configId);
             }
-            return this.RequestProcessedList(url);
+            return RequestProcessedList(url);
         }
 
         public List<dynamic> GetProcessedDocumentsByJobId(string jobId)
@@ -534,7 +534,7 @@ namespace Semantria.Com
             }
 
             string url = String.Format("{0}/document/processed.{1}?job_id={2}", _host, _format, jobId);
-            return this.RequestProcessedList(url);
+            return RequestProcessedList(url);
         }
 
         #endregion Document
@@ -550,7 +550,7 @@ namespace Semantria.Com
             }
 
             string data = _serializer.Serialize(task);
-            dynamic result = this.PostAnalyticData(url, data);
+            dynamic result = PostAnalyticData(url, data);
 
             if (result != null)
             {
@@ -575,8 +575,8 @@ namespace Semantria.Com
             {
                 url = String.Format("{0}/collection/{1}.{2}?config_id={3}", _host, encodedId, _format, configId);
             }
-            AuthResponse authResponse = this.RunRequest(QueryMethod.GET, url, null);
-            return this.ProcessGetResponse(authResponse);
+            AuthResponse authResponse = RunRequest(QueryMethod.GET, url, null);
+            return ProcessGetResponse(authResponse);
         }
 
         public int CancelCollection(string id, string configId = null)
@@ -587,8 +587,8 @@ namespace Semantria.Com
             {
                 url = String.Format("{0}/collection/{1}.{2}?config_id={3}", _host, encodedId, _format, configId);
             }
-            AuthResponse authResponse = this.RunRequest(QueryMethod.DELETE, url, null);
-            return this.ProcessPostResponse(authResponse);
+            AuthResponse authResponse = RunRequest(QueryMethod.DELETE, url, null);
+            return ProcessPostResponse(authResponse);
         }
 
         public List<dynamic> GetProcessedCollections(string configId = null)
@@ -598,7 +598,7 @@ namespace Semantria.Com
             {
                 url = String.Format("{0}/collection/processed.{1}?config_id={2}", _host, _format, configId);
             }
-            return this.RequestProcessedList(url);
+            return RequestProcessedList(url);
         }
 
         public List<dynamic> GetProcessedCollectionsByJobId(string jobId)
@@ -609,70 +609,114 @@ namespace Semantria.Com
             }
 
             string url = String.Format("{0}/collection/processed.{1}?job_id={2}", _host, _format, jobId);
-            return this.RequestProcessedList(url);
+            return RequestProcessedList(url);
         }
 
         #endregion Collection
 
+        #region Salience user directory
+
+        public static readonly string ZIP_FORMAT = "zip";
+        public static readonly string TAR_FORMAT = "tar";
+        public static readonly string TARGZ_FORMAT = "tar.gz";
+        public static readonly List<string> archiveFormats = new List<string>() {
+                ZIP_FORMAT, TAR_FORMAT, TARGZ_FORMAT, 
+        };
+
+        private string getArchiveFormat(string path) {
+            foreach (string format in archiveFormats) {
+                if (path.EndsWith("." + format)) {
+                    return format;
+                }
+            }
+            return ZIP_FORMAT;
+        }
+
+        public byte[] GetUserDirectory(string configId) {
+            return GetUserDirectory(configId, ZIP_FORMAT);
+        }
+
+        public byte[] GetUserDirectory(string configId, string format) {
+            AuthResponse authResponse = GetBinary("salience/user-directory." + format, configId);
+            return authResponse.BinaryData;
+        }
+
+        public void WriteUserDirectoryToFile(string configId, string path) {
+             byte[] bytes = GetUserDirectory(configId, getArchiveFormat(path));
+             if (bytes == null) {
+                 throw new SystemException(String.Format(
+                     "Can't get user directory for config {0}. Check error handler for specific error message",
+                     configId));
+             }
+            WriteByteArrayToFile(path, bytes);
+        }
+
+        private static void WriteByteArrayToFile(string fileName, byte[] byteArray)
+        {
+            using (var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write))
+            {
+                fs.Write(byteArray, 0, byteArray.Length);
+            }
+        }
+
+        #endregion Salience user directory
+
         #region Private request and response support
+
+        private string makeUrl(string tag, string configId, bool omitFormat=false) {
+            string url = String.Format("{0}/{1}", _host, tag);
+            if (!omitFormat)
+            {
+                url += "." + _format;
+            }
+            if (!String.IsNullOrEmpty(configId))
+            {
+                url += String.Format("?config_id={0}", configId);
+            }
+            return url;
+        }
 
         private AuthResponse Get(string tag, string configId = null)
         {
-            string url = String.Format("{0}/{1}.{2}", _host, tag, _format);
-            if (!String.IsNullOrEmpty(configId))
-            {
-                url = String.Format("{0}/{1}.{2}?config_id={3}", _host, tag, _format, configId);
-            }
+            string url = makeUrl(tag, configId);
+            return RunRequest(QueryMethod.GET, url, null);
+        }
 
-            return this.RunRequest(QueryMethod.GET, url, null);
+        private AuthResponse GetBinary(string tag, string configId = null)
+        {
+            string url = makeUrl(tag, configId, true);
+            return RunRequest(QueryMethod.GET, url, null, true);
         }
 
         private dynamic Add(QueryMethod method, dynamic items, string tag, string configId = null)
         {
-            string url = String.Format("{0}/{1}.{2}", _host, tag, _format);
-            if (!String.IsNullOrEmpty(configId))
-            {
-                url = String.Format("{0}/{1}.{2}?config_id={3}", _host, tag, _format, configId);
-            }
+            string url = makeUrl(tag, configId);
+            string data = _serializer.Serialize(items);
 
-            string data = null;
-            data = _serializer.Serialize(items);
-
-            AuthResponse authResponse = this.RunRequest(method, url, data);
-            dynamic obj = this.ProcessGetResponse(authResponse);
+            AuthResponse authResponse = RunRequest(method, url, data);
+            dynamic obj = ProcessGetResponse(authResponse);
 
             return obj;
         }
 
         private dynamic Update(QueryMethod method, dynamic items, string tag, string configId = null)
         {
-            string url = String.Format("{0}/{1}.{2}", _host, tag, _format);
-            if (!String.IsNullOrEmpty(configId))
-            {
-                url = String.Format("{0}/{1}.{2}?config_id={3}", _host, tag, _format, configId);
-            }
-
-            string data = null;
-            data = _serializer.Serialize(items);
+            string url = makeUrl(tag, configId);
+            string data = _serializer.Serialize(items);
             
-            AuthResponse authResponse = this.RunRequest(method, url, data);
-            dynamic obj = this.ProcessGetResponse(authResponse);
+            AuthResponse authResponse = RunRequest(method, url, data);
+            dynamic obj = ProcessGetResponse(authResponse);
             
             return obj;
         }
 
         private int Delete(QueryMethod method, dynamic items, string tag, string configId = null)
         {
-            string url = String.Format("{0}/{1}.{2}", _host, tag, _format);
-            if (!String.IsNullOrEmpty(configId))
-            {
-                url = String.Format("{0}/{1}.{2}?config_id={3}", _host, tag, _format, configId);
-            }
-            
+            string url = makeUrl(tag, configId);
             string data = _serializer.Serialize(items);
 
-            AuthResponse authResponse = this.RunRequest(method, url, data);
-            return this.ProcessPostResponse(authResponse);
+            AuthResponse authResponse = RunRequest(method, url, data);
+            return ProcessPostResponse(authResponse);
         }
 
         private WebResponse RunRegularRequest(QueryMethod method, string url, string data)
@@ -775,7 +819,7 @@ namespace Semantria.Com
 
         private void WriteSessionFile(string sessionId)
         {
-            string sessionFile = Path.Combine(Path.GetTempPath(), "session.dat");
+            string sessionFile = Path.Combine(Path.GetTempPath(), "semantria-session.dat");
             using (StreamWriter writer = new StreamWriter(sessionFile))
             {
                 writer.Write(sessionId);
@@ -784,7 +828,7 @@ namespace Semantria.Com
 
         private string ReadSessionFile()
         {
-            string sessionFile = Path.Combine(Path.GetTempPath(), "session.dat");
+            string sessionFile = Path.Combine(Path.GetTempPath(), "semantria-session.dat");
             if (File.Exists(sessionFile))
             {
                 using (StreamReader reader = new StreamReader(sessionFile))
@@ -797,7 +841,7 @@ namespace Semantria.Com
             return null;
         }
 
-        private AuthResponse RunRequest(QueryMethod method, string url, string data)
+        private AuthResponse RunRequest(QueryMethod method, string url, string data, bool isBinary=false)
         {
             if (string.IsNullOrEmpty(_consumerKey) && string.IsNullOrEmpty(_consumerSecret))
             {
@@ -821,17 +865,17 @@ namespace Semantria.Com
                 }
             }
 
-            return ExecuteRequest(method, url, data);
+            return ExecuteRequest(method, url, data, isBinary);
         }
 
-        private AuthResponse ExecuteRequest(QueryMethod method, string url, string data)
+        private AuthResponse ExecuteRequest(QueryMethod method, string url, string data, bool isBinary)
         {
-            string appName = this.GetAppName();
+            string appName = GetAppName();
             AuthRequest authRequest = new AuthRequest(_consumerKey, _consumerSecret, appName, _useCompression, _apiVersion);
             using (authRequest)
             {
                 OnRequest(this, new RequestEventArgs(method.ToString(), url, data));
-                AuthResponse authResponse = authRequest.AuthWebRequest(method, url, data);
+                AuthResponse authResponse = authRequest.AuthWebRequest(method, url, data, isBinary);
                 OnResponse(this, new ResponseEventArgs(authResponse.Status, authResponse.Data));
                 return authResponse;
             }
@@ -839,10 +883,10 @@ namespace Semantria.Com
 
         private List<dynamic> RequestProcessedList(string url)
         {
-            AuthResponse authResponse = this.RunRequest(QueryMethod.GET, url, null);
+            AuthResponse authResponse = RunRequest(QueryMethod.GET, url, null);
             dynamic obj = new List<dynamic>();
 
-            dynamic result = this.ProcessGetResponse(authResponse);
+            dynamic result = ProcessGetResponse(authResponse);
             if (result != null)
             {
                 obj = new List<dynamic>(((IEnumerable)result).Cast<dynamic>()); ;
@@ -864,7 +908,7 @@ namespace Semantria.Com
                 case 202:
                     return obj;
                 default:
-                    this.ResolveError(authResponse);
+                    ResolveError(authResponse);
                     return obj;
             }
         }
@@ -880,7 +924,7 @@ namespace Semantria.Com
                 case 202:
                     return status;
                 default:
-                    this.ResolveError(authResponse);
+                    ResolveError(authResponse);
                     return status;
             }
         }
@@ -888,12 +932,12 @@ namespace Semantria.Com
         private dynamic PostQueueBatch(string url, dynamic tasks)
         {
             string data = _serializer.Serialize(tasks);
-            return this.PostAnalyticData(url, data);
+            return PostAnalyticData(url, data);
         }
 
         private dynamic PostAnalyticData(string url, string data)
         {
-            AuthResponse authResponse = this.RunRequest(QueryMethod.POST, url, data);
+            AuthResponse authResponse = RunRequest(QueryMethod.POST, url, data);
 
             int status = (int)authResponse.Status;
             string message = authResponse.Data;
@@ -904,14 +948,14 @@ namespace Semantria.Com
             {
                 case 200:
                     {
-                        dynamic result = this.ProcessGetResponse(authResponse);
+                        dynamic result = ProcessGetResponse(authResponse);
                         if (result != null) obj = result;
                         return obj;
                     }
                 case 202:
                     return obj;
                 default:
-                    this.ResolveError(authResponse);
+                    ResolveError(authResponse);
                     return null;
             }
         }

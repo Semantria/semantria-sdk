@@ -1,5 +1,8 @@
 CHANGELOG
 
+4.2.104 - Add Session.getUserDirectory.
+	- Add logging to reading response.
+
 4.2.103 - Remove final class modifiers.
 
 4.2.102 - Upgrade pom.xml to java 1.8.

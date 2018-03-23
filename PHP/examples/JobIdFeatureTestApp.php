@@ -1,6 +1,6 @@
 <?php
 
-require_once('../semantria/session.php');
+require_once('semantria/session.php');
 
 // The consumer key and secret
 define('CONSUMER_KEY', getenv("SEMANTRIA_KEY"));
@@ -58,7 +58,7 @@ for ($i=0; $i < $unique_jobid_count; $i++) {
     $job_documents[$job_id] = array();
 }
 
-print("Reading collection from file...\n");
+print("Reading documents from file...\n");
 $file = fopen("source.txt", "r");
 if (!$file) {
     print("File not found\n");

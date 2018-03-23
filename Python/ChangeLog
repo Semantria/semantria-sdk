@@ -1,5 +1,9 @@
 CHANGELOG
 
+4.2.92 - Don't use saved session when user changes.
+
+4.2.91 - Added session.getUserDirectory().
+
 4.2.90 - Fixed bug in username/password authentication.
 	- Fixed bug attempting to set modified property in auto response test app.
 
