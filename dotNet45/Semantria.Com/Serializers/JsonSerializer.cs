@@ -37,6 +37,7 @@ namespace Semantria.Com.Serializers
         public dynamic Deserialize(string str)
         {
             JavaScriptSerializer serializer = new JavaScriptSerializer();
+            serializer.MaxJsonLength = System.Int32.MaxValue;
             serializer.RegisterConverters(new[] { new DynamicJsonObjectConverter() });
             dynamic obj = serializer.Deserialize(str, typeof(DynamicJsonObject));
             return obj;
@@ -52,6 +53,7 @@ namespace Semantria.Com.Serializers
         private string serialize(dynamic obj)
         {
             JavaScriptSerializer serializer = new JavaScriptSerializer();
+            serializer.MaxJsonLength = System.Int32.MaxValue;
             serializer.RegisterConverters(new[] { new DynamicJsonObjectConverter() });
             var output = serializer.Serialize(obj);
             return output;

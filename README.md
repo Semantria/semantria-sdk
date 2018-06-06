@@ -6,8 +6,6 @@ The Semantria SDKs are the most convenient way to integrate with the Semantria A
 
 For small volume, or ad-hoc, interactive data exploration check out [Semantria for Excel](https://www.lexalytics.com/semantria/excel).
 
-Signup for a free trial [here](https://www.lexalytics.com/signup).
-
 Please visit [semantria.readme.io](https://semantria.readme.io/docs/) for complete API documentation.
 
 Available SDKs:
