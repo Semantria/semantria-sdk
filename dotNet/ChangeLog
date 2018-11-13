@@ -1,5 +1,7 @@
 CHANGELOG
 
+4.2.102 - Add extra fields to Location object.
+
 4.2.101 - Added Session.GetUserDirectory & WriteUserDirectoryToFile
 
 4.2.100 - Fixed bug attempting to set modified property in auto response test app.

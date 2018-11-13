@@ -34,7 +34,7 @@ First, ensure the environment variables SEMANTRIA\_KEY and SEMANTRIA\_SECRET are
 
 Then run the detailed example:
 
-    $ java -cp target/semantria-java-sdk-4.2.104-jar-with-dependencies.jar com.semantria.example.DetailedModeTestApp
+    $ java -cp target/semantria-java-sdk-4.2.105-jar-with-dependencies.jar com.semantria.example.DetailedModeTestApp
 
 Several other examples are in com.semantria.example.
 

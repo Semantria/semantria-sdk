@@ -39,5 +39,17 @@ namespace Semantria.Com.Mapping.Output
 		[DataMember(Name = "length")]
 		[XmlElementAttribute("length")]
 		public int Length { get; set; }
+		
+		[DataMember(Name = "sentence")]
+		[XmlElementAttribute("sentence")]
+		public int Sentence { get; set; }
+
+		[DataMember(Name = "token_index")]
+		[XmlElementAttribute("token_index")]
+		public int TokenIndex { get; set; }
+
+		[DataMember(Name = "token_count")]
+		[XmlElementAttribute("token_count")]
+		public int TokenCount { get; set; }
 	}
 }
