@@ -1611,7 +1611,7 @@ public class Session {
 
     private void handleError(Integer status, String message) {
         if (callback == null) {
-            log.error("status: {}, message: ", status, message);
+            log.error("status: {}, message: {}", status, message);
         } else {
             callback.onError(this, new ResponseArgs(status, message));
         }

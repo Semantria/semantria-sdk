@@ -7,6 +7,8 @@ import java.util.List;
 public class DocTheme
 {
 	private String title = null;
+	private String normalized = null;
+	private String stemmed = null;
 	private Float sentiment_score = null;
 	private Integer evidence = null;
 	private Boolean is_about = null;
@@ -16,6 +18,10 @@ public class DocTheme
 
 	@XmlElement(name="title")
 	public String getTitle() { return title; }
+	@XmlElement(name = "normalized")
+	public String getNormalized() { return normalized; }
+	@XmlElement(name = "stemmed")
+	public String getStemmed() { return stemmed; }
 	@XmlElement(name="sentiment_score")
 	public Float getSentimentScore() { return sentiment_score; }
 	@XmlElement(name="evidence")
@@ -31,6 +37,8 @@ public class DocTheme
 	public List<Mention> getMentions(){ return mentions; }
 
 	public void setTitle(String title) { this.title = title; }
+	public void setNormalized(String value) { normalized = value; }
+	public void setStemmed(String value) { stemmed = value; }
 	public void setSentimentScore(Float sentiment_score) { this.sentiment_score = sentiment_score; }
 	public void setEvidence(Integer evidence) { this.evidence = evidence; }
 	public void setIsAbout(Boolean is_about) { this.is_about = is_about; }

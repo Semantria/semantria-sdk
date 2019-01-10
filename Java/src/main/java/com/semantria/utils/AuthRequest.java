@@ -38,7 +38,7 @@ public class AuthRequest {
 	private boolean isBinaryResponse = false;
 	private String responseString = "";
 	private byte[] responseData = null;
-	private String appName = "Java/4.2.105/";
+	private String appName = "Java/4.2.106/";
 	private String apiVersion = "";
 	private String errorMsg = null;
 	private boolean useCompression = false;

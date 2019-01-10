@@ -207,11 +207,10 @@ public class DetailedModeTestApp {
         if (doc.getThemes() != null) {
             System.out.println("document themes:");
             for (DocTheme theme : doc.getThemes()) {
-                System.out.format("\ttitle: %s"
-                                + "\n\tsentiment: %.2f"
-                                + "\n\tsentiment polarity: %s\n\n",
-                        theme.getTitle(), theme.getSentimentScore(),
-                        theme.getSentimentPolarity());
+                System.out.format("\ttitle: %s, normalized: %s, stemmed: %s\n"
+                                + "\tsentiment: %.2f,sentiment polarity: %s\n\n",
+                        theme.getTitle(), theme.getNormalized(), theme.getStemmed(),
+                        theme.getSentimentScore(), theme.getSentimentPolarity());
             }
         }
     }

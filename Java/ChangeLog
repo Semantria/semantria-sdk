@@ -1,5 +1,8 @@
 CHANGELOG
 
+4.2.106 - Fix error log message.
+	- Expose theme normalized and stemmed forms.
+
 4.2.105 - Add extra fields to Location object.
 
 4.2.104 - Add Session.getUserDirectory.

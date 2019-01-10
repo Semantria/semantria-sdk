@@ -93,6 +93,8 @@ public class JsonSerializer implements ISerializer
 			}
 			else if(type.equals(ServiceStatus.class))
 			{
+
+
 				object = gson.fromJson(string, ServiceStatus.class);
 			}
 			else if(type.equals(Subscription.class))
