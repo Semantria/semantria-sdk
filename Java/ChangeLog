@@ -1,5 +1,7 @@
 CHANGELOG
 
+4.2.107 - Update compress version; Fix test.
+
 4.2.106 - Fix error log message.
 	- Expose theme normalized and stemmed forms.
 

@@ -674,7 +674,8 @@ public class SessionTest {
 
         List<Query> queries = session.addQueries(Arrays.asList(new Query("q1", "dog AND cat"), new Query("q2", "red OR green")), configId);
 
-        session.getUserDirectory(configId, new File("/kevin/tmp/junk.tar"));
+        // For windows: create a writeable c:\tmp directory
+        session.getUserDirectory(configId, new File("/tmp/junk.tar"));
         byte[] bytes = session.getUserDirectory(configId, Session.ArchiveFormat.TAR);
         assertNotNull("user directory tar bytes is null", bytes);
 
