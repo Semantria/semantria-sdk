@@ -1,6 +1,8 @@
 CHANGELOG
 
-4.2.107 - Update compress version; Fix test.
+4.2.108 - Fix updateXxx methods (e.g., updateConfigurations, updateQueries, etc.) to prevent Null Pointer Exception
+
+4.2.107 - Update commons compress to avoid security vulnerability; Update compress version; Fix test.
 
 4.2.106 - Fix error log message.
 	- Expose theme normalized and stemmed forms.

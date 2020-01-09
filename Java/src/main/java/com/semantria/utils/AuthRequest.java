@@ -38,7 +38,7 @@ public class AuthRequest {
 	private boolean isBinaryResponse = false;
 	private String responseString = "";
 	private byte[] responseData = null;
-	private String appName = "Java/4.2.107/";
+	private String appName = "Java/4.2.108/";
 	private String apiVersion = "";
 	private String errorMsg = null;
 	private boolean useCompression = false;
@@ -402,6 +402,10 @@ public class AuthRequest {
 
 	public Integer getStatus() {
 		return status;
+	}
+
+	public boolean isSuccess() {
+		return (status >= 200) && (status < 300);
 	}
 
 	public String getMessageFromJsonErrorMessage(String key) {

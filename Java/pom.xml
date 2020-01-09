@@ -8,7 +8,7 @@
 
     <groupId>com.semantria</groupId>
     <artifactId>semantria-java-sdk</artifactId>
-    <version>4.2.107</version>
+    <version>4.2.108</version>
 
     <properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -32,7 +32,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
-            <version>1.18</version>
+            <version>[1.19,)</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>

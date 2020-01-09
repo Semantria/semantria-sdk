@@ -535,12 +535,13 @@ public class Session {
     public List<Category> updateCategories(List<Category> categories, String config_id) {
         try {
             AuthRequest req = update(categories, "categories", config_id, Categories.class, "PUT");
-            Categories list = (Categories) serializer.deserialize(req.getResponse(), Categories.class);
-            if (list != null) {
-                return list.getCategories();
-            } else {
-                return Collections.emptyList();
+            if (req.isSuccess()) {
+                Categories list = (Categories) serializer.deserialize(req.getResponse(), Categories.class);
+                if (list != null) {
+                    return list.getCategories();
+                }
             }
+            return Collections.emptyList();
         } catch (CredentialException e) {
             handleError(e.getStatus(), e.toString());
             return Collections.emptyList();
@@ -619,9 +620,11 @@ public class Session {
     public List<Query> updateQueries(List<Query> queries, String config_id) {
         try {
             AuthRequest req = update(queries, "queries", config_id, Queries.class, "PUT");
-            Queries list = (Queries) serializer.deserialize(req.getResponse(), Queries.class);
-            if (list != null) {
-                return list.getQueries();
+            if (req.isSuccess()) {
+                Queries list = (Queries) serializer.deserialize(req.getResponse(), Queries.class);
+                if (list != null) {
+                    return list.getQueries();
+                }
             }
             return Collections.emptyList();
         } catch (CredentialException e) {
@@ -700,9 +703,11 @@ public class Session {
     public List<SentimentPhrase> updateSentimentPhrases(List<SentimentPhrase> phrases, String config_id) {
         try {
             AuthRequest req = update(phrases, "phrases", config_id, SentimentPhrases.class, "PUT");
-            SentimentPhrases list = (SentimentPhrases) serializer.deserialize(req.getResponse(), SentimentPhrases.class);
-            if (list != null) {
-                return list.getSentimentPhrases();
+            if (req.isSuccess()) {
+                SentimentPhrases list = (SentimentPhrases) serializer.deserialize(req.getResponse(), SentimentPhrases.class);
+                if (list != null) {
+                    return list.getSentimentPhrases();
+                }
             }
             return Collections.emptyList();
         } catch (CredentialException e) {
@@ -782,9 +787,11 @@ public class Session {
     public List<BlacklistItem> updateBlacklist(List<BlacklistItem> blacklistItems, String config_id) {
         try {
             AuthRequest req = update(blacklistItems, "blacklist", config_id, Blacklists.class, "PUT");
-            Blacklists list = (Blacklists) serializer.deserialize(req.getResponse(), Blacklists.class);
-            if (list != null) {
-                return list.getBlacklist();
+            if (req.isSuccess()) {
+                Blacklists list = (Blacklists) serializer.deserialize(req.getResponse(), Blacklists.class);
+                if (list != null) {
+                    return list.getBlacklist();
+                }
             }
             return Collections.emptyList();
         } catch (CredentialException e) {
@@ -864,9 +871,11 @@ public class Session {
     public List<UserEntity> updateEntities(List<UserEntity> entities, String config_id) {
         try {
             AuthRequest req = update(entities, "entities", config_id, UserEntities.class, "PUT");
-            UserEntities list = (UserEntities) serializer.deserialize(req.getResponse(), UserEntities.class);
-            if (list != null) {
-                return list.getEntities();
+            if (req.isSuccess()) {
+                UserEntities list = (UserEntities) serializer.deserialize(req.getResponse(), UserEntities.class);
+                if (list != null) {
+                    return list.getEntities();
+                }
             }
             return Collections.emptyList();
         } catch (CredentialException e) {
@@ -946,9 +955,11 @@ public class Session {
     public List<TaxonomyNode> updateTaxonomy(List<TaxonomyNode> nodes, String config_id) {
         try {
             AuthRequest req = update(nodes, "taxonomy", config_id, Taxonomies.class, "PUT");
-            Taxonomies list = (Taxonomies) serializer.deserialize(req.getResponse(), Taxonomies.class);
-            if (list != null) {
-                return list.getTaxonomies();
+            if (req.isSuccess()) {
+                Taxonomies list = (Taxonomies) serializer.deserialize(req.getResponse(), Taxonomies.class);
+                if (list != null) {
+                    return list.getTaxonomies();
+                }
             }
             return Collections.emptyList();
         } catch (CredentialException e) {
@@ -1062,9 +1073,11 @@ public class Session {
     public List<Configuration> updateConfigurations(List<Configuration> configurations) {
         try {
             AuthRequest req = update(configurations, "configurations", null, Configurations.class, "PUT");
-            Configurations list = (Configurations) serializer.deserialize(req.getResponse(), Configurations.class);
-            if (list != null) {
-                return list.getConfigurations();
+            if (req.isSuccess()) {
+                Configurations list = (Configurations) serializer.deserialize(req.getResponse(), Configurations.class);
+                if (list != null) {
+                    return list.getConfigurations();
+                }
             }
             return Collections.emptyList();
         } catch (CredentialException e) {
@@ -1263,7 +1276,6 @@ public class Session {
             CollAnalyticData result = null;
             if (200 == status) {
                 result = (CollAnalyticData) serializer.deserialize(req.getResponse(), CollAnalyticData.class);
-
             }
             return result;
         } catch (CredentialException e) {
