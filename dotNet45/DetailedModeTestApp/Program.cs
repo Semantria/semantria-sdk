@@ -66,7 +66,8 @@ namespace DetailedModeTestApp
                     dynamic doc = new
                     {
                         id = docId,
-                        text = iterrator.Current
+                        text = iterrator.Current,
+                        metadata = String.Format("{{\"color\":\"red\", \"size\":{0}}}", iterrator.Current.Length)
                     };
 
                     outgoingBatch.Add(doc);
@@ -124,6 +125,7 @@ namespace DetailedModeTestApp
                 {
                     // print document sentiment score
                     Console.WriteLine(string.Format("Document {0}. Sentiment score: {1}", data.id, data.sentiment_score));
+                    Console.WriteLine(string.Format("  metadata: {0}", data.metadata));
 
                     // print intentions
                     if (data.auto_categories != null && data.auto_categories.Count > 0)

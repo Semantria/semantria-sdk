@@ -21,7 +21,11 @@ namespace Semantria.Com.Mapping
         [XmlElementAttribute("job_id")]
         public string JobId { get; set; }
 
-		[DataMember(Name = "text")]
+        [DataMember(Name = "metadata")]
+        [XmlElementAttribute("metadata")]
+        public string Metadata { get; set; }
+
+        [DataMember(Name = "text")]
 		[XmlElementAttribute("text")]
 		public string Text { get; set; }
 	}

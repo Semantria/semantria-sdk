@@ -60,14 +60,16 @@ namespace DetailedModeTestApp
 
                 // Queue all docs to be analyzed
                 List<Document> outgoingBatch = new List<Document>(subscription.BasicSettings.IncomingBatchLimit);
-                IEnumerator<string> iterrator = initialTexts.GetEnumerator();
-                while (iterrator.MoveNext())
+                IEnumerator<string> iterator = initialTexts.GetEnumerator();
+                while (iterator.MoveNext())
                 {
                     string docId = Guid.NewGuid().ToString();
                     Document doc = new Document()
                     {
                         Id = docId,
-                        Text = iterrator.Current
+                        Text = iterator.Current,
+                        // metadata must be json
+                        Metadata = String.Format("{{\"color\":\"red\",\"size\":{0}}}", iterator.Current.Length)
                     };
 
                     outgoingBatch.Add(doc);
@@ -125,6 +127,7 @@ namespace DetailedModeTestApp
                 {
                     // print document sentiment score
                     Console.WriteLine(string.Format("Document {0}. Sentiment score: {1}", data.Id, data.SentimentScore));
+                    Console.WriteLine(string.Format("  metadata: {0}", data.Metadata));
 
                     // print intentions
                     if (data.Topics != null && data.Topics.Count > 0)

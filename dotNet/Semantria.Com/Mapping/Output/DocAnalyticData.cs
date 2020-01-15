@@ -25,6 +25,10 @@ namespace Semantria.Com.Mapping.Output
         [XmlElementAttribute("job_id")]
         public string JobId { get; set; }
 
+        [DataMember(Name = "metadata")]
+        [XmlElementAttribute("metadata")]
+        public string Metadata { get; set; }
+
         [DataMember(Name = "status")]
         private string _status;
         [XmlElementAttribute("status")]
