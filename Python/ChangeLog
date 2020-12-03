@@ -1,5 +1,11 @@
 CHANGELOG
 
+4.2.95 - Use username in auth session cache.
+
+4.2.94 - Better auth session management.
+
+4.2.93 - Enable compression by default; support http.
+
 4.2.92 - Don't use saved session when user changes.
 
 4.2.91 - Added session.getUserDirectory().

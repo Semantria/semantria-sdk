@@ -9,6 +9,12 @@ import semantria
 consumerKey = os.getenv('SEMANTRIA_KEY')
 consumerSecret = os.getenv('SEMANTRIA_SECRET')
 
+if (not consumerKey) or (not consumerSecret):
+    print("ERROR: The environment variables SEMANTRIA_KEY and SEMANTRIA_SECRET")
+    print("       must be defined before running the unit tests.")
+    print()
+    sys.exit(1)
+
 col_id = str(uuid.uuid1()).replace("-", "")
 doc_id = str(uuid.uuid1()).replace("-", "")
 message = "Amazon Web Services has announced a new feature called VMWare Import, " \

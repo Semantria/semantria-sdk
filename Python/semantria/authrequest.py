@@ -14,6 +14,7 @@ import hmac
 import binascii
 import hashlib
 import sys
+from semantria.version import DEFAULT_API_VERSION
 
 OAuthVersion = "1.0"
 OAuthParameterPrefix = "oauth_"
@@ -25,51 +26,46 @@ OAuthTimestampKey = "oauth_timestamp"
 OAuthNonceKey = "oauth_nonce"
 
 
-class AuthRequest:
-    apiVersion = "4.2"
+def isPython3():
+    return sys.version_info[0] >= 3
 
-    def __init__(self, consumerKey, consumerSecret, applicationName, use_compression=False):
+class AuthRequest:
+
+    def __init__(self, consumerKey, consumerSecret, applicationName, use_compression=True):
         self.consumerKey = consumerKey
         self.consumerSecret = consumerSecret
         self.applicationName = applicationName
         self.use_compression = use_compression
+        self.apiVersion = DEFAULT_API_VERSION
 
     def authWebRequest(self, method, url, postData, headers=None):
         nonce = self.generateNonce()
         timestamp = self.generateTimestamp()
-        query = self.generateQuery(method, url, timestamp, nonce)
-        authheader = self.generateAuthHeader(query, timestamp, nonce)
+        request_url = self.generateAuthUrl(method, url, timestamp, nonce)
+        auth_header = self.generateAuthHeader(request_url, timestamp, nonce)
+        request_headers = self.generateHeaders(method, headers, auth_header)
+        request_data = self.getRequestDataBytes(postData)
 
-        request_headers = headers.copy() if headers else dict()
-        request_headers["Authorization"] = authheader
-        if method == "POST":
-            request_headers["Content-type"] = "application/x-www-form-urlencoded"
-        request_headers["x-api-version"] = self.apiVersion
-        request_headers["x-app-name"] = self.applicationName
-        if self.use_compression:
-            request_headers["Accept-encoding"] = "gzip"
-
-        qparts = urlparse(query)
-        qscheme, qnetloc, qpath, qparams, qquery, qfragment = qparts[:6]
-
-        host = 'https://%s%s?%s' % (qnetloc, qpath, qquery)
-
-        params = {
-            'data': postData,
-            'headers': request_headers
-        }
-
-        response = requests.request(method, host, **params)
-        data = response.content
+        if not postData:
+            request_data = None
+        elif isinstance(postData, str) or ((not isPython3()) and isinstance(postData, unicode)):
+            request_data = toBytes(postData)
+        elif isinstance(postData, dict):
+            request_data = toBytes(jsons.dumps(postData))
+        else:
+            request_data = postData
+            
+        response = requests.request(method, request_url, data=request_data, headers=request_headers)
+        response_data = response.content
 
         try:
             # Deserialize to json, then serialize again. 
             # Protects against possible char encoding problems.
-            data = json.dumps(response.json())
+            response_data = json.dumps(response.json())
         except ValueError:
             pass
 
-        result = {"status": response.status_code, "reason": response.reason, "data": data}
+        result = {"status": response.status_code, "reason": response.reason, "data": response_data}
         return result
 
     def getApiVersion(self):
@@ -78,7 +74,20 @@ class AuthRequest:
     def setApiVersion(self, apiVersion):
         self.apiVersion = apiVersion
 
-    def generateQuery(self, method, url, timestamp, nonce):
+    def generateHeaders(self, method, headers, auth_header):
+        request_headers = headers.copy() if headers else dict()
+        request_headers["Authorization"] = auth_header
+        #if method == "POST":
+        #    request_headers["Content-type"] = "application/json"
+        if self.apiVersion:
+            request_headers["x-api-version"] = self.apiVersion
+        if self.applicationName:
+            request_headers["x-app-name"] = self.applicationName
+        if self.use_compression:
+            request_headers["Accept-encoding"] = "gzip"
+        return request_headers
+
+    def generateAuthUrl(self, method, url, timestamp, nonce):
         parts = urlparse(url)
         scheme, netloc, path, params, query, fragment = parts[:6]
         np = self.getNormalizedParameters(timestamp, nonce)
@@ -90,11 +99,11 @@ class AuthRequest:
         
         return urlunparse((scheme, netloc, path, params, query, fragment))
 
-    def generateAuthHeader(self, query, timestamp, nonce):
+    def generateAuthHeader(self, url, timestamp, nonce):
         md5cs = self.getMD5Hash(self.consumerSecret)
-        escquery = self.escape(query)
-        hash_ = self.getSHA1(md5cs, escquery)
-        hash_ = self.escape(hash_)
+        escaped_url = escape(url)
+        hash_ = self.getSHA1(md5cs, escaped_url)
+        hash_ = escape(hash_)
 
         items = [
             ("OAuth realm", ""),
@@ -130,19 +139,12 @@ class AuthRequest:
 
     def getMD5Hash(self, str_):
         md5h = hashlib.md5()
-        if sys.version_info[0] >= 3:
-            md5h.update(bytes(str_, 'utf-8'))
-        else:
-            md5h.update(str_)
+        md5h.update(toBytes(str_))
         md5sig = md5h.hexdigest()
         return md5sig
  
     def getSHA1(self, md5cs, query):
-        if sys.version_info[0] >= 3:  # Python 3
-            sha1res = hmac.new(bytes(md5cs, 'utf-8'), bytes(query, 'utf-8'), hashlib.sha1).digest()
-        else:
-            sha1res = hmac.new(md5cs, query, hashlib.sha1).digest()
-
+        sha1res = hmac.new(toBytes(md5cs), toBytes(query), hashlib.sha1).digest()
         sha1sig = binascii.b2a_base64(sha1res)[:-1]
         return sha1sig
 
@@ -152,5 +154,23 @@ class AuthRequest:
     def generateNonce(self, length=20):
         return ''.join([str(random.randint(0, 9)) for i in range(length)])
     
-    def escape(self, s):
-        return quote(s, safe='~')
+    def getRequestDataBytes(self, postData):
+        if not postData:
+            return None
+        elif isinstance(postData, str) or ((not isPython3()) and isinstance(postData, unicode)):
+            return toBytes(postData)
+        elif isinstance(postData, dict):
+            return toBytes(jsons.dumps(postData))
+        else:
+            return postData
+            
+
+def escape(s):
+    return quote(s, safe='~')
+
+def toBytes(x):
+    if isPython3():
+        return bytes(x, 'utf-8')
+    else:
+        return x.encode('utf-8')
+

@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 try:
-    import http.client as httplib
+    from http.client import HTTPException
 except ImportError:
-    import httplib
+    from httplib import HTTPException
 
 try:
     from urllib.parse import quote as url_quote
@@ -11,7 +11,7 @@ except ImportError:
     from urllib import quote as url_quote
 
 import json
-import os
+import os, os.path
 from semantria.authrequest import *
 from semantria.error import SemantriaError
 from semantria.jsonserializer import *
@@ -21,14 +21,14 @@ from semantria.version import WRAPPER_VERSION
 class Session(object):
 
     host = 'https://api.semantria.com'
-    wrapperName = 'Python/' + WRAPPER_VERSION
+    wrapperName = 'Python{}.{}/{}'.format(sys.version_info[0], sys.version_info[1], WRAPPER_VERSION)
     default_key_url='https://semantria.com/auth/session'
     default_app_key='8f46c3c2-ca89-01aa-aad3-f437ea98cf7f'
 
     def __init__(self, consumerKey=None, consumerSecret=None,
-                 serializer=None, applicationName=None, use_compression=False,
+                 serializer=None, applicationName=None, use_compression=True,
                  username=None, password=None,
-                 session_file ='/tmp/semantria-session.dat',
+                 session_file = None,
                  auth_key_url=default_key_url,
                  auth_app_key=default_app_key):
 
@@ -75,11 +75,13 @@ class Session(object):
    
 
     def obtainKeys(self, username, password,
-                   session_file='/tmp/semantria-session.dat',
+                   session_file=None,
                    auth_key_url=default_key_url,
                    auth_app_key=default_app_key):
         import requests
 
+        if not session_file:
+            session_file = getSessionDataFile(username)
         session_id = self.getSavedSessionId(session_file, username)
 
         if session_id:
@@ -105,6 +107,8 @@ class Session(object):
     #   username
     #   session id
     def saveSessionId(self, session_file, username, session_id):
+        if not session_file:
+            return
         with open(session_file, mode='w') as f:
             f.seek(0)
             f.write(username)
@@ -114,7 +118,7 @@ class Session(object):
 
     # Returns session id if a reasonable one is found
     def getSavedSessionId(self, session_file, username):
-        if not os.path.exists(session_file):
+        if (not session_file) or (not os.path.exists(session_file)):
             return None
         with open(session_file, mode='r') as f:
             u = f.readline().strip()
@@ -353,7 +357,6 @@ class Session(object):
             result = []
         return result
 
-    def addTaxonomy(self, items, config_id=None):
         return self.updateTaxonomy(items, config_id, create=True)
 
     def updateTaxonomy(self, items, config_id=None, create=False):
@@ -508,6 +511,10 @@ class Session(object):
         # allow null string to indicate no extra format extension on url
         if format is None:
             format = self.format
+        if self.host.endswith('/'):
+            self.host = self.host[:-1]
+        if not path.startswith('/'):
+            path = '/' + path
         url = self.host + path
         if format:
             url += '.' + format
@@ -563,7 +570,7 @@ class Session(object):
         if status in [400, 401, 402, 403, 406, 500]:
             self.Error({"status": status, "message": message})
         else:
-            raise httplib.HTTPException(status, message)
+            raise HTTPException(status, message)
 
 
 class SessionEvent:
@@ -607,3 +614,14 @@ def isSuccess(status):
         traceback.print_tb(sys.exc_info()[2])
         sys.stderr.write("\n")
         return False
+
+# Look in several directories for place to put the session data file.
+# Return the first found or None if no suitable directoris are found.
+def getSessionDataFile(username):
+    for path in [os.getenv('TEMP'), '/tmp', '/temp']:
+        if path and os.path.isdir(path):
+            safe_username = ''.join(ch for ch in username if (ch.isalnum() or (ch in '-_.')))
+            return os.path.join(path, 'semantria-session-{}.dat'.format(safe_username))
+    return None
+
+
